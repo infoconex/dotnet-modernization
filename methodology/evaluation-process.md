@@ -20,7 +20,7 @@ Inventory OS/build, SDK/runtime/targeting packs, compiler, MSBuild implementatio
 
 ## 4. Discover opportunities
 
-Identify actual duplication, workflow defects, tool assumptions, modernization tools, and technical constraints. Classify benefits as **immediate**, **future migration**, or **likely redundant**.
+Identify actual duplication, workflow defects, tool assumptions, modernization tools, and technical constraints. Use the [repository configuration and tooling assessment](repository-configuration.md) to consider relevant central .NET configuration mechanisms, including existing files, effective imports, and intentional omissions. Record applicability and assessment state without assuming each mechanism should be introduced. Classify benefits as **immediate**, **future migration**, or **likely redundant**.
 
 **Output:** candidate opportunities, hypotheses, priorities.
 

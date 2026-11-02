@@ -2,7 +2,7 @@
 
 ## 1. Intake
 
-Identify the application, owning repository, supported platforms, target framework(s), project formats, stakeholders, constraints, and objective. Separate **discovery**, **approved implementation**, and **release** scopes.
+Identify the application, owning repository, supported platforms, target framework(s), project formats, stakeholders, constraints, and objective. Use the [investigation catalog](investigation-catalog.md) to screen relevant modernization areas and explain exclusions without requiring every area to be investigated. Separate **discovery**, **approved implementation**, and **release** scopes.
 
 **Output:** project profile and evaluation overview.
 
@@ -20,7 +20,7 @@ Inventory OS/build, SDK/runtime/targeting packs, compiler, MSBuild implementatio
 
 ## 4. Discover opportunities
 
-Identify actual duplication, workflow defects, tool assumptions, modernization tools, and technical constraints. Use the [repository configuration and tooling assessment](repository-configuration.md) to consider relevant central .NET configuration mechanisms, including existing files, effective imports, and intentional omissions. Record applicability and assessment state without assuming each mechanism should be introduced. Classify benefits as **immediate**, **future migration**, or **likely redundant**.
+Identify actual duplication, workflow defects, tool assumptions, modernization tools, and technical constraints. Revisit the [investigation catalog](investigation-catalog.md) as evidence changes the priorities; document applicability, assessment state and deferrals, not merely a list of technologies. Use the [repository configuration and tooling assessment](repository-configuration.md) to consider relevant central .NET configuration mechanisms, including existing files, effective imports, and intentional omissions. Record applicability and assessment state without assuming each mechanism should be introduced. Classify benefits as **immediate**, **future migration**, or **likely redundant**.
 
 **Output:** candidate opportunities, hypotheses, priorities.
 

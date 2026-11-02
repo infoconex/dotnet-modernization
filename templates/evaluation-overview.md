@@ -19,6 +19,14 @@ Target frameworks, supported platforms, excluded migrations, compatibility invar
 
 Link to restore/build/full-test/API/resource/package results and environment inventory.
 
+## Repository configuration and tooling
+
+Use the [repository configuration assessment](../methodology/repository-configuration.md) to identify *relevant* central files and tool settings. Record only meaningful existing configurations, opportunities or omissions; do not create placeholder entries for every possible file. Keep applicability and assessment state distinct from verification outcomes.
+
+| File or mechanism | Applicability | Assessment state | Observation or open question | Evidence / proposed action |
+|---|---|---|---|---|
+| <relevant mechanism> | Applicable / Not applicable / Undetermined | Evaluated / Deferred / Not yet assessed | <observed behavior or question> | <finding, evidence link, or no change> |
+
 ## Opportunities
 
 Summarize candidate improvements, benefit, effort, risk and migration relevance.

@@ -33,3 +33,75 @@ These are **discovery-supported recommendations**, not applied RecordSift change
 Restoration → Release build of all ten → NUnit 419 discovered / 418 pass / 0 fail / 1 expected skip → public API 425 entries → assembly versions and logical resources → five XML docs → .nuspec/package contents, dependencies and clean consumer verification → Windows CI.
 
 A change can be implemented independently when its only dependency is the baseline; the shared-properties change benefits from fixing the local test runner first. Do not change application main, merge or publish based solely on this roadmap.
+
+## Coverage of the 34 proposed RecordSift investigations
+
+The earlier planning backlog identified **34 candidate investigations in six workstreams** (the source heading incorrectly said seven). The crosswalk below reconciles those candidates with this evaluation; it is **not** a second implementation plan or a claim that all investigations are complete. Evidence states refer to the **frozen November 2026 baseline**, and no change to RecordSift's `main` is implied. This evaluation's scope remains **pre-SDK discovery**. Conversion, runtime migration and related post-conversion work should use new dated evaluations with their own baseline SHAs if pursued.
+
+Do not read an existing CI check as proof of a new migration scenario. In particular, Release build/test success does not prove Debug parity, executing five NUnit suites does not establish code coverage, and successful SDK-only build/NUnit does not certify packaging/consumer independence. The [current status](status.md), [findings](findings.md), [risks](risks.md), and individual [experiments](experiments/README.md) remain authoritative for exact results.
+
+### 1. Application baseline and compatibility (1–6)
+
+| # | Investigation | Baseline disposition / remaining work | Current evidence |
+|---|---|---|---|
+| 1 | Solution/project inventory | Verified source inventory | [Baseline](baseline.md) |
+| 2 | Reproducible build | Release CI verified; Debug parity not established | [Baseline](baseline.md) |
+| 3 | All-suite local testing | Five-suite CI verified; local XLSX omission unresolved | [Status](status.md) |
+| 4 | Public API compatibility | 425-entry baseline verified; enforce on future changes | [EXP-001](experiments/EXP-001-baseline.md) |
+| 5 | Assembly/resource/XML contracts | Baseline identities documented; compare on each change | [Baseline](baseline.md) |
+| 6 | Packaging and consumers | Existing packaging/clean consumer CI passed | [Evidence](evidence/manifest.md) |
+
+### 2. MSBuild configuration (7–12)
+
+| # | Investigation | Baseline disposition / remaining work | Current evidence |
+|---|---|---|---|
+| 7 | Actual MSBuild imports | Verified, including failed early-import control | [EXP-006](experiments/EXP-006-msbuild-imports.md) |
+| 8 | Shared project properties | LangVersion POC verified; no application implementation | [EXP-002](experiments/EXP-002-shared-properties.md) |
+| 9 | Project override behavior | Conditional default verified; no implementation | [EXP-005](experiments/EXP-005-sdk-selection-and-overrides.md) |
+| 10 | Shared build targets | Import verified; no new target justified | [EXP-006](experiments/EXP-006-msbuild-imports.md) |
+| 11 | Response/solution build customization | No need demonstrated; no adoption experiment | [Risks](risks.md) |
+| 12 | Raw project-XML assumptions | API checker coupling observed; refactor not implemented | [Baseline](baseline.md) |
+
+### 3. Tooling and environments (13–19)
+
+| # | Investigation | Baseline disposition / remaining work | Current evidence |
+|---|---|---|---|
+| 13 | Windows runner inventory | Verified installed/preinstalled toolchain | [EXP-001](experiments/EXP-001-baseline.md) |
+| 14 | Framework SDK container | Historical image tested; supported 4.8.1 image not executed | [EXP-003](experiments/EXP-003-framework-sdk-container.md) |
+| 15 | Build without VS Build Tools | Restore/build/all NUnit verified; release gates not covered | [EXP-004](experiments/EXP-004-sdk-only-build.md) |
+| 16 | Full SDK-only release validation | Not executed: API, XML, packaging, consumer and audit gates | [R-001](risks.md) |
+| 17 | Clean Windows VM | Not executed; optional alternative environment | [Original discovery](discovery-report.md) |
+| 18 | Consistent local build/test commands | Proposed; local test parity must be corrected first | [Status](status.md) |
+| 19 | Tool discovery and PowerShell host | PowerShell 5.1/7 difference verified; standardization pending | [EXP-006](experiments/EXP-006-msbuild-imports.md) |
+
+### 4. Repository configuration and dependencies (20–24)
+
+| # | Investigation | Baseline disposition / remaining work | Current evidence |
+|---|---|---|---|
+| 20 | SDK selection with global.json | Selection/negative control verified; pinned formatter/build untested | [EXP-005](experiments/EXP-005-sdk-selection-and-overrides.md) |
+| 21 | EditorConfig/analyzer enforcement | Existing naming gate observed; broader rule review pending | [Original discovery](discovery-report.md) |
+| 22 | NuGet restore sources and audit | Existing CI restore/audit verified; changes not proposed | [Baseline](baseline.md) |
+| 23 | Direct/transitive dependency inventory | Pinned packages inspected; systematic transitive map pending | [Risks](risks.md) |
+| 24 | Dependency support/security review | Existing audit gate verified; broader support/remediation review pending | [Evidence](evidence/manifest.md) |
+
+### 5. SDK-style conversion preparation (25–30)
+
+| # | Investigation | Baseline disposition / remaining work | Current evidence |
+|---|---|---|---|
+| 25 | Conversion tools and approach | Future evaluation; not compared or approved | [Risks](risks.md) |
+| 26 | Assembly metadata conversion | Future evaluation; preserve current attributes | [Baseline](baseline.md) |
+| 27 | Compile/resource item globs | Future evaluation; preserve explicit logical names | [Baseline](baseline.md) |
+| 28 | PackageReference/central versions | Future dependency migration; not executed | [R-008](risks.md) |
+| 29 | SDK packaging and test tooling | Future evaluation; existing contracts remain | [Baseline](baseline.md) |
+| 30 | Post-conversion parity | Future mandatory acceptance criteria; not executed | [Evidence standards](../../../../methodology/evidence-standards.md) |
+
+### 6. Runtime, language, architecture and CI (31–34)
+
+| # | Investigation | Baseline disposition / remaining work | Current evidence |
+|---|---|---|---|
+| 31 | Modern .NET runtime | Future separately baselined evaluation; not executed | [Evaluation process](../../../../methodology/evaluation-process.md) |
+| 32 | New C# features and analyzers | Future independent candidate; not contingent on conversion | [Catalog](../../../../methodology/investigation-catalog.md) |
+| 33 | Architecture/platform dependencies | Broader investigation deferred; can run independently | [Catalog](../../../../methodology/investigation-catalog.md) |
+| 34 | Post-conversion CI/CD/release | Future evaluation; pre-SDK CI improvements can be independent | [Catalog](../../../../methodology/investigation-catalog.md) |
+
+**Immediate implementation candidates (subject to approval):** correct `scripts/run_tests.ps1` and stale test-count documentation, then evaluate the already proven minimal `Directory.Build.props` change. **Separate follow-up research:** complete SDK-only release gates, confirm supported container versions, review dependency/security and analyzer settings where useful. **New evaluations:** SDK-style conversion, PackageReference migration, runtime/platform changes and larger architecture/CI redesigns if justified. Independent investigations need not wait for these later phases.

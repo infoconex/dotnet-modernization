@@ -17,7 +17,7 @@ Which low-risk improvements deliver value to an existing Windows-only .NET Frame
 - [Status](status.md) — activity vs. evidence state and specific open work.
 - [Baseline](baseline.md) — actual projects, configuration, tests and compatibility contracts.
 - [Findings](findings.md) — independently traceable conclusions, including late follow-up experiments.
-- [Roadmap](roadmap.md) — recommended future implementation order and verification gates.
+- [Roadmap and investigation crosswalk](roadmap.md) — implementation priorities, verification gates and disposition of 34 proposed investigations across six workstreams.
 - [Risks](risks.md) — what remains unverified.
 - [Decisions](decisions.md) — decisions explicitly proposed, not silently approved.
 - [Experiments](experiments/README.md) — individually reproducible investigation notes.

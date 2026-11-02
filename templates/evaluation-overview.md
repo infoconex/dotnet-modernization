@@ -19,6 +19,14 @@ Target frameworks, supported platforms, excluded migrations, compatibility invar
 
 Link to restore/build/full-test/API/resource/package results and environment inventory.
 
+## Modernization area screening
+
+Use the [investigation catalog](../methodology/investigation-catalog.md) to identify relevant opportunities and explicit exclusions. This is a *screening*, not a requirement to evaluate all catalog areas. Add only meaningful rows; keep applicability, assessment state, evidence, decision and implementation distinct.
+
+| Area | Applicability | Assessment state | Reason / current evidence / follow-up |
+|---|---|---|---|
+| <relevant area> | Applicable / Not applicable / Undetermined | Evaluated / Deferred / Not yet assessed | <why; link to evidence or next investigation> |
+
 ## Repository configuration and tooling
 
 Use the [repository configuration assessment](../methodology/repository-configuration.md) to identify *relevant* central files and tool settings. Record only meaningful existing configurations, opportunities or omissions; do not create placeholder entries for every possible file. Keep applicability and assessment state distinct from verification outcomes.

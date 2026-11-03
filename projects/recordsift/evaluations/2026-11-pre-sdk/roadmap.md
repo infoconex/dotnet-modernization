@@ -1,6 +1,11 @@
 # Recommended implementation roadmap
 
-These are **discovery-supported recommendations**, not applied RecordSift changes.
+These are **discovery-supported recommendations**, not authorized permanent RecordSift changes. **Current governance (decision [P-012](decisions.md)): research and documentation only**; all implementation steps below are hypothetical proposals awaiting final stakeholder review and separate authorization. The frozen experiment baseline remains `RecordSift/main` SHA `8358780829458854a4b0356df5ac5e685f0a34c8`. The separate, previously approved test-runner fix was squash-merged only to `RecordSift/release/0.2` as [PR #258](https://github.com/infoconex/RecordSift/pull/258); the disposable `research/dotnet-modernization` base intentionally does **not** contain it.
+
+### Directory.Build.targets evidence-based disposition
+
+Source inspection of **all five production and five test traditional `.csproj` files** (finding [F-019](findings.md)) identified no custom targets, custom task declarations, pre/post-build events, or duplicate custom MSBuild operations. The repeated settings are compiler/project **properties** (`LangVersion=7.3`, `WarningLevel=4`, and production-only XML documentation/compiler-warning policy), not reusable build tasks. Existing shared API, XML and package verification is orchestrated in standalone CI scripts; migrating it into every project's Build target would change execution scope and create coupling without a demonstrated requirement. **Do not add `Directory.Build.targets` to RecordSift as a preparatory measure.** Revisit only if a concrete, repeatedly required build operation is identified, then run an isolated targeted evaluation and full compatibility checks. No new CI experiment was necessary for this source-only follow-up; [EXP-006](experiments/EXP-006-msbuild-imports.md) already verified import mechanics.
+
 
 ## Priority matrix
 
@@ -58,7 +63,7 @@ Do not read an existing CI check as proof of a new migration scenario. In partic
 | 7 | Actual MSBuild imports | Verified, including failed early-import control | [EXP-006](experiments/EXP-006-msbuild-imports.md) |
 | 8 | Shared project properties | LangVersion POC verified; no application implementation | [EXP-002](experiments/EXP-002-shared-properties.md) |
 | 9 | Project override behavior | Conditional default verified; no implementation | [EXP-005](experiments/EXP-005-sdk-selection-and-overrides.md) |
-| 10 | Shared build targets | Import verified; no new target justified | [EXP-006](experiments/EXP-006-msbuild-imports.md) |
+| 10 | Shared build targets | Mechanism verified by experiment; **10-project source audit found zero custom targets or duplicated build actions**. No `Directory.Build.targets` recommended. | [F-019](findings.md), [EXP-006](experiments/EXP-006-msbuild-imports.md) |
 | 11 | Response/solution build customization | No need demonstrated; no adoption experiment | [Risks](risks.md) |
 | 12 | Raw project-XML assumptions | API checker coupling observed; refactor not implemented | [Baseline](baseline.md) |
 

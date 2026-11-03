@@ -10,8 +10,7 @@ All RecordSift experiments use **application production baseline** `main` at `83
 | [EXP-004](EXP-004-sdk-only-build.md) | Windows .NET SDK-only build/test with no VS Build Tools | Verified, all 419 tests | [41486238239](https://github.com/infoconex/RecordSift/actions/runs/41486238239) |
 | [EXP-005](EXP-005-sdk-selection-and-overrides.md) | global.json SDK selection and shared property override | Verified selection/precedence; formatter untested | [41486700576](https://github.com/infoconex/RecordSift/actions/runs/41486700576) |
 | [EXP-006](EXP-006-msbuild-imports.md) | MSBuild import/targets checks and early Common.props | Working existing import path; early import regression | [41484290488](https://github.com/infoconex/RecordSift/actions/runs/41484290488) |
-
-| [EXP-007](EXP-007-sdk-only-release-gates.md) | SDK-only XML/API/package/consumer gates | Partial: XML/API pass; package/consumer failed on ZipFile type; follow-up control running | [First run](https://github.com/infoconex/RecordSift/actions/runs/41575562993) / [follow-up](https://github.com/infoconex/RecordSift/actions/runs/41576091787) |
+| [EXP-007](EXP-007-sdk-only-release-gates.md) | SDK-only XML/API/package/consumer gates | Complete, partially verified: XML/API, NuGet pack and install pass; full validation blocked by environment assumptions | [Corrected run](https://github.com/infoconex/RecordSift/actions/runs/41576608287) |
 
 See [evidence manifest](../evidence/manifest.md) for immutable container digests, artifact IDs and corrected/failed runs.
 

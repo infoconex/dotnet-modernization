@@ -27,8 +27,8 @@ Production-specific configuration generates XML documentation and enforces `CS15
 | `DebugType` | `full` (Debug), `pdbonly` (Release), **10/10** | **Keep local:** compiler/PDB behavior is configuration-specific; no centralization test. |
 | `Optimize` | `false` (Debug), `true` (Release), **10/10** | **Keep local:** changes compilation behavior; avoid coupling to unrelated modernization. |
 | `DefineConstants` | `DEBUG;TRACE` (Debug), `TRACE` (Release), **10/10** | **Keep local:** part of configuration-specific compiled behavior and source conditional compilation. |
-| `OutputPath` | `bin\\Debug\\` and `bin\\Release\\`, **10/10** | **Keep local:** existing build scripts, NUnit discovery, package staging, and consumer checks rely on these paths. |
-| `DocumentationFile` | Per-project `bin\\{Debug|Release}\\RecordSift.<Component>.xml` in **5/5 production projects only**; absent from test projects | **Keep local:** exact XML output paths are contract/packaging inputs; file name is project-specific and intended production-only. |
+| `OutputPath` | `bin\Debug\` and `bin\Release\`, **10/10** | **Keep local:** existing build scripts, NUnit discovery, package staging, and consumer checks rely on these paths. |
+| `DocumentationFile` | Per-project `bin\{Debug|Release}\RecordSift.<Component>.xml` in **5/5 production projects only**; absent from test projects | **Keep local:** exact XML output paths are contract/packaging inputs; file name is project-specific and intended production-only. |
 | `WarningsAsErrors` | `1591` in Debug and Release for **5/5 production** projects only; absent in tests | **Keep local for now:** preserves compiler `CS1591` behavior only for public production APIs; don't equate with enabling `TreatWarningsAsErrors` everywhere. |
 | `IsTestProject` | `true` in **5/5 test** projects only | **Keep local:** it distinguishes test from production projects; a nested `tests/Directory.Build.props` would require explicit composition with root defaults if both are used. |
 | `FileAlignment` | `512` in **8/10**; absent in two projects | **Keep local:** do not infer that absent declarations can be safely replaced with an explicit common value without checking evaluated defaults/output metadata. |
@@ -36,7 +36,7 @@ Production-specific configuration generates XML documentation and enforces `CS15
 | `ProjectGuid` | Unique GUID in **10/10** | **Never homogenize:** project identity. |
 | `AssemblyName`, `RootNamespace` | Distinct names in **10/10** | **Keep local:** identity, resource names and API/packaging compatibility; avoid assumption that a derived name is equivalent. |
 
-Additional non-property distinctions (explicit `Compile`, `Reference`, `ProjectReference`, `EmbeddedResource`/`LogicalName` items, and `packages.config`) are outside the scope of shared compiler defaults. Each of the ten projects imports `$(MSBuildToolsPath)\\Microsoft.CSharp.targets`, with no other explicit targets import.
+Additional non-property distinctions (explicit `Compile`, `Reference`, `ProjectReference`, `EmbeddedResource`/`LogicalName` items, and `packages.config`) are outside the scope of shared compiler defaults. Each of the ten projects imports `$(MSBuildToolsPath)\Microsoft.CSharp.targets`, with no other explicit targets import.
 
 ### Why source duplication does not imply safe property movement
 

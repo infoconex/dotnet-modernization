@@ -1,6 +1,6 @@
 # Evaluation progress and verification status
 
-**As assessed:** November 2, 2026  
+**As assessed:** November 3, 2026 (original baseline and EXP-007 are historical November 2 evidence)  
 **Baseline application SHA:** `8358780829458854a4b0356df5ac5e685f0a34c8`  
 **Overall:** discovery substantially complete; no implementation authorized or performed in application main.
 

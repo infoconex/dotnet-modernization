@@ -26,3 +26,17 @@
 **Next investigation:** test API verification, XML documentation validation, packaging and clean consumer checks inside the SDK-only Windows environment.
 
 **First proposed implementation after approval:** repair local test-script parity and establish a reproducible all-five-suite command; then introduce minimal common shared properties and rerun compatibility gates.
+
+## Methodology-validation pilot (approved November 2, 2026)
+
+| Activity | Work state | Evidence outcome / follow-up |
+|---|---|---|
+| Adaptive stakeholder interview and explicit scope authorization | Complete | P-001–P-010 recorded in [decisions](decisions.md); approved [scope](README.md) |
+| Central methodology process / intake / approval / GitHub rules | Documentation updated on PR #1 | Requires review and fresh-context acceptance; [process](../../../../methodology/evaluation-process.md) |
+| Lightweight agent entry points and authorization-aware template | Documentation updated on PR #1 | [root AGENTS](../../../../AGENTS.md), [Copilot](../../../../.github/copilot-instructions.md), [evaluation template](../../../../templates/evaluation-overview.md) |
+| Targeted SDK-only release-gate investigation | In progress | [issue #2](https://github.com/infoconex/dotnet-modernization/issues/2), [EXP-007](experiments/EXP-007-sdk-only-release-gates.md) |
+| Independent fresh-context acceptance | Not executed | [issue #3](https://github.com/infoconex/dotnet-modernization/issues/3); must use a separate assistant session |
+
+**Process observation:** Before this pilot, the evaluation lifecycle began with intake but did not instruct an unfamiliar assistant to inspect before interviewing, obtain explicit consolidated approval, or preserve authorization for session handoff. Centralized the new rules in the existing lifecycle rather than duplicating them in AI entry points. Original RecordSift discovery documents remain historical evidence; do not mandate every specialized file for future applications.
+
+**GitHub tracking limitation:** This connection can create issues and edit documentation, but does not expose a GitHub milestone-creation/attachment operation. Issues #2 and #3 are linked to the approved evaluation without a created milestone; do not represent a milestone as created.

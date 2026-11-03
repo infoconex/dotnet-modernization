@@ -6,7 +6,7 @@
 **Disposable application experiment branch:** `research/migration-ci-exp013-20261103`; commits only the isolated `.github/workflows/research-exp013-migration-ci.yml`. Any temporary PackageReference conversions remain in GitHub Actions' checkout and are never committed to the application.  
 **Documentation branch:** `research/recordsift-migration-ci-exp013-20261103`, for a separate **draft PR, not merged**.  
 **Prior evidence:** [EXP-011 dependency inventory, draft PR #12](https://github.com/infoconex/dotnet-modernization/pull/12) and [EXP-012 manual exact-pins PackageReference migration, draft PR #14](https://github.com/infoconex/dotnet-modernization/pull/14).  
-**Status:** Findings from official migration-tool documentation and read-only source audit recorded; exact CI command experiments must be evaluated from completed Actions logs before claiming execution results.
+**Status:** CI tooling and source-compatibility probes verified; a final narrow architecture-guard positive/negative control is pending. No Visual Studio wizard result claimed.
 
 ## Research boundaries
 
@@ -66,22 +66,45 @@ The following table is a **source-only audit** of the frozen application reposit
 
 **Evidence:** workflow source SHA, GitHub run and artifact IDs, OS/MSBuild/SDK/NuGet/PowerShell, JSON status matrix, NUnit XMLs and formatter output. The migration experiment does **not** run the actual GUI wizard and is not equivalent to executing every production workflow end-to-end.
 
-## Findings and outcome
+## Verified Windows CI execution and negative controls
 
-**Current state:** Await final EXP-013 execution. A first workflow attempt was not triggered because a disposable workflow's branch filter pointed to the previous experiment branch; the next attempt was blocked immediately by a mismatched workflow-file name in the branch-only diff assertion. Both are **experiment harness errors**, not RecordSift restore/build defects.
+**Execution [41736927515](https://github.com/infoconex/RecordSift/actions/runs/41736927515):** [artifact 13279955880](https://github.com/infoconex/RecordSift/actions/runs/41736927515/artifacts/13279955880), workflow SHA `79eaa43b6cc6dc83bf093f247cc2e3d19d8eaa99`. **Result: completed successfully**, including full exact-pins migration/consumer gates, restored assets, original CLI restore, 17/17 experimental package audit, unchanged formatter, six docs scripts (four passed, two failed in the *post-build Windows probe*). The overall workflow was green because those two probes intentionally record individual negative results.
 
-**Gate table to finalize from completed job logs:**
+**Confirmatory execution [41737351278](https://github.com/infoconex/RecordSift/actions/runs/41737351278):** [artifact 13278713864](https://github.com/infoconex/RecordSift/actions/runs/41737351278/artifacts/13278713864), workflow SHA `e06968f12c5da80b3445769595e90eed2207157e`. **Result: completed successfully** with additional unchanged-format *pre-migration* source validation, formatter diagnostic verbosity and `obj/` cleanup controls.
 
-| Question | Executed outcome | Source |
+**Tool inventory:** Windows NT `10.0.20348.0`, GitHub `windows-2022`, .NET SDK `10.0.403`, NuGet CLI `7.9.0.83`, PowerShell `7.6.9`, Visual Studio 2022 Enterprise MSBuild `17.14.60.43110`. `nuget help` did not list a `migrate` command; **no Visual Studio GUI wizard was executed**. All exact-pins `PackageReference` edits were ephemeral.
+
+| CI question | Verified observation | Interpretation |
 |---|---|---|
-| Original NuGet CLI restore after conversion | Pending | EXP-013 Windows run |
-| Seven assets after original restore | Pending | EXP-013 Windows run |
-| Original package-audit source access | Pending (source inspection predicts failure) | EXP-013 |
-| Candidate 17/17 direct pin inventory | Pending | EXP-013 |
-| Original IDE1006 `dotnet format style` | Pending | EXP-013 |
-| Documentation/architecture Python source checks | Pending | EXP-013 |
-| Exact-pins behavior/package/consumer controls | [EXP-012 passed](https://github.com/infoconex/RecordSift/actions/runs/41735278846); must separately verify in EXP-013 | EXP-012; EXP-013 |
-| GUI Visual Studio wizard classification | **Not executed**, no wizard report | Microsoft documented GUI workflow; separate stakeholder authorization if required |
+| Original pre-migration baseline | `nuget restore`, Release build, 419/418/0/1 NUnit **passed** | Original RecordSift contract reproduced |
+| Exact-17 `PackageReference` migration | MSBuild restore, ten Release projects, 419/418/0/1 NUnit, five XML docs **passed** | Source-format migration is feasible in traditional net48 |
+| Compiled API/identity | **414 entries passed**, after filtering 11 *source-only* `packages.config` records into a temporary reference copy | **Unchanged 425-entry full verifier fails**; do not classify it as green |
+| Local unpublished NuGet RC + independent installed consumer / Getting Started samples | **Passed** | Consumer compatibility verified only for all-17-exact-pins candidate |
+| Negative CS1591 docs | **Passed** | Existing compiler enforcement still works |
+| **Original CI `nuget.exe restore RecordSift.sln -NonInteractive -PackagesDirectory packages -ConfigFile NuGet.Config`** after PackageReference conversion | **Passed**, with all **seven `project.assets.json`** present | Existing restore CLI **does not need replacement** solely because package-management format changed |
+| Original dependency audit reading `tests/RecordSift.Domain.Tests/packages.config` | **Expected fail:** absent file, exactly as source predicts | Existing CI inventory validation **must** be adapted; do not delete the policy |
+| Experimental format-aware pin audit (XML `PackageReference`) | **17/17 exact entries across seven projects passed** | A replacement can preserve pin enforcement without relying on deleted file paths; candidate not committed |
+| Identical `dotnet format style RecordSift.sln --no-restore --verify-no-changes --diagnostics IDE1006 --severity error --verbosity normal` | **Exit 0** | Current naming/style check is compatible in tested Windows host |
+| Formatter diagnostic repeat with `--verbosity diagnostic` | **Exit 0**, no lines containing warning/fail/unable/exception | Normal command printed a generic workspace warning; diagnostic run did not identify actionable migration warnings. Don't claim all possible warnings eliminated. |
+| `validate_docs.py`, `verify_getting_started_samples.py`, `validate_test_metadata.py`, `validate_constant_names.py` | All **exit 0** in Windows post-build probe | No change required based on this limited execution |
+| `validate_architecture_layers.py` | **Exit 1** after original `packages.config` build, **exit 1** after converted build and again **exit 1 after removing all 10 transient `obj/` directories** | Two distinct issues: pre-existing generated `obj/**/*.cs` scanning; **real migration incompatibility** because script still demands a raw `ExcelDataReader` `Reference` element |
+| `validate_core_messages.py` | **Exit 1** after original build and after migrated build; **exit 0 after deleting generated `obj/` directories** | Pre-existing post-build order issue, **not** caused by PackageReference |
+| GUI migrator classification/backup/compatibility report | **Not executed; no report** | Can't claim wizard direct/transitive choices or parity |
+
+**Specific architecture guard:** frozen `scripts/validate_architecture_layers.py` lines **323–324** demand a `<Reference Include="ExcelDataReader">` item. The converted XLSX project correctly has a `<PackageReference Include="ExcelDataReader" Version="[3.9.0]">` instead. That guard must recognize the new dependency representation **without weakening the rule** that only the XLSX infrastructure adapter owns the vendor parser dependency. The current frozen source verifier's `rglob("*.cs")` also includes generated assembly-attribute files under `obj` when run after a build; this affects the original `packages.config` baseline too. The separate, clean Ubuntu docs workflow was **not** invoked against a migrated branch: post-build Windows probes are not evidence of its results.
+
+**Pending additional narrow control:** a new disposable workflow revision tests a *temporary source-format-aware architecture guard* using positive and negative scenarios, including deliberately removing the XLSX `ExcelDataReader` declaration and requiring rejection. It will not modify application source in GitHub. Record the actual completed job before calling this control verified.
+
+**Non-migration caveat:** The existing `scripts/run_tests.ps1` still omits the XLSX assembly; experiment uses all five DLLs explicitly and confirms 419/418/0/1. Do not claim that unmodified script establishes full suite parity.
+
+### Experiment-harness history
+
+- Initial branch-only workflow `ec9ae3fe4a0bed5a83606307661709e994692eb4` was not triggered because its push filter contained the wrong branch.
+- [41736825889](https://github.com/infoconex/RecordSift/actions/runs/41736825889) stopped immediately because the workflow's source-integrity check contained the wrong workflow filename; this was a **harness error**.
+- [41736927515](https://github.com/infoconex/RecordSift/actions/runs/41736927515) verified the core CI compatibility and revealed the architecture/core-resource Python gate behavior.
+- [41737351278](https://github.com/infoconex/RecordSift/actions/runs/41737351278) established original-format baseline failures, isolated `obj`-generated-file noise and confirmed the persistent XLSX dependency declaration mismatch.
+
+**Research interpretation:** A green top-level experimental workflow is not evidence that every included negative probe passed. Preserve individual exit statuses and compare the original and migrated project formats. Do not conflate the production Ubuntu docs workflow's clean-checkout operation with these explicitly **Windows post-build** probes.
 
 ## Recommendation framework (not implementation approval)
 

@@ -91,7 +91,7 @@ Do not read an existing CI check as proof of a new migration scenario. In partic
 | 25 | Conversion tools and approach | Future evaluation; not compared or approved | [Risks](risks.md) |
 | 26 | Assembly metadata conversion | Future evaluation; preserve current attributes | [Baseline](baseline.md) |
 | 27 | Compile/resource item globs | Future evaluation; preserve explicit logical names | [Baseline](baseline.md) |
-| 28 | PackageReference/central versions | Future dependency migration; not executed | [R-008](risks.md) |
+| 28 | PackageReference/central versions | **EXP-012 tested disposable, exact-pinned PackageReference on all seven traditional net48 projects**: restore/build/419 NUnit, compiled API 414/414, XML, local package and clean consumer pass. **Unchanged 425-entry verifier fails on 11 raw `packages.config` source records; legacy test-runner path requires separate installation.** No permanent migration, central package management, or direct-only graph approval. | [EXP-012](experiments/EXP-012-packagereference-isolation.md), [R-008](risks.md) |
 | 29 | SDK packaging and test tooling | Future evaluation; existing contracts remain | [Baseline](baseline.md) |
 | 30 | Post-conversion parity | Future mandatory acceptance criteria; not executed | [Evidence standards](../../../../methodology/evidence-standards.md) |
 

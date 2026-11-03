@@ -4,7 +4,7 @@
 
 | ID | Gap or risk | Classification | Required follow-up |
 |---|---|---|---|
-| R-001 | Full API, XML, packaging and clean consumer checks have not run inside the SDK-only Windows container. | Unverified scope extension | Execute each script and log true external dependencies. |
+| R-001 | XML and API checks passed inside SDK-only Windows, but local packaging and clean-consumer scripts failed on unresolved ZipFile type; full release parity remains unverified. | Partially verified; follow-up in progress | [EXP-007](experiments/EXP-007-sdk-only-release-gates.md): check explicit compression assembly load then isolate remaining toolchain dependencies. |
 | R-002 | Supported .NET Framework SDK image tag 4.8.1-windowsservercore-ltsc2022 had a resolvable manifest but was not pulled/executed in this investigation. | Not executed | Pull, record digest/tool inventory and rerun 419-test baseline. |
 | R-003 | Formatter behavior with a repository-pinned global.json was not independently verified. | Not executed | Test dotnet format style under candidate SDKs, including CI provisioning. |
 | R-004 | Early import of Microsoft.Common.props caused MSB3107 reference metadata errors. | Verified regression | Do not introduce this import; investigate root cause only if a requirement arises. |

@@ -25,6 +25,18 @@
 
 **Never equate workflow status = success with every embedded experiment passing.** A deliberately failing negative control can coexist with a successful workflow.
 
+## Failure attribution and probe validity
+
+When an experiment fails, identify **which layer actually failed** before blaming the application:
+
+- **Application behavior:** the intended check executed correctly and demonstrated a contract or behavior change. Report the exact reproduced failure.
+- **Environment/toolchain:** the check could not run as intended due to missing SDK, targeting pack, compiler, container daemon, credentials, host runtime, implicit assembly loading, or similar prerequisites. Record as blocked or partially verified and identify which earlier checks passed.
+- **Experiment harness:** the diagnostic workflow, wrapper, quoting, parameter binding, error handling, or artifact collection was incorrect. Mark that result **inconclusive**, fix the harness in isolation and rerun without changing the application.
+
+A failed workflow is not necessarily a failed application. A green workflow is not proof that every check ran. Preserve the **first failure encountered**, any independent successful gates and the command's true exit code. Repeat only the narrow control needed to distinguish explanations; do not silently reclassify an environmental or harness failure as a product defect.
+
+**Observed pilot example:** [RecordSift EXP-007](../projects/recordsift/evaluations/2026-11-pre-sdk/experiments/EXP-007-sdk-only-release-gates.md) found that build/NUnit/XML/API checks succeeded, a packaging invocation initially lacked an implicitly loaded PowerShell assembly, a later wrapper incorrectly quoted a named parameter, and another attempt encountered an unavailable Docker daemon. These are distinct conclusions with distinct verification statuses.
+
 ## Compatibility checklist
 
 Before and after meaningful changes, compare:

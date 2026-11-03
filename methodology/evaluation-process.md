@@ -1,10 +1,47 @@
 # Modernization evaluation lifecycle
 
-## 1. Intake
+## Start here: first-contact protocol
 
-Identify the application, owning repository, supported platforms, target framework(s), project formats, stakeholders, constraints, and objective. Use the [investigation catalog](investigation-catalog.md) to screen relevant modernization areas and explain exclusions without requiring every area to be investigated. Separate **discovery**, **approved implementation**, and **release** scopes.
+An assistant with **no prior conversation context** must be able to start from the root README, this procedure, the application repository, and any existing dated evaluation. Do not rely on remembered stakeholder choices, prior chats, or undocumented approvals.
 
-**Output:** project profile and evaluation overview.
+**Order matters:** inspect repositories and existing evidence → identify missing stakeholder decisions → interview adaptively → present consolidated scope → obtain **explicit approval** → establish/reuse baseline → select investigations → run authorized isolated experiments if justified → assess, document and recommend. Technical discovery from source inspection is allowed before scope approval; **new experiments and investigation issues are not** unless separately authorized.
+
+## 1. Inspect, interview, and approve scope
+
+### Inspect before asking
+
+1. Confirm the owning repository, current default branch/full SHA, access level, project inventory, existing CI/build/test commands and requirements/consumer constraints. Follow repository-specific instructions and check relevant existing evaluations.
+2. Identify which questions can be answered from code, documentation, recorded decisions or previous evidence. Do not ask these again.
+3. Review the [investigation catalog](investigation-catalog.md) as a relevance screen, **not** a list of mandatory work. Note relevant unknowns and exclusions.
+4. Explain the known baseline, available evidence, and unresolved human decisions before starting the interview.
+
+### Adaptive stakeholder interview
+
+Ask **one consequential question at a time** and explain the recommendation, alternatives and implications. Use supported interactive single-choice controls where practical; otherwise provide clearly numbered options. Always allow **Other / custom answer**. Avoid collecting information already verified from repositories or earlier answers. A small evaluation may require few questions; do not force a standard questionnaire.
+
+Resolve only material decisions: objectives and drivers, desired modernization horizon, compatibility invariants, platforms/consumers, critical risk tolerance, AI autonomy, scope exclusions, authorization for isolation/experiments/implementation, evidence expectations, GitHub tracking, and completion/acceptance criteria. Distinguish **discovering** existing constraints from **asking** stakeholders to choose them. Follow up only if an answer changes what is permitted or how success will be measured.
+
+### Explicit consolidated scope approval — mandatory checkpoint
+
+Write a concise scope proposal in the evaluation overview ([template](../templates/evaluation-overview.md)) covering:
+
+- Application owner/repository/branch and frozen baseline SHA; objective, measurable outputs and intended modernization stage.
+- Included areas/investigations and explicit exclusions or deferrals, with prioritization and existing evidence to reuse.
+- Required compatibility contracts, accepted risk, verification gates and criteria for stopping/escalation.
+- Levels of autonomy; exactly which experiments, branches, workflows, documentation updates and issue actions are authorized.
+- Explicit **non-authorizations**: permanent source changes, merges, publishing, deployments and costs unless approved.
+- Evidence and GitHub tracking conventions; completion criteria and any independent fresh-context acceptance test.
+
+Present the proposal to the stakeholder and request explicit approval or revision **before starting investigations**. A preferred interview answer is not itself final approval; record the approval decision, date, approver and linked scope. A later scope expansion requires a recorded amendment and approval. Continue the already-approved portion of work where safe.
+
+### Approval and escalation rules
+
+- Default without authorization: **read-only discovery and proposal**.
+- Guided autonomous (when explicitly selected): after scope approval, investigate and record evidence independently within approved boundaries. Isolated branch/workflow modifications are allowed **only** if covered by experiment authorization.
+- Stop the affected work and seek authorization for scope expansion, permanent application changes, backward-compatibility breaks, destructive cleanup, unapproved spending, merge/release or publication. Continue unrelated in-scope work.
+- An experiment may demonstrate a regression; **accepting or shipping** it is not authorized. Never interpret a finding or recommendation as approval.
+
+**Output:** repository profile, focused stakeholder decisions, **approved** evaluation scope, stated authorization boundary and current next action. Preserve concise decisions, not necessarily the whole interview transcript.
 
 ## 2. Establish the baseline
 
@@ -56,3 +93,36 @@ Track **work state** independently from **verification outcome**:
 - Evidence: verified, partially verified, unverified, failed hypothesis, not executed.
 
 A successfully completed experiment can have a failed hypothesis; a verified experiment does not imply an implementation was approved.
+
+
+## GitHub work tracking and ownership
+
+A **milestone** represents **one application and one agreed modernization goal**, e.g. `RecordSift — Pre-SDK Modernization Evaluation`. Create only approved goals, not a milestone for every investigation. Where tooling cannot create/attach milestones, record that limitation and keep the issue linked to the evaluation; never claim a milestone was created.
+
+Meaningful investigations are tracked as focused issues in **dotnet-modernization**. An issue specifies objective, motivating evidence gap, relevant application/evaluation and files, hypotheses/dependencies, authorized experiment boundary, expected verification, findings/disposition and permanent documentation links. Do not create an issue for every catalog row or interview answer. Use sub-issues only for substantial decomposition. Keep the issue updated as evidence emerges; issue closure reflects a supported disposition, **not** an automatic code change.
+
+**Application implementation issues and PRs belong in the application repository**, linked to investigation findings and created only under explicit implementation authorization. Discovery experiments may use preauthorized temporary application branches, but do not merge or publish them. Record exact baseline and experiment SHAs.
+
+## Lean documentation ownership
+
+Each evaluation requires only a navigable **overview** with approved scope, current status/next step, baseline/evidence links, decisions/approvals and a traceable outcome. Add specialized documents **when they earn a distinct responsibility**, not as empty placeholders:
+
+- `baseline.md` for substantial immutable source/environment/compatibility records.
+- `experiments/` and `evidence/` for multiple reproducible experiments or sizeable retained diagnostics.
+- `findings.md` for many evidence-backed observations; `decisions.md` when authorization/technical dispositions need a durable audit trail.
+- `status.md` only for active multi-workstream tracking; `risks.md` for nontrivial unresolved risks; `roadmap.md` for a meaningful sequence of independent recommended changes.
+- A preserved historical discovery report is an archival source, **not** an additional live status authority.
+
+Use **one authoritative home** for each fact or procedure; link instead of repeating detailed status, findings or rules across files. Prefer a short overview for simple evaluations and retain older evidence rather than overwriting history.
+
+## Pilot self-audit and cross-session continuation
+
+During an evaluation note actual process failures: unclear entry point, missed/duplicated interview question, ambiguity in approval, unexecuted verification, conflicting documents, unsupported GitHub operation, or a task that depends on hidden chat history. Improve the **central procedure** when possible; AI entry points should link here rather than restate it.
+
+At session boundaries update the overview with the repository/branch/full SHA, approved scope and approvals, issue IDs, experiment artifacts/outcomes, unresolved gates, and **one concrete next action**. A later assistant should verify live repository state first and avoid repeating completed experiments. Never infer success from a workflow's overall color.
+
+## Evaluation completion and independent acceptance
+
+An evaluation may close when the agreed questions have evidence-backed dispositions (including justified deferrals/no-change), compatibility or environment checks are clearly marked pass/fail/not executed, and recommendations are prioritized with implementation authorization separate. Record outstanding risks and owner decisions. **Completing evaluation does not require performing an upgrade.**
+
+When the stakeholder requires **fresh-context acceptance**, an independent AI session must start solely from repository instructions and the application reference, then demonstrate correct inspection, adaptive interview, explicit scope approval, investigation/evidence tracking and escalation boundaries. Log the test procedure, observed passes/failures and correction loop. **This live pilot cannot mark its own fresh-context validation as passed.**

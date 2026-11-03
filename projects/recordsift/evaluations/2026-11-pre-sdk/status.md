@@ -12,6 +12,7 @@
 | Establish Windows CI restore/build/NUnit/API/package baseline | Complete | Verified | [Baseline run](https://github.com/infoconex/RecordSift/actions/runs/41392848910) |
 | Verify independent clean consumer checks | Complete | Verified on existing CI | [Consumer run](https://github.com/infoconex/RecordSift/actions/runs/41392848814) |
 | Verify shared Directory.Build.props without changed imports | Complete | Verified | [Experimental run](https://github.com/infoconex/RecordSift/actions/runs/41484769924) |
+| Inventory all 10 traditional project property groups and classify `Directory.Build.props` candidates | Complete — source-only audit November 3, 2026 | [F-020](findings.md): 19 distinct project property types; only `LangVersion` already experimentally verified for moving; `WarningLevel` remains an optional **unexecuted** follow-up. No RecordSift build or test performed for this audit. | [Detailed property matrix](baseline.md), [recommendations](roadmap.md) |
 | Evaluate Directory.Build.targets and early import risks | Complete | Verified mechanism; early import experiment failed | [Import run](https://github.com/infoconex/RecordSift/actions/runs/41484290488) |
 | Containerize full build/tests with .NET Framework SDK | Complete | Verified; Build Tools present | [Container run](https://github.com/infoconex/RecordSift/actions/runs/41484891489) |
 | Build all ten traditional projects without VS Build Tools | Complete | Verified | [SDK-only run](https://github.com/infoconex/RecordSift/actions/runs/41486238239) |

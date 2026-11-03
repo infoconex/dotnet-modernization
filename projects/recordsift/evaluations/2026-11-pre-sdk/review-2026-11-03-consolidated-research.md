@@ -10,6 +10,22 @@
 
 > **Review status:** Prepared for stakeholder disposition. No new application implementation, docs merges, package publication, SDK-style conversion, .NET migration, or integration of temporary experiment code is authorized by this report. The source PRs remain open and draft, and findings are not stakeholder-approved implementation decisions.
 
+## Independent review checks (November 3, 2026)
+
+This additional source cross-check reviewed the review document against the actual GitHub PR list, branch references, historical methodology merge, eight relevant completed Actions runs and the 34-item canonical roadmap. **It was a documentation review, not a repeat of application experiments.**
+
+| Review control | Checked evidence | Disposition |
+|---|---|---|
+| Documentation PR topology | [PR #1](https://github.com/infoconex/dotnet-modernization/pull/1) **merged** on November 3, 2026 (merge SHA `903629088e57ad081c512292c7fab4d9c72e4476`); research drafts **#4/#5/#6/#8/#10/#12/#14/#16** remain **open/draft**; this independent review is draft **#18** | **Verified**, distinguishing completed methodology merge from unmerged research |
+| Frozen application branches | RecordSift `main` / `research/dotnet-modernization`: `8358780829458854a4b0356df5ac5e685f0a34c8`; `release/0.2`: `338257f84a72a04136801aa93c3c435e28a61dce` | **Verified unchanged** during consolidation |
+| Historical methodology exception | [Issue #3](https://github.com/infoconex/dotnet-modernization/issues/3) is **closed / not planned**, consistent with P-011; this is **not** a pass of original strict fresh-context acceptance | **Verified** |
+| Roadmap | `roadmap.md` on documentation main contains **34 distinct numbered investigations, 1–34**, with no missing item | **Verified**; preserve those 34 during later union |
+| Finding IDs in eight draft branches | The only *new* F-IDs used are F-019 (two conflicting subjects), F-020 (two conflicting subjects), and F-021 (unique to the pinned-SDK draft); later experiments document evidence outside canonical `findings.md` | **Verified**; resolve F-019/F-020 before documentation integration |
+| Cited executed runs | EXP-002 [41484769924](https://github.com/infoconex/RecordSift/actions/runs/41484769924); EXP-004 [41486238239](https://github.com/infoconex/RecordSift/actions/runs/41486238239); EXP-008 [41681192996](https://github.com/infoconex/RecordSift/actions/runs/41681192996); EXP-009 [41708730067](https://github.com/infoconex/RecordSift/actions/runs/41708730067); EXP-010 [41713886548](https://github.com/infoconex/RecordSift/actions/runs/41713886548); EXP-011 [41728933974](https://github.com/infoconex/RecordSift/actions/runs/41728933974); EXP-012 [41735278846](https://github.com/infoconex/RecordSift/actions/runs/41735278846); EXP-013 [41737816926](https://github.com/infoconex/RecordSift/actions/runs/41737816926) | All eight GitHub Actions runs show **completed / success** and matching research-branch SHA, but the reports' **gate-level failures and unexecuted controls remain authoritative** |
+| Report relative links and draft diff | Checked relative links resolve against the documentation main repository tree; only this review document is added by draft #18 | **Verified at review time**; rerun document checks after any integration |
+
+**Review finding:** The original report was directionally accurate. Two details required correction: (1) the historical P-004/P-011 prohibition on merging PR #1 describes an earlier state, since **PR #1 is now merged**, and (2) the already-applied `release/0.2` test-runner fix should **not** be labeled a new P0 implementation item. Neither correction alters the experiment findings or grants implementation/merge authority.
+
 ## Executive conclusion
 
 **RecordSift can gain useful pre-SDK maintainability improvements without changing framework, project format, architecture or runtime.** The strongest low-risk candidate is consolidating `LangVersion=7.3` into a minimal conditional `Directory.Build.props`, using the existing traditional import chain. This has actual build/test/API/documentation/packaging evidence; no early `Microsoft.Common.props` import is necessary or recommended. The value is a *single authoritative setting across ten currently identical projects* while retaining local overrides. **Nothing is approved for implementation.**
@@ -47,7 +63,7 @@ Legend: **Verified** means the named checks actually ran or the source was inspe
 
 | Subject | Outcome / bounded verification | Proposed value and action | Priority |
 |---|---|---|---|
-| Historical contract and local all-five-suite runner | Baseline 419/418/0/1; main local runner omitted XLSX. Corrected in separate `release/0.2` PR #258, not main. | **Recognize existing fix** and confirm intended branch promotion separately when appropriate; avoid recreating/merging from research. | **P0 release-branch disposition**, not a new experiment |
+| Historical contract and local all-five-suite runner | Baseline 419/418/0/1; main local runner omitted XLSX. Corrected in separate `release/0.2` PR #258, not main. | **Recognize existing fix**; no new modernization work. Any later branch promotion remains a separate release decision, not an instruction from this review. | **Already addressed on release/0.2**; no new research/implementation |
 | Shared `LangVersion=7.3` in `Directory.Build.props` | **EXP-002/005 verified** no change to tested build/NUnit/API/XML/package and override behavior. Existing traditional import chain adequate. | **Primary low-risk pre-SDK candidate**: one place for ten identical settings, project override permitted. Require explicit implementation approval and current SHA/full gates. | **P1 (if implementation authorized)** |
 | `Directory.Build.targets` | Source audit #4 verified no reusable target action; EXP-006 established import mechanism. | **Do not add** without actual shared behavior to enforce. | No change |
 | Early `Microsoft.Common.props` import | EXP-006 **MSB3107 regression**. | **Avoid** changing imports just for central defaults. | No change |
@@ -87,8 +103,8 @@ All eight drafts share the **same base main SHA** and independently update commo
 
 | Canonical section | Consolidated correction (proposal, no committed integration) |
 |---|---|
-| **Stakeholder decisions** | Preserve **P-001–P-011** including P-011's accepted strict-acceptance-evidence limitation, and incorporate **P-012** research-only/branch boundary recorded in PR #4. The latter must not be discarded by PR #5/#6 branches based on an earlier decisions version. Do **not** reinterpret old pilot approvals as modernization implementation approval. |
-| **D-001** | Note correction already merged into RecordSift **release/0.2** via PR #258, still absent from app main. Distinguish branch status from recommended action. |
+| **Stakeholder decisions** | Preserve **P-001–P-011** including P-011's accepted strict-acceptance-evidence limitation, and incorporate **P-012** research-only/branch boundary recorded in PR #4. Historical P-004/P-011 text saying PR #1 should not be merged reflects its **earlier approval stage**; [PR #1 was subsequently merged](https://github.com/infoconex/dotnet-modernization/pull/1) on November 3, 2026. Its merge does **not** authorize later research-draft merges or application implementation. P-012 must not be discarded by other branches based on an earlier decisions version. |
+| **D-001** | Note correction already merged into RecordSift **release/0.2** via PR #258, still absent from app main. Mark it **already implemented on its authorized branch**, not a new P0 work item or a recommendation to promote it. |
 | **D-002 / D-003** | Align with PR #5 conditional LangVersion recommendation and PR #4 no-targets recommendation. No early MSBuild import. |
 | **D-005 / R-001** | EXP-009 **corrected positive SDK-only release path verified**; original validators **still fail unchanged**, and SDK-only **negative CS1591** remains untested. Keep historical EXP-007 recorded as *partial* and add new evidence instead of overwriting its outcome. |
 | **D-006 / R-008** | The sentence “defer PackageReference **to SDK conversion**” is no longer a technical dependency: EXP-012 executed it separately in traditional net48. Reframe as **optional and unapproved**, with confirmed version-drift hazard, required audit/API/runner/architecture adaptations and consumer gates. Central package management is not needed during legacy `packages.config` use. |

@@ -2,7 +2,7 @@
 
 **As assessed:** November 2, 2026  
 **Baseline application SHA:** `8358780829458854a4b0356df5ac5e685f0a34c8`  
-**Overall:** discovery substantially complete; no implementation authorized or performed in application main.
+**Overall:** original discovery substantially complete; a source-only build-target duplication audit is now complete. **Research and documentation only** until the stakeholder reviews and separately approves implementation (P-012). Application `main` remains at the frozen baseline; the previously approved test-runner correction exists only on the separate `release/0.2` branch.
 
 **Work state** means an activity was attempted/completed. **Evidence outcome** states what it proved; these are different.
 
@@ -13,6 +13,7 @@
 | Verify independent clean consumer checks | Complete | Verified on existing CI | [Consumer run](https://github.com/infoconex/RecordSift/actions/runs/41392848814) |
 | Verify shared Directory.Build.props without changed imports | Complete | Verified | [Experimental run](https://github.com/infoconex/RecordSift/actions/runs/41484769924) |
 | Evaluate Directory.Build.targets and early import risks | Complete | Verified mechanism; early import experiment failed | [Import run](https://github.com/infoconex/RecordSift/actions/runs/41484290488) |
+| Audit all ten traditional project files for custom targets and duplicate pre/post-build actions | Complete — source review only | 0 custom targets/events/imports found; no common build action to centralize; no new execution evidence claimed | [F-019](findings.md), [roadmap](roadmap.md) |
 | Containerize full build/tests with .NET Framework SDK | Complete | Verified; Build Tools present | [Container run](https://github.com/infoconex/RecordSift/actions/runs/41484891489) |
 | Build all ten traditional projects without VS Build Tools | Complete | Verified | [SDK-only run](https://github.com/infoconex/RecordSift/actions/runs/41486238239) |
 | Execute all five NUnit suites without VS Build Tools | Complete | Verified: 419/418/0/1 | [SDK-only run](https://github.com/infoconex/RecordSift/actions/runs/41486238239) |
@@ -25,14 +26,14 @@
 
 **Next research decision:** SDK-only release-gate experiment [EXP-007](experiments/EXP-007-sdk-only-release-gates.md) is complete with a partial outcome. Any permanent validation-script portability changes require separate RecordSift implementation authorization. Independent methodology assessment is **concluded with an explicit evidence exception under P-011**: several repository-grounded candidate responses demonstrated substantive capability, but no complete same-session response and tool trace establishes a formal strict pass. No more retests are requested for this pilot.
 
-**First proposed implementation after approval:** repair local test-script parity and establish a reproducible all-five-suite command; then introduce minimal common shared properties and rerun compatibility gates.
+**Research baseline and branch separation:** `RecordSift/research/dotnet-modernization` is pinned to the unchanged `main` SHA `8358780829458854a4b0356df5ac5e685f0a34c8`. A prior, explicitly authorized correction of the local four-of-five NUnit runner was squash-merged to `RecordSift/release/0.2` as [PR #258](https://github.com/infoconex/RecordSift/pull/258); [issue #257](https://github.com/infoconex/RecordSift/issues/257) is closed. Its exact post-merge checks passed, but **that implementation is deliberately excluded from the research baseline**. Future work is **research/documentation only** (P-012), including shared `Directory.Build.props` evaluation. Do not merge research branches into application or documentation `main` without review and new approval.
 
 ## Methodology-validation pilot (approved November 2, 2026)
 
 | Activity | Work state | Evidence outcome / follow-up |
 |---|---|---|
 | Adaptive stakeholder interview and explicit scope authorization | Complete | P-001–P-010 recorded in [decisions](decisions.md); approved [scope](README.md) |
-| Central methodology process / intake / approval / GitHub rules | Documentation updated on PR #1 | Ready for final PR review with P-011 independent-evidence exception; [process](../../../../methodology/evaluation-process.md) |
+| Central methodology process / intake / approval / GitHub rules | Complete — PR #1 merged into documentation `main` as `903629088e57ad081c512292c7fab4d9c72e4476` | Accepted P-011 independent-evidence limitation remains disclosed; [process](../../../../methodology/evaluation-process.md) |
 | Lightweight agent entry points and authorization-aware template | Documentation updated on PR #1 | [root AGENTS](../../../../AGENTS.md), [Copilot](../../../../.github/copilot-instructions.md), [evaluation template](../../../../templates/evaluation-overview.md) |
 | Targeted SDK-only release-gate investigation | Complete — partially verified | [issue #2](https://github.com/infoconex/dotnet-modernization/issues/2), [EXP-007](experiments/EXP-007-sdk-only-release-gates.md) |
 | Independent fresh-context acceptance | **Concluded — accepted evidence limitation (P-011)** | Multiple candidate assessments recovered methodology and evidence accurately; isolation/reading evidence was not fully retained **in the same session**, so strict AC-01–AC-09 acceptance cannot be called passed. Stakeholder directed an end to retests; [issue #3](https://github.com/infoconex/dotnet-modernization/issues/3) documents closure by exception. No implementation/merge authorization. |

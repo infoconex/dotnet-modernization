@@ -81,7 +81,7 @@ Do not read an existing CI check as proof of a new migration scenario. In partic
 | 20 | SDK selection with global.json | Selection/negative control verified; pinned formatter/build untested | [EXP-005](experiments/EXP-005-sdk-selection-and-overrides.md) |
 | 21 | EditorConfig/analyzer enforcement | Existing naming gate observed; broader rule review pending | [Original discovery](discovery-report.md) |
 | 22 | NuGet restore sources and audit | Existing CI restore/audit verified; changes not proposed | [Baseline](baseline.md) |
-| 23 | Direct/transitive dependency inventory | Pinned packages inspected; systematic transitive map pending | [Risks](risks.md) |
+| 23 | Direct/transitive dependency inventory | **Baseline package and nuspec dependency-group inventory verified** in EXP-011: 7 configs, 13 IDs, 11 production pins and 13 HintPaths. **True top-level classification and a migrated resolver graph remain unverified.** | [EXP-011](experiments/EXP-011-nuget-dependency-inventory.md), [R-008](risks.md) |
 | 24 | Dependency support/security review | Existing audit gate verified; broader support/remediation review pending | [Evidence](evidence/manifest.md) |
 
 ### 5. SDK-style conversion preparation (25–30)

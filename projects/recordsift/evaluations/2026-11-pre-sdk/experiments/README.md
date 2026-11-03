@@ -12,7 +12,7 @@ All RecordSift experiments use **application production baseline** `main` at `83
 | [EXP-006](EXP-006-msbuild-imports.md) | MSBuild import/targets checks and early Common.props | Working existing import path; early import regression | [41484290488](https://github.com/infoconex/RecordSift/actions/runs/41484290488) |
 | [EXP-007](EXP-007-sdk-only-release-gates.md) | SDK-only XML/API/package/consumer gates | Complete, partially verified: XML/API, NuGet pack and install pass; full validation blocked by environment assumptions | [Corrected run](https://github.com/infoconex/RecordSift/actions/runs/41576608287) |
 
-| [EXP-009](EXP-009-sdk-only-release-validation.md) | Focused SDK-only packaging text/nuget XML/Roslyn consumer controls | Follow-up in progress; first run confirms PowerShell default-vs-UTF-8 mismatch and records probe defect | [Follow-up runs](EXP-009-sdk-only-release-validation.md#evidence-log) |
+| [EXP-009](EXP-009-sdk-only-release-validation.md) | Explicit UTF-8 package validation, NuGet XML extraction and independent net48 consumers using SDK Roslyn | **Verified corrected positive path:** all 419 NUnit, five XML outputs, 425 APIs, package validate/install and both consumer executables; original scripts still fail unchanged; CS1591 negative not run | [Successful run 41708730067](https://github.com/infoconex/RecordSift/actions/runs/41708730067) |
 
 See [evidence manifest](../evidence/manifest.md) for immutable container digests, artifact IDs and corrected/failed runs.
 

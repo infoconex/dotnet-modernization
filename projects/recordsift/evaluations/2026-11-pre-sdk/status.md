@@ -19,7 +19,7 @@
 | Verify global.json version selection and overrides | Complete | Verified selection and missing-SDK negative control | [Follow-up run](https://github.com/infoconex/RecordSift/actions/runs/41486700576) |
 | Confirm conditional Directory.Build.props override semantics | Complete | Verified: project override retained when shared default conditional | [Follow-up run](https://github.com/infoconex/RecordSift/actions/runs/41486700576) |
 | Run *full* packaging/API/consumer gates inside SDK-only container | Complete | Partially verified: build/419 tests/XML/425 APIs, NuGet pack/install passed; validation scripts failed on notice decoding and XML extraction; standalone consumer not executed | [EXP-007](experiments/EXP-007-sdk-only-release-gates.md), [issue #2](https://github.com/infoconex/dotnet-modernization/issues/2) |
-| Test pinned SDK with actual formatter validation | Not started | Not executed | `dotnet format style` compatibility and CI SDK provisioning |
+| Test exact-pinned SDK with actual formatter, Release build and compatibility gates | **Complete** (EXP-008, November 3, 2026) | **Verified** on SDK 10.0.403 and 10.0.303: IDE1006 gate, ten-project Release rebuild, five NUnit suites (419/418/0/1), XML docs and 425 API/metadata entries; no-pin formatter/build also pass. Optional adoption decision remains. | [EXP-008](experiments/EXP-008-pinned-sdk-formatter-build.md), [Windows run](https://github.com/infoconex/RecordSift/actions/runs/41681192996) |
 | Execute current supported framework SDK 4.8.1 container | Not started | Not executed | Tag manifest exists; no runtime test yet |
 | Implement any modernization changes in application repository | Not started | Not applicable | Out of this discovery scope |
 

@@ -4,7 +4,9 @@
 
 An assistant with **no prior conversation context** must be able to start from the root README, this procedure, the application repository, and any existing dated evaluation. Do not rely on remembered stakeholder choices, prior chats, or undocumented approvals.
 
-**Order matters:** inspect repositories and existing evidence → identify missing stakeholder decisions → interview adaptively → present consolidated scope → obtain **explicit approval** → establish/reuse baseline → select investigations → run authorized isolated experiments if justified → assess, document and recommend. Technical discovery from source inspection is allowed before scope approval; **new experiments and investigation issues are not** unless separately authorized.
+**Order matters for a new evaluation:** inspect repositories and existing evidence → identify missing stakeholder decisions → interview adaptively → present consolidated scope → obtain **explicit approval** → establish/reuse baseline → select investigations → run authorized isolated experiments if justified → assess, document and recommend. Technical discovery from source inspection is allowed before scope approval; **new experiments and investigation issues are not** unless separately authorized.
+
+**Resuming an existing evaluation is different:** inspect the evaluation overview, recorded stakeholder decisions and approval, current status, experiment evidence and relevant GitHub issues **before** asking questions or proposing new work. If the existing approval still covers the requested action, reuse it; do not re-interview, reapprove unchanged scope, recreate work, or treat an already completed investigation as pending. If approval cannot be verified or a materially different goal is requested, present only the missing decision or scope amendment. Validate live repository branches/SHAs separately from the immutable historical baseline. Do not assume an unmerged documentation PR is part of the default branch.
 
 ## 1. Inspect, interview, and approve scope
 
@@ -41,7 +43,7 @@ Present the proposal to the stakeholder and request explicit approval or revisio
 - Stop the affected work and seek authorization for scope expansion, permanent application changes, backward-compatibility breaks, destructive cleanup, unapproved spending, merge/release or publication. Continue unrelated in-scope work.
 - An experiment may demonstrate a regression; **accepting or shipping** it is not authorized. Never interpret a finding or recommendation as approval.
 
-**Output:** repository profile, focused stakeholder decisions, **approved** evaluation scope, stated authorization boundary and current next action. Preserve concise decisions, not necessarily the whole interview transcript.
+**Output:** repository profile, focused stakeholder decisions, **approved or verified existing** evaluation scope, stated authorization boundary and current next action. Preserve concise decisions, not necessarily the whole interview transcript.
 
 ## 2. Establish the baseline
 
@@ -99,7 +101,7 @@ A successfully completed experiment can have a failed hypothesis; a verified exp
 
 A **milestone** represents **one application and one agreed modernization goal**, e.g. `RecordSift — Pre-SDK Modernization Evaluation`. Create only approved goals, not a milestone for every investigation. Where tooling cannot create/attach milestones, record that limitation and keep the issue linked to the evaluation; never claim a milestone was created.
 
-Meaningful investigations are tracked as focused issues in **dotnet-modernization**. An issue specifies objective, motivating evidence gap, relevant application/evaluation and files, hypotheses/dependencies, authorized experiment boundary, expected verification, findings/disposition and permanent documentation links. Do not create an issue for every catalog row or interview answer. Use sub-issues only for substantial decomposition. Keep the issue updated as evidence emerges; issue closure reflects a supported disposition, **not** an automatic code change.
+Meaningful investigations are tracked as focused issues in the **methodology/evaluation repository** (in this project, `infoconex/dotnet-modernization`), not automatically in the application repository. An issue specifies objective, motivating evidence gap, relevant application/evaluation and files, hypotheses/dependencies, authorized experiment boundary, expected verification, findings/disposition and permanent documentation links. Do not create an issue for every catalog row or interview answer. Use sub-issues only for substantial decomposition. Keep the issue updated as evidence emerges; issue closure reflects a supported disposition, **not** an automatic code change.
 
 **Application implementation issues and PRs belong in the application repository**, linked to investigation findings and created only under explicit implementation authorization. Discovery experiments may use preauthorized temporary application branches, but do not merge or publish them. Record exact baseline and experiment SHAs.
 
@@ -119,7 +121,7 @@ Use **one authoritative home** for each fact or procedure; link instead of repea
 
 During an evaluation note actual process failures: unclear entry point, missed/duplicated interview question, ambiguity in approval, unexecuted verification, conflicting documents, unsupported GitHub operation, or a task that depends on hidden chat history. Improve the **central procedure** when possible; AI entry points should link here rather than restate it.
 
-At session boundaries update the overview with the repository/branch/full SHA, approved scope and approvals, issue IDs, experiment artifacts/outcomes, unresolved gates, and **one concrete next action**. A later assistant should verify live repository state first and avoid repeating completed experiments. Never infer success from a workflow's overall color.
+At session boundaries update the overview with the repository/branch/full SHA, approved scope and approvals, issue IDs, experiment artifacts/outcomes, unresolved gates, and **one concrete next action**. A later assistant should verify live repository state first and avoid repeating completed experiments. Never infer success from a workflow's overall color. If the *next action is the independent acceptance run itself*, the evaluating assistant should complete the blind response and let the reviewer record its result, rather than recommend starting the same test again.
 
 ## Evaluation completion and independent acceptance
 

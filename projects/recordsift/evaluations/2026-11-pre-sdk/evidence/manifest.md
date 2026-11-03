@@ -22,6 +22,8 @@
 | SDK-only assembly-loading control | [41576091787](https://github.com/infoconex/RecordSift/actions/runs/41576091787) | Inconclusive for package: harness incorrectly quoted PowerShell parameter | **Artifact 13202929618**; workflow SHA `5775fb98c7d30866ae24d0aaee721548bc71c591` |
 | Corrected SDK-only assembly-loading control | [41576608287](https://github.com/infoconex/RecordSift/actions/runs/41576608287) | Attempt 1 blocked by runner Docker daemon; attempt 2 executed: 419 tests, XML and API pass; NuGet pack/install succeeded, existing validators failed on notice text comparison and missing extracted XML. Partial outcome; no clean consumer execution | **Artifact 13204365812**, workflow SHA `7df8be3374e292c6957ab22dcd9966dc30138b19`, [EXP-007](../experiments/EXP-007-sdk-only-release-gates.md) |
 
+| **EXP-011 legacy NuGet dependency graph and assets** | **[41728933974](https://github.com/infoconex/RecordSift/actions/runs/41728933974)** | **Passed** unchanged `nuget restore`, 7 configs/17 entries/13 unique packages, 11 exact production nuspec entries, all 13 real HintPath files; dependency group/asset inspection | **Artifact 13274828527**; workflow SHA `a94381f97843d692265e805aeb899e616c60a7bb`; [EXP-011](../experiments/EXP-011-nuget-dependency-inventory.md). Prior success [41728599985](https://github.com/infoconex/RecordSift/actions/runs/41728599985) artifact 13275169273 lacked only the stricter real-file validation |
+
 ## Container identities
 
 **Framework SDK container:** historical, cached tag `mcr.microsoft.com/dotnet/framework/sdk:4.8-windowsservercore-ltsc2022`; immutable digest `sha256:460dedaed73224f73ff10dc3ad754d0ed250aa57bcdf6c5052a811b4b7e29345`. Visual Studio Build Tools included; not a currently supported tag for new instructions.
@@ -37,5 +39,7 @@
 - `discovery/sdk-only-20261102` — SDK-only container proof.
 - `discovery/props-sdk-selection-20261102` — SDK selection and property override controls.
 - `discovery/sdk-only-release-gates-20261102` — EXP-007 compatibility-gate controls; not merged.
+
+- `research/nuget-graph-20261103` — EXP-011 workflow-only branch; only read-only restore/inspection, no application source changes.
 
 Branches may be deleted after evidence is durably archived. No application pull request was merged and no application release/publishing action occurred.

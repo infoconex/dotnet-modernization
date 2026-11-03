@@ -22,6 +22,8 @@
 | SDK-only assembly-loading control | [41576091787](https://github.com/infoconex/RecordSift/actions/runs/41576091787) | Inconclusive for package: harness incorrectly quoted PowerShell parameter | **Artifact 13202929618**; workflow SHA `5775fb98c7d30866ae24d0aaee721548bc71c591` |
 | Corrected SDK-only assembly-loading control | [41576608287](https://github.com/infoconex/RecordSift/actions/runs/41576608287) | Attempt 1 blocked by runner Docker daemon; attempt 2 executed: 419 tests, XML and API pass; NuGet pack/install succeeded, existing validators failed on notice text comparison and missing extracted XML. Partial outcome; no clean consumer execution | **Artifact 13204365812**, workflow SHA `7df8be3374e292c6957ab22dcd9966dc30138b19`, [EXP-007](../experiments/EXP-007-sdk-only-release-gates.md) |
 
+| **EXP-012 exact-pinned PackageReference conversion (traditional net48)** | **[41734675914](https://github.com/infoconex/RecordSift/actions/runs/41734675914)** | **Passed:** 7 projects/17 exact pins, MSBuild restore/rebuild, 419/418/0/1 NUnit, all five XML, **414 compiled API/identity entries**, local NuGet package/independent consumer, negative CS1591. **Expected fail:** unchanged API script's 11 `packages.config` metadata records; runner reinstalled separately. | **Artifact 13277228780**, workflow SHA `e5dac596a65aeba6a0059e4642d1f29f2c526518`; [EXP-012](../experiments/EXP-012-packagereference-isolation.md). First run [41734336487](https://github.com/infoconex/RecordSift/actions/runs/41734336487) stopped on original API metadata gate. |
+
 ## Container identities
 
 **Framework SDK container:** historical, cached tag `mcr.microsoft.com/dotnet/framework/sdk:4.8-windowsservercore-ltsc2022`; immutable digest `sha256:460dedaed73224f73ff10dc3ad754d0ed250aa57bcdf6c5052a811b4b7e29345`. Visual Studio Build Tools included; not a currently supported tag for new instructions.
@@ -37,5 +39,7 @@
 - `discovery/sdk-only-20261102` — SDK-only container proof.
 - `discovery/props-sdk-selection-20261102` — SDK selection and property override controls.
 - `discovery/sdk-only-release-gates-20261102` — EXP-007 compatibility-gate controls; not merged.
+
+- `research/package-reference-exp012-20261103` — workflow-only EXP-012 branch; conversion of seven project files and deletion of seven `packages.config` files performed **only** in disposable runner checkout; never committed.
 
 Branches may be deleted after evidence is durably archived. No application pull request was merged and no application release/publishing action occurred.

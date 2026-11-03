@@ -18,7 +18,7 @@
 | Execute all five NUnit suites without VS Build Tools | Complete | Verified: 419/418/0/1 | [SDK-only run](https://github.com/infoconex/RecordSift/actions/runs/41486238239) |
 | Verify global.json version selection and overrides | Complete | Verified selection and missing-SDK negative control | [Follow-up run](https://github.com/infoconex/RecordSift/actions/runs/41486700576) |
 | Confirm conditional Directory.Build.props override semantics | Complete | Verified: project override retained when shared default conditional | [Follow-up run](https://github.com/infoconex/RecordSift/actions/runs/41486700576) |
-| Run *full* packaging/API/consumer gates inside SDK-only container | Not started | Not executed | Needed before claiming end-to-end tool independence |
+| Run *full* packaging/API/consumer gates inside SDK-only container | In progress | Outcome pending | [EXP-007](experiments/EXP-007-sdk-only-release-gates.md), [issue #2](https://github.com/infoconex/dotnet-modernization/issues/2), [run](https://github.com/infoconex/RecordSift/actions/runs/41575562993) |
 | Test pinned SDK with actual formatter validation | Not started | Not executed | `dotnet format style` compatibility and CI SDK provisioning |
 | Execute current supported framework SDK 4.8.1 container | Not started | Not executed | Tag manifest exists; no runtime test yet |
 | Implement any modernization changes in application repository | Not started | Not applicable | Out of this discovery scope |

@@ -12,6 +12,8 @@ All RecordSift experiments use **application production baseline** `main` at `83
 | [EXP-006](EXP-006-msbuild-imports.md) | MSBuild import/targets checks and early Common.props | Working existing import path; early import regression | [41484290488](https://github.com/infoconex/RecordSift/actions/runs/41484290488) |
 | [EXP-007](EXP-007-sdk-only-release-gates.md) | SDK-only XML/API/package/consumer gates | Complete, partially verified: XML/API, NuGet pack and install pass; full validation blocked by environment assumptions | [Corrected run](https://github.com/infoconex/RecordSift/actions/runs/41576608287) |
 
+| [EXP-010](EXP-010-warninglevel-centralization.md) | Scope `WarningLevel=4` defaults to existing Debug/Release configurations across ten traditional projects | **Verified:** 20/20 effective property values preserved, shared 3 propagation and project overrides work, Debug/Release builds, 419 NUnit, 425 APIs, XML, package/consumer and negative CS1591 passed; unrestricted defaults broaden Custom property | [Successful run 41713886548](https://github.com/infoconex/RecordSift/actions/runs/41713886548) |
+
 See [evidence manifest](../evidence/manifest.md) for immutable container digests, artifact IDs and corrected/failed runs.
 
 **Interpretation:** A workflow can pass while an intentionally unsuccessful negative control demonstrates a missing dependency. State the result of each command, not merely its enclosing workflow.

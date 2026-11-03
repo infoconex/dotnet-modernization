@@ -18,6 +18,8 @@
 | F-012 | The raw-XML public API checker creates coupling to the location of TargetFrameworkVersion in project files. | Verified source inspection | [Baseline](baseline.md) |
 | F-013 | Windows PowerShell 7 changes the reflection-based API comparison result; the corrected Windows PowerShell 5.1 run passes. | Verified execution difference | [Evidence](evidence/manifest.md) |
 | F-014 | The SDK-only container's compilation and NUnit success does **not** prove all API, XML, packaging and clean-consumer scripts run without Build Tools. | Explicit scope limit | [Risks](risks.md) |
+| F-015 | In a clean SDK-only Windows container, the five XML documentation files and all 425 compiled API/metadata entries passed their existing checks using Windows PowerShell 5.1. | Verified execution | [EXP-007 first run](experiments/EXP-007-sdk-only-release-gates.md) |
+| F-016 | Existing local-packaging and consumer scripts fail in the minimal PowerShell environment when `ZipFile` is not resolved; second isolated run tests explicit `System.IO.Compression.FileSystem` preload to isolate the blocker. | Verified initial failure; root-cause control pending | [EXP-007](experiments/EXP-007-sdk-only-release-gates.md) |
 
 ## Application-specific interpretation
 

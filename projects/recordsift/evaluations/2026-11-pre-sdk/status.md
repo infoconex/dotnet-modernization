@@ -23,7 +23,7 @@
 | Execute current supported framework SDK 4.8.1 container | Not started | Not executed | Tag manifest exists; no runtime test yet |
 | Implement any modernization changes in application repository | Not started | Not applicable | Out of this discovery scope |
 
-**Next research decision:** SDK-only release-gate experiment [EXP-007](experiments/EXP-007-sdk-only-release-gates.md) is complete with a partial outcome. Any permanent validation-script portability changes require separate RecordSift implementation authorization. Independent fresh-context methodology acceptance remains pending.
+**Next research decision:** SDK-only release-gate experiment [EXP-007](experiments/EXP-007-sdk-only-release-gates.md) is complete with a partial outcome. Any permanent validation-script portability changes require separate RecordSift implementation authorization. Independent fresh-context methodology acceptance remains **pending a valid context-isolated repeat** after a candidate attempt disclosed prior-account context.
 
 **First proposed implementation after approval:** repair local test-script parity and establish a reproducible all-five-suite command; then introduce minimal common shared properties and rerun compatibility gates.
 
@@ -35,7 +35,7 @@
 | Central methodology process / intake / approval / GitHub rules | Documentation updated on PR #1 | Requires review and fresh-context acceptance; [process](../../../../methodology/evaluation-process.md) |
 | Lightweight agent entry points and authorization-aware template | Documentation updated on PR #1 | [root AGENTS](../../../../AGENTS.md), [Copilot](../../../../.github/copilot-instructions.md), [evaluation template](../../../../templates/evaluation-overview.md) |
 | Targeted SDK-only release-gate investigation | Complete — partially verified | [issue #2](https://github.com/infoconex/dotnet-modernization/issues/2), [EXP-007](experiments/EXP-007-sdk-only-release-gates.md) |
-| Independent fresh-context acceptance | Not executed | [issue #3](https://github.com/infoconex/dotnet-modernization/issues/3); must use a separate assistant session |
+| Independent fresh-context acceptance | Attempted; **invalid under isolation criterion** | Candidate response correctly summarized prior work and found a confirmed roadmap inconsistency, but disclosed access to account-level prior context; no complete tool trace was provided. [Issue #3](https://github.com/infoconex/dotnet-modernization/issues/3) remains open for a genuinely context-isolated repeat. |
 
 **Process observation:** Before this pilot, the evaluation lifecycle began with intake but did not instruct an unfamiliar assistant to inspect before interviewing, obtain explicit consolidated approval, or preserve authorization for session handoff. Centralized the new rules in the existing lifecycle rather than duplicating them in AI entry points. Original RecordSift discovery documents remain historical evidence; do not mandate every specialized file for future applications.
 

@@ -6,8 +6,8 @@
 **Application:** `infoconex/RecordSift`, canonical baseline `main` at `8358780829458854a4b0356df5ac5e685f0a34c8`  
 **Isolated experiment branch:** `discovery/sdk-only-release-gates-20261102`  
 **Experiment workflow commit:** `7340c3409a755060cea33265cbcf129d4778832d`  
-**Work state:** In progress (workflow launched)  
-**Evidence outcome:** Not yet verified; do not claim gate results before inspecting the run.
+**Work state:** In progress (second controlled diagnostic launched)  
+**Evidence outcome:** Partially verified: XML/API gates passed; package and consumer failed in first run. Second isolation control pending.
 
 ## Objective and hypothesis
 
@@ -26,11 +26,26 @@ The workflow builds the unchanged traditional solution and checks NUnit baseline
 - `scripts/build_release_candidate.ps1` invokes NuGet pack and requires `git` to stamp the exact source commit; Git availability in SDK-only container must be checked.
 - `scripts/verify_clean_consumer.ps1` explicitly finds Visual Studio MSBuild and its `Roslyn/csc.exe` through `vswhere` to build an installed .NET Framework consumer. An unchanged consumer gate may be blocked by this tool assumption even if the SDK-only solution builds. This is **source-inspection evidence**, not a runtime result.
 
-## Execution evidence
+## Actual results — first run (negative control)
 
-- [GitHub Actions run 41575562993](https://github.com/infoconex/RecordSift/actions/runs/41575562993): launched; inspect job logs and artifacts before concluding.
-- Separate logs expected: `sdk-only-gate-xml-positive.log`, `sdk-only-gate-api-425.log`, `sdk-only-gate-local-package.log`, `sdk-only-gate-clean-consumer.log`, plus `sdk-only-release-gates.json` (latter gates only when prerequisites succeed).
+[Run 41575562993](https://github.com/infoconex/RecordSift/actions/runs/41575562993), experimental commit `7340c3409a755060cea33265cbcf129d4778832d`, failed **as a workflow**, correctly reporting incomplete release verification. Logs retained in [artifact 13203417992](https://github.com/infoconex/RecordSift/actions/runs/41575562993/artifacts/13203417992).
 
-## Pending verification/disposition
+| Gate | Observed result | Reproducible interpretation |
+|---|---|---|
+| SDK-only .NET Framework reference pack negative control | MSB3644 as expected without references | Targeting pack absent, not an application regression |
+| Restore / ten-project Release build | Passed | Build Tools absent; `dotnet msbuild` available |
+| NUnit five test assemblies | **419 discovered, 418 passed, 0 failed, 1 skipped** | Reconfirmed unchanged functional baseline |
+| XML documentation (positive mode) | **Passed** | Five nonempty XML files: 179/101/8/2/9 entries |
+| Public API/metadata check | **Passed** | Windows PowerShell 5.1 verified all **425** baseline entries |
+| Local package creation/validation | **Failed** | Windows PowerShell could not resolve `[IO.Compression.ZipFile]` during validation |
+| Clean installed-package consumer | **Failed** | Windows PowerShell could not resolve `[System.IO.Compression.ZipFile]` before reaching compiler/tool discovery |
 
-The workflow was queued when this note was opened. After its completion record actual per-gate results, environment and image digest, failure diagnostics, artifact IDs and any gates not executed. A failing or blocked gate must **not** be reported as release compatibility success. A successful *build/test* does not guarantee consumer toolchain independence. No permanent application implementation is authorized.
+The container inventory confirmed NuGet CLI **present** after installation, Git CLI **present**, and Visual Studio IDE, Build Tools and standalone `MSBuild.exe` **absent**. These are direct run observations, not assumptions from source. **Do not yet attribute consumer failure to VS tooling**: the first encountered obstacle was the compression assembly.
+
+## Follow-up control — no application code changes
+
+[Run 41576091787](https://github.com/infoconex/RecordSift/actions/runs/41576091787), experiment workflow commit `5775fb98c7d30866ae24d0aaee721548bc71c591`, was launched to invoke each **unchanged** verification script from Windows PowerShell 5.1 after explicitly loading `System.IO.Compression.FileSystem` into the child process. This distinguishes implicit assembly-loading assumptions from subsequent Build Tools/compiler requirements. The result was pending at the time of this update.
+
+## Limitations and next evidence
+
+The first run verifies SDK-only XML/API compatibility and documents missing implicit assembly loading in two validation scripts. It does **not** establish full release/consumer toolchain independence. Inspect the second run's per-gate logs, source and image digest, artifact and failure chain before closing the investigation. The published application scripts are unchanged. No application implementation is authorized.

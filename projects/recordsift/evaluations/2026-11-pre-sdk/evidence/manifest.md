@@ -22,6 +22,8 @@
 | SDK-only assembly-loading control | [41576091787](https://github.com/infoconex/RecordSift/actions/runs/41576091787) | Inconclusive for package: harness incorrectly quoted PowerShell parameter | **Artifact 13202929618**; workflow SHA `5775fb98c7d30866ae24d0aaee721548bc71c591` |
 | Corrected SDK-only assembly-loading control | [41576608287](https://github.com/infoconex/RecordSift/actions/runs/41576608287) | Attempt 1 blocked by runner Docker daemon; attempt 2 executed: 419 tests, XML and API pass; NuGet pack/install succeeded, existing validators failed on notice text comparison and missing extracted XML. Partial outcome; no clean consumer execution | **Artifact 13204365812**, workflow SHA `7df8be3374e292c6957ab22dcd9966dc30138b19`, [EXP-007](../experiments/EXP-007-sdk-only-release-gates.md) |
 
+| **EXP-010 scoped WarningLevel parity** | **[41713886548](https://github.com/infoconex/RecordSift/actions/runs/41713886548)** | **Verified:** 20 Debug/Release property values, scoped Custom preservation, shared-value and project-level override controls, all ten Debug/Release builds, 419/418/0/1 tests, five XML docs, 425 APIs, unpublished package and clean consumer; negative CS1591 passes | **Artifact 13268657551**; workflow SHA `fd44c1b7bd89c7718117222f5276fbeef0e649af`; [EXP-010](../experiments/EXP-010-warninglevel-centralization.md) |
+
 ## Container identities
 
 **Framework SDK container:** historical, cached tag `mcr.microsoft.com/dotnet/framework/sdk:4.8-windowsservercore-ltsc2022`; immutable digest `sha256:460dedaed73224f73ff10dc3ad754d0ed250aa57bcdf6c5052a811b4b7e29345`. Visual Studio Build Tools included; not a currently supported tag for new instructions.
@@ -31,6 +33,8 @@
 **Artifact limitation:** Run links and artifact IDs are locators, not permanent preservation guarantees. Core evidence is summarized in checked-in experiment notes and the original [discovery report](../discovery-report.md).
 
 ## Experimental repository branches (not main)
+
+- `research/warninglevel-20261103` — EXP-010 workflow-only branch, all project edits ephemeral. No merge to application main or release/0.2.
 
 - `discovery/pre-sdk-20261102` — import/property/validation workflows.
 - `discovery/pre-sdk-container-20261102` — Framework SDK container workflows.

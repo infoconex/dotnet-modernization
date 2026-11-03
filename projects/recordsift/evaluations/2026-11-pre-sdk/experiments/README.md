@@ -11,6 +11,8 @@ All RecordSift experiments use **application production baseline** `main` at `83
 | [EXP-005](EXP-005-sdk-selection-and-overrides.md) | global.json SDK selection and shared property override | Verified selection/precedence; formatter untested | [41486700576](https://github.com/infoconex/RecordSift/actions/runs/41486700576) |
 | [EXP-006](EXP-006-msbuild-imports.md) | MSBuild import/targets checks and early Common.props | Working existing import path; early import regression | [41484290488](https://github.com/infoconex/RecordSift/actions/runs/41484290488) |
 
+| [EXP-007](EXP-007-sdk-only-release-gates.md) | SDK-only XML/API/package/consumer gates | In progress; results not yet verified | [41575562993](https://github.com/infoconex/RecordSift/actions/runs/41575562993) |
+
 See [evidence manifest](../evidence/manifest.md) for immutable container digests, artifact IDs and corrected/failed runs.
 
 **Interpretation:** A workflow can pass while an intentionally unsuccessful negative control demonstrates a missing dependency. State the result of each command, not merely its enclosing workflow.

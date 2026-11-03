@@ -6,7 +6,7 @@
 **Disposable application branch:** `research/package-reference-exp012-20261103`; it adds **only** `.github/workflows/research-exp012-packagereference.yml`. The seven project-file edits and removals of `packages.config` occur **only in a disposable GitHub Actions workspace** and are never committed to RecordSift.  
 **Documentation branch:** `research/recordsift-package-reference-exp012-20261103` on `infoconex/dotnet-modernization`, as a separate draft PR pending review.  
 **Previous inventory:** [EXP-011](EXP-011-nuget-dependency-inventory.md) exists on unmerged [draft PR #12](https://github.com/infoconex/dotnet-modernization/pull/12); this link is intentionally to the related draft because the canonical docs `main` does not yet contain that file.  
-**Overall status:** In progress; first experiment identifies a tooling compatibility defect in the legacy public API validator; subsequent positive control is being evaluated. **No conversion approved for application implementation.**
+**Overall status:** **Complete, verified for the exact-pinned candidate**. The unchanged legacy 425-entry API gate fails as a documented negative control because it reads removed `packages.config` files; the **414 compiled API/identity entries** and all other compatibility checks pass in an isolated corrective comparison. No conversion approved for application implementation.
 
 ## Goal and controlled scope
 
@@ -50,7 +50,7 @@ GitHub hosted `windows-2022`, Windows NT `10.0.20348.0`; VS 2022 Enterprise MSBu
 | Migrated NUnit five-suite check | **419 total / 418 passed / 0 failed / 1 skipped** | Baseline parity with test-harness workaround |
 | Positive XML documentation | **Passed** | All five production assemblies, members **179/101/8/2/9** |
 | **Unmodified public API/metadata verifier** | **Failed**: 11 `package` lines missing | Script reads `src/*/packages.config`, which is correctly absent after migration. The 11 absent lines are package-management **source metadata**, not automatically a changed compiled C# public API. |
-| Local NuGet package / clean consumer / negative CS1591 | **Not reached** | Do not report these as passed from the initial run |
+| Local NuGet package / clean consumer / negative CS1591 | **Not reached** | These gates were performed **only in the corrected follow-up**, not the initial run |
 
 The raw verifier `scripts/verify_public_api.ps1` lines 105–110 explicitly load `packages.config` and emit `package <assembly> <id>=<version>`. Lines 194–200 compare all emitted lines with `docs/compatibility/public-api-net48.txt`. The resulting 11 missing entries explain exactly why the original check fails in this migration. **Do not change the approved baseline merely to turn the check green.** A future compatibility gate must understand both metadata formats or separate compiled API signature/assembly identity from package and consumer-dependency policy.
 
@@ -60,11 +60,29 @@ The raw verifier `scripts/verify_public_api.ps1` lines 105–110 explicitly load
 
 Second workflow [41734675914](https://github.com/infoconex/RecordSift/actions/runs/41734675914) temporarily subtracts **only** the 11 raw `package` records from a copied approved baseline, then runs the unchanged compiled reflection comparator against its remaining entries. This is a diagnostic to distinguish real compiled API drift from known source-format metadata coupling. The untouched full validator is still run and expected to fail on the same 11 records.
 
-**Follow-up results:** Pending completed log inspection. Do not infer completed compatibility gates from this initial record.
+**Follow-up result: verified.** [Successful Actions run 41734675914](https://github.com/infoconex/RecordSift/actions/runs/41734675914), workflow SHA `e5dac596a65aeba6a0059e4642d1f29f2c526518`; [artifact 13277228780](https://github.com/infoconex/RecordSift/actions/runs/41734675914/artifacts/13277228780) contains both NUnit XML results, package assets JSON, the experiment's structured outcome, and the temporary compiled-only API baseline. The unchanged full API check still fails intentionally on the 11 deleted raw package declarations. A **second** invocation of the unchanged checker, with a **temporary filtered baseline** preserving all other entries, passed **414 compiled API and identity entries**.
+
+| Compatibility gate | Successful follow-up run |
+|---|---|
+| Original `nuget restore` + Release build + five-suite NUnit baseline | **PASS**; 419/418/0/1 |
+| Seven traditional-project conversions; 17 exact `PackageReference` items | **PASS**, only disposable checkout |
+| PackageReference `MSBuild /t:Restore`, seven `obj/project.assets.json` and expected pinned versions | **PASS** |
+| Migrated Release build, 10 assembly-name parity check | **PASS** |
+| NUnit, with separate explicit NuGet installation of the legacy console runner | **PASS**; 419/418/0/1 |
+| Five generated XML documentation files | **PASS**; counts 179/101/8/2/9 |
+| Original `verify_public_api.ps1` using committed full baseline | **EXPECTED FAIL**; 11 `packages.config` entries missing |
+| Unchanged reflection checker against temporary baseline excluding **only** 11 source-only package lines | **PASS**; 414 compiled API/identity entries |
+| Create and validate unpublished internal 0.1.0-rc.1 package with original package script | **PASS**; five net48 DLLs/XMLs, licenses/notices, dependencies |
+| Independent NuGet-installed net48 consumer + all four Getting Started CSV/XLSX samples | **PASS** |
+| Negative CS1591 compiler-enforcement check | **PASS**, deliberately undocumented public member rejected |
+
+The **unpublished experimental package** has SHA-256 `D9A7C2C08191AABB30B9CD343446CC225A2EA012612D1A26AEDFB5A67E387BAD`. This is not publishable release evidence: the original packaging script labels the package with a workflow commit even though only the workflow is committed and the project-file conversion exists solely within the temporary checkout. **No NuGet publication occurred.**
+
+No production script, application branch, approved 425-entry baseline, `.nuspec`, or release workflow was modified. These results prove parity for the **all-17-exact-pins manual candidate and tested gates**, not for a reduced direct-only package list or a real Visual Studio automated migrator. The original 425-entry verifier remains incompatible with the source-format change and must not be counted as a passed unchanged gate.
 
 ## Risks and recommendations (provisional)
 
-1. **Technically feasible restore/build/test under traditional projects** with exact `PackageReference` versions has now been executed, but the full release compatibility contract is **not verified** by the first run.
+1. **Technically verified** for the controlled all-17-exact-pins candidate across original/migrated builds, NUnit, compiled API/identity subset, XML, unpublished packaging, independent consumers and CS1591. The current unmodified 425-entry gate **still fails** for 11 source-only package records, and the legacy NUnit console path still needs a separately installed tool.
 2. **Source-format coupling in the API baseline validator is proven.** If a future PackageReference change is approved, adapt its source-package checking to the evaluated dependency model and keep a separate explicit policy check for the hand-maintained `.nuspec`. Do not weaken compiled API and identity checks.
 3. **Legacy NUnit tool path requires a decision.** This experiment can run the same tests with a separately installed runner, but the unchanged `nuget restore` no longer provisions it at the assumed legacy location. Modernize the test runner separately after authorization, and verify all 419 tests.
 4. Retaining **17 exact** references establishes dependency-version parity for the deliberate test; this is not the ideal minimal direct-dependency representation. Follow-on direct-only transitive evaluation must be independently tested, especially `System.Memory` and `Unsafe` version resolution and .NET Framework binding redirects.

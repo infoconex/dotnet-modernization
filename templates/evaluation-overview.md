@@ -13,7 +13,21 @@ What questions must this evaluation answer? Distinguish discovery from approved 
 
 ## Scope and constraints
 
-Target frameworks, supported platforms, excluded migrations, compatibility invariants, authorization boundaries.
+Describe supported frameworks/platforms, consumers, included areas, excluded migrations, compatibility invariants, risk tolerance and relevant existing evidence. **Do not start new technical investigations merely because this template exists.**
+
+## Stakeholder decisions and scope authorization
+
+**Scope state:** proposed / approved / amendment pending  
+**Approval:** approver, date and approval reference, or **not yet approved**  
+**AI autonomy:** supervised / guided autonomous / other  
+**Experiment authorization:** permitted isolated environments, temporary branches and workflow changes; prohibited actions  
+**Implementation / merge / release authorization:** explicitly authorized or **not authorized**
+
+Record concise decisions and rationale or link to a dedicated decision record *only when needed*. An interview preference is not approval of this consolidated scope. For complete procedure see [the evaluation process](../methodology/evaluation-process.md#1-inspect-interview-and-approve-scope).
+
+## Approved investigation boundary
+
+List the few prioritized investigation objectives, rationale, expected evidence/verification, dependencies, exclusions and conditions requiring scope amendment. Distinguish **already verified** from proposed experiments. Do not create empty issue or experiment files.
 
 ## Baseline
 
@@ -57,6 +71,14 @@ List explicit gaps and assumptions.
 
 For every proposed change: prerequisite, verification gates, rollback plan.
 
+## Pilot and process observations
+
+Record only demonstrated workflow friction, missing instructions, conflicting authority or handoff gaps; link to methodology improvements instead of repeating whole procedures.
+
+## Completion and fresh-context acceptance
+
+Specify stakeholder-approved completion criteria. If an independent new-session validation is required, record its procedure, status and actual evidence; do not claim completion from the same context that created the methodology.
+
 ## Next action
 
-One specific highest-value activity, with link to the issue or experiment.
+One specific highest-value activity, with link to the issue or experiment. If scope is pending, the next action is **obtain explicit stakeholder approval**, not start the investigation.

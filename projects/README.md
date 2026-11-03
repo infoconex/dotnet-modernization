@@ -6,7 +6,7 @@ Organize by **application**, then by **dated, independently reproducible evaluat
 
 | Application | Evaluation | Phase | Next action |
 |---|---|---|---|
-| [RecordSift](recordsift/README.md) | [November 2026 pre-SDK discovery](recordsift/evaluations/2026-11-pre-sdk/README.md) | Discovery substantially complete | Validate remaining release/consumer tooling in the SDK-only environment. |
+| [RecordSift](recordsift/README.md) | [November 2026 pre-SDK discovery and methodology pilot](recordsift/evaluations/2026-11-pre-sdk/README.md) | Original technical discovery substantially complete; approved methodology pilot active | [SDK-only release-gate issue #2](https://github.com/infoconex/dotnet-modernization/issues/2); [independent acceptance #3](https://github.com/infoconex/dotnet-modernization/issues/3). |
 
 ## Naming conventions
 

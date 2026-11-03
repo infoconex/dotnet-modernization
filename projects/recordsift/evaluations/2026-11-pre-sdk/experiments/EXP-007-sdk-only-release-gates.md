@@ -5,9 +5,9 @@
 **Date:** November 2, 2026  
 **Application:** `infoconex/RecordSift`, canonical baseline `main` at `8358780829458854a4b0356df5ac5e685f0a34c8`  
 **Isolated experiment branch:** `discovery/sdk-only-release-gates-20261102`  
-**Experiment workflow commit:** `7340c3409a755060cea33265cbcf129d4778832d`  
-**Work state:** In progress (second controlled diagnostic launched)  
-**Evidence outcome:** Partially verified: XML/API gates passed; package and consumer failed in first run. Second isolation control pending.
+**Experiment workflow commits:** first `7340c3409a755060cea33265cbcf129d4778832d`; final corrected control `7df8be3374e292c6957ab22dcd9966dc30138b19`  
+**Work state:** Complete (investigation documented; no application changes)  
+**Evidence outcome:** **Partially verified:** complete restore/build/NUnit, positive XML, public API and package archive contents; current packaging/consumer verification scripts do not finish in the minimal environment. Causes isolated below.
 
 ## Objective and hypothesis
 
@@ -44,14 +44,34 @@ The container inventory confirmed NuGet CLI **present** after installation, Git 
 
 ## Follow-up control — no application code changes
 
-[Run 41576091787](https://github.com/infoconex/RecordSift/actions/runs/41576091787), experiment workflow commit `5775fb98c7d30866ae24d0aaee721548bc71c591`, was launched to invoke each **unchanged** verification script from Windows PowerShell 5.1 after explicitly loading `System.IO.Compression.FileSystem` into the child process. This distinguishes implicit assembly-loading assumptions from subsequent Build Tools/compiler requirements. The result was pending at the time of this update.
+[Run 41576091787](https://github.com/infoconex/RecordSift/actions/runs/41576091787), experiment workflow commit `5775fb98c7d30866ae24d0aaee721548bc71c591`, was launched to invoke each **unchanged** verification script from Windows PowerShell 5.1 after explicitly loading `System.IO.Compression.FileSystem` into the child process. This distinguishes implicit assembly-loading assumptions from subsequent Build Tools/compiler requirements. The run confirmed XML/API again but its package step was **inconclusive** because the temporary wrapper misquoted a parameter name; see the diagnosis below.
 
 ## Control-run diagnosis
 
 [Run 41576091787](https://github.com/infoconex/RecordSift/actions/runs/41576091787), [artifact 13202929618](https://github.com/infoconex/RecordSift/actions/runs/41576091787/artifacts/13202929618), again verified the 419-test baseline, XML documentation and 425 API entries. The first package invocation failed on PowerShell parameter binding: the **experimental harness** quoted `-OutputDirectory` as a string, which was misinterpreted as a positional value for `PackageVersion`. This is a test-harness defect, **not** an application packaging failure. The clean consumer was not executed because no package was produced. Do not use this run to infer packaging or consumer portability.
 
-A corrected isolated invocation (unquoted parameter name, quoted parameter value, with the compression assembly loaded in each fresh Windows PowerShell process) was committed as `7df8be3374e292c6957ab22dcd9966dc30138b19` and launched in [run 41576608287](https://github.com/infoconex/RecordSift/actions/runs/41576608287). Its first attempt was **blocked before Docker image pull** because the GitHub Windows runner could not connect to \\.\\pipe\\docker_engine; no build or gate was attempted. GitHub Actions [re-run attempt 2](https://github.com/infoconex/RecordSift/actions/runs/41576608287) has been requested for this same corrected commit, and its release-gate outcomes are pending evidence review.
+A corrected isolated invocation (unquoted parameter name, quoted parameter value, with the compression assembly loaded in each fresh Windows PowerShell process) was committed as `7df8be3374e292c6957ab22dcd9966dc30138b19` and launched in [run 41576608287](https://github.com/infoconex/RecordSift/actions/runs/41576608287). Its first attempt was **blocked before Docker image pull** because the GitHub Windows runner could not connect to \\.\\pipe\\docker_engine; no build or gate was attempted. GitHub Actions [re-run attempt 2](https://github.com/infoconex/RecordSift/actions/runs/41576608287) executed the corrected experiment. Its per-gate results and retained artifact are documented below.
 
-## Limitations and next evidence
+## Corrected control: actual packaging and consumer outcomes
 
-The first run verifies SDK-only XML/API compatibility and documents missing implicit assembly loading in two validation scripts. It does **not** establish full release/consumer toolchain independence. Inspect the second run's per-gate logs, source and image digest, artifact and failure chain before closing the investigation. The published application scripts are unchanged. No application implementation is authorized.
+**Execution:** [run 41576608287, attempt 2](https://github.com/infoconex/RecordSift/actions/runs/41576608287), workflow SHA `7df8be3374e292c6957ab22dcd9966dc30138b19`; diagnostic [artifact 13204365812](https://github.com/infoconex/RecordSift/actions/runs/41576608287/artifacts/13204365812). The Docker image digest, reverified in this run, was `sha256:2b4600777bcef9209c18ae1c284bbdbf92edfbfba64728887ccf8eb61051bc25`. Container had no Visual Studio IDE, Build Tools or standalone `MSBuild.exe`. Explicit compression-assembly preload was confined to the experimental invocation.
+
+| Gate | True observation | Scope of conclusion |
+|---|---|---|
+| NuGet restore; ten-project Release build; five NUnit suites | **PASS**: 419 tests, 418 passed, 0 failed, 1 intentionally skipped | SDK-only build and .NET Framework execution reconfirmed. |
+| Positive XML documentation validation | **PASS**, all five XML docs contain members (179/101/8/2/9) | The `-Negative` MSBuild compiler-enforcement control was **not run**. |
+| Windows PowerShell 5.1 compiled public API/metadata baseline | **PASS**, all 425 entries | API parity within the recorded .NET Framework 4.8 environment. |
+| Create an unpublished `0.1.0-rc.1` `.nupkg` via NuGet | **PACK SUCCEEDED**, archive produced | NuGet packed expected assemblies, XML, README, license and notices. |
+| Existing packaging validation script | **FAIL** on `THIRD-PARTY-NOTICES.md` string comparison | The artifact's **packed notice bytes exactly equal staged source bytes** (2,655 bytes); the script compares a `StreamReader`-decoded UTF-8 entry with PowerShell 5.1 `Get-Content -Raw` text. The no-BOM UTF-8 notice includes an em dash; the failure is consistent with implicit ANSI-vs-UTF-8 decoding, **not** package byte corruption. The decoding explanation is derived from source and artifact inspection, not a separate direct encoding-control run. |
+| Install unpublished package in independent NuGet consumer | **INSTALL SUCCEEDED** | The candidate and dependencies were retrieved and installed from the local feed + NuGet.org. |
+| Existing clean-consumer verification script | **FAIL** before compilation: `Installed package missing RecordSift.Domain.xml` | The `.nupkg` **does contain** `lib/net48/RecordSift.Domain.xml` and all five XML files. Container inventory includes `NUGET_XMLDOC_MODE=skip`; this explains an environment-dependent extraction omission. The script's later `vswhere`/Visual Studio Roslyn requirement was **not reached** and remains an independently observed source dependency. |
+
+**Artifact cross-check, reproducible without changing RecordSift:** Download artifact 13204365812. Extract nested `sdk-only-local-package/RecordSift.0.1.0-rc.1.nupkg` and compare its `THIRD-PARTY-NOTICES.md` raw bytes to `sdk-only-local-package/staging/THIRD-PARTY-NOTICES.md`: they match exactly. Inspect the `.nupkg` central directory to confirm `lib/net48/` contains five RecordSift DLLs and five XML documentation files. Compare the install-failure log `sdk-only-gate-clean-consumer.log` with the environment inventory and NuGet installation output. These checks confirm an existing validator/environment mismatch rather than a missing packaged file.
+
+## Conclusion and recommendations (not implementation authorization)
+
+**Verified:** SDK-only Windows without Visual Studio Build Tools supports full RecordSift build/NUnit, positive XML docs, compiled API verification, **NuGet package generation**, and independent **package installation** under the isolated experimental conditions.
+
+**Not verified:** passing the entire *unchanged* packaging and consumer **validation scripts** or compiling/executing the independently installed consumer with no Build Tools. Explicit encoding in text comparisons, controlling `NUGET_XMLDOC_MODE`, and removing consumer-script `vswhere`/VS-Roslyn assumptions are candidate **future implementation work**, not changes authorized by this evaluation. The negative CS1591 documentation gate also retains a VS MSBuild dependency.
+
+**Disposition:** The scoped investigation is complete with a **partially verified** outcome and concrete tooling blockers. Do not describe the overall failing GitHub Actions run as an application failure, or claim end-to-end SDK-only release equivalence. Preserve experimental branch and artifact locators as evidence; RecordSift `main` remains unchanged.

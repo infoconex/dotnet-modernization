@@ -1,6 +1,6 @@
 # Experiment index
 
-All RecordSift experiments use **application production baseline** `main` at `8358780829458854a4b0356df5ac5e685f0a34c8`. Temporary workflows were committed only to disposable `discovery/*` branches; in-workspace experimental changes were not committed to application main.
+All RecordSift experiments use **application production baseline** `main` at `8358780829458854a4b0356df5ac5e685f0a34c8`. Temporary workflows were committed only to disposable `discovery/*` or `research/*` branches; in-workspace experimental changes were not committed to application main.
 
 | ID | Experiment | Observed outcome | Run |
 |---|---|---|---|
@@ -11,6 +11,8 @@ All RecordSift experiments use **application production baseline** `main` at `83
 | [EXP-005](EXP-005-sdk-selection-and-overrides.md) | global.json SDK selection and shared property override | Verified selection/precedence; formatter untested | [41486700576](https://github.com/infoconex/RecordSift/actions/runs/41486700576) |
 | [EXP-006](EXP-006-msbuild-imports.md) | MSBuild import/targets checks and early Common.props | Working existing import path; early import regression | [41484290488](https://github.com/infoconex/RecordSift/actions/runs/41484290488) |
 | [EXP-007](EXP-007-sdk-only-release-gates.md) | SDK-only XML/API/package/consumer gates | Complete, partially verified: XML/API, NuGet pack and install pass; full validation blocked by environment assumptions | [Corrected run](https://github.com/infoconex/RecordSift/actions/runs/41576608287) |
+
+| [EXP-009](EXP-009-sdk-only-release-validation.md) | Focused SDK-only packaging text/nuget XML/Roslyn consumer controls | Follow-up in progress; first run confirms PowerShell default-vs-UTF-8 mismatch and records probe defect | [Follow-up runs](EXP-009-sdk-only-release-validation.md#evidence-log) |
 
 See [evidence manifest](../evidence/manifest.md) for immutable container digests, artifact IDs and corrected/failed runs.
 

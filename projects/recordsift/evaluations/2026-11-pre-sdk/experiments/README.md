@@ -12,6 +12,8 @@ All RecordSift experiments use **application production baseline** `main` at `83
 | [EXP-006](EXP-006-msbuild-imports.md) | MSBuild import/targets checks and early Common.props | Working existing import path; early import regression | [41484290488](https://github.com/infoconex/RecordSift/actions/runs/41484290488) |
 | [EXP-007](EXP-007-sdk-only-release-gates.md) | SDK-only XML/API/package/consumer gates | Complete, partially verified: XML/API, NuGet pack and install pass; full validation blocked by environment assumptions | [Corrected run](https://github.com/infoconex/RecordSift/actions/runs/41576608287) |
 
+| [EXP-013](EXP-013-migration-tooling-ci-readiness.md) | Visual Studio GUI migrator research and actual Windows CI assumptions under disposable traditional net48 PackageReference | **Verified:** unchanged NuGet CLI restore, seven assets, formatter IDE1006, experimental 17-pin audit; original packages.config audit fails. Original-format Windows post-build source-validator failures reproduced; format-specific XLSX guard still fails after obj cleanup. GUI wizard not run. | [41737351278](https://github.com/infoconex/RecordSift/actions/runs/41737351278) |
+
 See [evidence manifest](../evidence/manifest.md) for immutable container digests, artifact IDs and corrected/failed runs.
 
 **Interpretation:** A workflow can pass while an intentionally unsuccessful negative control demonstrates a missing dependency. State the result of each command, not merely its enclosing workflow.

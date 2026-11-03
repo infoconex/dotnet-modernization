@@ -5,7 +5,7 @@
 **Canonical RecordSift baseline:** `8358780829458854a4b0356df5ac5e685f0a34c8` (`main` and `research/dotnet-modernization` remain unchanged).  
 **Disposable application branch:** `research/package-reference-exp012-20261103`; it adds **only** `.github/workflows/research-exp012-packagereference.yml`. The seven project-file edits and removals of `packages.config` occur **only in a disposable GitHub Actions workspace** and are never committed to RecordSift.  
 **Documentation branch:** `research/recordsift-package-reference-exp012-20261103` on `infoconex/dotnet-modernization`, as a separate draft PR pending review.  
-**Previous inventory:** [EXP-011](EXP-011-nuget-dependency-inventory.md) exists on unmerged [draft PR #12](https://github.com/infoconex/dotnet-modernization/pull/12); this link is intentionally to the related draft because the canonical docs `main` does not yet contain that file.  
+**Previous inventory:** [EXP-011](https://github.com/infoconex/dotnet-modernization/pull/12) exists on unmerged [draft PR #12](https://github.com/infoconex/dotnet-modernization/pull/12); this link is intentionally to the related draft because the canonical docs `main` does not yet contain that file.  
 **Overall status:** **Complete, verified for the exact-pinned candidate**. The unchanged legacy 425-entry API gate fails as a documented negative control because it reads removed `packages.config` files; the **414 compiled API/identity entries** and all other compatibility checks pass in an isolated corrective comparison. No conversion approved for application implementation.
 
 ## Goal and controlled scope

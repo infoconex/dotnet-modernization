@@ -12,6 +12,10 @@ An evaluation is not an upgrade: a successful experiment proves a narrowly defin
 - [Articles](articles/README.md) — mapping technical evidence to future articles, without mixing publication drafts into research.
 - [Templates](templates/) — lightweight starting points for future assessments and experiments.
 
+## Start an evaluation (human or AI)
+
+Begin at [the evaluation process](methodology/evaluation-process.md#start-here-first-contact-protocol). Inspect the application and existing evaluations **before** interviewing. Record stakeholder choices in a concise decision record, obtain **explicit approval of a consolidated scope**, then run only authorized investigations. The linked methodology is authoritative for interview, issue tracking, experiment safeguards, documentation and completion. Repository-specific AI entry points are pointers, not separate copies of these rules.
+
 ## First evaluation
 
 [RecordSift — November 2026 pre-SDK modernization discovery](projects/recordsift/evaluations/2026-11-pre-sdk/README.md)

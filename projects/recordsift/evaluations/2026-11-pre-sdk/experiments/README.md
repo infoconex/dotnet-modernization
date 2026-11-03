@@ -12,7 +12,7 @@ All RecordSift experiments use **application production baseline** `main` at `83
 | [EXP-006](EXP-006-msbuild-imports.md) | MSBuild import/targets checks and early Common.props | Working existing import path; early import regression | [41484290488](https://github.com/infoconex/RecordSift/actions/runs/41484290488) |
 | [EXP-007](EXP-007-sdk-only-release-gates.md) | SDK-only XML/API/package/consumer gates | Complete, partially verified: XML/API, NuGet pack and install pass; full validation blocked by environment assumptions | [Corrected run](https://github.com/infoconex/RecordSift/actions/runs/41576608287) |
 
-| [EXP-012](EXP-012-packagereference-isolation.md) | Disposable conversion of seven traditional net48 projects from `packages.config` to 17 exact `PackageReference` declarations (without SDK-style conversion) | **Verified:** original and converted restore/build; 419/418/0/1 NUnit; compiled ABI/identity 414 records, five XML, NuGet package/consumer and negative CS1591; unchanged 425-line gate fails on 11 deleted `packages.config` metadata records | [41734675914](https://github.com/infoconex/RecordSift/actions/runs/41734675914) |
+| [EXP-012](EXP-012-packagereference-isolation.md) | Disposable traditional net48 PackageReference migration with full-exact-pins and direct-only control | **Exact pins verified:** build, 419 NUnit, 414 compiled API/identity, XML, package/consumer, CS1591; unchanged 425 gate fails on 11 legacy metadata lines. **Direct-only:** build/tests/API pass but four versions downgrade: Memory, Unsafe, Buffers, Vectors. | [41735278846](https://github.com/infoconex/RecordSift/actions/runs/41735278846) |
 
 See [evidence manifest](../evidence/manifest.md) for immutable container digests, artifact IDs and corrected/failed runs.
 

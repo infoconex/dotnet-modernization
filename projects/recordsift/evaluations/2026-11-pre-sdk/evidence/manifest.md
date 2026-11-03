@@ -20,7 +20,8 @@
 | Corrected SDK selection and override controls | [41486700576](https://github.com/infoconex/RecordSift/actions/runs/41486700576) | Passed | Fixed 10.0.403; latestFeature 10.0.403; override 7.2 |
 
 | SDK-only full release-gates probe | [41575562993](https://github.com/infoconex/RecordSift/actions/runs/41575562993) | Partial; XML and API passed, package/consumer failed on ZipFile type | **Artifact 13203417992**; workflow SHA `7340c3409a755060cea33265cbcf129d4778832d`; [EXP-007](../experiments/EXP-007-sdk-only-release-gates.md) |
-| SDK-only assembly-loading control | [41576091787](https://github.com/infoconex/RecordSift/actions/runs/41576091787) | Pending | Workflow SHA `5775fb98c7d30866ae24d0aaee721548bc71c591` |
+| SDK-only assembly-loading control | [41576091787](https://github.com/infoconex/RecordSift/actions/runs/41576091787) | Inconclusive for package: harness incorrectly quoted PowerShell parameter | **Artifact 13202929618**; workflow SHA `5775fb98c7d30866ae24d0aaee721548bc71c591` |
+| Corrected SDK-only assembly-loading control | [41576608287](https://github.com/infoconex/RecordSift/actions/runs/41576608287) | Pending | Workflow SHA `7df8be3374e292c6957ab22dcd9966dc30138b19` |
 
 ## Container identities
 

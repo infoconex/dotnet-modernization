@@ -29,9 +29,9 @@ All experiments were isolated to disposable GitHub Actions workspaces and experi
 
 Each future RecordSift evaluation should have its own dated folder and immutable starting SHA.
 
-## Proposed methodology-validation pilot scope — awaiting explicit approval
+## Approved methodology-validation pilot scope
 
-**Status:** Proposed, **not yet approved** for autonomous technical investigation. This pilot validates the reusable methodology using the existing pre-SDK RecordSift evidence. Its stakeholder authorization decisions are recorded in [decisions.md](decisions.md), especially P-001–P-009. The original technical evaluation and its frozen baseline remain unchanged.
+**Status:** **Approved November 2, 2026** by the evaluation stakeholder; guided autonomous methodology improvements and targeted isolated investigations may proceed within the documented boundaries. This pilot validates the reusable methodology using the existing pre-SDK RecordSift evidence. Its stakeholder authorization decisions are recorded in [decisions.md](decisions.md), especially P-001–P-009. The original technical evaluation and its frozen baseline remain unchanged.
 
 **Objective and outcome:** Make the methodology usable by an AI assistant with no earlier conversation history. Demonstrate that it can discover a .NET application's context, interview only for missing decisions, obtain explicit scope approval, prioritize and execute appropriately isolated investigations, preserve evidence, track work in GitHub, and deliver justified recommendations without assuming implementation authority.
 
@@ -45,4 +45,4 @@ Each future RecordSift evaluation should have its own dated folder and immutable
 
 **Acceptance:** (1) a consolidated approval is explicitly recorded; (2) necessary methodology improvements are committed to the existing docs PR without merging; (3) at least one meaningful investigation, or a documented no-experiment justification, demonstrates accurate issue/evidence/decision tracking; (4) a separately initiated fresh-context assistant validates the workflow using repository instructions and reports pass/fail against agreed criteria; (5) unresolved gaps and required follow-ups are transparently documented. The fresh-context test is future work, not currently passed.
 
-**Next action:** Request the stakeholder's explicit approval of this consolidated scope **before** initiating additional technical experiments or investigation issues. Approval of this proposal does not authorize application implementation or merging PR #1.
+**Next action:** Conduct the approved pilot: improve the methodology instructions and create a focused investigation issue for the highest-value unresolved evidence gap. Preserve all technical and authorization boundaries; approval does not authorize application implementation or merging PR #1.

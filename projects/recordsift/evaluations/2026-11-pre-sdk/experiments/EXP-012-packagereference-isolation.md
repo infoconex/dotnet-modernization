@@ -1,0 +1,81 @@
+# EXP-012 — Isolated `packages.config` to `PackageReference` migration without SDK-style conversion
+
+**Assessment date:** November 3, 2026  
+**Tracking:** [Issue #13](https://github.com/infoconex/dotnet-modernization/issues/13)  
+**Canonical RecordSift baseline:** `8358780829458854a4b0356df5ac5e685f0a34c8` (`main` and `research/dotnet-modernization` remain unchanged).  
+**Disposable application branch:** `research/package-reference-exp012-20261103`; it adds **only** `.github/workflows/research-exp012-packagereference.yml`. The seven project-file edits and removals of `packages.config` occur **only in a disposable GitHub Actions workspace** and are never committed to RecordSift.  
+**Documentation branch:** `research/recordsift-package-reference-exp012-20261103` on `infoconex/dotnet-modernization`, as a separate draft PR pending review.  
+**Previous inventory:** [EXP-011](EXP-011-nuget-dependency-inventory.md) exists on unmerged [draft PR #12](https://github.com/infoconex/dotnet-modernization/pull/12); this link is intentionally to the related draft because the canonical docs `main` does not yet contain that file.  
+**Overall status:** In progress; first experiment identifies a tooling compatibility defect in the legacy public API validator; subsequent positive control is being evaluated. **No conversion approved for application implementation.**
+
+## Goal and controlled scope
+
+Assess whether a traditional .NET Framework **4.8**, C# **7.3**, non-SDK solution can move from `packages.config` to `PackageReference` **without first converting project format or changing target runtime**. Preserve the exact known versions and isolate changes to one variable (dependency management format) before experimenting with direct-only dependency simplification or SDK conversion.
+
+This is an **in-workspace manual comparison**, **not** a run of the Visual Studio automated `Migrate packages.config to PackageReference` wizard. It must not be interpreted as proof that the wizard chooses the same references or metadata.
+
+## Frozen input and experiment design
+
+- Five production and five test traditional C# projects, seven `packages.config` files and **17** pinned package entries (13 unique package IDs).
+- Current hand-maintained published `RecordSift.nuspec` explicitly lists 11 production package IDs at bracketed **exact** versions. The migration experiment leaves it unchanged.
+- Each temporary `PackageReference` mirrors the original `packages.config` ID/version using exact `Version="[x.y.z]"`, rather than a bare minimum version. This deliberately preserves all 17 entries, including candidates that may become transitive later.
+- Remove only C# assembly `<Reference>` elements pointing to the legacy `packages/` folder and each `<None Include="packages.config" />`. Preserve all framework references, project references, compiler options, target version, resource identities and output paths.
+- Remove the seven `packages.config` files only in the ephemeral checkout. The experiment changes no `.nuspec`, `NuGet.Config`, source C#, tests, public APIs, CI release workflows, version or library source.
+- Baseline command: `nuget restore RecordSift.sln -NonInteractive -PackagesDirectory packages -ConfigFile NuGet.Config`; normal Visual Studio MSBuild Release rebuild and all five NUnit suites.
+- Candidate command: `MSBuild.exe RecordSift.sln /t:Restore /p:RestoreConfigFile=NuGet.Config`, then `/t:Rebuild /p:Configuration=Release /p:Platform="Any CPU"`. Inspect `obj/project.assets.json` for each of the seven package-managed projects.
+- The original NUnit scripts use `packages/NUnit.ConsoleRunner.3.17.0/tools/nunit3-console.exe`. With `PackageReference`, NuGet restores to a global cache, not the legacy solution packages location. **The experiment explicitly installs NUnit.ConsoleRunner 3.17.0 into `packages/` solely as test-harness compatibility**, rather than silently treating the original tooling as unchanged.
+- For public API checks, run the **unchanged** legacy validator as a control. If it rejects missing raw `packages.config` metadata, compare the compiled API and identity records against a **temporary, in-workspace filtered copy** of the original approved API baseline, excluding only the 11 legacy package declarations. Never weaken or alter the committed production verifier or approved baseline.
+- If parity succeeds, subsequently verify production XML docs and intentional CS1591 enforcement, the 419/418/0/1 five-suite baseline, unpublished package and independent clean consumer. Note where a gate was not reached. Any package is **unpublished** research output, not a release candidate.
+
+## Environment
+
+GitHub hosted `windows-2022`, Windows NT `10.0.20348.0`; VS 2022 Enterprise MSBuild; Windows PowerShell 5.1 for API verification, PowerShell 7.6.9 for orchestration, .NET SDK 10.0.403, and NuGet CLI 7.9.0.83. These tools are preinstalled on the hosted runner; no Visual Studio requirement was removed by the PackageReference experiment. The supported target remains .NET Framework 4.8.
+
+**Reproducible procedure:** [experiment workflow on research branch](https://github.com/infoconex/RecordSift/blob/research/package-reference-exp012-20261103/.github/workflows/research-exp012-packagereference.yml). The branch only adds this workflow; the application baseline is the exact immutable SHA above.
+
+## Executed result: initial workflow
+
+**Initial workflow:** [GitHub Actions 41734336487](https://github.com/infoconex/RecordSift/actions/runs/41734336487), workflow SHA `80931140924e60052a5d4584af0985c97d33d83e`, [artifact 13276673751](https://github.com/infoconex/RecordSift/actions/runs/41734336487/artifacts/13276673751).
+
+| Gate | Observed | Interpretation |
+|---|---|---|
+| Source branch diff | Workflow only | No application changes committed |
+| Existing `nuget restore` / Release rebuild | **Passed** | Original input builds |
+| Baseline NUnit 5 suites | **419 total / 418 passed / 0 failed / 1 intentionally skipped** | Reproducible behavioral control |
+| Seven `packages.config` files replaced in disposable checkout with 17 exact `PackageReference` declarations | **Completed** | No SDK-style conversion performed |
+| `MSBuild.exe /t:Restore` | **Passed** | Classic non-SDK .NET Framework projects support PackageReference restore |
+| `obj/project.assets.json` | **Seven found** | Confirmed resolver graph generation and preservation of `CsvHelper/33.1.0`, `System.Memory/4.5.5`, `System.Runtime.CompilerServices.Unsafe/6.0.0`, and other packages |
+| Migrated Release rebuild | **Passed** | All ten original DLL names present |
+| NUnit ConsoleRunner available at legacy path | **Yes, but by explicit separate `nuget install`** | Test tooling needs migration attention |
+| Migrated NUnit five-suite check | **419 total / 418 passed / 0 failed / 1 skipped** | Baseline parity with test-harness workaround |
+| Positive XML documentation | **Passed** | All five production assemblies, members **179/101/8/2/9** |
+| **Unmodified public API/metadata verifier** | **Failed**: 11 `package` lines missing | Script reads `src/*/packages.config`, which is correctly absent after migration. The 11 absent lines are package-management **source metadata**, not automatically a changed compiled C# public API. |
+| Local NuGet package / clean consumer / negative CS1591 | **Not reached** | Do not report these as passed from the initial run |
+
+The raw verifier `scripts/verify_public_api.ps1` lines 105–110 explicitly load `packages.config` and emit `package <assembly> <id>=<version>`. Lines 194–200 compare all emitted lines with `docs/compatibility/public-api-net48.txt`. The resulting 11 missing entries explain exactly why the original check fails in this migration. **Do not change the approved baseline merely to turn the check green.** A future compatibility gate must understand both metadata formats or separate compiled API signature/assembly identity from package and consumer-dependency policy.
+
+**Key observation:** The new `project.assets.json` files list project-to-project references as `RecordSift.* / 1.0.0` entries as well as NuGet packages. Those synthetic project graph entries are **not** external NuGet dependencies and must not be counted as package conflicts or published dependencies. RecordSift product `.nuspec` remains the independent authority for consumer package dependencies under this experiment.
+
+## Follow-up controls and final outcome
+
+Second workflow [41734675914](https://github.com/infoconex/RecordSift/actions/runs/41734675914) temporarily subtracts **only** the 11 raw `package` records from a copied approved baseline, then runs the unchanged compiled reflection comparator against its remaining entries. This is a diagnostic to distinguish real compiled API drift from known source-format metadata coupling. The untouched full validator is still run and expected to fail on the same 11 records.
+
+**Follow-up results:** Pending completed log inspection. Do not infer completed compatibility gates from this initial record.
+
+## Risks and recommendations (provisional)
+
+1. **Technically feasible restore/build/test under traditional projects** with exact `PackageReference` versions has now been executed, but the full release compatibility contract is **not verified** by the first run.
+2. **Source-format coupling in the API baseline validator is proven.** If a future PackageReference change is approved, adapt its source-package checking to the evaluated dependency model and keep a separate explicit policy check for the hand-maintained `.nuspec`. Do not weaken compiled API and identity checks.
+3. **Legacy NUnit tool path requires a decision.** This experiment can run the same tests with a separately installed runner, but the unchanged `nuget restore` no longer provisions it at the assumed legacy location. Modernize the test runner separately after authorization, and verify all 419 tests.
+4. Retaining **17 exact** references establishes dependency-version parity for the deliberate test; this is not the ideal minimal direct-dependency representation. Follow-on direct-only transitive evaluation must be independently tested, especially `System.Memory` and `Unsafe` version resolution and .NET Framework binding redirects.
+5. Any future project conversion must test the existing package staging and consumer scripts. Other unmerged documentation branches may overlap the experiment index/status; reconcile at review.
+6. **No changes to application main, release/0.2 or released NuGet packages. No implementation authorization.**
+
+## References
+
+- [Microsoft: PackageReference in project files](https://learn.microsoft.com/en-us/nuget/consume-packages/package-references-in-project-files) — traditional .NET Framework project support, minimum versus exact versions, transitive asset selection and global packages.
+- [Microsoft: Migrate packages.config to PackageReference](https://learn.microsoft.com/en-us/nuget/consume-packages/migrate-packages-config-to-package-reference) — supported Visual Studio migration reports and special-package behavior.
+- [Microsoft: NuGet restore in MSBuild](https://learn.microsoft.com/en-us/nuget/reference/msbuild-targets) — separate restore and build targets.
+- [EXP-011 dependency inventory (draft)](https://github.com/infoconex/dotnet-modernization/pull/12) — read-only source and package metadata baseline.
+
+All observations here refer to an **experimental checkout**, not an approved application implementation.

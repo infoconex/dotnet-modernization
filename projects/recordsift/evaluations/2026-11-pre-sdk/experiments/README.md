@@ -12,6 +12,8 @@ All RecordSift experiments use **application production baseline** `main` at `83
 | [EXP-006](EXP-006-msbuild-imports.md) | MSBuild import/targets checks and early Common.props | Working existing import path; early import regression | [41484290488](https://github.com/infoconex/RecordSift/actions/runs/41484290488) |
 | [EXP-007](EXP-007-sdk-only-release-gates.md) | SDK-only XML/API/package/consumer gates | Complete, partially verified: XML/API, NuGet pack and install pass; full validation blocked by environment assumptions | [Corrected run](https://github.com/infoconex/RecordSift/actions/runs/41576608287) |
 
+| [EXP-011](EXP-011-nuget-dependency-inventory.md) | Inspect full legacy NuGet package inventory, restored nuspec graph/assets and migration risks without application changes | **Verified:** 7 config files, 17 entries, 13 pinned IDs/restored packages, 11 production nuspec dependencies, 13 existing HintPath DLLs; future PackageReference graph not executed | [41728933974](https://github.com/infoconex/RecordSift/actions/runs/41728933974) |
+
 See [evidence manifest](../evidence/manifest.md) for immutable container digests, artifact IDs and corrected/failed runs.
 
 **Interpretation:** A workflow can pass while an intentionally unsuccessful negative control demonstrates a missing dependency. State the result of each command, not merely its enclosing workflow.

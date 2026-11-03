@@ -1,0 +1,13 @@
+# RecordSift
+
+Application repository: [infoconex/RecordSift](https://github.com/infoconex/RecordSift)
+
+RecordSift is a Windows-only CSV and Excel import library, used both as an application and as a realistic modernization case study.
+
+At the first evaluation baseline it contains five production libraries and five NUnit 3 test projects targeting .NET Framework 4.8 with C# 7.3 and traditional, non-SDK project files.
+
+## Evaluations
+
+- [2026-11: Pre-SDK modernization discovery](evaluations/2026-11-pre-sdk/README.md) — what can safely be improved before SDK-style conversion.
+
+Future evaluations (such as SDK conversion or runtime migration) should use their **own** dates, baseline SHAs, evidence and verification gates. This repository stores assessment and learning, not the application source code.

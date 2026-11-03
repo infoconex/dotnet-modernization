@@ -19,6 +19,8 @@
 | First SDK selection negative control | [41486570113](https://github.com/infoconex/RecordSift/actions/runs/41486570113) | Workflow failed | Missing SDK correctly detected, but negative control was not handled |
 | Corrected SDK selection and override controls | [41486700576](https://github.com/infoconex/RecordSift/actions/runs/41486700576) | Passed | Fixed 10.0.403; latestFeature 10.0.403; override 7.2 |
 
+| SDK-only full release-gates probe | [41575562993](https://github.com/infoconex/RecordSift/actions/runs/41575562993) | Pending execution results | Experimental workflow commit `7340c3409a755060cea33265cbcf129d4778832d`, [EXP-007](../experiments/EXP-007-sdk-only-release-gates.md) |
+
 ## Container identities
 
 **Framework SDK container:** historical, cached tag `mcr.microsoft.com/dotnet/framework/sdk:4.8-windowsservercore-ltsc2022`; immutable digest `sha256:460dedaed73224f73ff10dc3ad754d0ed250aa57bcdf6c5052a811b4b7e29345`. Visual Studio Build Tools included; not a currently supported tag for new instructions.

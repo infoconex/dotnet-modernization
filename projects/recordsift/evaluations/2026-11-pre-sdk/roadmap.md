@@ -88,7 +88,7 @@ Do not read an existing CI check as proof of a new migration scenario. In partic
 
 | # | Investigation | Baseline disposition / remaining work | Current evidence |
 |---|---|---|---|
-| 25 | Conversion tools and approach | Future evaluation; not compared or approved | [Risks](risks.md) |
+| 25 | Conversion tools and approach | **EXP-013:** Microsoft documents a Visual Studio GUI migration wizard (top-level/transitive categorization, backup/report); no wizard report was executed in this headless experiment. Exact-pins manual conversion is **EXP-012**, not evidence of wizard output. Actual Windows CI: unchanged `nuget restore` and IDE1006 formatter pass, but pinned-package audit and XLSX architecture checks rely on legacy XML. | [EXP-013](experiments/EXP-013-migration-tooling-ci-readiness.md), [EXP-012 draft PR #14](https://github.com/infoconex/dotnet-modernization/pull/14) |
 | 26 | Assembly metadata conversion | Future evaluation; preserve current attributes | [Baseline](baseline.md) |
 | 27 | Compile/resource item globs | Future evaluation; preserve explicit logical names | [Baseline](baseline.md) |
 | 28 | PackageReference/central versions | Future dependency migration; not executed | [R-008](risks.md) |

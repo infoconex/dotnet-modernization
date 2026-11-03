@@ -12,7 +12,7 @@ These are **discovery-supported recommendations**, not applied RecordSift change
 | Standardize local tool and PowerShell assumptions | High | Low–medium | Medium | Medium | Before SDK or independently |
 | SDK-only Windows build/test workflow | High | Low–medium | Medium | Medium | Optional before SDK; feasible |
 | Condition-based shared warning levels | Medium | Low | Low | Medium | Optional |
-| global.json pin/roll-forward | Medium | Low–medium | Low | Medium | Optional after formatter test |
+| global.json pin/roll-forward | Medium only with a tooling consistency requirement | Low–medium, including provisioning risk | Low | Medium | **Optional, formatter/build/tests now verified in EXP-008; no immediate adoption need demonstrated** |
 | Directory.Build.targets with no actual reusable build behavior | Low | Medium | Medium | Low | Not recommended |
 | Additional .rsp / Directory.Solution.* files without requirements | Low | Medium | Low | Low | Not recommended |
 | Early Microsoft.Common.props import | Low | High, observed failure | Medium | Low | Not recommended |
@@ -25,7 +25,7 @@ These are **discovery-supported recommendations**, not applied RecordSift change
 3. **Create minimal shared compiler defaults.** Move identical LangVersion=7.3 from all ten projects into root Directory.Build.props, without adding an early import. Use conditional assignment where project-specific override must remain possible. Compare evaluated properties; execute the complete gate.
 4. **Consider other duplication one setting at a time.** WarningLevel may qualify. Keep output directories, documentation files, resource names, assembly metadata and TargetFrameworkVersion project-specific for now.
 5. **Document a fully inventoried clean Windows environment.** Favor an immutable .NET SDK-only image for educational build/test independence; separately qualify complete API/packaging/consumer scripts. Do not claim release equivalence prematurely.
-6. **Consider SDK selection after actual formatter/CI test.** Make any global.json choice deliberate and documented.
+6. **Consider SDK selection only for an explicit tooling reproducibility goal.** [EXP-008](experiments/EXP-008-pinned-sdk-formatter-build.md) already verifies the real IDE1006 gate and Release/test/API checks under two exact 10.0 SDK pins. Define update/roll-forward and developer/CI provisioning policy before recommending a permanent `global.json`; do not conflate SDK selection with framework migration or direct Visual Studio `MSBuild.exe`.
 7. **Only then evaluate SDK-style conversion.** Preserve current framework and C# while converting project format; defer PackageReference/central package management to a separately verified stage if appropriate.
 
 ## Verification for substantive application changes
@@ -78,7 +78,7 @@ Do not read an existing CI check as proof of a new migration scenario. In partic
 
 | # | Investigation | Baseline disposition / remaining work | Current evidence |
 |---|---|---|---|
-| 20 | SDK selection with global.json | Selection/negative control verified; pinned formatter/build untested | [EXP-005](experiments/EXP-005-sdk-selection-and-overrides.md) |
+| 20 | SDK selection with global.json | **Verified** SDK selection, unavailable-SDK control and current formatter/Release/NUnit/XML/API checks with exact 10.0.303 and 10.0.403 pins. No repository-wide pin adoption authorized; provider/version maintenance tradeoff remains optional. | [EXP-005](experiments/EXP-005-sdk-selection-and-overrides.md), [EXP-008](experiments/EXP-008-pinned-sdk-formatter-build.md) |
 | 21 | EditorConfig/analyzer enforcement | Existing naming gate observed; broader rule review pending | [Original discovery](discovery-report.md) |
 | 22 | NuGet restore sources and audit | Existing CI restore/audit verified; changes not proposed | [Baseline](baseline.md) |
 | 23 | Direct/transitive dependency inventory | Pinned packages inspected; systematic transitive map pending | [Risks](risks.md) |

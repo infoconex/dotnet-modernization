@@ -14,7 +14,7 @@ An evaluation is not an upgrade: a successful experiment proves a narrowly defin
 
 ## Start an evaluation (human or AI)
 
-Begin at [the evaluation process](methodology/evaluation-process.md#start-here-first-contact-protocol). Inspect the application and existing evaluations **before** interviewing. Record stakeholder choices in a concise decision record, obtain **explicit approval of a consolidated scope**, then run only authorized investigations. The linked methodology is authoritative for interview, issue tracking, experiment safeguards, documentation and completion. Repository-specific AI entry points are pointers, not separate copies of these rules.
+Begin at [the evaluation process](methodology/evaluation-process.md#start-here-first-contact-protocol). Inspect the application and existing evaluations **before** interviewing. **For a new evaluation**, record stakeholder choices and obtain explicit approval of a consolidated scope before running investigations. **To resume an existing evaluation**, first verify its recorded scope, approval, progress and outstanding issues; reuse authorization that still applies rather than repeating the interview. The linked methodology is authoritative for issue tracking, experiment safeguards, documentation and completion. Repository-specific AI entry points are pointers, not separate copies of these rules.
 
 ## First evaluation
 

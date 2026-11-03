@@ -18,12 +18,12 @@
 | Execute all five NUnit suites without VS Build Tools | Complete | Verified: 419/418/0/1 | [SDK-only run](https://github.com/infoconex/RecordSift/actions/runs/41486238239) |
 | Verify global.json version selection and overrides | Complete | Verified selection and missing-SDK negative control | [Follow-up run](https://github.com/infoconex/RecordSift/actions/runs/41486700576) |
 | Confirm conditional Directory.Build.props override semantics | Complete | Verified: project override retained when shared default conditional | [Follow-up run](https://github.com/infoconex/RecordSift/actions/runs/41486700576) |
-| Run *full* packaging/API/consumer gates inside SDK-only container | In progress | Partially verified: XML and 425 API pass; package/consumer blocked on implicit ZipFile type in first run; follow-up underway | [EXP-007](experiments/EXP-007-sdk-only-release-gates.md), [issue #2](https://github.com/infoconex/dotnet-modernization/issues/2) |
+| Run *full* packaging/API/consumer gates inside SDK-only container | Complete | Partially verified: build/419 tests/XML/425 APIs, NuGet pack/install passed; validation scripts failed on notice decoding and XML extraction; standalone consumer not executed | [EXP-007](experiments/EXP-007-sdk-only-release-gates.md), [issue #2](https://github.com/infoconex/dotnet-modernization/issues/2) |
 | Test pinned SDK with actual formatter validation | Not started | Not executed | `dotnet format style` compatibility and CI SDK provisioning |
 | Execute current supported framework SDK 4.8.1 container | Not started | Not executed | Tag manifest exists; no runtime test yet |
 | Implement any modernization changes in application repository | Not started | Not applicable | Out of this discovery scope |
 
-**Next investigation:** test API verification, XML documentation validation, packaging and clean consumer checks inside the SDK-only Windows environment.
+**Next research decision:** SDK-only release-gate experiment [EXP-007](experiments/EXP-007-sdk-only-release-gates.md) is complete with a partial outcome. Any permanent validation-script portability changes require separate RecordSift implementation authorization. Independent fresh-context methodology acceptance remains pending.
 
 **First proposed implementation after approval:** repair local test-script parity and establish a reproducible all-five-suite command; then introduce minimal common shared properties and rerun compatibility gates.
 
@@ -34,7 +34,7 @@
 | Adaptive stakeholder interview and explicit scope authorization | Complete | P-001–P-010 recorded in [decisions](decisions.md); approved [scope](README.md) |
 | Central methodology process / intake / approval / GitHub rules | Documentation updated on PR #1 | Requires review and fresh-context acceptance; [process](../../../../methodology/evaluation-process.md) |
 | Lightweight agent entry points and authorization-aware template | Documentation updated on PR #1 | [root AGENTS](../../../../AGENTS.md), [Copilot](../../../../.github/copilot-instructions.md), [evaluation template](../../../../templates/evaluation-overview.md) |
-| Targeted SDK-only release-gate investigation | In progress | [issue #2](https://github.com/infoconex/dotnet-modernization/issues/2), [EXP-007](experiments/EXP-007-sdk-only-release-gates.md) |
+| Targeted SDK-only release-gate investigation | Complete — partially verified | [issue #2](https://github.com/infoconex/dotnet-modernization/issues/2), [EXP-007](experiments/EXP-007-sdk-only-release-gates.md) |
 | Independent fresh-context acceptance | Not executed | [issue #3](https://github.com/infoconex/dotnet-modernization/issues/3); must use a separate assistant session |
 
 **Process observation:** Before this pilot, the evaluation lifecycle began with intake but did not instruct an unfamiliar assistant to inspect before interviewing, obtain explicit consolidated approval, or preserve authorization for session handoff. Centralized the new rules in the existing lifecycle rather than duplicating them in AI entry points. Original RecordSift discovery documents remain historical evidence; do not mandate every specialized file for future applications.

@@ -39,4 +39,6 @@
 
 **Process observation:** Before this pilot, the evaluation lifecycle began with intake but did not instruct an unfamiliar assistant to inspect before interviewing, obtain explicit consolidated approval, or preserve authorization for session handoff. Centralized the new rules in the existing lifecycle rather than duplicating them in AI entry points. Original RecordSift discovery documents remain historical evidence; do not mandate every specialized file for future applications.
 
+**Avoided unnecessary files:** No separate `methodology/start-evaluation.md` was added; the root README, `AGENTS.md` and lightweight Copilot entry point all route to the same authoritative lifecycle. An investigation issue template is deferred until repeated issue creation demonstrates a genuine need; focused issues #2 and #3 already exercise the current conventions without duplicating a process across YAML and Markdown. Specialized status/findings/risks/roadmap documents are retained for this historically extensive evaluation, **not** mandated as empty placeholders for every new application.
+
 **GitHub tracking limitation:** This connection can create issues and edit documentation, but does not expose a GitHub milestone-creation/attachment operation. Issues #2 and #3 are linked to the approved evaluation without a created milestone; do not represent a milestone as created.

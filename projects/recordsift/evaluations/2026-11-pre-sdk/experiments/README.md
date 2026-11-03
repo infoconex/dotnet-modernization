@@ -1,6 +1,6 @@
 # Experiment index
 
-All RecordSift experiments use **application production baseline** `main` at `8358780829458854a4b0356df5ac5e685f0a34c8`. Temporary workflows were committed only to disposable `discovery/*` branches; in-workspace experimental changes were not committed to application main.
+All RecordSift experiments use **application production baseline** `main` at `8358780829458854a4b0356df5ac5e685f0a34c8`. Temporary workflows were committed only to disposable `discovery/*` or `research/*` branches; in-workspace experimental changes were not committed to application main.
 
 | ID | Experiment | Observed outcome | Run |
 |---|---|---|---|

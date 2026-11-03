@@ -4,7 +4,7 @@
 **Tracking:** [Issue #11](https://github.com/infoconex/dotnet-modernization/issues/11)  
 **RecordSift frozen baseline:** `8358780829458854a4b0356df5ac5e685f0a34c8` (`main` and `research/dotnet-modernization` unchanged).  
 **Research-only RecordSift branch:** `research/nuget-graph-20261103`, adding **only** an isolated GitHub Actions workflow, `.github/workflows/research-exp011-nuget-graph.yml`. No committed `.csproj`, package, `packages.config`, `.nuspec`, `NuGet.Config`, or product script changes.  
-**Successful initial execution:** [GitHub Actions 41728599985](https://github.com/infoconex/RecordSift/actions/runs/41728599985), workflow commit `55f882bb9f40f449a72ba013a8cb284c9d31259a`, [artifact 13275169273](https://github.com/infoconex/RecordSift/actions/runs/41728599985/artifacts/13275169273).  
+**Successful definitive execution:** [GitHub Actions 41728933974](https://github.com/infoconex/RecordSift/actions/runs/41728933974), workflow commit `a94381f97843d692265e805aeb899e616c60a7bb`, [artifact 13274828527](https://github.com/infoconex/RecordSift/actions/runs/41728933974/artifacts/13274828527). Earlier [41728599985](https://github.com/infoconex/RecordSift/actions/runs/41728599985), artifact 13275169273, verified the full inventory except the stricter final HintPath-file check.  
 **Outcome:** **Verified** pinned source and clean restore/package metadata consistency. **Not verified:** automatic top-level/transitive classification for PackageReference, an actual migration, changed consumer package behavior, or post-migration tests. Follow-up run adds strict validation of resolved HintPaths; see below.
 
 ## Objective and hypothesis
@@ -33,7 +33,7 @@ A `packages.config` entry describes a *package installed in that project*, not n
 | Access/secrets | Public NuGet source; no added secrets or publication credentials |
 | Product source edits | **None**; a clean restore downloaded packages to the workflow's disposable workspace |
 
-**Exact executed workflow and script:** [research workflow at immutable SHA](https://github.com/infoconex/RecordSift/blob/55f882bb9f40f449a72ba013a8cb284c9d31259a/.github/workflows/research-exp011-nuget-graph.yml). The uploaded JSON records each declared package, all dependency groups (including non-net48 groups, which must **not** be mistaken for selected net48 dependencies), enumerated assets, HintPaths and tool versions.
+**Exact executed workflow and script:** [research workflow at definitive immutable SHA](https://github.com/infoconex/RecordSift/blob/a94381f97843d692265e805aeb899e616c60a7bb/.github/workflows/research-exp011-nuget-graph.yml). The uploaded JSON records each declared package, all dependency groups (including non-net48 groups, which must **not** be mistaken for selected net48 dependencies), enumerated assets, HintPaths and tool versions.
 
 ## Verified baseline — projects and version declarations
 
@@ -47,7 +47,7 @@ A `packages.config` entry describes a *package installed in that project*, not n
 
 **Exact observed cardinalities:** 10 `.csproj` projects; **7** package config files; **17** declarations across those files; **13** distinct package IDs; **13** restored package directories; **11** production package IDs and exactly **11** hand-maintained `RecordSift.nuspec` dependency entries. Each production `.nuspec` entry is an **exact** bracketed version `[x.y.z]` matching its corresponding `packages.config` version, with no duplicate production IDs. Source declarations showed **zero multiple-version conflicts per package ID**. The NuGet restore was successful and logged no `NU1900`–`NU1905` warnings **in that run**, not a security guarantee for future dates.
 
-There are **13** explicit assembly `HintPath` references across the projects: 7 CSV DLLs, 1 XLSX DLL, and 5 `nunit.framework` DLLs. The other package entries do not each imply a direct C# assembly reference; for example, the NUnit console runner is an executable used by scripts. The XLSX project's source has doubled path separators in its HintPath text; a parser must tolerate those without assuming a broken compiled reference.
+There are **13** explicit assembly `HintPath` references across the projects: 7 CSV DLLs, 1 XLSX DLL, and 5 `nunit.framework` DLLs. **Definitive run 41728933974 validated all 13 against real existing restored assembly files**, not just directory names. The other package entries do not each imply a direct C# assembly reference; for example, the NUnit console runner is an executable used by scripts. The XLSX project's source has doubled path separators in its HintPath text; the final harness handled those correctly and verified its DLL exists.
 
 ## Metadata-derived dependency relationships (framework-sensitive)
 
@@ -106,7 +106,7 @@ References (current primary documentation, consulted during assessment):
 - [41728191457](https://github.com/infoconex/RecordSift/actions/runs/41728191457) — after valid clean restore/package inspection, PowerShell strict mode rejected an empty XML `Reference` property on a project group with no references. Switched to explicit XML selection.
 - [41728365433](https://github.com/infoconex/RecordSift/actions/runs/41728365433) — after successful restore/package inspection, PowerShell reserved automatic `$PID` variable name collided with a harness local; renamed it.
 - **[41728599985](https://github.com/infoconex/RecordSift/actions/runs/41728599985)** — complete initial read-only inventory succeeded; [artifact 13275169273](https://github.com/infoconex/RecordSift/actions/runs/41728599985/artifacts/13275169273) contains JSON and restore log. No application failure was demonstrated.
-- A further narrow control enhances the HintPath check to include doubled separators and full on-disk target existence; update the record with its definitive run before claiming this *extra* check passed.
+- **[41728933974](https://github.com/infoconex/RecordSift/actions/runs/41728933974)**, workflow `a94381f97843d692265e805aeb899e616c60a7bb`, [artifact 13274828527](https://github.com/infoconex/RecordSift/actions/runs/41728933974/artifacts/13274828527) — **final green run**. Verified all original inventory checks **and all 13 actual HintPath assembly files**, including the XLSX path with doubled separators. Artifact JSON `resolvedFilePresent=true` for all 13; working source checkout remained unchanged. The present study is complete.
 
 **Not rerun in this read-only inventory:** C# compile, NUnit, public API, XML-documentation validation, NuGet packing or clean consumer. Those have separate established baseline evidence in [EXP-001](EXP-001-baseline.md), [EXP-009 draft](https://github.com/infoconex/dotnet-modernization/pull/8) and [EXP-010 draft](https://github.com/infoconex/dotnet-modernization/pull/10). Cite them without pretending those gates ran during EXP-011.
 

@@ -19,7 +19,7 @@ Production-specific configuration generates XML documentation and enforces `CS15
 | Property | Exact baseline declaration / coverage | Research disposition |
 |---|---|---|
 | `LangVersion` | `7.3` in **10/10**, unconditional | **First candidate:** identical and previously verified in [EXP-002](experiments/EXP-002-shared-properties.md). Use conditional shared default to preserve overrides; see [EXP-005](experiments/EXP-005-sdk-selection-and-overrides.md). |
-| `WarningLevel` | `4` in Debug and Release for **10/10** (**20** declarations) | **Second candidate only:** identical but grouped by `Configuration|Platform`; moving to an unconditional file could also affect nonstandard configurations. No isolated parity experiment yet. |
+| `WarningLevel` | `4` in Debug and Release for **10/10** (**20** declarations) | **Second candidate only:** identical but grouped by `Configuration\|Platform`; moving to an unconditional file could also affect nonstandard configurations. No isolated parity experiment yet. |
 | `TargetFrameworkVersion` | `v4.8` in **10/10**, unconditional | **Keep local:** `scripts/verify_public_api.ps1` reads its raw project-XML location. Moving it changes the validator's inputs before any framework migration. |
 | `Configuration`, `Platform` | Unconditional defaults `Debug` and `AnyCPU`, respectively, in **10/10** | **Keep local:** the conditional Debug/Release property groups are evaluated before RecordSift's current late `Directory.Build.props` import. Late defaults cannot retroactively activate a group that already evaluated. |
 | `OutputType` | `Library` in **10/10** | **Keep local:** little practical benefit; retain explicit project identity/shape until a distinct need is established. |
@@ -28,7 +28,7 @@ Production-specific configuration generates XML documentation and enforces `CS15
 | `Optimize` | `false` (Debug), `true` (Release), **10/10** | **Keep local:** changes compilation behavior; avoid coupling to unrelated modernization. |
 | `DefineConstants` | `DEBUG;TRACE` (Debug), `TRACE` (Release), **10/10** | **Keep local:** part of configuration-specific compiled behavior and source conditional compilation. |
 | `OutputPath` | `bin\Debug\` and `bin\Release\`, **10/10** | **Keep local:** existing build scripts, NUnit discovery, package staging, and consumer checks rely on these paths. |
-| `DocumentationFile` | Per-project `bin\{Debug|Release}\RecordSift.<Component>.xml` in **5/5 production projects only**; absent from test projects | **Keep local:** exact XML output paths are contract/packaging inputs; file name is project-specific and intended production-only. |
+| `DocumentationFile` | Per-project `bin\{Debug\|Release}\RecordSift.<Component>.xml` in **5/5 production projects only**; absent from test projects | **Keep local:** exact XML output paths are contract/packaging inputs; file name is project-specific and intended production-only. |
 | `WarningsAsErrors` | `1591` in Debug and Release for **5/5 production** projects only; absent in tests | **Keep local for now:** preserves compiler `CS1591` behavior only for public production APIs; don't equate with enabling `TreatWarningsAsErrors` everywhere. |
 | `IsTestProject` | `true` in **5/5 test** projects only | **Keep local:** it distinguishes test from production projects; a nested `tests/Directory.Build.props` would require explicit composition with root defaults if both are used. |
 | `FileAlignment` | `512` in **8/10**; absent in two projects | **Keep local:** do not infer that absent declarations can be safely replaced with an explicit common value without checking evaluated defaults/output metadata. |
@@ -52,7 +52,7 @@ Additional non-property distinctions (explicit `Compile`, `Reference`, `ProjectR
    ```
 
 3. **Not all shared values are available at the right time.** Do not move `Configuration`/`Platform` defaults into a file imported after project configuration groups have been evaluated; this could affect which groups apply. Retaining `TargetFrameworkVersion`, project identities, XML documentation paths, resource logical names and output paths avoids known toolchain/API/consumer dependencies.
-4. **Keep experiments atomic.** The verified scope for EXP-002 is `LangVersion` in a Release parity run (419 discovered / 418 passed / 0 failed / 1 intentionally skipped, 425 API/metadata entries, XML and local package validation); other property moves and Debug parity are **not verified** by that run. Evaluate `WarningLevel` separately, including normal/exceptional `Configuration|Platform` values, overrides, generated XML/assembly and clean consumer checks. Recheck actual evaluated values with `MSBuild -getProperty` and import locations with `/pp`.
+4. **Keep experiments atomic.** The verified scope for EXP-002 is `LangVersion` in a Release parity run (419 discovered / 418 passed / 0 failed / 1 intentionally skipped, 425 API/metadata entries, XML and local package validation); other property moves and Debug parity are **not verified** by that run. Evaluate `WarningLevel` separately, including normal/exceptional `Configuration\|Platform` values, overrides, generated XML/assembly and clean consumer checks. Recheck actual evaluated values with `MSBuild -getProperty` and import locations with `/pp`.
 
 ## NuGet and packaging
 

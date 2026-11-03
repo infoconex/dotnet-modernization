@@ -46,6 +46,12 @@ The container inventory confirmed NuGet CLI **present** after installation, Git 
 
 [Run 41576091787](https://github.com/infoconex/RecordSift/actions/runs/41576091787), experiment workflow commit `5775fb98c7d30866ae24d0aaee721548bc71c591`, was launched to invoke each **unchanged** verification script from Windows PowerShell 5.1 after explicitly loading `System.IO.Compression.FileSystem` into the child process. This distinguishes implicit assembly-loading assumptions from subsequent Build Tools/compiler requirements. The result was pending at the time of this update.
 
+## Control-run diagnosis
+
+[Run 41576091787](https://github.com/infoconex/RecordSift/actions/runs/41576091787), [artifact 13202929618](https://github.com/infoconex/RecordSift/actions/runs/41576091787/artifacts/13202929618), again verified the 419-test baseline, XML documentation and 425 API entries. The first package invocation failed on PowerShell parameter binding: the **experimental harness** quoted `-OutputDirectory` as a string, which was misinterpreted as a positional value for `PackageVersion`. This is a test-harness defect, **not** an application packaging failure. The clean consumer was not executed because no package was produced. Do not use this run to infer packaging or consumer portability.
+
+A corrected isolated invocation (unquoted parameter name, quoted parameter value, with the compression assembly loaded in each fresh Windows PowerShell process) was committed as `7df8be3374e292c6957ab22dcd9966dc30138b19` and launched in [run 41576608287](https://github.com/infoconex/RecordSift/actions/runs/41576608287). Its release-gate outcomes are pending evidence review.
+
 ## Limitations and next evidence
 
 The first run verifies SDK-only XML/API compatibility and documents missing implicit assembly loading in two validation scripts. It does **not** establish full release/consumer toolchain independence. Inspect the second run's per-gate logs, source and image digest, artifact and failure chain before closing the investigation. The published application scripts are unchanged. No application implementation is authorized.

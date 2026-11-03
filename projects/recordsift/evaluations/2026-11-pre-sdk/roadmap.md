@@ -2,6 +2,8 @@
 
 These are **discovery-supported recommendations**, not applied RecordSift changes.
 
+**Current boundary:** research and documentation only. Source-inspection findings and conditional implementation ideas are **not authorization** to alter RecordSift, merge into either repository's `main`, or publish packages. Changes are disposable unless a later independent stakeholder approval explicitly authorizes implementation.
+
 ## Priority matrix
 
 | Candidate | Immediate value | Risk | Effort | SDK preparation | Recommendation |
@@ -11,12 +13,30 @@ These are **discovery-supported recommendations**, not applied RecordSift change
 | Centralize identical LangVersion with Directory.Build.props | High | Low–medium | Low | High | Before SDK; already POC verified |
 | Standardize local tool and PowerShell assumptions | High | Low–medium | Medium | Medium | Before SDK or independently |
 | SDK-only Windows build/test workflow | High | Low–medium | Medium | Medium | Optional before SDK; feasible |
-| Condition-based shared warning levels | Medium | Low | Low | Medium | Optional |
+| Condition-based shared warning level 4 | Medium | Low–medium, **unverified** | Low | Medium | Optional **separate experiment**, not included in EXP-002 |
 | global.json pin/roll-forward | Medium | Low–medium | Low | Medium | Optional after formatter test |
 | Directory.Build.targets with no actual reusable build behavior | Low | Medium | Medium | Low | Not recommended |
 | Additional .rsp / Directory.Solution.* files without requirements | Low | Medium | Low | Low | Not recommended |
 | Early Microsoft.Common.props import | Low | High, observed failure | Medium | Low | Not recommended |
 | packages.config to PackageReference / Directory.Packages.props | Migration value | Medium–high | Medium | High | During SDK conversion |
+
+## RecordSift property-by-property evaluation (November 3, 2026)
+
+[F-020 and the complete 10-project matrix](baseline.md) classify **19 distinct declared MSBuild properties**. Project-source duplication alone is not sufficient evidence that relocation preserves evaluated values or build behavior. [EXP-002](experiments/EXP-002-shared-properties.md) independently verified **only** `LangVersion` centralization; [EXP-005](experiments/EXP-005-sdk-selection-and-overrides.md) showed the required conditional default when a project has its own override.
+
+| Candidate / concern | Recommended disposition | Reason / evidence |
+|---|---|---|
+| Shared `LangVersion=7.3` in all 10 projects | **Recommend as the single initial centralization candidate**, but only after review/explicit authorization | An isolated Release build/tests/API/XML/package experiment passed; a conditional shared default preserved a project-level override. No original project files changed during research. |
+| Shared `WarningLevel=4` in Debug and Release for all 10 projects | **Optional second, separate experiment; not verified for movement** | 20 repeated declarations, but source groups are conditional. Moving to an unconditional default changes applicability for configurations outside those groups; inspect evaluated property and error/warning behavior. |
+| Production-only `WarningsAsErrors=1591`, per-project XML documentation output | **Keep project-local** pending a distinct requirement | This is a deliberate source/test distinction and includes unique XML output paths and CS1591 enforcement. Moving it into nested files adds import/composition risk. |
+| `Configuration`, `Platform`, `OutputPath`, `DebugType`, `Optimize`, `DefineConstants`, `DebugSymbols` | **Keep project-local** | Conditional groups are evaluated before the present late props import; package/test scripts and compiler/runtime behavior depend on these choices. |
+| `TargetFrameworkVersion=v4.8` | **Keep project-local** | Raw-XML compatibility verifier expects it in each project; centralization requires an independent tooling change and its own evidence. |
+| `OutputType`, `FileAlignment`, `AppDesignerFolder`, `IsTestProject` | **Keep project-local** | Minimal benefit, partial coverage or purposeful differences across projects. |
+| `ProjectGuid`, `AssemblyName`, `RootNamespace`, resource identities and explicit items | **Do not homogenize** | These identify projects, assemblies, resources, references and packaging contracts. |
+
+**If a future owner approves a limited shared-properties experiment:** start from the frozen `RecordSift/research/dotnet-modernization` branch, run `MSBuild -getProperty` and `/pp` before and after, preserve project-local overrides, and compare Debug **and** Release, all ten project builds, five NUnit suites (419 total / 418 pass / 0 fail / 1 skip), 425 API/metadata entries, assembly/resources, XML output, unpublished NuGet package layout and independent clean consumer. Keep candidate moves isolated so failures can be attributed. Preserve failed controls and distinguish the earlier demonstrated Release parity from new, unexecuted checks.
+
+**No new MSBuild or CI run was performed for this property inventory.**
 
 ## Dependency-aware sequence
 
@@ -56,7 +76,7 @@ Do not read an existing CI check as proof of a new migration scenario. In partic
 | # | Investigation | Baseline disposition / remaining work | Current evidence |
 |---|---|---|---|
 | 7 | Actual MSBuild imports | Verified, including failed early-import control | [EXP-006](experiments/EXP-006-msbuild-imports.md) |
-| 8 | Shared project properties | LangVersion POC verified; no application implementation | [EXP-002](experiments/EXP-002-shared-properties.md) |
+| 8 | Shared project properties | Property-by-property source audit completed: **LangVersion** centralization verified by POC, **WarningLevel** optional unverified follow-up; preserve other project-specific declarations. No permanent application implementation. | [F-020](findings.md), [baseline](baseline.md), [EXP-002](experiments/EXP-002-shared-properties.md) |
 | 9 | Project override behavior | Conditional default verified; no implementation | [EXP-005](experiments/EXP-005-sdk-selection-and-overrides.md) |
 | 10 | Shared build targets | Import verified; no new target justified | [EXP-006](experiments/EXP-006-msbuild-imports.md) |
 | 11 | Response/solution build customization | No need demonstrated; no adoption experiment | [Risks](risks.md) |

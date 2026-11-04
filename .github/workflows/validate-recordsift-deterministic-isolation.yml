@@ -1,0 +1,76 @@
+name: EXP-019 frozen-source opt-in deterministic compiler isolation
+
+on:
+  pull_request:
+    paths:
+      - ".github/workflows/validate-recordsift-deterministic-isolation.yml"
+      - "tooling/pilots/recordsift/EXP-019/**"
+      - "projects/recordsift/evaluations/2026-11-pre-sdk/experiments/EXP-019-deterministic-compiler.md"
+      - "tooling/pe-provenance/**"
+      - "tooling/validators/pe_variation.py"
+      - "tooling/validators/tests/test_pe_variation.py"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  four-independent-frozen-builds:
+    runs-on: windows-2022
+    timeout-minutes: 90
+    steps:
+      - name: Checkout isolated research
+        uses: actions/checkout@08c6903cd8c0fde910a37f88322edcfb5dd907a8 # v5.0.0
+        with:
+          persist-credentials: false
+      - name: Checkout immutable RecordSift release source
+        uses: actions/checkout@08c6903cd8c0fde910a37f88322edcfb5dd907a8 # v5.0.0
+        with:
+          repository: infoconex/RecordSift
+          ref: 8358780829458854a4b0356df5ac5e685f0a34c8
+          path: recordsift
+          fetch-depth: 0
+          persist-credentials: false
+      - name: Pin metadata tooling SDK
+        uses: actions/setup-dotnet@a98b56852c35b8e3190ac28c8c2271da59106c68 # v6.0.0
+        with:
+          dotnet-version: "10.0.403"
+      - name: Verify metadata comparison unit fixtures
+        shell: pwsh
+        run: |
+          python -m unittest discover -s tooling/validators/tests -p test_pe_variation.py -v
+          if ($LASTEXITCODE -ne 0) { throw 'PE variation fixtures failed.' }
+      - name: Build approved original metadata extractor and independent PE reader
+        shell: pwsh
+        run: |
+          $sdk = (& dotnet --version).Trim()
+          if ($LASTEXITCODE -ne 0 -or $sdk -cne '10.0.403') { throw "Unexpected SDK $sdk" }
+          dotnet build tooling/assembly-metadata/src/AssemblyMetadata.csproj -c Release -nologo -v minimal
+          if ($LASTEXITCODE -ne 0) { throw 'Original metadata extractor build failed.' }
+          dotnet build tooling/pe-provenance/src/PeProvenance.csproj -c Release -nologo -v minimal
+          if ($LASTEXITCODE -ne 0) { throw 'PE reader build failed.' }
+      - name: Four independent frozen-source Release builds and original package/consumer gates
+        shell: pwsh
+        run: |
+          & ./tooling/pilots/recordsift/EXP-019/run.ps1 -ApplicationRoot (Join-Path $env:GITHUB_WORKSPACE 'recordsift') -EvidenceRoot (Join-Path $env:RUNNER_TEMP 'RecordSift-EXP-019')
+          if ($LASTEXITCODE -ne 0) { throw 'EXP-019 did not verify original gates and deterministic comparison.' }
+      - name: Preserve JSON and acceptance evidence only; exclude DLLs and NuGet archives
+        if: always()
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4.6.2
+        with:
+          name: recordsift-exp019-deterministic-build-evidence
+          retention-days: 30
+          if-no-files-found: warn
+          path: |
+            ${{ runner.temp }}/RecordSift-EXP-019/toolchain.json
+            ${{ runner.temp }}/RecordSift-EXP-019/effective-deterministic-settings.json
+            ${{ runner.temp }}/RecordSift-EXP-019/baseline-default-pe.json
+            ${{ runner.temp }}/RecordSift-EXP-019/deterministic-first-pe.json
+            ${{ runner.temp }}/RecordSift-EXP-019/deterministic-other-worktree-pe.json
+            ${{ runner.temp }}/RecordSift-EXP-019/deterministic-samepath-repeat-pe.json
+            ${{ runner.temp }}/RecordSift-EXP-019/deterministic-reproducibility.json
+            ${{ runner.temp }}/RecordSift-EXP-019/baseline-versus-opt-in.json
+            ${{ runner.temp }}/RecordSift-EXP-019/experiment-report.json
+            ${{ runner.temp }}/RecordSift-EXP-019/logical-compatibility-*.json
+            ${{ runner.temp }}/RecordSift-EXP-019/*-release-evidence/pilot-report.json
+            ${{ runner.temp }}/RecordSift-EXP-019/*-release-evidence/nunit-*.xml

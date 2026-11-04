@@ -150,7 +150,8 @@ internal static class MetadataExtractor
         foreach (ExportedTypeHandle handle in reader.ExportedTypes)
         {
             ExportedType forwarded = reader.GetExportedType(handle);
-            if ((forwarded.Attributes & TypeAttributes.Forwarder) != 0)
+            // CLI ExportedType Forwarder flag is 0x00200000 (not exposed in System.Reflection.TypeAttributes).
+            if (((int)forwarded.Attributes & 0x00200000) != 0)
                 Add(api, $"forwarded type {reader.GetString(forwarded.Namespace)}.{reader.GetString(forwarded.Name)}");
         }
 

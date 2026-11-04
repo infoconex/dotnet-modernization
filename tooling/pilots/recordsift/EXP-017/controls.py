@@ -11,7 +11,7 @@ import sys
 import xml.etree.ElementTree as ET
 import zipfile
 
-ROOT = Path(__file__).resolve().parents[3]
+ROOT = Path(__file__).resolve().parents[4]
 sys.path.insert(0, str(ROOT / 'tooling' / 'validators'))
 import compatibility
 import package_payload

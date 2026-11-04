@@ -15,6 +15,8 @@ public class Sample<T> : IContract<T> where T : class, new()
     public T Value { get; set; } = new();
     public event EventHandler? Changed;
     public const int Number = 42;
+    public void WithDefault(int count = 7) { }
+
     public readonly int ReadOnly;
     internal int Invisible;
     protected internal virtual T Process(ref T value, out string? message) { message = null; return value; }

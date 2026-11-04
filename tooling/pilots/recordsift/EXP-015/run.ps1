@@ -51,6 +51,11 @@ if ($LASTEXITCODE -ne 0) { throw 'Could not stage candidate changes.' }
 & git -C $candidate -c 'user.name=Modernization research' -c 'user.email=research@example.invalid' commit -m 'EXP-015 disposable LangVersion candidate'
 if ($LASTEXITCODE -ne 0) { throw 'Could not create ephemeral candidate commit.' }
 $candidateSha = (& git -C $candidate rev-parse HEAD).Trim()
+$baselineTreeSha = (& git -C $baseline rev-parse 'HEAD^{tree}').Trim()
+$candidateTreeSha = (& git -C $candidate rev-parse 'HEAD^{tree}').Trim()
+if ($LASTEXITCODE -ne 0 -or $candidateTreeSha -ceq $baselineTreeSha) {
+    throw 'Candidate source tree is identical to frozen baseline (or tree inspection failed).'
+}
 $changed = @(& git -C $candidate diff --name-only $baselineSha $candidateSha)
 $expectedPaths = @('Directory.Build.props') + @($projects | ForEach-Object {
     [IO.Path]::GetRelativePath($candidate, $_.FullName).Replace('\', '/')
@@ -113,7 +118,10 @@ $comparison = Get-Content -LiteralPath $comparisonFile -Raw | ConvertFrom-Json
 $report = [ordered]@{
     experiment = 'EXP-015'
     baseline_source_sha = $baselineSha
+    baseline_tree_sha = $baselineTreeSha
     ephemeral_candidate_sha = $candidateSha
+    candidate_tree_sha = $candidateTreeSha
+    replay_note = 'Local commit SHA may vary across runs from timestamp/author metadata; compare candidate tree SHA and retained patch for equivalent source.'
     candidate_push = 'none; ephemeral commit only'
     changed_files = @($changed)
     comparison_result = $comparison.overall

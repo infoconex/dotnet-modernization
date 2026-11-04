@@ -116,7 +116,8 @@ internal static class Program
         {
             MethodDefinition method = reader.GetMethodDefinition(handle);
             if (method.RelativeVirtualAddress == 0) continue;
-            byte[] bytes = pe.GetMethodBody(method.RelativeVirtualAddress).GetILBytes().ToArray();
+            byte[] bytes = pe.GetMethodBody(method.RelativeVirtualAddress).GetILBytes() ??
+                throw new BadImageFormatException("Managed method has no readable IL");
             ilBytes += bytes.Length;
             string token = MetadataTokens.GetToken(handle).ToString("X8", CultureInfo.InvariantCulture);
             methodBodies.Add(token, new

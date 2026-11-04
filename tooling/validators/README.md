@@ -9,7 +9,11 @@
 - **gates.py:** executes an explicit, reviewed array of argv commands **without a shell**, using the application checkout as its working root. Captures stdout/stderr to separate log files and records each gate's exit code, duration, status, expected-negative controls, and optionally NUnit 3 test counts. Records Git revision and source dirty paths before/after execution. Machine-readable output is **JSON schema version 1**.
 - All toolkit scripts use **only Python's standard library**. Unit fixtures do not require Visual Studio or RecordSift; the live MSBuild smoke test runs only when the SDK is installed.
 
-The original inventory and gate runner remain separate from the **new** evaluated-property and existing-restore-graph probes. Taken together, these tools still do **not** prove package feed acquisition origins, scan all runtime/native/COM activation, compile projects automatically, reconstruct complete legacy NuGet transitive closure, or independently compare binary/API/resource/consumer contracts. Supply those commands as explicit gates once your application has appropriate trusted checks. Do not call a successful workflow a validated upgrade merely because these tools ran.
+The source-only inventory and gate runner remain separate from evaluated-property, existing-restore-graph and compatibility-snapshot tools. Taken together, these tools still do **not** prove package feed acquisition origins, scan all runtime/native/COM activation, compile projects automatically, reconstruct complete legacy NuGet transitive closure, or independently compare binary/API/resource/consumer contracts. Supply those commands as explicit gates once your application has appropriate trusted checks. Do not call a successful workflow a validated upgrade merely because these tools ran.
+
+## Compatibility snapshots and comparisons
+
+The [compatibility snapshot and comparison guide](COMPATIBILITY.md) documents the new `compatibility.py` command, its five optional evidence categories (API, assembly identities, embedded-resource names, NuGet package metadata/path inventory, and NUnit 3 test results), source SHA controls, and its **scoped-match** semantics. Application-specific tools must generate API/assembly/resource manifests before comparison; the toolkit does **not** independently inspect .NET DLLs or certify consumer/runtime compatibility.
 
 ## Toolchain, evaluated MSBuild settings and dependencies
 

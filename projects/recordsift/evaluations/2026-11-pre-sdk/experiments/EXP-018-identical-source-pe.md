@@ -39,4 +39,30 @@ PE/MVID/PDB and raw IL hashes are *not* by themselves a causal explanation. Even
 
 **Review lenses:** .NET architecture, MSBuild/compiler, QA/release, reusable tooling design, security/supply-chain and developer documentation. These are analytical perspectives, not external human reviews.
 
-**Results:** Pending verified Actions run and artifact.
+## Verified evidence — three real builds with identical Git source
+
+[Successful Windows run 41901750747](https://github.com/infoconex/dotnet-modernization/actions/runs/41901750747), research SHA ade83c20d4942ebb5b34bd34a38e68e5d9b508cf (before documentation and enhanced property-log commits). [Evidence artifact 13359585654](https://github.com/infoconex/dotnet-modernization/actions/runs/41901750747/artifacts/13359585654), SHA-256 d42b59068654f3274a69a2d8580fd1c09f3bbb02e8fc6b9bda1520cd9226dd43, 30-day retention. The real original application Git SHA remained 8358780829458854a4b0356df5ac5e685f0a34c8 in all three builds. No app source files were modified and nothing was pushed or published.
+
+Each complete solution was independently restored and Rebuilt (all 10 traditional projects) using Windows 2022 Visual Studio MSBuild. **Each passed** the original **425-entry** compiled API gate, **419/418/0/1** NUnit tests across five assemblies, five XML docs, locally packaged 0.1.0, separate installed net48 consumer and Getting Started examples. The predecessor EXP-014 same-binary metadata repeats also matched, and the artificial evidence-difference controls detected the intended changes.
+
+Real metadata-only PE comparison of all five production DLLs:
+
+| Comparison against original build | DLL bytes differ | MVID differs | COFF stamp differs | PE debug directory differs | Raw method IL token records differ |
+| --- | ---: | ---: | ---: | ---: | ---: |
+| Second worktree, **same source SHA** | 5/5 | 5/5 | 5/5 | 5/5 | **0/5** |
+| Rebuilt at **exact same original checkout path** | 5/5 | 5/5 | 5/5 | 5/5 | **0/5** |
+
+The C# reader captured each actual PE and the portable Python comparator reported five changed whole-DLL hashes in both comparisons but **zero changed method-body IL token records**. The exact per-assembly SHA-256, version IDs, timestamp values, debug CodeView records, PDB path hashes, raw method IL token hashes, and 80 effective Release MSBuild property observations were retained in the artifact. All 40 project/property values matched across the two distinct source checkout paths. The workflow also inspected the new reader's own compiled DLL as a self-test before inspecting RecordSift.
+
+**Interpretation:** In this specific existing build, the changing whole-DLL bytes correlate with changed MVID/COFF/debug metadata **even with an identical Git source and identical source-directory path**. The compiled raw method IL bytes did not change. This is stronger evidence for build-generated metadata variation than EXP-017 could show, **not proof of which compiler setting or input caused the differences**, nor a guarantee that no other assembly metadata changed. It does not justify asserting an application defect or enabling Deterministic on production RecordSift.
+
+### Preserved interim failures and independent tooling check
+
+- [Windows run 41901490943](https://github.com/infoconex/dotnet-modernization/actions/runs/41901490943) **failed** while compiling the newly introduced PE reader: implementation incorrectly treated an object result as having a statically known assembly property, plus a nullable method-IL warning treated as an error. No three-build evidence was produced.
+- [Windows run 41901638985](https://github.com/infoconex/dotnet-modernization/actions/runs/41901638985) **failed** on the remaining nullable IL warning after fixing the first issue. The actual successful run came only after requiring nonnull method IL and correcting the reader.
+- [Portable validator run 41901638806](https://github.com/infoconex/dotnet-modernization/actions/runs/41901638806) passed on Ubuntu and Windows. At the successful PE-run research SHA, [tooling run 41901750743](https://github.com/infoconex/dotnet-modernization/actions/runs/41901750743) passed on Ubuntu but initially **failed** on Windows in a pre-existing dotnet-MSBuild smoke test: the returned LangVersion object lacked a value because its underlying query did not return a successful evaluated result. A failed-job retry was requested. This is not the new PE comparator fixture failing. Repeated failures should be recorded/investigated separately; do not misreport the initial Windows job as passing.
+
+**Evidence status:** The **three-build real PE experiment is verified**, with a separate final-branch property logging enhancement awaiting validation. Windows/Ubuntu fixture suite acceptance for the latest research revision must be confirmed independently. Draft PR #32 is open, unmerged, and RecordSift remains frozen.
+
+**Recommended next investigation:** Inspect actual evaluated Deterministic/DebugType/PathMap/PDB settings and isolate deliberate compiler determinism or debug-path controls **in disposable workspaces** with the full original API/NUnit/pack/consumer gate. Do not equate matching raw method IL with full binary, binding or behavioral equivalence.
+

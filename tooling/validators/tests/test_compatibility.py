@@ -196,7 +196,7 @@ class CompatibilityTests(unittest.TestCase):
         spec = {'schema_version': 1, 'components': {'api': 'public-api.txt'}}
         baseline = compatibility.capture(self.root, spec, sha, artifacts_root=artifacts)
         self.assertEqual(baseline['source']['dirty_paths'], [])
-        self.assertEqual(baseline['artifacts_root'], str(artifacts))
+        self.assertEqual(baseline['artifacts_root'], str(artifacts.resolve()))
         (artifacts / 'public-api.txt').write_text('T Fixture.Changed\\n')
         candidate = compatibility.capture(self.root, spec, sha, artifacts_root=artifacts)
         result = compatibility.compare(baseline, candidate)

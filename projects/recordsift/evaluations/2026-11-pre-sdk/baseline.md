@@ -62,7 +62,7 @@ Each project appears separately; settings are taken from its own `.csproj` at th
 
 ### Project-specific configuration
 
-One row per project; Debug and Release are side-by-side **columns**. `—` means a value is **not declared** in that project/configuration, not that the evaluated value is empty.
+Each project has one row per table. Separate Debug/Release columns are used **only when values differ**; identical values or predictable paths appear once. `—` means **not declared**, not an evaluated default.
 
 **Compiler settings**
 
@@ -81,18 +81,20 @@ One row per project; Debug and Release are side-by-side **columns**. `—` means
 
 **Output and validation settings**
 
-| Project | OutputPath (Debug) | OutputPath (Release) | WarningLevel (Debug) | WarningLevel (Release) | WarningsAsErrors (Debug) | WarningsAsErrors (Release) | DocumentationFile (Debug) | DocumentationFile (Release) |
-|---|---|---|---|---|---|---|---|---|
-| `Domain` | `bin\Debug\` | `bin\Release\` | `4` | `4` | `1591` | `1591` | `bin\Debug\RecordSift.Domain.xml` | `bin\Release\RecordSift.Domain.xml` |
-| `Application` | `bin\Debug\` | `bin\Release\` | `4` | `4` | `1591` | `1591` | `bin\Debug\RecordSift.Application.xml` | `bin\Release\RecordSift.Application.xml` |
-| `Infrastructure.Csv` | `bin\Debug\` | `bin\Release\` | `4` | `4` | `1591` | `1591` | `bin\Debug\RecordSift.Infrastructure.Csv.xml` | `bin\Release\RecordSift.Infrastructure.Csv.xml` |
-| `Infrastructure.Xlsx` | `bin\Debug\` | `bin\Release\` | `4` | `4` | `1591` | `1591` | `bin\Debug\RecordSift.Infrastructure.Xlsx.xml` | `bin\Release\RecordSift.Infrastructure.Xlsx.xml` |
-| `Infrastructure.Reporting` | `bin\Debug\` | `bin\Release\` | `4` | `4` | `1591` | `1591` | `bin\Debug\RecordSift.Infrastructure.Reporting.xml` | `bin\Release\RecordSift.Infrastructure.Reporting.xml` |
-| `Domain.Tests` | `bin\Debug\` | `bin\Release\` | `4` | `4` | — | — | — | — |
-| `Application.Tests` | `bin\Debug\` | `bin\Release\` | `4` | `4` | — | — | — | — |
-| `Infrastructure.Csv.Tests` | `bin\Debug\` | `bin\Release\` | `4` | `4` | — | — | — | — |
-| `Infrastructure.Xlsx.Tests` | `bin\Debug\` | `bin\Release\` | `4` | `4` | — | — | — | — |
-| `Infrastructure.Reporting.Tests` | `bin\Debug\` | `bin\Release\` | `4` | `4` | — | — | — | — |
+| Project | OutputPath | WarningLevel | WarningsAsErrors | DocumentationFile |
+|---|---|---|---|---|
+| `Domain` | `bin\<Configuration>\` | `4` | `1591` | `bin\<Configuration>\RecordSift.Domain.xml` |
+| `Application` | `bin\<Configuration>\` | `4` | `1591` | `bin\<Configuration>\RecordSift.Application.xml` |
+| `Infrastructure.Csv` | `bin\<Configuration>\` | `4` | `1591` | `bin\<Configuration>\RecordSift.Infrastructure.Csv.xml` |
+| `Infrastructure.Xlsx` | `bin\<Configuration>\` | `4` | `1591` | `bin\<Configuration>\RecordSift.Infrastructure.Xlsx.xml` |
+| `Infrastructure.Reporting` | `bin\<Configuration>\` | `4` | `1591` | `bin\<Configuration>\RecordSift.Infrastructure.Reporting.xml` |
+| `Domain.Tests` | `bin\<Configuration>\` | `4` | — | — |
+| `Application.Tests` | `bin\<Configuration>\` | `4` | — | — |
+| `Infrastructure.Csv.Tests` | `bin\<Configuration>\` | `4` | — | — |
+| `Infrastructure.Xlsx.Tests` | `bin\<Configuration>\` | `4` | — | — |
+| `Infrastructure.Reporting.Tests` | `bin\<Configuration>\` | `4` | — | — |
+
+`<Configuration>` is a **display placeholder** representing the explicitly declared `Debug` and `Release` paths, not an MSBuild expression. Both warning properties have the same declared values in Debug and Release.
 
 **Project-wide metadata**
 

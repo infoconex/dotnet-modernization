@@ -1,0 +1,80 @@
+name: EXP-018 identical-source managed PE reproducibility investigation
+
+on:
+  pull_request:
+    paths:
+      - ".github/workflows/validate-recordsift-pe-reproducibility.yml"
+      - "tooling/pe-provenance/**"
+      - "tooling/validators/pe_variation.py"
+      - "tooling/validators/tests/test_pe_variation.py"
+      - "tooling/pilots/recordsift/EXP-018/**"
+      - "projects/recordsift/evaluations/2026-11-pre-sdk/experiments/EXP-018-identical-source-pe.md"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  frozen-source-metadata:
+    runs-on: windows-2022
+    timeout-minutes: 75
+    steps:
+      - name: Checkout read-only research
+        uses: actions/checkout@08c6903cd8c0fde910a37f88322edcfb5dd907a8 # v5.0.0
+        with:
+          persist-credentials: false
+      - name: Checkout exact immutable RecordSift SHA
+        uses: actions/checkout@08c6903cd8c0fde910a37f88322edcfb5dd907a8 # v5.0.0
+        with:
+          repository: infoconex/RecordSift
+          ref: 8358780829458854a4b0356df5ac5e685f0a34c8
+          path: recordsift
+          fetch-depth: 0
+          persist-credentials: false
+      - name: Pin metadata-only toolchain SDK
+        uses: actions/setup-dotnet@a98b56852c35b8e3190ac28c8c2271da59106c68 # v6.0.0
+        with:
+          dotnet-version: "10.0.403"
+      - name: Verify portable comparison fixture tests
+        shell: pwsh
+        run: |
+          python -m unittest discover -s tooling/validators/tests -p test_pe_variation.py -v
+          if ($LASTEXITCODE -ne 0) { throw 'PE comparison unit tests failed.' }
+      - name: Build original API extractor and new metadata-only PE reader
+        shell: pwsh
+        run: |
+          $sdk = (& dotnet --version).Trim()
+          if ($LASTEXITCODE -ne 0 -or $sdk -cne '10.0.403') { throw "Incorrect .NET SDK $sdk" }
+          dotnet build tooling/assembly-metadata/src/AssemblyMetadata.csproj -c Release -nologo -v minimal
+          if ($LASTEXITCODE -ne 0) { throw 'Original metadata reader build failed.' }
+          dotnet build tooling/pe-provenance/src/PeProvenance.csproj -c Release -nologo -v minimal
+          if ($LASTEXITCODE -ne 0) { throw 'New managed PE reader build failed.' }
+          dotnet tooling/pe-provenance/src/bin/Release/net10.0/PeProvenance.dll --assembly tooling/pe-provenance/src/bin/Release/net10.0/PeProvenance.dll --output (Join-Path $env:RUNNER_TEMP 'exp018-reader-smoke.json')
+          if ($LASTEXITCODE -ne 0) { throw 'Metadata-only reader could not inspect its own compiled DLL.' }
+      - name: Three immutable-source builds, full release and consumer acceptance, and PE inspection
+        shell: pwsh
+        run: |
+          & ./tooling/pilots/recordsift/EXP-018/run.ps1 -ApplicationRoot (Join-Path $env:GITHUB_WORKSPACE 'recordsift') -EvidenceRoot (Join-Path $env:RUNNER_TEMP 'RecordSift-EXP-018')
+          if ($LASTEXITCODE -ne 0) { throw 'EXP-018 source identity, release gates, PE metadata or comparisons failed.' }
+      - name: Retain metadata reports, not compiled binaries or NuGet archives
+        if: always()
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4.6.2
+        with:
+          name: recordsift-exp018-identical-source-pe-evidence
+          retention-days: 30
+          if-no-files-found: warn
+          path: |
+            ${{ runner.temp }}/exp018-reader-smoke.json
+            ${{ runner.temp }}/RecordSift-EXP-018/toolchain.json
+            ${{ runner.temp }}/RecordSift-EXP-018/msbuild-evaluated-settings.json
+            ${{ runner.temp }}/RecordSift-EXP-018/original-pe.json
+            ${{ runner.temp }}/RecordSift-EXP-018/independent-pe.json
+            ${{ runner.temp }}/RecordSift-EXP-018/same-path-rebuild-pe.json
+            ${{ runner.temp }}/RecordSift-EXP-018/pe-variation-comparison.json
+            ${{ runner.temp }}/RecordSift-EXP-018/experiment-report.json
+            ${{ runner.temp }}/RecordSift-EXP-018/original-release-evidence/pilot-report.json
+            ${{ runner.temp }}/RecordSift-EXP-018/independent-release-evidence/pilot-report.json
+            ${{ runner.temp }}/RecordSift-EXP-018/same-path-rebuild-release-evidence/pilot-report.json
+            ${{ runner.temp }}/RecordSift-EXP-018/original-release-evidence/nunit-*.xml
+            ${{ runner.temp }}/RecordSift-EXP-018/independent-release-evidence/nunit-*.xml
+            ${{ runner.temp }}/RecordSift-EXP-018/same-path-rebuild-release-evidence/nunit-*.xml

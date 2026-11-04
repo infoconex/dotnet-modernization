@@ -54,7 +54,7 @@ Document relevant solution-level build inclusion/exclusions, nested solution fol
 
 ### Project-specific configuration
 
-**Use one row per project, with Debug and Release side-by-side as columns**, not separate rows. For projects with additional named configurations, add the relevant configuration columns. Keep related settings in focused tables rather than creating an excessively wide matrix. Only include properties relevant to the application and its modernization evaluation.
+**Use one row per project.** Include separate Debug and Release columns **only when their declared values differ**; collapse identical values and verified configuration-based path patterns into one column. When a project has different values that cannot be expressed with a shared pattern, show each configuration explicitly. Treat additional configurations similarly. Keep related settings in focused tables and include only properties relevant to the evaluation.
 
 **Compiler settings**
 
@@ -64,9 +64,13 @@ Document relevant solution-level build inclusion/exclusions, nested solution fol
 
 **Output and validation settings**
 
-| Project | OutputPath (Debug) | OutputPath (Release) | WarningLevel (Debug) | WarningLevel (Release) | WarningsAsErrors (Debug) | WarningsAsErrors (Release) | DocumentationFile (Debug) | DocumentationFile (Release) |
-|---|---|---|---|---|---|---|---|---|
-| <project> | <value> | <value> | <value> | <value> | <value> | <value> | <value> | <value> |
+Use a single column for a property when both configurations declare the same value or follow a clearly verified configuration-based path pattern. Show per-configuration values only for exceptions.
+
+| Project | OutputPath | WarningLevel | WarningsAsErrors | DocumentationFile |
+|---|---|---|---|---|
+| <project> | <shared value or `bin\\<Configuration>\\`> | <shared value or Debug/Release values> | <shared value or —> | <shared value, path pattern, or —> |
+
+`<Configuration>` in a path is a **display placeholder** for verified Debug/Release paths, not an MSBuild expression. For any project whose two configurations differ beyond the placeholder, show the actual Debug and Release values explicitly rather than implying they match.
 
 **Project-wide metadata**
 

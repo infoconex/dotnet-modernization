@@ -96,17 +96,30 @@ Tracked-source presence does not establish whether the toolchain imports other o
 
 ## 4. Dependencies and build
 
-### NuGet dependencies
+### External dependencies
 
-Record package dependencies **per project**, because different projects within one solution can use different NuGet declaration formats, versions or feeds. Link each declaration to its own source file; do not infer the declaration format from another project. For larger repositories, link to an equivalent complete inventory rather than duplicating it.
+Capture **all externally supplied dependencies**, not only NuGet packages. Project-to-project references are already in the project inventory; do not duplicate them here. Use a NuGet table for package declarations and a separate table **only when other external dependency mechanisms are present**. If none are declared, say so briefly. Record both build-time and runtime dependencies, and distinguish source inspection from executed discovery.
+
+**NuGet package declarations**
+
+Record one row per project/package declaration. Different projects may use `packages.config`, `PackageReference`, centrally managed versions, or a mixture.
 
 | Project | Package | Declared version | Declared in | Eligible feed(s) |
 |---|---|---|---|---|
-| <project> | <package ID> | <version or version range> | <linked `packages.config` / `PackageReference` and central-version source if applicable> | <source key(s) or not established> |
+| <project> | <package ID> | <version or range> | <linked `packages.config`, project `PackageReference`, central-version file if applicable> | <configured source key(s), or not established> |
 
-**Declaration location** and **package origin** are different facts. `PackageReference` lives in a project file and can obtain its version from `Directory.Packages.props`; `packages.config` lists installed packages for a project, including dependency packages. A repository may contain both project styles. Capture the configured feeds, any `packageSourceMapping` rules and restore overrides from applicable NuGet configuration. If individually verified package origins differ, add an **Observed origin** column with supporting restore evidence; otherwise state once that individual origins were not established. Package caches can satisfy restore without downloading from a feed. When declared and restored versions differ, record the resolved version as a separate column or link to the resolved package graph.
+The configured feed is **not necessarily the actual download origin**. Capture package-source mappings, NuGet restore overrides and source configuration. Add a verified **Resolved version** or **Observed origin** column when useful evidence exists; otherwise record the gap once. Keep the distributable package's own dependency metadata (such as a `.nuspec`) separate from project declarations.
 
-Keep **distributable package dependencies** (for example, a library's `.nuspec` metadata) distinct from the project's package declarations and from test/build tooling dependencies. Do not copy the same version inventory into two tables unless those declarations differ.
+**Other external dependencies (when present)**
+
+| Project / consumer | Dependency | Type / reference mechanism | Declared at | Version / identity | Location / resolution |
+|---|---|---|---|---|---|
+| <project> | <Vendor.Library.dll> | <assembly `Reference` with `HintPath`> | <linked project file> | <assembly identity/version if declared> | <relative/absolute path, verified or unresolved> |
+| <project> | <COM component> | <`COMReference`, `COMFileReference` or runtime activation> | <project file or code link> | <type-library GUID/major/minor, ProgID if known> | <registered on host / interop DLL / unknown> |
+| <project> | <native library> | <P/Invoke or dynamic native load> | <code or build manifest> | <DLL name/version/architecture> | <deployment path or runtime search behavior> |
+| <application> | <database/service> | <runtime service/API dependency> | <documented configuration or code> | <endpoint type/protocol/version if applicable> | <host/environment; omit secrets> |
+
+Additional mechanisms may include framework references, GAC-resolved assemblies, reference assemblies, custom build tasks, generated code, shared files, native packages or deployment-installed components. **Do not equate `Reference` without `HintPath` with proven GAC resolution**: an actual build or loader trace may be needed. For COM, include registration, platform bitness and interop requirements if known. For local DLLs, identify whether the referenced file is tracked, generated, installed externally, or missing. Source-only scans may not reveal reflection, runtime COM activation, native loading or external-service calls; mark those as **not assessed** rather than absent.
 
 ### Build environment
 

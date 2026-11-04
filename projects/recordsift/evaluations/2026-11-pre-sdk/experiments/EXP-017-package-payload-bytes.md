@@ -67,3 +67,5 @@ All **three** independently restored/rebuilt ten-project Release revisions passe
 
 **Interpretation:** **Do not claim that LangVersion centralization changed application behavior because the DLL hashes differ.** The five DLL members already differ under independent builds from identical frozen source. This does not prove the specific mechanism (MVID, PE timestamp, PDB path/compiler flags, generated source or any other input) or full deterministic-build behavior. A separate targeted reproducibility investigation is justified before recommending changes to signing/build properties. No application source or package has been pushed or published.
 
+
+**Follow-up research:** [issue #31](https://github.com/infoconex/dotnet-modernization/issues/31) tracks targeted CLR module/version-ID, PE/PDB and MSBuild property investigations to determine why separate builds of the same source produce differing DLL bytes. Do not assume any specific cause or recommend application changes from this first byte-level observation.

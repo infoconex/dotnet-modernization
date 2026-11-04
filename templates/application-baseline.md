@@ -1,137 +1,88 @@
-# <Application or repository> — Verified application baseline
+# <Application> — Verified application baseline
 
-**Repository:** <owner/repository>  
-**Source revision:** <full immutable Git SHA; branch is context, not identity>  
-**Source inventory date:** <YYYY-MM-DD>  
-**Baseline verification date(s):** <YYYY-MM-DD or not executed>  
-**Owner / scope:** <application owner, solution(s), included/excluded components>  
-**Inventory state:** <complete / partial with named gaps>  
-**Compatibility state:** <verified / partially verified / blocked / not executed>  
-**Evidence links:** <workflow runs, logs, artifacts, previously verified baseline>
+**Repository:** <owner/repo, browser URL> · **Baseline commit:** <full SHA>  
+**Inventory date:** <YYYY-MM-DD> · **Verification date:** <YYYY-MM-DD or not executed>  
+**Evidence state:** <source inspection status; executed compatibility status>
 
-Use this for substantial application or multi-project evaluations. Follow [the baseline procedure](../methodology/evaluation-process.md#2-establish-the-baseline). For small evaluations, include equivalent information directly in the [evaluation overview](evaluation-overview.md) instead of adding a duplicate file. **Remove empty/non-applicable subsections.** This template is an inventory and verification record, **not a proposed modernization plan or a requirement to add missing configuration files**.
+This is the **unchanged starting state**, not an experiment report or modernization proposal. Record each fact **once** under the six sections below, cite its pinned source or executed evidence, and explicitly note unknowns. For a small application, use a short equivalent section in the [evaluation overview](evaluation-overview.md) rather than copying this file. The [evaluation process](../methodology/evaluation-process.md#2-establish-the-baseline) describes how to collect and verify the information; don't repeat its instructions here.
 
-Record the origin and observation status of material claims: **source-declared**, **tool-evaluated**, **executed/verified**, **host-metadata observed**, **not executed** or **unknown**. Pin repository-source links to the baseline SHA; time-stamp mutable GitHub or package registry metadata. Do not infer that a declared version is the actual installed compiler version.
+## 1. Application overview
 
-## 1. Repository identity, application and release
+One short paragraph describing the application, its purpose, workload type (library/API/web/desktop/service/CLI), consumers, supported OS/runtime and relevant constraints.
 
-| Field | Observed value | Provenance / location |
+| Attribute | Value / source |
+|---|---|
+| Repository provider/type, visibility, owner and name | <Git host, app repository/monorepo, owner/repo> |
+| Browser URL; HTTPS and SSH clone URLs | <URLs> |
+| Default branch and immutable baseline SHA | <branch and full commit SHA> |
+| Application identity, ownership and license | <name, repository metadata/README/license> |
+| Supported framework(s), runtime/OS/architecture | <target(s) and confirmed support scope> |
+| Published release/package version(s) | <version and release/feed source; observed date> |
+| Source package, assembly, file and product versions | <distinct values and manifests/assembly metadata> |
+
+**Note only consequential discrepancies** (e.g., NuGet's published version differs from the checked-in `.nuspec`). Do not conflate solution format, declared Visual Studio version, MSBuild/SDK, target framework, C# version, assembly version and package version.
+
+## 2. Repository inventory
+
+| Directory | Purpose |
+|---|---|
+| <src/tests/docs/scripts/config/packaging/CI/deployment path> | <one-line description> |
+
+Document the **existing** modernization/configuration mechanisms here—present or absent from the pinned tree. Keep the table to applicable mechanisms, including shared MSBuild `Directory.Build.*` and `Directory.Solution.*`, `global.json`, `.editorconfig`, `NuGet.Config`, `packages.config`, `Directory.Packages.props`, `packages.lock.json`, relevant analyzer/Git files, application settings and CI/AI instruction files. Do **not** list every imaginable absent file if it has no bearing on the evaluation.
+
+| File or mechanism | Present / absent | Location and **current** purpose |
 |---|---|---|
-| Git host/provider and repository type | <GitHub/GitLab/etc.; app repo/monorepo/multiple solutions> | <host metadata and date> |
-| Repository name, owner, visibility | <values> | <host metadata> |
-| Browser URL; HTTPS/SSH clone URLs | <URLs> | <host metadata> |
-| Default branch and pinned baseline commit | <branch, full SHA> | <commit/tree link> |
-| Source ownership/instructions/license | <team, AGENTS.md/other, SPDX> | <files/host> |
-| Submodules, linked worktrees, external/shared sources | <present/absent and paths> | <tree/metadata> |
-| Application(s), purpose and consumers | <name, description, library/API/service/web/desktop/CLI> | <README/architecture> |
-| Supported OS, runtime, architecture/hosting | <Windows/Linux, runtime, framework, x86/x64/etc.> | <docs/config/build evidence> |
-| Published package/release/tag version(s) | <each separate value> | <release/feed metadata; observed date> |
-| Source package/manifests version(s) | <each separate value> | <nuspec/csproj/manifests> |
-| Assembly, file, informational/product version(s) | <per relevant output> | <AssemblyInfo.cs, project props, compiled metadata> |
+| <name> | <state> | <pinned source path, setting(s)> |
 
-**Identity/versions warning:** Solution format, declared VS version, project `ToolsVersion`, SDK version, MSBuild/compiler executable version, target framework, language version, assembly/file version and published package version are separate facts. State inconsistencies rather than silently harmonizing them.
+Absence is an observation, not a recommendation. Machine-wide, generated or imported settings must be distinguished from tracked files.
 
-## 2. Directory and solution inventory
+## 3. Solution and projects
 
-Summarize the actual tracked top-level/nested layout. List paths to source, tests, scripts, workflows, requirements, packaging, deployment, configuration and generated/ignored outputs; note any projects outside solutions. A short directory tree or table is sufficient.
-
-| Path | Role and noteworthy content | Source reference |
-|---|---|---|
-| <directory> | <source/test/config/deployment/etc.> | <pinned Git link> |
-
-Find **every** solution (`.sln`, `.slnx`, filters such as `.slnf`) and standalone project relevant to scope. Do not assume all projects are in one solution.
-
-| Solution/file | Format/version metadata when present | Projects/folders | Configurations/platforms | Mappings/exclusions | Source |
-|---|---|---|---|---|---|
-| <path or no solution> | <.sln version/VS declaration; .slnx-specific metadata; unknown> | <count and membership> | <Debug/Release/Custom, Any CPU/x64/etc.> | <ActiveCfg, Build.0, explicit dependencies, filters> | <pinned link> |
-
-Record solution project identifiers/GUIDs and paths, solution folders/nested hierarchy, build inclusion per configuration, and any project outside the solution. **Declared** minimum Visual Studio/version metadata is not proof of a working build environment. Solution-level `Any CPU` and project-level `AnyCPU` names can differ.
-
-## 3. Project inventory, settings and references
-
-One row per relevant project (or link to a complete versioned machine-readable inventory for a very large repository). Include project identity and what it actually produces, not just its filename.
-
-| Project path/name | Kind/format/SDK or ToolsVersion | Framework(s)/language | Output, assembly/root namespace/version | Config/platform | Direct project references | Other notable metadata |
-|---|---|---|---|---|---|---|
-| <.csproj/.vbproj/.fsproj/etc.> | <traditional/SDK-style/test/web/shared> | <TFM(s), C# version> | <Library/Exe/WinExe, identities> | <Debug/Release, AnyCPU/x64> | <paths> | <resources, signing, imports, warnings, generator> |
-
-For each project/condition where relevant, also record:
-
-- Direct `ProjectReference`, `Reference`/`HintPath`, `FrameworkReference`, `PackageReference` or `packages.config`, COM/PInvoke/native or shared-project edges; source dependencies are **not automatically** effective runtime dependencies.
-- Explicit or globbed `Compile`, `EmbeddedResource`, linked/generated items, logical resource names, assembly metadata and code generators/analyzers. Preserve compatibility-sensitive outputs through later project-format conversion.
-- Conditional `Configuration`/`Platform` groups; `DefineConstants`, optimization, debug/PDB, output/intermediate paths, XML docs and warning policies, signing, pre/post-build events, imports, custom `.props`/`.targets`, packaging/publish settings.
-- Declared **versus evaluated** MSBuild properties and imports in the build environment. Note the exact tool/command used to evaluate; don't claim evaluation without executing it.
-- Project reference topology including cycles, project-level architecture boundaries and target-framework incompatibilities, when found.
-
-## 4. Existing repository configuration mechanisms
-
-Record relevant files as **present/absent**, source location, current settings/purpose and observation status. *Absent from tracked source* does not rule out imported, machine-wide, environment or generated settings.
-
-| Mechanism | Present / absent / unknown | Path(s), consequential settings and source | Evaluation needed? |
+| Solution | Format / declared version(s) | Configurations and platforms | Included projects / build mappings |
 |---|---|---|---|
-| `.editorconfig`, `.globalconfig`/rulesets | <state> | <style/analyzer configuration> | <source vs run> |
-| `global.json` | <state> | <SDK pin/roll-forward> | <not inferred from dotnet --version> |
-| `Directory.Build.props`, `Directory.Build.targets`, `Directory.Build.rsp` | <state> | <imports/defaults/targets> | <evaluate if important> |
-| `Directory.Solution.*` | <state> | <solution customization> | <if applicable> |
-| `Directory.Packages.props` | <state> | <central package versions> | <if applicable> |
-| `NuGet.Config`, `packages.config`, `packages.lock.json` | <state> | <sources, audit, restore style, pins> | <actual restore closure> |
-| `.gitignore`, `.gitattributes`, source instructions | <state> | <ignored/generated files, line endings, instructions> | <if relevant> |
-| App/host configuration | <state> | <app.config, web.config, appsettings, IIS, Docker, services, IaC, secrets names only> | <if applicable> |
+| <.sln/.slnx path, or none> | <actual format-specific metadata> | <Debug/Release/Custom; Any CPU/x64/etc.> | <counts, ActiveCfg/Build inclusion and exceptions> |
 
-Do not mistake a file's absence for a defect or recommend creating files during source inventory.
+Include all relevant solutions, project paths and standalone projects **outside** solutions; note filters/folders/explicit dependencies when present. Never assume `.slnx` uses the same version/GUID serialization as `.sln`.
 
-## 5. Dependency graph and tooling inventory
+Use one project row per project (or link to a complete pinned inventory for a very large repository); state common values **once above the table**.
 
-| Category | Declared dependency/version | Effective/observed version | Source/evidence | Constraint or known gap |
+| Project/path | Kind, format and output | Framework(s), language, configuration | Direct project references | Notable differences |
 |---|---|---|---|---|
-| Production project references | <paths> | <graph> | <project XML> | <cycles/layers> |
-| Test project references and test tools | <NUnit, MSTest, etc.> | <runner version> | <project/CI> | <suite completeness> |
-| NuGet/direct and transitive packages | <pins and sources> | <resolved closure> | <restore output/lock/assets> | <license/security/binding redirects> |
-| Framework/SDK/targeting packs | <declared TFM> | <installed/ref packs> | <host inventory> | <supported platforms> |
-| Build toolchain | <VS/MSBuild/compiler/NuGet> | <actual version/path> | <commands/CI> | <preinstalled vs installed> |
-| OS/host/environment | <OS, arch, environment variables> | <version/image digest> | <runner/VM/container inventory> | <external services/feeds> |
+| <project> | <SDK/traditional, Library/Exe/Web/Test> | <TFMs/C#, Debug/Release/platform> | <direct references> | <GUID/identity/version/resources/extra imports> |
 
-Record package **declarations separately from resolved dependencies**, and test/packaging tools separately from distributable production dependencies. Do not record secrets or infer "direct" package intent without evidence.
+Summarize configuration differences **once** in a compact property table if relevant to the evaluation: `LangVersion`, compiler warnings, define constants, optimize/debug, output paths, `IsTestProject`, `DocumentationFile`, signing, source globs, resources/assembly identity and imported props/targets. Distinguish **declared** values from MSBuild **evaluated** values; document the tool used only if an evaluation actually ran.
 
-## 6. Build, test, CI/CD, packaging and runtime entry points
+## 4. Dependencies and build
 
-| Operation or workflow | Entry point, exact command/trigger | OS, shell, toolchain and configuration | Inputs/outputs and evidence | Limits |
-|---|---|---|---|---|
-| Clone and restore | <command> | <environment> | <source/feed> | <secrets names only> |
-| Build per solution/configuration | <command> | <Release/Debug, platform> | <DLL/EXE paths> | <unexecuted variants> |
-| Full and filtered tests | <command> | <runner, framework> | <counts/results> | <missing suites> |
-| API/compatibility checks | <command> | <host> | <snapshot, resources, identities> | <format/tool assumptions> |
-| Packaging and consumer check | <command> | <host> | <NuGet/install/consumer> | <unexecuted negatives> |
-| CI workflow | <path, triggers, branch filters> | <runner, tool provenance> | <run URL and commit> | <scope of CI gate> |
-| Publish/deploy/hosting | <script/workflow, no action taken> | <host> | <artifacts/healthchecks> | <authorization/external dependencies> |
-
-The presence of a workflow/script is **source evidence only**. A passing workflow may contain intentionally failed negative controls or skip tests; describe gate-level execution separately.
-
-## 7. Reproducible compatibility verification
-
-Verification must run on the **unchanged pinned revision** (or cite existing acceptable evidence from that exact revision). Record the actual OS/build environment, immutable container digest if used, tool provenance, command, results and run/artifact links. For absent gates, say **not executed / not applicable** with the reason.
-
-| Compatibility gate | Baseline outcome (verified/partial/failure/unexecuted/N/A) | Exact counts/contracts and evidence |
+| Topic | Baseline | Source or execution evidence |
 |---|---|---|
-| Restore and complete project build | <status> | <commands/versions/CI SHA> |
-| All discovered automated tests | <status> | <discovered/passed/failed/skipped per suite> |
-| API/ABI, assembly/file identity, XML docs, resources | <status> | <snapshot/signatures/identities> |
-| Package contents, dependency closure and clean consumer | <status> | <artifact/install/consumer logs> |
-| Runtime/platform/host/deployment behavior | <status> | <supported workloads and limitations> |
-| Application-specific security/integration/performance checks | <status> | <evidence or reason not applicable> |
+| Project, direct NuGet and resolved package graph | <counts/versions/sources, links to detail> | <csproj/packages.config/restore> |
+| Framework, external assemblies, generators and build prerequisites | <required tools/SDKs/targeting packs/interop> | <project/host inventory> |
+| Actual build environment and tools | <OS, MSBuild, SDK, NuGet, test runner, versions/paths/provenance> | <executed workflow/run> |
+| Restore/build/test/pack commands | <commands and relevant configurations> | <scripts/CI> |
+| CI/CD, packaging, deployment/consumer entry points | <workflow paths and artifacts> | <workflow definitions and executed evidence> |
 
-**Do not require a separate human reviewer.** A reproducible baseline means auditable source inspection and appropriately isolated execution, not perfect application correctness. Test counts are not coverage percentages. Preserve unexpected failures and negative controls.
+Include significant environment/host dependencies, release contracts, resource inputs and nondefault build steps **once** here. Package declarations, effective restored versions and compiled assembly references are separate; don't infer one from another. Don't include secrets.
 
-## 8. Discrepancies, known risks and baseline acceptance
+## 5. Verification results
 
-| Observation / missing information | Source vs evaluated vs executed | Impact on comparability | Follow-up (not automatically approved) |
-|---|---|---|---|
-| <known issue> | <evidence> | <risk> | <candidate or no change> |
+| Gate | Result and meaningful counts/contract | Executed evidence |
+|---|---|---|
+| Restore and complete build | <configuration; pass/fail/not run> | <CI run, commit, command> |
+| Automated tests | <discovered/passed/failed/skipped per suite or link> | <test output/run> |
+| Public API, assembly/resource/XML contracts | <baseline count/identity> | <snapshot/run> |
+| Package layout, dependency closure and clean consumer | <status/version/format> | <package/consumer run> |
+| Relevant platform/integration/other checks | <result or N/A/not executed> | <run/limits> |
 
-**Baseline assessment:** <verified / partial / blocked, with exact rationale>  
-**Acceptance constraints:** <what future modernization experiments must preserve>  
-**Unexecuted checks:** <list or none>  
-**Evidence retention:** <durable notes, links and artifacts; expiration concerns>  
-**Reusable baseline?** <yes for exact commit/tool environment, or conditions>
+A green workflow is not proof that every gate ran. Reuse valid existing evidence for the **same pinned source**; do not repeat tests merely to populate a document. Test counts do not establish code coverage or absence of defects.
 
-**Boundary:** Completing this document does **not** approve experiments, implementation, merges, release or publication. Link modernization opportunities and decisions from the [evaluation overview](evaluation-overview.md), not by rewriting historical baseline facts.
+## 6. Known issues and verification gaps
+
+| Issue, discrepancy or unverified assumption | Impact on baseline comparability |
+|---|---|
+| <specific observation and source> | <why it matters, link to existing investigation if any> |
+
+**Comparison contract:** <the gates that subsequent experiments must preserve>  
+**Baseline status:** <accepted verified reference / accepted with named gaps / more evidence needed>
+
+Keep this section factual. Record modernization hypotheses, implementation recommendations, risks and decisions in the **evaluation's** [findings/experiments/roadmap](evaluation-overview.md), rather than expanding the baseline into a second investigation report.

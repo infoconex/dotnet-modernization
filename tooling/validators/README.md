@@ -1,6 +1,6 @@
-# Reusable .NET evaluation validators (draft)
+# Reusable .NET evaluation validators
 
-**Status:** First toolkit increment, tested locally with Python's standard-library unit tests. These scripts are intentionally **independent of RecordSift**. They are not a substitute for application-specific build, API, resource, packaging and consumer checks.
+**Status:** Reusable, tested toolkit under continuing development. These scripts are intentionally **independent of RecordSift**. Their observations do not substitute for application-specific builds, API/resource checks, packaging, consumer or security verification.
 
 ## Requirements and scope
 
@@ -10,6 +10,51 @@
 - Both scripts use **only Python's standard library**. Their own tests do not require .NET, Visual Studio or RecordSift.
 
 They intentionally do **not** evaluate inherited MSBuild properties, prove package feed acquisition origins, scan runtime/native/COM activation, compile projects automatically, resolve NuGet transitive closure, or independently compare binary/API/resource/consumer contracts. Supply those commands as explicit gates once your application has appropriate trusted checks. Do not call a successful workflow a validated upgrade merely because these tools ran.
+
+## Toolchain, evaluated MSBuild settings and dependencies
+
+These additional commands emit independent, versioned JSON reports. They **do not change source files, run a build, restore packages, validate consumers, or authorize a modernization change**. All output paths must be outside the application's checkout.
+
+### Host toolchain observations
+
+~~~shell
+python tooling/validators/toolchain.py \
+  --source /path/to/application \
+  --output /path/outside/application/evidence/toolchain.json
+~~~
+
+Captures OS/architecture/Python, \`dotnet\` selected SDK version **from the application's working directory** (so \`global.json\` matters), enumerated SDKs and runtimes, the SDK's MSBuild version, any stand-alone \`msbuild\` and \`nuget\` available on \`PATH\`, installed .NET targeting packs in probed SDK roots, and conventional Windows .NET Framework reference-assembly folder versions. Missing tools and SDK-selection failures are explicit. **This is not a complete Visual Studio/Build Tools inventory**, does not authenticate binaries or image digests, and does not prove that a package/SDK builds an application.
+
+### MSBuild evaluated-property matrix
+
+Copy and edit [the sample matrix](examples/property-matrix.example.json). Choose the actual project(s), properties and explicit build contexts you need.
+
+~~~shell
+python tooling/validators/properties.py \
+  --source /path/to/application \
+  --project path/inside/application/Library.csproj \
+  --matrix tooling/validators/examples/property-matrix.example.json \
+  --engine dotnet \
+  --output /path/outside/application/evidence/evaluated-properties.json
+~~~
+
+Repeat \`--project\` for multiple projects. \`--engine msbuild\` selects stand-alone \`MSBuild.exe\` where it is discoverable on \`PATH\`; the default is \`dotnet msbuild\`. This feature requires an MSBuild version supporting \`-getProperty\` (MSBuild 17.8+). Values are obtained **one property at a time**, in each requested \`Configuration\`, \`Platform\`, \`TargetFramework\` or \`RuntimeIdentifier\` context. The tool records actual evaluated values, explicit empty-or-undefined outcomes and blocked/failed/timeout statuses. An ordinary failed query makes the command return a nonzero status. No \`-target:Build\` invocation or automatic restore is performed.
+
+**Important:** MSBuild evaluates imported project code and SDK resolvers. Use trusted, isolated checkouts and verify that an experiment cannot invoke unwanted custom behavior. Source-declared settings from \`inventory.py\` and effective settings from \`properties.py\` are *different evidence*. An empty result does not distinguish an omitted property from one deliberately set to empty. The CLI restricts property names and context values and does not capture verbose MSBuild error text, but sensitive values can still be present in property results: review plans and generated evidence before sharing.
+
+### Existing NuGet restore graph
+
+~~~shell
+python tooling/validators/dependencies.py \
+  --source /path/to/application \
+  --output /path/outside/application/evidence/dependencies.json
+~~~
+
+For **PackageReference** projects with an existing \`obj/project.assets.json\`, captures the *previous restore's* target-framework/RID-specific package and project library graph, resolved versions and dependency edges, direct declarations when supported by restore metadata, and counts of available compile/runtime/native assets. If no direct-classification metadata exists it reports **unknown**, not transitive. Graph edges can be explicitly unresolved or ambiguous.
+
+For **legacy \`packages.config\`**, captures exact source-declared versions and target frameworks, with optional folder-presence evidence using \`--packages-dir /path/to/restored/packages\`. **This is not a complete transitive dependency graph** for legacy projects; directories are not proof of an authentic restore. Reports explicitly distinguish \`assets_available\`, \`legacy_metadata_only\`, \`no_restore_evidence\`, and \`partial\` (parse failures). The command **never executes NuGet restore**. Stale \`obj\` data and restore sources must be independently checked. A complete security/dependency provenance review needs additional controls.
+
+**Example evidence order:** capture the immutable source SHA, run source inventory and toolchain inventory, perform an authorized normal restore through the application-provided gate runner, then collect the resolved graph and evaluated settings. Use an isolated workspace and compare *before* and *after* modernization candidates; preserve all logs and note missing gates.
 
 ## Source inventory
 
@@ -80,10 +125,10 @@ The result directory is required **outside the source checkout** to avoid contam
 python -m unittest discover -s tooling/validators/tests -v
 ~~~
 
-The tests exercise both legacy and SDK-style project XML, conditional property declarations, central package version declarations, COM and DLL references, partial malformed XML, SHA mismatch, redaction, negative controls, missing executables, fail-fast, NUnit counts, invalid paths, timeouts, and output isolation.
+The tests exercise legacy/SDK-style XML, NuGet restore graph fixtures, declared/direct ambiguity, tool availability, conditional and evaluated MSBuild settings, basic MSBuild execution when installed, negative controls, NUnit counts, malformed files, timeouts, and evidence isolation.
 
-**Verified locally:** 13/13 tests passed on Python 3.13.5 (Linux). Source/test files on this draft branch have Git blob IDs matching the tested local files. A separate pull-request CI workflow runs the suite on Ubuntu and Windows; its result is **not claimed passed until GitHub reports it**.
+**Verification for this increment:** Locally, 27 tests passed (Python 3.13.5 on Linux, including one live MSBuild smoke test skipped because no SDK is installed). The existing GitHub Actions test workflow checks the full suite on Windows and Ubuntu; consult the current PR checks for hosted outcomes rather than assuming they passed.
 
 ## Next increments
 
-After stakeholder review, consider a separate source-controlled module for toolchain fingerprinting (MSBuild executable/tool provenance, SDKs/targeting packs, container digests), evaluated-property matrices with controlled configuration/TFM/platform, NuGet restore-resolution closure, explicit API/assembly/resource/package diff checks, and a common report summary/JSON schema contract. Each needs focused tests on **legacy and SDK-style fixtures** before it is generalized. Keep the [historical RecordSift archive in draft PR #21](https://github.com/infoconex/dotnet-modernization/pull/21) unchanged; use it as evidence and regression input rather than treating it as automatically portable.
+After stakeholder review, consider deeper tool provenance (Visual Studio/Build Tools and pinned image digests), effective imported-property origins, legacy NuGet transitive resolution, explicit API/assembly/resource/package diff checks, and a common result schema and summary. The new modules provide **observational foundations**, not those comprehensive compatibility proofs. Each needs focused tests on **legacy and SDK-style fixtures** before it is generalized. Keep the [historical RecordSift archive in draft PR #21](https://github.com/infoconex/dotnet-modernization/pull/21) unchanged; use it as evidence and regression input rather than treating it as automatically portable.

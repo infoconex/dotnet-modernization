@@ -7,6 +7,8 @@ import os
 from pathlib import Path
 import re
 import sys
+
+from provenance import snapshot, require_commit
 import xml.etree.ElementTree as ET
 
 SCHEMA_VERSION = 1
@@ -127,6 +129,7 @@ def collect(source, packages_dir=None):
             raise ValueError('packages directory must be a directory')
     record = {'schema_version': SCHEMA_VERSION, 'kind': 'available-dependency-resolution-evidence',
               'generated_utc': dt.datetime.now(dt.timezone.utc).isoformat(), 'source_root': str(source),
+              'source': snapshot(source),
               'assets': [], 'legacy': [], 'errors': [],
               'limitations': ['No restore executed. Missing assets or package directories remain unresolved.',
                               'Package source configuration and download provenance are not verified.',
@@ -156,12 +159,14 @@ def main(argv=None):
     p.add_argument('--source', type=Path, required=True)
     p.add_argument('--packages-dir', type=Path, help='Optional legacy packages cache root; directory presence only')
     p.add_argument('--output', type=Path, required=True)
+    p.add_argument('--expect-commit', help='Require an exact 40-character Git SHA')
     args = p.parse_args(argv)
     try:
         source = args.source.resolve(strict=True)
         output = args.output.resolve()
         if output == source or output.is_relative_to(source):
             raise ValueError('output must be outside checkout')
+        require_commit(snapshot(source)['commit'], args.expect_commit)
         report = collect(source, args.packages_dir)
         output.parent.mkdir(parents=True, exist_ok=True)
         output.write_text(json.dumps(report, indent=2, sort_keys=True) + '\n', encoding='utf-8')

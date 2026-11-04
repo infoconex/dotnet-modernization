@@ -35,7 +35,8 @@ class PropertyTests(unittest.TestCase):
             return FakeRun('')
         matrix = {'schema_version': 1, 'properties': ['LangVersion', 'WarningLevel', 'DefineConstants'],
                   'contexts': [{'Configuration': 'Release', 'Platform': 'AnyCPU'}]}
-        with patch.object(properties.subprocess, 'run', side_effect=fake):
+        with patch.object(properties, 'snapshot', return_value={'commit': None, 'branch': None, 'dirty_paths': None}), \
+             patch.object(properties.subprocess, 'run', side_effect=fake):
             report = properties.evaluate(self.root, ['lib.csproj'], matrix, ['fake-msbuild'])
         observed = report['projects'][0]['contexts'][0]['properties']
         self.assertEqual(observed['LangVersion']['value'], '7.3')

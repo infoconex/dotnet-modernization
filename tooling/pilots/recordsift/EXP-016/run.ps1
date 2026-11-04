@@ -102,8 +102,8 @@ foreach ($category in @('assemblies', 'resources', 'packages', 'tests')) {
 }
 if ($comparison.components.api.diff_truncated) { throw 'API diff unexpectedly truncated.' }
 $diffs = @($comparison.components.api.differences)
-$old = 'field RecordSift.Domain.Results.ImportStatus.Canceled public const type=RecordSift.Domain.Results.ImportStatus value=3'
-$new = 'field RecordSift.Domain.Results.ImportStatus.Canceled public const type=RecordSift.Domain.Results.ImportStatus value=42'
+$old = 'assembly RecordSift.Domain :: field RecordSift.Domain.Results.ImportStatus.Canceled public const type=RecordSift.Domain.Results.ImportStatus value=3'
+$new = 'assembly RecordSift.Domain :: field RecordSift.Domain.Results.ImportStatus.Canceled public const type=RecordSift.Domain.Results.ImportStatus value=42'
 if ($diffs.Count -ne 2 -or
     @($diffs | Where-Object { $_.change -ceq 'removed' -and $_.baseline -ceq $old }).Count -ne 1 -or
     @($diffs | Where-Object { $_.change -ceq 'added' -and $_.candidate -ceq $new }).Count -ne 1) {

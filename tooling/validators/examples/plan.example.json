@@ -1,0 +1,16 @@
+{
+  "schema_version": 1,
+  "application": "REPLACE_WITH_APPLICATION_NAME",
+  "gates": [
+    {
+      "id": "git-available",
+      "command": ["git", "--version"],
+      "timeout_seconds": 20
+    },
+    {
+      "id": "dotnet-available",
+      "command": ["dotnet", "--info"],
+      "timeout_seconds": 40
+    }
+  ]
+}

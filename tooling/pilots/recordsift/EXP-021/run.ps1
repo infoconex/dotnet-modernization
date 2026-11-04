@@ -85,7 +85,7 @@ function Run-CiCandidate([string]$root, [string]$label) {
     $output = @()
     $exit = 2
     try {
-        & nuget restore RecordSift.sln -NonInteractive -PackagesDirectory packages -ConfigFile NuGet.Config
+        & nuget restore RecordSift.sln -NonInteractive -PackagesDirectory packages -ConfigFile NuGet.Config | Out-Host
         if ($LASTEXITCODE -ne 0) { throw "$label NuGet restore failed." }
         $output = @(& $msbuild RecordSift.sln /m /t:Rebuild /p:Configuration=Release '/p:Platform=Any CPU' '/p:Deterministic=true' '/p:ContinuousIntegrationBuild=true' /verbosity:minimal 2>&1)
         $exit = $LASTEXITCODE
@@ -103,7 +103,7 @@ function Run-CiCandidate([string]$root, [string]$label) {
         return [ordered]@{ label=$label; build='failed'; build_exit=$exit; error_codes=$buildErrors; full_release_gates='not_run'; pe='not_available'; source_sha=$frozen }
     }
     $releaseDir = Join-Path $evidence "$label-release-evidence"
-    & $pilot -ApplicationRoot $root -EvidenceRoot $releaseDir -ExpectedCommit $frozen -ExperimentId "EXP-021-$label"
+    & $pilot -ApplicationRoot $root -EvidenceRoot $releaseDir -ExpectedCommit $frozen -ExperimentId "EXP-021-$label" | Out-Host
     if ($LASTEXITCODE -ne 0) { throw "$label compiled but historical API/NUnit/XML/NuGet/consumer release acceptance FAILED." }
     Check-Frozen $root "$label after release acceptance"
     $args = @($reader)

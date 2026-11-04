@@ -169,6 +169,8 @@ The values above are declared in the frozen source, not measured by an independe
 | `Infrastructure.Xlsx.Tests` | `NUnit` | `3.14.0` | [`packages.config`](https://github.com/infoconex/RecordSift/blob/8358780829458854a4b0356df5ac5e685f0a34c8/tests/RecordSift.Infrastructure.Xlsx.Tests/packages.config) | `nuget.org` | Test framework |
 | `Infrastructure.Reporting.Tests` | `NUnit` | `3.14.0` | [`packages.config`](https://github.com/infoconex/RecordSift/blob/8358780829458854a4b0356df5ac5e685f0a34c8/tests/RecordSift.Infrastructure.Reporting.Tests/packages.config) | `nuget.org` | Test framework |
 
+**Usage** distinguishes production, test-framework and test-runner purposes; it does **not** establish historically direct versus transitive dependency status. [EXP-011](experiments/EXP-011-nuget-dependency-inventory.md) records that limitation.
+
 | Attribute | Value |
 |---|---|
 | NuGet package source | `https://api.nuget.org/v3/index.json` |

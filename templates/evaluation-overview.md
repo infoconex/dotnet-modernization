@@ -31,43 +31,25 @@ List the few prioritized investigation objectives, rationale, expected evidence/
 
 ## Verified, reproducible application baseline
 
-**Baseline source:** <repository owner/name and immutable full commit SHA>  
-**Inventory checked:** <date and source reference>  
-**Compatibility evidence:** <run URLs/commit/artifact identifiers, or explicitly not executed>  
-**Recorded in:** <link to baseline.md or inline section; no empty documents>  
-**Baseline status:** <source inventory complete/partial; behavior verified/partial/blocked/not executed>
+**Baseline source:** <repository owner/name + immutable full commit SHA>  
+**Inventory checked:** <date and source references>  
+**Compatibility evidence:** <run URLs/commit/artifact identifiers or explicitly not executed>  
+**Inventory status:** <complete/partial; named gaps>  
+**Verification status:** <verified/partial/blocked/not executed>  
+**Detailed record:** <link to baseline.md, or state that concise inventory is inline>
 
-Follow [establish the baseline](../methodology/evaluation-process.md#2-establish-the-baseline). Complete both **source-backed discovery** and **executed verification** before relying on this baseline for modernization decisions. For a small application, concise tables/links in this overview may be sufficient; for a larger one, link to an application-specific `baseline.md`.
+Follow [establish the baseline](../methodology/evaluation-process.md#2-establish-the-baseline) and use the [application baseline template](application-baseline.md) for substantial or multi-project evaluations. That template covers repository hosting/clone URLs and layout, application and package version identities, `.sln`/`.slnx` and project inventories, direct/effective dependencies, existing `Directory.Build.*`/`global.json` and other configuration, build/CI/toolchain, and compatibility verification. **Both source-backed discovery and executed checks are required**, although previously verified evidence at the exact same source SHA may be reused.
 
-### A. Repository, application, solution and configuration inventory
+For a small application, summarize the same applicable information here rather than creating a standalone file:
 
-Record these categories from the **unchanged source**. Include the source location and explicitly mark unavailable/irrelevant data; do **not** turn optional mechanisms into mandatory adoption recommendations.
-
-| Inventory subject | Required information where applicable | Source reference / verification gap |
+| Inventory / verification topic | Observed value and immutable source/evidence | Gaps |
 |---|---|---|
-| Repository identity | Git provider, host type, owner/name, public/private scope, browser URL, HTTPS and SSH clone URLs, default branch, exact baseline SHA, license | <source or observed host metadata/date> |
-| Application identity | Name, purpose, workload type, consumers, runtime/OS/architecture, published/application/package/assembly/file versions **separately** | <README/manifests/version sources> |
-| Directory structure | Actual project/source/test/docs/script/packaging/CI/deployment layout, generated/ignored directories, submodules | <pinned Git tree/paths> |
-| Solution(s) | Count and paths of `.sln`/`.slnx` (or none); format and version metadata where applicable, project membership/type/GUID, folders, configurations/platforms and project build mappings; projects outside solutions | <pinned solution files> |
-| Project(s) | Path/name, SDK-style or traditional, target framework(s), language/version, output/project type, `ToolsVersion` if relevant, platform/configurations, assembly/root namespace/identity/version and output paths | <pinned project files; evaluated settings if available> |
-| Dependency graph | Direct project references, explicit assembly/HintPath, NuGet declarations and **effective** versions, lockfiles, external tool/feeds/services, architecture edges | <projects, restores and inventory evidence> |
-| Build-sensitive metadata | Imported `.props`/`.targets`, compiler defines/warnings/optimization, linked/globbed/embedded/generated resources, output/assembly attributes, pre/post-build steps and packaging contracts | <project files, source/verification> |
-| Existing config files | **Present/absent**, locations and consequential values for relevant `Directory.Build.*`, `Directory.Solution.*`, `Directory.Packages.props`, `global.json`, `.editorconfig`, `NuGet.Config`, `packages.config`, `packages.lock.json`, `.globalconfig`, Git/config and application/host-specific files | <pinned repository tree; distinguish inherited/host settings> |
-| CI, build and release entry points | Restore/build/test/package/publish commands; scripts/workflows, triggers, OS/agent, tools/shells, package consumers, deployment/hosting and external prerequisites | <specific scripts/workflows> |
+| Repository, application identity, versions and layout | <repo, clone URL, app type, package/assembly versions, directory tree> | <none or named gap> |
+| Solution(s), projects, frameworks, outputs and dependency graph | <solution/project paths, declared versions, configurations/build mappings, external dependencies> | <none or named gap> |
+| Pre-existing configuration and tooling | <present/absent relevant MSBuild/NuGet/SDK/analyzer files, commands, actual tool versions> | <none or named gap> |
+| Test, API/resource, packaging, deployment/consumer gates | <commands, real results including passed/failed/skipped, run and artifact links> | <unexecuted checks> |
 
-For multi-project repositories, include a **project inventory table or a referenced machine-readable inventory** showing each relevant project's output type, framework(s), SDK/project format, version identity and direct references. Record inconsistencies without modifying the source. Avoid duplicating raw project XML or dumping unnecessary metadata.
-
-### B. Reproducible compatibility checks
-
-| Gate | Exact command / environment | Evidence and outcome |
-|---|---|---|
-| Restore and complete solution/project build | <OS, SDK/MSBuild, package sources and command> | <run/commit, verified/partial/failed/not executed> |
-| Automated tests | <all assemblies/test frameworks/filters> | <discovered, passed, failed, skipped; run> |
-| Public contracts | <API signatures, assembly/version/resources/serialization and docs as applicable> | <comparison evidence or not applicable> |
-| Packaging and external consumers | <NuGet/app artifacts, dependencies, clean consumer or deployment> | <run/known limitation> |
-| App-specific behavior | <runtime/platform, integration, security, performance or operational gate when relevant> | <evidence or gap> |
-
-**Provenance rule:** Keep **declared project/solution versions**, **evaluated MSBuild/compiler settings**, **actual runtime/tool versions** and **executed evidence** distinct. Record missing tests/uncertainty honestly. Do not require an independent human reviewer; independent execution means evidence from unchanged source in a reproducible environment. Reuse verified existing evidence at the same source revision without rerunning sufficient checks.
+**Provenance rule:** Keep declared versions, evaluated MSBuild settings, actual installed tools, and executed CI results separate. Do not mistake absence of an optional configuration file for a defect. Do not require an external reviewer or duplicate verification that already applies to the same immutable source/environment.
 
 **Baseline disposition:** <accepted verified reference / accepted with named gaps / additional evidence needed>.
 

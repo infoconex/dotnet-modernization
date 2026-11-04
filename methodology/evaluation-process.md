@@ -70,7 +70,7 @@ On the same pinned application source, record the actual OS/toolchain, restore a
 
 **Reuse rule:** Reuse an adequately verified existing baseline at the **same immutable commit** and compatible relevant environment. Do not rerun successful checks merely to populate an inventory; do not use another commit's green CI result as evidence for the current source without explaining its scope. New experiments compare against the established reference gates.
 
-**Output:** a traceable, readable application **baseline record** containing both source-inventory and verification evidence, with explicit missing fields/limitations. Use one `baseline.md` for substantial evaluations, or an equivalent section in the evaluation overview for small ones; do not create mandatory empty secondary files. The [evidence standards](evidence-standards.md) govern actual run provenance. Baseline **facts** belong here; proposed modernization changes belong in later findings/opportunities/experiments.
+**Output:** a traceable, readable application **baseline record** containing both source-inventory and verification evidence, with explicit missing fields/limitations. Use the [application baseline template](../templates/application-baseline.md) as the recommended format for substantial evaluations and record the result in one `baseline.md`, or capture the applicable information in the evaluation overview for small ones; do not create mandatory empty secondary files. The [evidence standards](evidence-standards.md) govern actual run provenance. Baseline **facts** belong here; proposed modernization changes belong in later findings/opportunities/experiments.
 
 ## 3. Reproduce the environment
 

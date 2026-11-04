@@ -36,7 +36,7 @@ The complete immutable executable procedure is [the experimental workflow](https
 | Control | Observed result | Interpretation |
 |---|---|---|
 | Original projects, Debug and Release | **20/20 evaluated `WarningLevel=4`** | Verified immutable baseline |
-| Original representative Application production and test projects under `Custom|AnyCPU` | **Empty** `WarningLevel` value | Baseline does not explicitly set it in this configuration |
+| Original representative Application production and test projects under `Custom\|AnyCPU` | **Empty** `WarningLevel` value | Baseline does not explicitly set it in this configuration |
 | Remove exactly 20 project declarations; create unrestricted shared default `4` | **20/20 Debug/Release still `4`**, but representative `Custom` becomes **explicit `4`** | Functional gate parity is possible; **property semantics broaden** for an undefined configuration |
 | Scope shared default to Debug and Release only | **20/20 Debug/Release remain `4`; representative `Custom` becomes empty again** | Preserves tested effective property semantics |
 | In scoped shared default, temporarily substitute `WarningLevel=3` | Application and test examples: **Debug=3, Release=3, Custom=empty** | Verified that shared value truly propagates and is not merely masked by the compiler default |
@@ -69,7 +69,7 @@ One source-format observation matters for reproducing the experiment: the Report
 | Unpublished local `0.1.0-rc.1` package | **PASS:** metadata, five assemblies, five XML files, notices, README, license and dependencies validated |
 | Independent installed-package consumer | **PASS:** compiled/executed; customer CSV/XLSX and all four Getting Started sample files validated |
 | Intentional missing-public-documentation control `CS1591` | **PASS:** existing negative check rejected undocumented `ExpectedColumn.Name` |
-| Actual permanent application files | **UNMODIFIED** | Experimental checkout and local candidate were discarded when job finished |
+| Actual permanent application files | **UNMODIFIED:** experimental checkout and local candidate were discarded when job finished |
 
 **Unpublished experimental package SHA-256:** `7765D2479FFBA0FA4700889E9467B56AF24E516951B334B813C2D82FF6CF9ADD`. The local package's source-commit field points to the experimental workflow commit (while the unchanged packager stamps `branch=main`); **do not publish** that exploratory archive. This is compatibility-test evidence, not an approved publication candidate.
 

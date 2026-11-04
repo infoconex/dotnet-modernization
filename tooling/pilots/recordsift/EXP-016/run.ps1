@@ -150,3 +150,6 @@ $summary = [ordered]@{
 }
 $summary | ConvertTo-Json -Depth 12 | Set-Content (Join-Path $evidence 'experiment-report.json') -Encoding utf8
 Write-Host "PASS: EXP-016 two real compiled revisions and strict positive/negative gates; ephemeral SHA $candidateSha"
+# Explicitly expected nonzero exit statuses were recorded and asserted above.
+# Return overall success only after every positive and negative gate passed.
+$global:LASTEXITCODE = 0

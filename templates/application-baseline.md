@@ -96,13 +96,17 @@ Tracked-source presence does not establish whether the toolchain imports other o
 
 ## 4. Dependencies and build
 
-### Dependencies
+### NuGet dependencies
 
-Each external dependency/package occupies **one row** when individual versions are relevant. Record NuGet declaration format, package feeds and project-reference topology without repeating the project inventory.
+Record package dependencies **per project**, because different projects within one solution can use different NuGet declaration formats, versions or feeds. Link each declaration to its own source file; do not infer the declaration format from another project. For larger repositories, link to an equivalent complete inventory rather than duplicating it.
 
-| Package / dependency | Declared version | Resolved version, if verified |
-|---|---|---|
-| <package name> | <version> | <version or not verified> |
+| Project | Package | Declared version | Declared in | Eligible feed(s) | Observed origin |
+|---|---|---|---|---|---|
+| <project> | <package ID> | <version or version range> | <linked `packages.config` / `PackageReference` in project file / central-version file> | <source key(s) or not established> | <verified feed/cache and evidence, or not recorded> |
+
+**Declaration location** and **package origin** are different facts. `PackageReference` lives in a project file and can obtain its version from `Directory.Packages.props`; `packages.config` lists installed packages for a project, including dependency packages. A repository may contain both project styles. Capture the configured feeds, any `packageSourceMapping` rules and restore overrides from applicable NuGet configuration, but don't call a feed the **observed origin** without logs or package metadata that establish it. Package caches can satisfy restore without downloading from a feed. When declared and restored versions differ, record the resolved version as a separate column or link to the resolved package graph.
+
+Keep **distributable package dependencies** (for example, a library's `.nuspec` metadata) distinct from the project's package declarations and from test/build tooling dependencies. Do not copy the same version inventory into two tables unless those declarations differ.
 
 ### Build environment
 

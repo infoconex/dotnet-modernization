@@ -1,0 +1,83 @@
+name: EXP-021 isolated CI property on traditional net48 without Source Link
+
+on:
+  pull_request:
+    paths:
+      - ".github/workflows/validate-recordsift-ci-property-only.yml"
+      - "tooling/pilots/recordsift/EXP-021/**"
+      - "projects/recordsift/evaluations/2026-11-pre-sdk/experiments/EXP-021-ci-property-only.md"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  ci-property-only:
+    runs-on: windows-2022
+    timeout-minutes: 90
+    steps:
+      - name: Checkout isolated research without persistent credentials
+        uses: actions/checkout@08c6903cd8c0fde910a37f88322edcfb5dd907a8 # v5.0.0
+        with:
+          persist-credentials: false
+      - name: Checkout exactly frozen RecordSift net48 application source
+        uses: actions/checkout@08c6903cd8c0fde910a37f88322edcfb5dd907a8 # v5.0.0
+        with:
+          repository: infoconex/RecordSift
+          ref: 8358780829458854a4b0356df5ac5e685f0a34c8
+          path: recordsift
+          fetch-depth: 0
+          persist-credentials: false
+      - name: Pin read-only metadata inspector SDK
+        uses: actions/setup-dotnet@a98b56852c35b8e3190ac28c8c2271da59106c68 # v6.0.0
+        with:
+          dotnet-version: "10.0.403"
+      - name: Verify existing PE comparison fixture tests
+        shell: pwsh
+        run: |
+          python -m unittest discover -s tooling/validators/tests -p test_pe_variation.py -v
+          if ($LASTEXITCODE -ne 0) { throw 'Portable PE comparison unit tests failed.' }
+      - name: Build existing metadata-only readers
+        shell: pwsh
+        run: |
+          $sdk = (& dotnet --version).Trim()
+          if ($LASTEXITCODE -ne 0 -or $sdk -cne '10.0.403') { throw "Unexpected SDK $sdk" }
+          dotnet build tooling/assembly-metadata/src/AssemblyMetadata.csproj -c Release -nologo -v minimal
+          if ($LASTEXITCODE -ne 0) { throw 'Compiled API metadata reader failed to build.' }
+          dotnet build tooling/pe-provenance/src/PeProvenance.csproj -c Release -nologo -v minimal
+          if ($LASTEXITCODE -ne 0) { throw 'Read-only managed PE reader failed to build.' }
+      - name: Verify original 4-build EXP-019 controls then isolate CI property with no packages
+        shell: pwsh
+        run: |
+          & ./tooling/pilots/recordsift/EXP-021/run.ps1 -ApplicationRoot (Join-Path $env:GITHUB_WORKSPACE 'recordsift') -EvidenceRoot (Join-Path $env:RUNNER_TEMP 'RecordSift-EXP-021')
+          if ($LASTEXITCODE -ne 0) { throw 'EXP-021 missing baseline evidence or invalid CI-only outcome.' }
+          $report = Get-Content (Join-Path $env:RUNNER_TEMP 'RecordSift-EXP-021/experiment-report.json') -Raw | ConvertFrom-Json
+          if ($report.frozen_source_sha -cne '8358780829458854a4b0356df5ac5e685f0a34c8' -or
+              $report.evaluated_property_count -ne 80) {
+              throw 'Wrong source provenance or incomplete MSBuild property matrix.'
+          }
+          if ($report.outcome -cnotin @('ci_only_build_blocked', 'ci_only_builds_accepted_with_metadata_observations')) {
+              throw "Unexpected EXP-021 classification: $($report.outcome)"
+          }
+          Write-Host "EXP-021 verified scoped research classification: $($report.outcome)"
+      - name: Preserve research-only JSON and original NUnit evidence (no binaries or nupkg)
+        if: always()
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4.6.2
+        with:
+          name: recordsift-exp021-ci-property-only-evidence
+          retention-days: 30
+          if-no-files-found: warn
+          path: |
+            ${{ runner.temp }}/RecordSift-EXP-021/experiment-report.json
+            ${{ runner.temp }}/RecordSift-EXP-021/effective-properties.json
+            ${{ runner.temp }}/RecordSift-EXP-021/ci-property-pe-variation.json
+            ${{ runner.temp }}/RecordSift-EXP-021/ci-*.json
+            ${{ runner.temp }}/RecordSift-EXP-021/ci-*-pe.json
+            ${{ runner.temp }}/RecordSift-EXP-021/ci-*-logical.json
+            ${{ runner.temp }}/RecordSift-EXP-021/ci-*-release-evidence/pilot-report.json
+            ${{ runner.temp }}/RecordSift-EXP-021/ci-*-release-evidence/nunit-*.xml
+            ${{ runner.temp }}/RecordSift-EXP-021/deterministic-only-controls/experiment-report.json
+            ${{ runner.temp }}/RecordSift-EXP-021/deterministic-only-controls/deterministic-reproducibility.json
+            ${{ runner.temp }}/RecordSift-EXP-021/deterministic-only-controls/toolchain.json
+            ${{ runner.temp }}/RecordSift-EXP-021/deterministic-only-controls/effective-deterministic-settings.json
+            ${{ runner.temp }}/RecordSift-EXP-021/deterministic-only-controls/*-release-evidence/pilot-report.json

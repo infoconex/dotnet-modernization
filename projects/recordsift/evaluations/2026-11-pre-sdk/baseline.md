@@ -186,6 +186,19 @@ The distributable [`RecordSift.nuspec`](https://github.com/infoconex/RecordSift/
 | Test runner version | NUnit.ConsoleRunner `3.17.0` |
 | Package output framework | `net48` |
 
+### Other external dependencies
+
+Source inspection of all ten project files at the frozen commit found:
+
+| Dependency mechanism | Declared state | Evidence |
+|---|---|---|
+| .NET Framework assembly references | Present, without explicit `HintPath`; these are not proven GAC-resolved binaries | [Project files](https://github.com/infoconex/RecordSift/tree/8358780829458854a4b0356df5ac5e685f0a34c8/src) |
+| Non-NuGet DLL references on disk | **None** declared: all 13 explicit DLL `HintPath` references point under `packages/` | [EXP-011](experiments/EXP-011-nuget-dependency-inventory.md) |
+| `COMReference` entries | **None** in the ten project files | [Project source](https://github.com/infoconex/RecordSift/blob/8358780829458854a4b0356df5ac5e685f0a34c8/RecordSift.sln) |
+| `COMFileReference` entries | **None** in the ten project files | [Project source](https://github.com/infoconex/RecordSift/blob/8358780829458854a4b0356df5ac5e685f0a34c8/RecordSift.sln) |
+| Native library declarations in project XML | **None** observed | [Project source](https://github.com/infoconex/RecordSift/blob/8358780829458854a4b0356df5ac5e685f0a34c8/RecordSift.sln) |
+| Runtime COM/native loading or external services | **Not assessed** by the project-file inventory | — |
+
 ### Build environment
 
 | Attribute | Observed value |

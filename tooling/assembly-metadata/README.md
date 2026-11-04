@@ -28,7 +28,7 @@ No application restore, build, source change, loading, dependency resolution, pa
 
 Use the existing [compatibility capture and compare guide](../validators/COMPATIBILITY.md) and [spec example](../validators/examples/compatibility-spec.example.json). Generate baseline and candidate artifacts independently after an approved build, then compare all requested contracts including tests and packages. Use the **same extractor version** on both sides. The text format differs from RecordSift's 425-line API-plus-packaging baseline; do not claim that old gate passed because this extractor produced a matching new baseline.
 
-**Known integration gap:** The existing compatibility capture command currently expects its input artifacts *inside* the source checkout, even though extractor output should be kept outside it. Staging generated artifacts inside a disposable checkout dirties that revision and reduces the comparator's provenance outcome. A separate approved enhancement should let capture accept an external artifacts root without altering the source revision.
+**Integration without modifying the source checkout:** The companion comparator now supports an external evidence directory via its `--artifacts-root` option. Capture provenance comes from the clean application Git checkout while API/assembly/resource evidence comes from the separate, explicitly identified artifacts directory. The collector SHA-256 fingerprints each input; users still must independently prove that the compiled binaries came from the recorded source revision through their build gates.
 
 ## Limitations and acceptance scope
 

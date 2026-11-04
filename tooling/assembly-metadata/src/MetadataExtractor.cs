@@ -4,6 +4,7 @@ using System.Reflection;
 using System.Reflection.Metadata;
 using System.Reflection.PortableExecutable;
 using System.Security.Cryptography;
+using System.Text.Json;
 
 namespace AssemblyMetadata;
 
@@ -78,7 +79,7 @@ internal static class MetadataExtractor
                 .Select(h => signature.Resolve(reader, reader.GetInterfaceImplementation(h).Interface, ctx))
                 .OrderBy(x => x, StringComparer.Ordinal));
             string flags = $"{type.Attributes & (TypeAttributes.Abstract | TypeAttributes.Sealed | TypeAttributes.Interface)}";
-            Add(api, $"type {fullName} kind={kind} flags={flags} base={baseName} interfaces=[{interfaces}]" +
+            Add(api, $"type {fullName} visibility={type.Attributes & TypeAttributes.VisibilityMask} kind={kind} flags={flags} base={baseName} interfaces=[{interfaces}]" +
                 Constraints(reader, type.GetGenericParameters(), signature, ctx));
 
             foreach (FieldDefinitionHandle fieldHandle in type.GetFields())
@@ -89,7 +90,9 @@ internal static class MetadataExtractor
                 var fieldType = field.DecodeSignature(signature, ctx);
                 string extra = (field.Attributes & FieldAttributes.Literal) != 0 ? " const" :
                     (field.Attributes & FieldAttributes.InitOnly) != 0 ? " readonly" : "";
-                Add(api, $"field {fullName}.{reader.GetString(field.Name)} {visibility}{extra} type={fieldType}");
+                string constant = field.GetDefaultValue().IsNil ? "" :
+                    " value=" + ReadConstant(reader, field.GetDefaultValue());
+                Add(api, $"field {fullName}.{reader.GetString(field.Name)} {visibility}{extra} type={fieldType}{constant}");
             }
 
             foreach (MethodDefinitionHandle methodHandle in type.GetMethods())
@@ -104,17 +107,20 @@ internal static class MetadataExtractor
                 string modifiers = (method.Attributes & MethodAttributes.Static) != 0 ? " static" : "";
                 if ((method.Attributes & MethodAttributes.Abstract) != 0) modifiers += " abstract";
                 else if ((method.Attributes & MethodAttributes.Virtual) != 0) modifiers += " virtual";
-                var parameterFlags = method.GetParameters()
+                var parameters = method.GetParameters()
                     .Select(h => reader.GetParameter(h)).Where(p => p.SequenceNumber > 0)
                     .OrderBy(p => p.SequenceNumber)
-                    .ToDictionary(p => (int)p.SequenceNumber, p => p.Attributes);
+                    .ToDictionary(p => (int)p.SequenceNumber);
                 var argTypes = parsed.ParameterTypes.Select((p, i) =>
                 {
-                    parameterFlags.TryGetValue(i + 1, out ParameterAttributes attr);
+                    parameters.TryGetValue(i + 1, out Parameter? metadata);
+                    var attr = metadata?.Attributes ?? 0;
                     string flag = (attr & ParameterAttributes.Out) != 0 ? "out " :
                         (attr & ParameterAttributes.In) != 0 ? "in " : "";
                     if ((attr & ParameterAttributes.Optional) != 0) flag += "optional ";
-                    return flag + p;
+                    string constant = metadata is not null && !metadata.Value.GetDefaultValue().IsNil ?
+                        " default=" + ReadConstant(reader, metadata.Value.GetDefaultValue()) : "";
+                    return flag + p + constant;
                 });
                 Add(api, $"method {fullName}.{methodName} {visibility}{modifiers} " +
                     $"generic={parsed.GenericParameterCount} ({string.Join(",", argTypes)})->{parsed.ReturnType}" +
@@ -156,6 +162,30 @@ internal static class MetadataExtractor
         }
 
         return new ExtractedAssembly(identity, new ResourceSet(assemblyName, resources), api.ToArray());
+    }
+
+    private static string ReadConstant(MetadataReader reader, ConstantHandle handle)
+    {
+        Constant constant = reader.GetConstant(handle);
+        var blob = reader.GetBlobReader(constant.Value);
+        return constant.TypeCode switch
+        {
+            ConstantTypeCode.Boolean => blob.ReadBoolean().ToString(),
+            ConstantTypeCode.Char => ((int)blob.ReadChar()).ToString(CultureInfo.InvariantCulture),
+            ConstantTypeCode.SByte => blob.ReadSByte().ToString(CultureInfo.InvariantCulture),
+            ConstantTypeCode.Byte => blob.ReadByte().ToString(CultureInfo.InvariantCulture),
+            ConstantTypeCode.Int16 => blob.ReadInt16().ToString(CultureInfo.InvariantCulture),
+            ConstantTypeCode.UInt16 => blob.ReadUInt16().ToString(CultureInfo.InvariantCulture),
+            ConstantTypeCode.Int32 => blob.ReadInt32().ToString(CultureInfo.InvariantCulture),
+            ConstantTypeCode.UInt32 => blob.ReadUInt32().ToString(CultureInfo.InvariantCulture),
+            ConstantTypeCode.Int64 => blob.ReadInt64().ToString(CultureInfo.InvariantCulture),
+            ConstantTypeCode.UInt64 => blob.ReadUInt64().ToString(CultureInfo.InvariantCulture),
+            ConstantTypeCode.Single => blob.ReadSingle().ToString("R", CultureInfo.InvariantCulture),
+            ConstantTypeCode.Double => blob.ReadDouble().ToString("R", CultureInfo.InvariantCulture),
+            ConstantTypeCode.String => JsonSerializer.Serialize(blob.ReadUTF16(blob.Length)),
+            ConstantTypeCode.NullReference => "null",
+            _ => throw new BadImageFormatException("Unsupported public constant type: " + constant.TypeCode)
+        };
     }
 
     private static void Add(SortedSet<string> result, string text)

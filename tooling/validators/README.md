@@ -11,6 +11,10 @@
 
 The source-only inventory and gate runner remain separate from evaluated-property, existing-restore-graph and compatibility-snapshot tools. Taken together, these tools still do **not** prove package feed acquisition origins, scan all runtime/native/COM activation, compile projects automatically, reconstruct complete legacy NuGet transitive closure, or independently compare binary/API/resource/consumer contracts. Supply those commands as explicit gates once your application has appropriate trusted checks. Do not call a successful workflow a validated upgrade merely because these tools ran.
 
+## Compiled assembly metadata extraction
+
+The [cross-platform .NET 10 metadata-only extractor](../assembly-metadata/README.md) generates public API records, assembly identities and embedded-resource names directly from managed binaries for use with the compatibility comparator. It does **not** load the DLLs, execute code or replace application behavior/consumer tests.
+
 ## Compatibility snapshots and comparisons
 
 The [compatibility snapshot and comparison guide](COMPATIBILITY.md) documents the new `compatibility.py` command, its five optional evidence categories (API, assembly identities, embedded-resource names, NuGet package metadata/path inventory, and NUnit 3 test results), source SHA controls, and its **scoped-match** semantics. Application-specific tools must generate API/assembly/resource manifests before comparison; the toolkit does **not** independently inspect .NET DLLs or certify consumer/runtime compatibility.

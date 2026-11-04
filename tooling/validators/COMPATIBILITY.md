@@ -6,7 +6,7 @@ The standard-library `compatibility.py` implementation works independently of Re
 
 ## Evidence contract
 
-The [specification example](examples/compatibility-spec.example.json) selects only components actually being assessed. All file paths are relative to `--source`; source artifacts must exist under that checkout, and the output must be **outside** it.
+The [specification example](examples/compatibility-spec.example.json) selects only components actually being assessed. By default evidence paths are relative to `--source`. For generated build artifacts, pass `--artifacts-root /separate/artifacts` to keep the Git source checkout clean. Source revision is recorded from `--source`, while manifest paths and SHA-256 fingerprints come from the artifacts root. The output must be **outside** the source checkout.
 
 | Component | Artifact contract | What is compared |
 |---|---|---|
@@ -28,6 +28,7 @@ Both checkouts should be **separate, reproducible source revisions**. Commit can
 python tooling/validators/compatibility.py capture \
   --source /path/to/baseline-checkout \
   --spec /path/to/baseline-spec.json \
+  --artifacts-root /external/evidence/baseline/generated \
   --expect-commit FULL_BASELINE_GIT_SHA \
   --output /external/evidence/baseline.json
 
@@ -62,7 +63,7 @@ The comparison contains per-component status and detailed differences. Component
 
 Use an existing approved application validator where possible; for example, RecordSift's frozen `docs/compatibility/public-api-net48.txt` contains a combined API/metadata text baseline, while `scripts/verify_public_api.ps1` already checks compiled assemblies. That historical file mixes **compiled API and raw package metadata**, so a format migration may change its metadata lines without changing compiled API. Preserve that distinction in findings; do **not** delete metadata entries or claim a 425-entry unchanged checker passed unless it actually did.
 
-The new JSON assembly and resource manifests are a deliberately **small interchange format**, not evidence that their values were independently extracted from binaries. Record provenance of the extractor, runtime/PowerShell host, file hashes and exact build inputs as part of the surrounding experiment. A future reusable reflection or ECMA-335 metadata extractor may make those captures automatic, but should be tested on strong-named, mixed-mode, multi-target and framework-dependent assemblies before adoption.
+The JSON assembly and resource manifests are small interchange formats. The [metadata-only .NET assembly extractor](../assembly-metadata/README.md) can now generate these manifests and public API records directly from compiled DLL/EXE files without executing their code. It must still be validated independently for each application's required metadata surface. Record provenance of the extractor, runtime/PowerShell host, file hashes and exact build inputs as part of the surrounding experiment. A future reusable reflection or ECMA-335 metadata extractor may make those captures automatic, but should be tested on strong-named, mixed-mode, multi-target and framework-dependent assemblies before adoption.
 
 ## Reuse and safeguards
 

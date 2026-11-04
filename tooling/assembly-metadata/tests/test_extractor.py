@@ -19,6 +19,9 @@ class ExtractorTests(unittest.TestCase):
             return
         cls.temp = tempfile.TemporaryDirectory()
         cls.scratch = Path(cls.temp.name)
+        shutil.copy2(SOURCE / 'global.json', cls.scratch / 'global.json')
+        version = subprocess.run(['dotnet', '--version'], cwd=cls.scratch, capture_output=True, text=True, check=True)
+        assert version.stdout.strip() == '10.0.403', version.stdout
         cls.fixture = cls.scratch / 'fixture'
         shutil.copytree(FIXTURE, cls.fixture)
         cls.app = cls.scratch / 'extractor'
@@ -37,7 +40,7 @@ class ExtractorTests(unittest.TestCase):
     @classmethod
     def build(cls, project):
         run = subprocess.run(['dotnet', 'build', str(project), '-c', 'Release', '-v', 'quiet', '-nologo'],
-                             text=True, stdout=subprocess.PIPE, stderr=subprocess.STDOUT,
+                             cwd=cls.scratch, text=True, stdout=subprocess.PIPE, stderr=subprocess.STDOUT,
                              timeout=120, check=False)
         if run.returncode != 0:
             raise AssertionError(f'Build failed: {project}\n{run.stdout[:6000]}')
@@ -45,7 +48,7 @@ class ExtractorTests(unittest.TestCase):
     def extract(self, binary, output):
         return subprocess.run(['dotnet', str(self.program), '--assembly', str(binary),
                                '--output-dir', str(output)], capture_output=True,
-                              text=True, timeout=30, check=False)
+                              cwd=self.scratch, text=True, timeout=30, check=False)
 
     def test_public_surface_identity_resource_and_comparator_formats(self):
         dest = self.scratch / 'baseline-evidence'
@@ -149,6 +152,10 @@ class ExtractorTests(unittest.TestCase):
         self.assertFalse((self.scratch / 'invalid' / 'public-api.txt').exists())
         same = self.extract(self.binary, self.binary.parent)
         self.assertNotEqual(same.returncode, 0)
+        good = self.scratch / 'not-empty'
+        good.mkdir()
+        (good / 'stale.txt').write_text('stale')
+        self.assertNotEqual(self.extract(self.binary, good).returncode, 0)
 
 if __name__ == '__main__':
     unittest.main()

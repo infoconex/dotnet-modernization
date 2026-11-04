@@ -1,0 +1,76 @@
+name: EXP-017 real NuGet archive and DLL payload-byte comparison
+
+on:
+  pull_request:
+    paths:
+      - ".github/workflows/validate-recordsift-package-payload.yml"
+      - "tooling/validators/package_payload.py"
+      - "tooling/validators/tests/test_package_payload.py"
+      - "tooling/pilots/recordsift/EXP-017/**"
+      - "projects/recordsift/evaluations/2026-11-pre-sdk/experiments/EXP-017-package-payload-bytes.md"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  package-payload-controls:
+    runs-on: windows-2022
+    timeout-minutes: 75
+    steps:
+      - name: Checkout reusable modernization tooling
+        uses: actions/checkout@08c6903cd8c0fde910a37f88322edcfb5dd907a8 # v5.0.0
+        with:
+          persist-credentials: false
+      - name: Checkout immutable RecordSift baseline
+        uses: actions/checkout@08c6903cd8c0fde910a37f88322edcfb5dd907a8 # v5.0.0
+        with:
+          repository: infoconex/RecordSift
+          ref: 8358780829458854a4b0356df5ac5e685f0a34c8
+          path: recordsift
+          fetch-depth: 0
+          persist-credentials: false
+      - name: Pin .NET 10 metadata-only extractor SDK
+        uses: actions/setup-dotnet@a98b56852c35b8e3190ac28c8c2271da59106c68 # v6.0.0
+        with:
+          dotnet-version: "10.0.403"
+      - name: Run portable package-byte comparator tests
+        shell: pwsh
+        run: |
+          python -m unittest discover -s tooling/validators/tests -p test_package_payload.py -v
+          if ($LASTEXITCODE -ne 0) { throw 'Portable payload comparison unit tests failed.' }
+      - name: Build metadata extractor with pinned SDK
+        shell: pwsh
+        run: |
+          $sdk = (& dotnet --version).Trim()
+          if ($LASTEXITCODE -ne 0 -or $sdk -cne '10.0.403') { throw "Unexpected .NET SDK $sdk" }
+          dotnet build tooling/assembly-metadata/src/AssemblyMetadata.csproj -c Release -nologo -v minimal
+          if ($LASTEXITCODE -ne 0) { throw 'Metadata-only extractor build failed.' }
+      - name: Execute EXP-015 unmodified independent real candidate build and all compatibility gates
+        shell: pwsh
+        run: |
+          & ./tooling/pilots/recordsift/EXP-015/run.ps1 -ApplicationRoot (Join-Path $env:GITHUB_WORKSPACE 'recordsift') -EvidenceRoot (Join-Path $env:RUNNER_TEMP 'RecordSift-EXP-017')
+          if ($LASTEXITCODE -ne 0) { throw 'Predecessor EXP-015 actual candidate release/consumer gates failed.' }
+      - name: Compare real package member bytes and exercise narrow positive/negative controls
+        shell: pwsh
+        run: |
+          python tooling/pilots/recordsift/EXP-017/controls.py --exp015-evidence (Join-Path $env:RUNNER_TEMP 'RecordSift-EXP-017')
+          if ($LASTEXITCODE -ne 0) { throw 'Package payload comparison or controls failed.' }
+      - name: Upload source/metadata/digest evidence; exclude packages and compiled DLLs
+        if: always()
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4.6.2
+        with:
+          name: recordsift-exp017-package-payload-evidence
+          if-no-files-found: warn
+          retention-days: 30
+          path: |
+            ${{ runner.temp }}/RecordSift-EXP-017/package-payload-report.json
+            ${{ runner.temp }}/RecordSift-EXP-017/candidate-report.json
+            ${{ runner.temp }}/RecordSift-EXP-017/candidate.patch
+            ${{ runner.temp }}/RecordSift-EXP-017/toolchain.json
+            ${{ runner.temp }}/RecordSift-EXP-017/property-matrix.json
+            ${{ runner.temp }}/RecordSift-EXP-017/baseline-versus-candidate.json
+            ${{ runner.temp }}/RecordSift-EXP-017/baseline-evidence/pilot-report.json
+            ${{ runner.temp }}/RecordSift-EXP-017/candidate-evidence/pilot-report.json
+            ${{ runner.temp }}/RecordSift-EXP-017/baseline-evidence/nunit-*.xml
+            ${{ runner.temp }}/RecordSift-EXP-017/candidate-evidence/nunit-*.xml

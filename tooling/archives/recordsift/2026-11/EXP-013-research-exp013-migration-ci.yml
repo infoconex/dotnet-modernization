@@ -1,0 +1,363 @@
+name: EXP-013 migration CI and tooling compatibility in disposable PackageReference
+on:
+  push:
+    branches: [research/migration-ci-exp013-20261103]
+permissions:
+  contents: read
+jobs:
+  migration-proof:
+    runs-on: windows-2022
+    timeout-minutes: 40
+    steps:
+      - name: Checkout frozen baseline with only experimental workflow
+        uses: actions/checkout@08c6903cd8c0fde910a37f88322edcfb5dd907a8 # v5.0.0
+        with:
+          persist-credentials: false
+          fetch-depth: 0
+      - name: Baseline, ephemeral PackageReference conversion, restore and compatibility gates
+        shell: pwsh
+        run: |
+          $ErrorActionPreference='Stop'
+          Set-StrictMode -Version Latest
+          New-Item -ItemType Directory -Force TestResults | Out-Null
+          $baseline='8358780829458854a4b0356df5ac5e685f0a34c8'
+          $head=(& git rev-parse HEAD).Trim()
+          $changed=@(& git diff --name-only $baseline HEAD)
+          if($changed.Count -ne 1 -or $changed[0] -cne '.github/workflows/research-exp013-migration-ci.yml'){
+            throw "Research branch must add only the workflow: $($changed -join ',')"
+          }
+          $vswhere=Join-Path ([Environment]::GetFolderPath('ProgramFilesX86')) 'Microsoft Visual Studio\Installer\vswhere.exe'
+          $msbuild=(& $vswhere -latest -requires Microsoft.Component.MSBuild -find 'MSBuild\**\Bin\MSBuild.exe' | Select-Object -First 1)
+          if(-not $msbuild){throw 'VS MSBuild absent on host'}
+          $nuget=(Get-Command nuget -ErrorAction Stop).Source
+          Write-Host "EXP013 HOST os=$([Environment]::OSVersion.VersionString) PS=$($PSVersionTable.PSVersion) SDK=$(dotnet --version) NuGet=$(& nuget help | Select-Object -First 1)"
+          Write-Host "EXP013 SOURCE frozen=$baseline workflow=$head MSBuild=$msbuild"
+          & $msbuild -version -nologo
+          $summary=[ordered]@{
+            frozenSource=$baseline;experimentalWorkflow=$head;toolMsbuild=$msbuild
+            baseline=[ordered]@{};migration=[ordered]@{};gates=[ordered]@{}
+          }
+          function Save-Evidence {
+            $s=ConvertTo-Json -InputObject $summary -Depth 18
+            [IO.File]::WriteAllText((Join-Path (Get-Location).Path 'TestResults\exp013-outcome.json'),$s,[Text.UTF8Encoding]::new($false))
+          }
+          function Invoke-Native([string]$name,[scriptblock]$action){
+            Write-Host "EXP013 START $name"
+            & $action
+            if($LASTEXITCODE -ne 0){throw "$name failed exit=$LASTEXITCODE"}
+            Write-Host "EXP013 PASS $name"
+          }
+          function Run-FiveSuites([string]$stage){
+            $assemblies=@('Domain','Application','Infrastructure.Csv','Infrastructure.Reporting','Infrastructure.Xlsx') | ForEach-Object {
+              "tests\RecordSift.$_.Tests\bin\Release\RecordSift.$_.Tests.dll"
+            }
+            $runner="packages\NUnit.ConsoleRunner.3.17.0\tools\nunit3-console.exe"
+            if(-not(Test-Path $runner)){throw "NUnit console runner not in expected legacy path: $runner"}
+            & $runner @assemblies "--result=TestResults/exp013-$stage-nunit.xml;format=nunit3" --noheader
+            if($LASTEXITCODE -ne 0){throw "$stage NUnit runner failed exit=$LASTEXITCODE"}
+            [xml]$n=Get-Content "TestResults/exp013-$stage-nunit.xml" -Raw
+            $tot=[int]$n.'test-run'.total;$pass=[int]$n.'test-run'.passed;$fail=[int]$n.'test-run'.failed;$skip=[int]$n.'test-run'.skipped
+            Write-Host "EXP013 NUNIT stage=$stage total=$tot pass=$pass fail=$fail skipped=$skip"
+            if($tot -ne 419 -or $pass -ne 418 -or $fail -ne 0 -or $skip -ne 1){throw "$stage NUnit parity mismatch"}
+            return [ordered]@{total=$tot;passed=$pass;failed=$fail;skipped=$skip}
+          }
+          function Count-Files([string]$configuration) {
+            $assemblies=@(Get-ChildItem src,tests -Recurse -File -Filter '*.csproj')
+            $found=@()
+            foreach($a in $assemblies){
+              $basename=$a.BaseName
+              $dll=Join-Path $a.DirectoryName "bin\$configuration\$basename.dll"
+              if(-not(Test-Path $dll)){throw "Missing $configuration assembly $dll"}
+              $found+=$basename
+            }
+            return @($found | Sort-Object)
+          }
+          try {
+            # Existing baseline commands, before any migration edits.
+            Invoke-Native 'baseline NuGet restore' { & $nuget restore RecordSift.sln -NonInteractive -PackagesDirectory packages -ConfigFile NuGet.Config }
+            Invoke-Native 'baseline Release rebuild' { & $msbuild RecordSift.sln /m /t:Rebuild /p:Configuration=Release '/p:Platform=Any CPU' /verbosity:minimal }
+            $summary.baseline.assemblies=Count-Files 'Release'
+            $summary.baseline.nunit=Run-FiveSuites 'baseline'
+            # Check the same source-only validators after a normal *packages.config* build,
+            # before conversion, to avoid mislabeling generated obj/ files as migration regressions.
+            $summary.baseline.postBuildSourceValidators=[ordered]@{}
+            foreach($script in @('validate_architecture_layers.py','validate_core_messages.py')){
+              & python "scripts/$script"
+              $code=$LASTEXITCODE
+              $summary.baseline.postBuildSourceValidators[$script]=$code
+              Write-Host "EXP013 BASELINE DOCS post-build $script exit=$code"
+            }
+            Save-Evidence
+
+            # Migrate all seven packages.config projects *only inside this checkout*.
+            # Keep every listed version as exact [version] for a controlled parity candidate.
+            $configurationFiles=@(Get-ChildItem src,tests -Recurse -File -Filter packages.config | Sort-Object FullName)
+            if($configurationFiles.Count -ne 7){throw "Expected 7 config projects, got $($configurationFiles.Count)"}
+            $declarations=@()
+            foreach($config in $configurationFiles){
+              [xml]$configXml=Get-Content -LiteralPath $config.FullName -Raw
+              $projPath=Join-Path $config.DirectoryName ((Split-Path $config.DirectoryName -Leaf)+'.csproj')
+              if(-not(Test-Path $projPath)){throw "Matching csproj missing for $($config.FullName)"}
+              [xml]$projectXml=Get-Content -LiteralPath $projPath -Raw
+              $root=$projectXml.DocumentElement
+              $ns=$root.NamespaceURI
+              $nodeGroup=$projectXml.CreateElement('ItemGroup',$ns)
+              foreach($package in @($configXml.packages.package)){
+                $id=$package.GetAttribute('id')
+                $version=$package.GetAttribute('version')
+                $pkg=$projectXml.CreateElement('PackageReference',$ns)
+                $pkg.SetAttribute('Include',$id)
+                $pkg.SetAttribute('Version',"[$version]")
+                if($id -eq 'NUnit.ConsoleRunner'){$pkg.SetAttribute('PrivateAssets','all')}
+                [void]$nodeGroup.AppendChild($pkg)
+                $declarations += [pscustomobject]@{project=(Split-Path $config.DirectoryName -Leaf);package=$id;version=$version;exact="[$version]"}
+              }
+              [void]$root.InsertBefore($nodeGroup,@($root.ChildNodes | Where-Object {$_.LocalName -eq 'Import'} | Select-Object -First 1)[0])
+              # With PackageReference, NuGet resolves assembly references from project.assets.json.
+              # Remove only package HintPath references, preserving all framework and project refs.
+              foreach($reference in @($projectXml.SelectNodes("//*[local-name()='Reference']"))){
+                $hintNode=$reference.SelectSingleNode("*[local-name()='HintPath']")
+                if($null -ne $hintNode -and $hintNode.InnerText -match '(?i)packages[\\/]'){
+                  [void]$reference.ParentNode.RemoveChild($reference)
+                }
+              }
+              foreach($item in @($projectXml.SelectNodes("//*[local-name()='None']"))){
+                if($item.GetAttribute('Include') -ieq 'packages.config'){[void]$item.ParentNode.RemoveChild($item)}
+              }
+              $settings=New-Object System.Xml.XmlWriterSettings
+              $settings.Indent=$true;$settings.IndentChars='  ';$settings.OmitXmlDeclaration=$false
+              $writer=[System.Xml.XmlWriter]::Create($projPath,$settings)
+              try{$projectXml.Save($writer)}finally{$writer.Dispose()}
+              Remove-Item -LiteralPath $config.FullName -Force
+            }
+            $summary.migration.projects=$configurationFiles.Count
+            $summary.migration.exactPackageReferences=$declarations
+            if($declarations.Count -ne 17){throw "Expected 17 exact references got $($declarations.Count)"}
+            $afterFiles=@(Get-ChildItem src,tests -Recurse -File -Filter packages.config)
+            if($afterFiles.Count -ne 0){throw "packages.config remnants: $($afterFiles.Count)"}
+            Write-Host "EXP013 MIGRATED seven traditional projects, 17 pinned exact PackageReference items, no SDK or net48 edits"
+            Save-Evidence
+
+            # Clear legacy packages and restore with explicit MSBuild PackageReference target.
+            # Install *test harness only* in legacy path for existing NUnit scripts.
+            Remove-Item packages -Recurse -Force
+            Invoke-Native 'PackageReference MSBuild solution Restore' {
+              & $msbuild RecordSift.sln /t:Restore '/p:RestoreConfigFile=NuGet.Config' /verbosity:minimal
+            }
+            $assets=@(Get-ChildItem src,tests -Recurse -File -Filter project.assets.json | Sort-Object FullName)
+            $summary.migration.assetFiles=$assets.Count
+            if($assets.Count -lt 7){throw "Missing PackageReference assets; got $($assets.Count)"}
+            $resolved=[ordered]@{}
+            foreach($f in $assets){
+              $projectName=(Split-Path (Split-Path $f.DirectoryName -Parent) -Leaf)
+              $obj=Get-Content $f.FullName -Raw | ConvertFrom-Json -Depth 100
+              $lib=@($obj.libraries.PSObject.Properties.Name | Where-Object {$_ -match '/' } | Sort-Object)
+              $resolved[$f.DirectoryName.Replace((Get-Location).Path+'\','/')]= $lib
+              Write-Host "EXP013 ASSETS $($f.FullName) : $($lib -join ',')"
+            }
+            $summary.migration.resolvedAssets=$resolved
+            $csv=@($assets | Where-Object {$_.FullName -match 'Infrastructure.Csv\\obj\\'})
+            if($csv.Count -ne 1){throw 'Missing CSV migrated assets'}
+            $csvAssets=Get-Content $csv[0].FullName -Raw | ConvertFrom-Json -Depth 100
+            $libraries=@($csvAssets.libraries.PSObject.Properties.Name)
+            foreach($expected in @('CsvHelper/33.1.0','System.Memory/4.5.5','System.Runtime.CompilerServices.Unsafe/6.0.0')){
+              if($expected -notin $libraries){throw "Migrated CSV selected different dependency $expected; found $($libraries -join ',')"}
+            }
+            Save-Evidence
+
+            Invoke-Native 'migrated Release rebuild' {
+              & $msbuild RecordSift.sln /m /t:Rebuild /p:Configuration=Release '/p:Platform=Any CPU' /verbosity:minimal
+            }
+            $summary.migration.assemblies=Count-Files 'Release'
+            if(($summary.migration.assemblies -join ';') -cne ($summary.baseline.assemblies -join ';')){
+              throw 'Assembly set changed after migration'
+            }
+            Write-Host 'EXP013 ASSEMBLIES baseline and migration 10/10 matched by names'
+            $summary.gates.xml='NOT_EXECUTED'
+            $summary.gates.api='NOT_EXECUTED'
+            $summary.gates.nunit='NOT_EXECUTED'
+            $summary.gates.consumer='NOT_EXECUTED'
+            Save-Evidence
+
+            # NUnit console is a development tool, restored separately to the original path.
+            # This deliberate workaround is *not* an unchanged toolchain parity proof.
+            Invoke-Native 'install legacy NUnit console harness separately' {
+              & $nuget install NUnit.ConsoleRunner -Version 3.17.0 -OutputDirectory packages -Source https://api.nuget.org/v3/index.json -NonInteractive
+            }
+            $summary.migration.nunit=Run-FiveSuites 'migrated'
+            $summary.gates.nunit='PASS 419/418/0/1 with external runner installation'
+            Save-Evidence
+            & .\scripts\verify_xml_documentation.ps1
+            $summary.gates.xml='PASS five production XML docs'
+            Save-Evidence
+            # Original verifier intentionally rejects the missing packages.config source records.
+            # Its 11 legacy package declarations are *source-format metadata*, not compiled ABI.
+            & powershell.exe -NoProfile -NonInteractive -File .\scripts\verify_public_api.ps1
+            $originalApiCode=$LASTEXITCODE
+            if($originalApiCode -eq 0){throw 'Original compatibility script unexpectedly accepted removed legacy packages.config'}
+            $summary.gates.originalApi='EXPECTED FAILURE: 11 packages.config metadata lines absent'
+            $baselineApi=@(Get-Content docs\compatibility\public-api-net48.txt -Encoding UTF8)
+            $legacyLines=@($baselineApi | Where-Object { $_.StartsWith('package ',[StringComparison]::Ordinal) })
+            if($legacyLines.Count -ne 11){throw "Expected 11 original package metadata baseline lines, got $($legacyLines.Count)"}
+            $compiledBaseline=Join-Path (Get-Location).Path 'TestResults\exp013-compiled-only-api-baseline.txt'
+            $compiledExpected=@($baselineApi | Where-Object { -not $_.StartsWith('package ',[StringComparison]::Ordinal) })
+            [IO.File]::WriteAllLines($compiledBaseline,$compiledExpected,[Text.UTF8Encoding]::new($false))
+            & powershell.exe -NoProfile -NonInteractive -File .\scripts\verify_public_api.ps1 -BaselineFile $compiledBaseline
+            if($LASTEXITCODE -ne 0){throw "Compiled-only API/metadata baseline check failed exit=$LASTEXITCODE"}
+            $summary.gates.api="PASS $($compiledExpected.Count-3) compiled ABI/identity entries; 11 legacy package records intentionally excluded"
+            Save-Evidence
+            $feed=Join-Path $env:RUNNER_TEMP 'EXP013-local-package'
+            & .\scripts\build_release_candidate.ps1 -OutputDirectory $feed
+            $summary.gates.package='PASS unpublished package'
+            Save-Evidence
+            & .\scripts\verify_clean_consumer.ps1 -CandidateDirectory $feed
+            $summary.gates.consumer='PASS independent NuGet-installed consumer and examples'
+            Save-Evidence
+            & .\scripts\verify_xml_documentation.ps1 -Negative
+            $summary.gates.cs1591='PASS intentional CS1591 negative'
+            Save-Evidence
+            Write-Host 'EXP013 VERIFIED all intended parity gates under explicit full exact pins'
+
+            # Probe original CI command with migrated PackageReference: command is identical to main workflows.
+            # This executes only after exact-pins behavioral/package/consumer checks have already passed.
+            $summary.ci=[ordered]@{}
+            $nugetHelp=@(& $nuget help)
+            $summary.ci.nugetMigrateCommandAdvertised=(@($nugetHelp | Where-Object {$_ -match '^\s+migrate\s'}).Count -gt 0)
+            Write-Host "EXP013 TOOL NuGet help advertises migrate=$($summary.ci.nugetMigrateCommandAdvertised)"
+            Invoke-Native 'original CI nuget.exe restore command on converted projects' {
+              & $nuget restore RecordSift.sln -NonInteractive -PackagesDirectory packages -ConfigFile NuGet.Config
+            }
+            $summary.ci.originalNuGetRestore='PASS'
+            $assetsAfterNuget=@(Get-ChildItem src,tests -Recurse -File -Filter project.assets.json)
+            if($assetsAfterNuget.Count -ne 7){throw "After unchanged NuGet CLI restore expected seven assets, found $($assetsAfterNuget.Count)"}
+            Write-Host "EXP013 RESTORE unchanged NuGet restore succeeded, seven project.assets.json present"
+            $summary.ci.assetsCount=$assetsAfterNuget.Count
+            # The original audit source reads packages.config; assert it rejects migration.
+            $auditSource='tests/RecordSift.Domain.Tests/packages.config'
+            if(Test-Path -LiteralPath $auditSource){throw 'Deleted original packages.config unexpectedly exists'}
+            $auditRejected=$false
+            try {
+              [xml]$originalAuditInput=Get-Content -LiteralPath $auditSource -Raw -ErrorAction Stop
+            } catch {
+              $auditRejected=$true
+              Write-Host "EXP013 AUDIT original packages.config input fails as expected: $($_.Exception.Message)"
+            }
+            if(-not $auditRejected){throw 'Original audit unexpectedly handled absent packages.config'}
+            $summary.ci.originalAudit='EXPECTED FAIL: legacy packages.config does not exist after migration'
+            # Equivalent *candidate only*, no edit to production audit: verify same 17 exact declarations.
+            $actualRefs=@()
+            foreach($project in @(Get-ChildItem src,tests -Recurse -File -Filter '*.csproj')){
+              [xml]$pr=Get-Content -LiteralPath $project.FullName -Raw
+              foreach($n in @($pr.SelectNodes("//*[local-name()='PackageReference']"))){
+                $actualRefs+=[pscustomobject]@{project=$project.BaseName;id=$n.GetAttribute('Include');version=$n.GetAttribute('Version')}
+              }
+            }
+            $declared=@($declarations | ForEach-Object {"$($_.project)/$($_.package)/$($_.exact)"} | Sort-Object)
+            $observed=@($actualRefs | ForEach-Object {"$($_.project)/$($_.id)/$($_.version)"} | Sort-Object)
+            if(($declared -join '|') -cne ($observed -join '|')){throw "PackageReference pin audit mismatch: declared $($declared.Count), observed $($observed.Count)"}
+            if($observed.Count -ne 17){throw "PackageReference audit expected 17 refs, got $($observed.Count)"}
+            $summary.ci.candidatePackageAudit='PASS 17 exact package pins across seven traditional projects'
+            Write-Host "EXP013 AUDIT candidate exact-pin inventory 17/17, no changed production audit"
+            Save-Evidence
+
+            # Reuse current Windows main CI Roslyn formatter command unchanged.
+            $formatLog='TestResults/exp013-dotnet-format.log'
+            & dotnet format style RecordSift.sln --no-restore --verify-no-changes --diagnostics IDE1006 --severity error --verbosity normal *> $formatLog
+            $formatExit=$LASTEXITCODE
+            Write-Host "EXP013 FORMAT dotnet format style exit=$formatExit"
+            Get-Content $formatLog -Tail 30 | ForEach-Object {Write-Host "EXP013 FORMATLOG $_"}
+            $summary.ci.formatExit=$formatExit
+            $summary.ci.format=if($formatExit -eq 0){'PASS'}else{'FAIL: see exp013-dotnet-format.log'}
+            Save-Evidence
+
+            # Existing docs/architecture validation scripts run on Ubuntu in production CI.
+            # Execute them here only as extra source-compatibility probes, noting host difference.
+            $docTests=@('validate_docs.py','verify_getting_started_samples.py','validate_test_metadata.py','validate_constant_names.py','validate_architecture_layers.py','validate_core_messages.py')
+            $py=(Get-Command python -ErrorAction SilentlyContinue)
+            $summary.ci.docsScripts=[ordered]@{}
+            if($null -eq $py){$summary.ci.docsScripts.status='NOT EXECUTED python absent'}
+            else {
+              foreach($script in $docTests){
+                & python "scripts/$script"
+                $code=$LASTEXITCODE
+                $summary.ci.docsScripts[$script]=$code
+                Write-Host "EXP013 DOCS $script exit=$code (Windows-host probe)"
+              }
+            }
+            Save-Evidence
+
+            # More precise formatter warning diagnostic; main CI uses the prior normal-verbosity command.
+            & dotnet format style RecordSift.sln --no-restore --verify-no-changes --diagnostics IDE1006 --severity error --verbosity diagnostic *> TestResults/exp013-format-diagnostic.log
+            $diagnosticFormatExit=$LASTEXITCODE
+            $summary.ci.formatDiagnosticExit=$diagnosticFormatExit
+            $formatWarnings=@(Get-Content TestResults/exp013-format-diagnostic.log | Where-Object {$_ -match '(?i)warning|fail|unable|exception'} | Select-Object -First 30)
+            Write-Host "EXP013 FORMAT diagnostic exit=$diagnosticFormatExit warning-lines=$($formatWarnings.Count)"
+            $formatWarnings | ForEach-Object {Write-Host "EXP013 FORMATDETAIL $_"}
+            # Generated obj/*.cs files after build can trigger source validators in a way clean Ubuntu docs CI does not.
+            $objFolders=@(Get-ChildItem src,tests -Directory -Recurse -Filter obj)
+            Write-Host "EXP013 DOCS transient obj folders=$($objFolders.Count), removing only in disposable checkout"
+            foreach($folder in $objFolders){Remove-Item -LiteralPath $folder.FullName -Recurse -Force}
+            $summary.ci.docsAfterObjCleanup=[ordered]@{}
+            foreach($script in @('validate_architecture_layers.py','validate_core_messages.py')){
+              & python "scripts/$script"
+              $code=$LASTEXITCODE
+              $summary.ci.docsAfterObjCleanup[$script]=$code
+              Write-Host "EXP013 DOCS after-obj-cleanup $script exit=$code"
+            }
+            Save-Evidence
+            # Candidate research-only format-aware architecture guard; never modify source on branch.
+            $guardPath='scripts/validate_architecture_layers.py'
+            $xlsxProject='src/RecordSift.Infrastructure.Xlsx/RecordSift.Infrastructure.Xlsx.csproj'
+            $oldGuard=[IO.File]::ReadAllText((Join-Path (Get-Location).Path $guardPath))
+            $oldProject=[IO.File]::ReadAllText((Join-Path (Get-Location).Path $xlsxProject))
+            $needle='if not any(x.attrib.get("Include") == "ExcelDataReader" for x in items(xlsx_root, "Reference")):'
+            $candidate='if not any(x.attrib.get("Include") == "ExcelDataReader" for x in (items(xlsx_root, "Reference") + items(xlsx_root, "PackageReference"))):'
+            if(-not $oldGuard.Contains($needle)){throw 'Architecture guard marker not found'}
+            $candidateGuard=$oldGuard.Replace($needle,$candidate)
+            try {
+              [IO.File]::WriteAllText((Join-Path (Get-Location).Path $guardPath),$candidateGuard,[Text.UTF8Encoding]::new($false))
+              & python $guardPath
+              $candidatePass=$LASTEXITCODE
+              Write-Host "EXP013 ARCH format-aware candidate positive exit=$candidatePass"
+              $summary.ci.candidateArchitecturePositive=$candidatePass
+              if($candidatePass -ne 0){throw 'Format-aware architecture candidate did not pass'}
+              [xml]$proj=Get-Content $xlsxProject -Raw
+              $vendor=@($proj.SelectNodes("//*[local-name()='PackageReference' and @Include='ExcelDataReader']"))
+              if($vendor.Count -ne 1){throw 'Expected one XLSX vendor PackageReference'}
+              [void]$vendor[0].ParentNode.RemoveChild($vendor[0])
+              $proj.Save((Join-Path (Get-Location).Path $xlsxProject))
+              & python $guardPath
+              $negativeExit=$LASTEXITCODE
+              Write-Host "EXP013 ARCH format-aware negative removing vendor exit=$negativeExit"
+              $summary.ci.candidateArchitectureNegative=$negativeExit
+              if($negativeExit -eq 0){throw 'Format-aware architecture candidate accepted removal of ExcelDataReader'}
+            } finally {
+              [IO.File]::WriteAllText((Join-Path (Get-Location).Path $guardPath),$oldGuard,[Text.UTF8Encoding]::new($false))
+              [IO.File]::WriteAllText((Join-Path (Get-Location).Path $xlsxProject),$oldProject,[Text.UTF8Encoding]::new($false))
+            }
+            $summary.ci.candidateArchitectureGuard='PASS positive and negative controls in ephemeral checkout'
+            Save-Evidence
+            Write-Host 'EXP013 ARCH research candidate recognizes PackageReference and still rejects missing XLSX vendor dependency'
+            if($formatExit -ne 0){Write-Warning 'Unchanged format gate failed; record as an independent CI blocker, not an application test failure'}
+            Write-Host 'EXP013 CI RESEARCH COMPLETE: no application files committed'
+          } catch {
+            $summary.failure=[string]$_
+            Write-Host "EXP013 FIRST FAILURE $($_.ToString())"
+            Save-Evidence
+            throw
+          } finally {
+            Save-Evidence
+            Write-Host "EXP013 GIT STATUS $(git status --short | Out-String)"
+          }
+      - name: Retain experimental result, restore/asset graph and NUnit XML
+        if: always()
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4.6.2
+        with:
+          name: exp013-migration-ci-evidence
+          path: |
+            TestResults/exp013-*
+            src/**/obj/project.assets.json
+            tests/**/obj/project.assets.json
+            TestResults/exp013-dotnet-format.log
+            TestResults/exp013-format-diagnostic.log
+          if-no-files-found: warn

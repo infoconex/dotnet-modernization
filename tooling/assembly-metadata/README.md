@@ -32,7 +32,7 @@ Use the existing [compatibility capture and compare guide](../validators/COMPATI
 
 ## Limitations and acceptance scope
 
-The initial API inventory does **not** fully capture: parameter default values, literal field values, all custom attributes, nullability annotations, tuple names, COM interop behavior, private explicit-interface implementations, InternalsVisibleTo exposure, native/mixed-mode behavior, and every possible signature modifier. Public/protected access is included according to metadata visibility; other accessibility policies require separate tests. Embedded resources are recorded by **name only**, not content. A public key token is not strong-name signature validation.
+The initial API inventory captures literal field/enum values and metadata constant defaults for parameters, but does **not** fully capture: all custom attributes, nullability annotations, tuple names, COM interop behavior, private explicit-interface implementations, InternalsVisibleTo exposure, native/mixed-mode behavior, and every possible signature modifier. Public/protected access is included according to metadata visibility; other accessibility policies require separate tests. Embedded resources are recorded by **name only**, not content. A public key token is not strong-name signature validation.
 
 A matching snapshot is **not** proof of Windows/.NET Framework execution, binary compatibility, resource contents, consumer installation or package safety. Run those independently using the existing application-specific gates. The extractor cannot replace RecordSift's original public API validator without separate migration/approval.
 

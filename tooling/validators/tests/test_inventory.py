@@ -40,6 +40,7 @@ class InventoryTests(unittest.TestCase):
         self.assertEqual(len(obj['solutions']), 1)
         self.assertEqual(len(obj['packages_config']), 1)
         self.assertEqual(len(obj['nuspec'][0]['dependencies']), 1)
+        self.assertEqual(obj['central_package_versions'][0]['Include'], 'Centrally.Managed')
         legacy = next(p for p in obj['projects'] if p['path'].startswith('Legacy/'))
         core = next(p for p in obj['projects'] if p['path'].startswith('Core/'))
         self.assertEqual(legacy['sdk_declarations'], [])
@@ -52,6 +53,16 @@ class InventoryTests(unittest.TestCase):
         self.assertFalse(any('Skip' in p['path'] for p in obj['projects']))
         self.assertTrue(any('Runtime service dependencies' in t for t in obj['limitations']))
         self.assertFalse(obj['errors'])
+
+    def test_redacts_sensitive_msbuild_values(self):
+        self.write('Safe.csproj', '<Project><PropertyGroup><ApiKey>do-not-expose</ApiKey><Password>abc</Password><Company>Public</Company></PropertyGroup><ItemGroup><Reference Include="X"><Credential>private</Credential></Reference></ItemGroup></Project>')
+        data = inventory.generate(self.root)
+        project = data['projects'][0]
+        values = {item['name']: item['declared_value'] for item in project['properties']}
+        self.assertEqual(values['ApiKey'], '<redacted>')
+        self.assertEqual(values['Password'], '<redacted>')
+        self.assertEqual(values['Company'], 'Public')
+        self.assertEqual(project['assembly_references'][0]['metadata']['Credential']['value'], '<redacted>')
 
     def test_malformed_source_is_partial_not_a_success(self):
         self.write('Broken.csproj', '<Project><PropertyGroup>')

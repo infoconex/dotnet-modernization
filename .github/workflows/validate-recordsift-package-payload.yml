@@ -51,6 +51,11 @@ jobs:
         run: |
           & ./tooling/pilots/recordsift/EXP-015/run.ps1 -ApplicationRoot (Join-Path $env:GITHUB_WORKSPACE 'recordsift') -EvidenceRoot (Join-Path $env:RUNNER_TEMP 'RecordSift-EXP-017')
           if ($LASTEXITCODE -ne 0) { throw 'Predecessor EXP-015 actual candidate release/consumer gates failed.' }
+      - name: Repeat original frozen source build in a third independent checkout
+        shell: pwsh
+        run: |
+          & ./tooling/pilots/recordsift/EXP-017/same-source-repeat.ps1 -ApplicationRoot (Join-Path $env:GITHUB_WORKSPACE 'recordsift') -EvidenceRoot (Join-Path $env:RUNNER_TEMP 'RecordSift-EXP-017')
+          if ($LASTEXITCODE -ne 0) { throw 'Same-source independent build and original release gates failed.' }
       - name: Compare real package member bytes and exercise narrow positive/negative controls
         shell: pwsh
         run: |
@@ -72,5 +77,7 @@ jobs:
             ${{ runner.temp }}/RecordSift-EXP-017/baseline-versus-candidate.json
             ${{ runner.temp }}/RecordSift-EXP-017/baseline-evidence/pilot-report.json
             ${{ runner.temp }}/RecordSift-EXP-017/candidate-evidence/pilot-report.json
+            ${{ runner.temp }}/RecordSift-EXP-017/repeat-evidence/pilot-report.json
+            ${{ runner.temp }}/RecordSift-EXP-017/repeat-evidence/nunit-*.xml
             ${{ runner.temp }}/RecordSift-EXP-017/baseline-evidence/nunit-*.xml
             ${{ runner.temp }}/RecordSift-EXP-017/candidate-evidence/nunit-*.xml

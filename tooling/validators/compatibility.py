@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 """Capture and compare scoped .NET compatibility evidence, without building an application."""
 import argparse
+from collections import Counter
 import datetime as dt
 import json
 from pathlib import Path
@@ -238,7 +239,7 @@ def differences(before, after):
     """Structured deterministic recursive changes, bounded for readable reports."""
     found = []
     def walk(left, right, path):
-        if len(found) >= MAX_DIFF:
+        if len(found) > MAX_DIFF:
             return
         if isinstance(left, dict) and isinstance(right, dict):
             for key in sorted(set(left) | set(right)):
@@ -248,16 +249,19 @@ def differences(before, after):
                     found.append({'path': path + '/' + key, 'change': 'removed', 'baseline': left[key]})
                 else:
                     walk(left[key], right[key], path + '/' + key)
-                if len(found) >= MAX_DIFF:
+                if len(found) > MAX_DIFF:
                     return
         elif isinstance(left, list) and isinstance(right, list):
-            old, new = set(json.dumps(x, sort_keys=True) for x in left), set(json.dumps(x, sort_keys=True) for x in right)
-            for v in sorted(old - new):
-                found.append({'path': path, 'change': 'removed', 'baseline': json.loads(v)})
-                if len(found) >= MAX_DIFF: return
-            for v in sorted(new - old):
-                found.append({'path': path, 'change': 'added', 'candidate': json.loads(v)})
-                if len(found) >= MAX_DIFF: return
+            old = Counter(json.dumps(x, sort_keys=True) for x in left)
+            new = Counter(json.dumps(x, sort_keys=True) for x in right)
+            for v in sorted(old.keys() | new.keys()):
+                if old[v] > new[v]:
+                    found.append({'path': path, 'change': 'removed',
+                                  'baseline': json.loads(v), 'count': old[v] - new[v]})
+                elif new[v] > old[v]:
+                    found.append({'path': path, 'change': 'added',
+                                  'candidate': json.loads(v), 'count': new[v] - old[v]})
+                if len(found) > MAX_DIFF: return
         elif left != right:
             found.append({'path': path, 'change': 'changed', 'baseline': left, 'candidate': right})
     walk(before, after, '')
@@ -269,6 +273,12 @@ def compare(baseline, candidate):
         if not isinstance(obj, dict) or obj.get('schema_version') != VERSION or obj.get('kind') != 'compatibility-snapshot':
             raise ValueError(label + ' must be a compatibility snapshot schema v1')
     a, b = baseline.get('components', {}), candidate.get('components', {})
+    if not isinstance(a, dict) or not isinstance(b, dict):
+        raise ValueError('snapshot components must be objects')
+    if any(not isinstance(v, dict) or v.get('status') not in ('captured', 'error') or
+           (v.get('status') == 'captured' and 'data' not in v)
+           for v in list(a.values()) + list(b.values())):
+        raise ValueError('snapshot component lacks required status/data')
     names = sorted(set(a) | set(b))
     if not names or set(names) - set(COMPONENTS):
         raise ValueError('no comparable recognized components')
@@ -282,11 +292,14 @@ def compare(baseline, candidate):
             continue
         left, right = a[name]['data'], b[name]['data']
         changed = left != right
+        diff = differences(left, right) if changed else []
         report['components'][name] = {'status': 'changed' if changed else 'matched',
-                                       'differences': differences(left, right) if changed else [],
-                                       'diff_truncated': changed and len(differences(left, right)) >= MAX_DIFF}
+                                       'differences': diff[:MAX_DIFF],
+                                       'diff_truncated': len(diff) > MAX_DIFF}
     statuses = [v['status'] for v in report['components'].values()]
     sources = [baseline.get('source') or {}, candidate.get('source') or {}]
+    if not all(isinstance(x, dict) for x in sources):
+        raise ValueError('invalid source provenance')
     verified = all(isinstance(x.get('commit'), str) and len(x['commit']) == 40
                    and x.get('dirty_paths') == [] for x in sources)
     report['provenance'] = 'clean_committed' if verified else 'unverified_or_dirty'

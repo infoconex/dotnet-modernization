@@ -1,0 +1,83 @@
+name: EXP-023A read-only Source Link NuGet build-asset version matrix
+
+on:
+  pull_request:
+    paths:
+      - ".github/workflows/validate-sourcelink-package-audit.yml"
+      - "tooling/validators/nuget_build_assets.py"
+      - "tooling/validators/tests/test_nuget_build_assets.py"
+      - "projects/recordsift/evaluations/2026-11-pre-sdk/experiments/EXP-023-source-link-asset-audit.md"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  inspect-only:
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [windows-2022, ubuntu-24.04]
+    runs-on: ${{ matrix.os }}
+    timeout-minutes: 18
+    steps:
+      - name: Checkout research-only audit without push credentials
+        uses: actions/checkout@08c6903cd8c0fde910a37f88322edcfb5dd907a8 # v5.0.0
+        with:
+          persist-credentials: false
+      - name: Test read-only archive handling and malformed ZIP negative controls
+        shell: pwsh
+        run: |
+          python -m unittest discover -s tooling/validators/tests -p test_nuget_build_assets.py -v
+          if ($LASTEXITCODE -ne 0) { throw 'NuGet archive audit fixture tests failed.' }
+      - name: Retrieve exact pinned official NuGet archives into ephemeral runner directory
+        shell: pwsh
+        run: |
+          $ErrorActionPreference = 'Stop'
+          $fixed = @(
+            @{id='Microsoft.SourceLink.GitHub'; version='1.1.1'},
+            @{id='Microsoft.SourceLink.Common'; version='1.1.1'},
+            @{id='Microsoft.Build.Tasks.Git'; version='1.1.1'},
+            @{id='Microsoft.SourceLink.GitHub'; version='8.0.0'},
+            @{id='Microsoft.SourceLink.Common'; version='8.0.0'},
+            @{id='Microsoft.Build.Tasks.Git'; version='8.0.0'},
+            @{id='Microsoft.SourceLink.GitHub'; version='10.0.403'},
+            @{id='Microsoft.SourceLink.Common'; version='10.0.403'},
+            @{id='Microsoft.Build.Tasks.Git'; version='10.0.403'},
+            @{id='System.IO.Hashing'; version='10.0.14'}
+          )
+          $directory = Join-Path $env:RUNNER_TEMP 'sourcelink-nuget-audit-input'
+          New-Item -ItemType Directory -Path $directory -Force | Out-Null
+          $entries = @()
+          foreach ($p in $fixed) {
+            $id = $p.id.ToLowerInvariant()
+            $version = $p.version.ToLowerInvariant()
+            $filename = "$id.$version.nupkg"
+            $uri = "https://api.nuget.org/v3-flatcontainer/$id/$version/$filename"
+            $local = Join-Path $directory $filename
+            Invoke-WebRequest -Uri $uri -OutFile $local -TimeoutSec 60 -ErrorAction Stop
+            $bytes = (Get-Item -LiteralPath $local).Length
+            if ($bytes -le 0 -or $bytes -gt 100663296) { throw "Invalid official archive size for $filename" }
+            Write-Host "Retrieved exact pinned metadata input: $($p.id) $($p.version) ($bytes bytes); will NOT import or execute package targets."
+            $entries += @{ id = $p.id; version = $p.version; path = $local }
+          }
+          @{packages = $entries} | ConvertTo-Json -Depth 5 | Set-Content (Join-Path $env:RUNNER_TEMP 'sourcelink-audit-manifest.json') -Encoding utf8
+      - name: Record actual NuGet manifests, dependency graph edges, and import assets
+        shell: pwsh
+        run: |
+          python tooling/validators/nuget_build_assets.py --manifest (Join-Path $env:RUNNER_TEMP 'sourcelink-audit-manifest.json') --output (Join-Path $env:RUNNER_TEMP 'sourcelink-build-audit.json')
+          if ($LASTEXITCODE -ne 0) { throw 'Missing, invalid or unsafe package archives.' }
+          $data = Get-Content (Join-Path $env:RUNNER_TEMP 'sourcelink-build-audit.json') -Raw | ConvertFrom-Json
+          if ($data.schema_version -ne 1 -or $data.packages.Count -ne 10) { throw 'Incomplete pinned official package matrix.' }
+          foreach ($p in $data.packages) {
+            Write-Host "$($p.id) $($p.version) imports=$(@($p.msbuild_import_candidates).Count), declaredDeps=$(@($p.declared_dependencies).Count), sha256=$($p.archive_sha256)"
+          }
+          Write-Host 'PASS: Source Link build-asset audit only. No packages installed, targets imported, or binary loaded.'
+      - name: Retain metadata and SHA fingerprints only
+        if: always()
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4.6.2
+        with:
+          name: sourcelink-pinned-assets-${{ matrix.os }}
+          retention-days: 30
+          if-no-files-found: warn
+          path: ${{ runner.temp }}/sourcelink-build-audit.json

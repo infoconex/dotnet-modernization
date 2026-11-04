@@ -152,6 +152,32 @@ class CompatibilityTests(unittest.TestCase):
         self.assertNotEqual(result['components']['packages']['baseline_input_artifacts'][0]['sha256'],
                             result['components']['packages']['candidate_input_artifacts'][0]['sha256'])
 
+    def test_nuspec_additional_reference_and_content_contract_changes(self):
+        path = self.root / 'sample.1.0.0.nupkg'
+        def create(reference):
+            nuspec = (f'<package minClientVersion="3.0"><metadata><id>sample</id><version>1.0.0</version>'
+                      f'<dependencies><group targetFramework="net48" /></dependencies>'
+                      f'<references><group targetFramework="net48"><reference file="{reference}" /></group></references>'
+                      f'<frameworkReferences><group targetFramework="net6.0">'
+                      f'<frameworkReference name="Microsoft.AspNetCore.App" /></group></frameworkReferences>'
+                      f'<frameworkAssemblies><frameworkAssembly assemblyName="System.Xml" targetFramework="net48" /></frameworkAssemblies>'
+                      f'<contentFiles><files include="any/any/*" buildAction="Content" copyToOutput="true"/></contentFiles>'
+                      f'<packageTypes><packageType name="Dependency" /></packageTypes>'
+                      f'</metadata></package>')
+            with zipfile.ZipFile(path, 'w') as archive:
+                archive.writestr('sample.nuspec', nuspec)
+                archive.writestr('lib/net48/A.dll', b'bytes')
+        create('A.dll')
+        before = compatibility.package_contract(path)
+        self.assertEqual(before['dependency_groups'], ['net48'])
+        self.assertEqual(before['min_client_version'], '3.0')
+        self.assertEqual(set(before['additional_contracts']),
+                         {'references', 'frameworkReferences', 'frameworkAssemblies', 'contentFiles', 'packageTypes'})
+        create('B.dll')
+        after = compatibility.package_contract(path)
+        self.assertEqual(before['payload_paths'], after['payload_paths'])
+        self.assertNotEqual(before['additional_contracts'], after['additional_contracts'])
+
     def test_missing_category_and_incomplete_capture_are_not_green(self):
         self.api()
         baseline = compatibility.capture(self.root, {'schema_version': 1, 'components': {'api': 'contracts/api.txt'}})

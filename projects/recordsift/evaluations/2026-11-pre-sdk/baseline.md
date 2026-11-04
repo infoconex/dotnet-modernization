@@ -8,20 +8,15 @@ This document records **the unchanged starting state**, not proposed modernizati
 
 ## 1. Application overview
 
-RecordSift is a Windows-only .NET Framework 4.8 class library for importing CSV/XLSX records, schema mapping, validation, diagnostics and reporting. It is distributed through NuGet. [Application README](https://github.com/infoconex/RecordSift/blob/8358780829458854a4b0356df5ac5e685f0a34c8/README.md).
+RecordSift imports CSV/XLSX records with schema mapping, validation, diagnostics and reporting. It is distributed as a NuGet library. [Application README](https://github.com/infoconex/RecordSift/blob/8358780829458854a4b0356df5ac5e685f0a34c8/README.md).
 
 | Attribute | Value |
 |---|---|
 | Application name | RecordSift |
 | Application type | Class library |
-| Git host | GitHub |
-| Git repository | `infoconex/RecordSift` |
 | Visibility | Public |
-| Repository URL | [infoconex/RecordSift](https://github.com/infoconex/RecordSift) |
 | HTTPS clone URL | `https://github.com/infoconex/RecordSift.git` |
 | SSH clone URL | `git@github.com:infoconex/RecordSift.git` |
-| Default branch | `main` |
-| Baseline commit | `8358780829458854a4b0356df5ac5e685f0a34c8` |
 | License | MIT |
 | Supported operating system | Windows |
 | Published NuGet version | `0.1.0` |
@@ -47,7 +42,7 @@ RecordSift is a Windows-only .NET Framework 4.8 class library for importing CSV/
 
 Each project appears separately; settings are taken from its own `.csproj` at the baseline commit. Direct references are shown by project suffix (for example, `Domain` means `RecordSift.Domain`).
 
-| Project | Role | Format | Framework | C# | Output | Platform | ToolsVersion | Direct project references |
+| Project | Role | Format | Framework | C# | Output | MSBuild Platform | ToolsVersion | Direct project references |
 |---|---|---|---|---|---|---|---|---|
 | [`RecordSift.Domain`](https://github.com/infoconex/RecordSift/blob/8358780829458854a4b0356df5ac5e685f0a34c8/src/RecordSift.Domain/RecordSift.Domain.csproj) | Production | Traditional | `v4.8` | `7.3` | `Library` | `AnyCPU` | `15.0` | — |
 | [`RecordSift.Application`](https://github.com/infoconex/RecordSift/blob/8358780829458854a4b0356df5ac5e685f0a34c8/src/RecordSift.Application/RecordSift.Application.csproj) | Production | Traditional | `v4.8` | `7.3` | `Library` | `AnyCPU` | `15.0` | `Domain` |
@@ -59,6 +54,8 @@ Each project appears separately; settings are taken from its own `.csproj` at th
 | [`RecordSift.Infrastructure.Csv.Tests`](https://github.com/infoconex/RecordSift/blob/8358780829458854a4b0356df5ac5e685f0a34c8/tests/RecordSift.Infrastructure.Csv.Tests/RecordSift.Infrastructure.Csv.Tests.csproj) | Test | Traditional | `v4.8` | `7.3` | `Library` | `AnyCPU` | `15.0` | `Application.Tests`, `Infrastructure.Csv`, `Application`, `Domain` |
 | [`RecordSift.Infrastructure.Xlsx.Tests`](https://github.com/infoconex/RecordSift/blob/8358780829458854a4b0356df5ac5e685f0a34c8/tests/RecordSift.Infrastructure.Xlsx.Tests/RecordSift.Infrastructure.Xlsx.Tests.csproj) | Test | Traditional | `v4.8` | `7.3` | `Library` | `AnyCPU` | `15.0` | `Infrastructure.Xlsx`, `Application`, `Domain` |
 | [`RecordSift.Infrastructure.Reporting.Tests`](https://github.com/infoconex/RecordSift/blob/8358780829458854a4b0356df5ac5e685f0a34c8/tests/RecordSift.Infrastructure.Reporting.Tests/RecordSift.Infrastructure.Reporting.Tests.csproj) | Test | Traditional | `v4.8` | `7.3` | `Library` | `AnyCPU` | `15.0` | `Infrastructure.Csv`, `Infrastructure.Reporting`, `Application`, `Domain` |
+
+The **MSBuild Platform** column records each project's declared `Platform` default (`AnyCPU`), not `PlatformTarget`, `Prefer32Bit`, runtime architecture or native dependency bitness.
 
 ### Project-specific configuration
 
@@ -151,38 +148,35 @@ The values above are declared in the frozen source, not measured by an independe
 
 ### NuGet dependencies
 
-| Project | Package | Version | Declared in | Eligible feed |
-|---|---|---|---|---|
-| `Infrastructure.Csv` | `CsvHelper` | `33.1.0` | [`packages.config`](https://github.com/infoconex/RecordSift/blob/8358780829458854a4b0356df5ac5e685f0a34c8/src/RecordSift.Infrastructure.Csv/packages.config) | `nuget.org` |
-| `Infrastructure.Csv` | `Microsoft.Bcl.AsyncInterfaces` | `8.0.0` | [`packages.config`](https://github.com/infoconex/RecordSift/blob/8358780829458854a4b0356df5ac5e685f0a34c8/src/RecordSift.Infrastructure.Csv/packages.config) | `nuget.org` |
-| `Infrastructure.Csv` | `Microsoft.Bcl.HashCode` | `1.1.1` | [`packages.config`](https://github.com/infoconex/RecordSift/blob/8358780829458854a4b0356df5ac5e685f0a34c8/src/RecordSift.Infrastructure.Csv/packages.config) | `nuget.org` |
-| `Infrastructure.Csv` | `Microsoft.CSharp` | `4.7.0` | [`packages.config`](https://github.com/infoconex/RecordSift/blob/8358780829458854a4b0356df5ac5e685f0a34c8/src/RecordSift.Infrastructure.Csv/packages.config) | `nuget.org` |
-| `Infrastructure.Csv` | `System.Memory` | `4.5.5` | [`packages.config`](https://github.com/infoconex/RecordSift/blob/8358780829458854a4b0356df5ac5e685f0a34c8/src/RecordSift.Infrastructure.Csv/packages.config) | `nuget.org` |
-| `Infrastructure.Csv` | `System.Buffers` | `4.5.1` | [`packages.config`](https://github.com/infoconex/RecordSift/blob/8358780829458854a4b0356df5ac5e685f0a34c8/src/RecordSift.Infrastructure.Csv/packages.config) | `nuget.org` |
-| `Infrastructure.Csv` | `System.Numerics.Vectors` | `4.5.0` | [`packages.config`](https://github.com/infoconex/RecordSift/blob/8358780829458854a4b0356df5ac5e685f0a34c8/src/RecordSift.Infrastructure.Csv/packages.config) | `nuget.org` |
-| `Infrastructure.Csv` | `System.Runtime.CompilerServices.Unsafe` | `6.0.0` | [`packages.config`](https://github.com/infoconex/RecordSift/blob/8358780829458854a4b0356df5ac5e685f0a34c8/src/RecordSift.Infrastructure.Csv/packages.config) | `nuget.org` |
-| `Infrastructure.Csv` | `System.Threading.Tasks.Extensions` | `4.5.4` | [`packages.config`](https://github.com/infoconex/RecordSift/blob/8358780829458854a4b0356df5ac5e685f0a34c8/src/RecordSift.Infrastructure.Csv/packages.config) | `nuget.org` |
-| `Infrastructure.Xlsx` | `ExcelDataReader` | `3.9.0` | [`packages.config`](https://github.com/infoconex/RecordSift/blob/8358780829458854a4b0356df5ac5e685f0a34c8/src/RecordSift.Infrastructure.Xlsx/packages.config) | `nuget.org` |
-| `Infrastructure.Xlsx` | `System.ValueTuple` | `4.5.0` | [`packages.config`](https://github.com/infoconex/RecordSift/blob/8358780829458854a4b0356df5ac5e685f0a34c8/src/RecordSift.Infrastructure.Xlsx/packages.config) | `nuget.org` |
-| `Domain.Tests` | `NUnit` | `3.14.0` | [`packages.config`](https://github.com/infoconex/RecordSift/blob/8358780829458854a4b0356df5ac5e685f0a34c8/tests/RecordSift.Domain.Tests/packages.config) | `nuget.org` |
-| `Domain.Tests` | `NUnit.ConsoleRunner` | `3.17.0` | [`packages.config`](https://github.com/infoconex/RecordSift/blob/8358780829458854a4b0356df5ac5e685f0a34c8/tests/RecordSift.Domain.Tests/packages.config) | `nuget.org` |
-| `Application.Tests` | `NUnit` | `3.14.0` | [`packages.config`](https://github.com/infoconex/RecordSift/blob/8358780829458854a4b0356df5ac5e685f0a34c8/tests/RecordSift.Application.Tests/packages.config) | `nuget.org` |
-| `Infrastructure.Csv.Tests` | `NUnit` | `3.14.0` | [`packages.config`](https://github.com/infoconex/RecordSift/blob/8358780829458854a4b0356df5ac5e685f0a34c8/tests/RecordSift.Infrastructure.Csv.Tests/packages.config) | `nuget.org` |
-| `Infrastructure.Xlsx.Tests` | `NUnit` | `3.14.0` | [`packages.config`](https://github.com/infoconex/RecordSift/blob/8358780829458854a4b0356df5ac5e685f0a34c8/tests/RecordSift.Infrastructure.Xlsx.Tests/packages.config) | `nuget.org` |
-| `Infrastructure.Reporting.Tests` | `NUnit` | `3.14.0` | [`packages.config`](https://github.com/infoconex/RecordSift/blob/8358780829458854a4b0356df5ac5e685f0a34c8/tests/RecordSift.Infrastructure.Reporting.Tests/packages.config) | `nuget.org` |
+| Project | Package | Version | Declared in | Eligible feed | Usage |
+|---|---|---|---|---|---|
+| `Infrastructure.Csv` | `CsvHelper` | `33.1.0` | [`packages.config`](https://github.com/infoconex/RecordSift/blob/8358780829458854a4b0356df5ac5e685f0a34c8/src/RecordSift.Infrastructure.Csv/packages.config) | `nuget.org` | Production |
+| `Infrastructure.Csv` | `Microsoft.Bcl.AsyncInterfaces` | `8.0.0` | [`packages.config`](https://github.com/infoconex/RecordSift/blob/8358780829458854a4b0356df5ac5e685f0a34c8/src/RecordSift.Infrastructure.Csv/packages.config) | `nuget.org` | Production |
+| `Infrastructure.Csv` | `Microsoft.Bcl.HashCode` | `1.1.1` | [`packages.config`](https://github.com/infoconex/RecordSift/blob/8358780829458854a4b0356df5ac5e685f0a34c8/src/RecordSift.Infrastructure.Csv/packages.config) | `nuget.org` | Production |
+| `Infrastructure.Csv` | `Microsoft.CSharp` | `4.7.0` | [`packages.config`](https://github.com/infoconex/RecordSift/blob/8358780829458854a4b0356df5ac5e685f0a34c8/src/RecordSift.Infrastructure.Csv/packages.config) | `nuget.org` | Production |
+| `Infrastructure.Csv` | `System.Memory` | `4.5.5` | [`packages.config`](https://github.com/infoconex/RecordSift/blob/8358780829458854a4b0356df5ac5e685f0a34c8/src/RecordSift.Infrastructure.Csv/packages.config) | `nuget.org` | Production |
+| `Infrastructure.Csv` | `System.Buffers` | `4.5.1` | [`packages.config`](https://github.com/infoconex/RecordSift/blob/8358780829458854a4b0356df5ac5e685f0a34c8/src/RecordSift.Infrastructure.Csv/packages.config) | `nuget.org` | Production |
+| `Infrastructure.Csv` | `System.Numerics.Vectors` | `4.5.0` | [`packages.config`](https://github.com/infoconex/RecordSift/blob/8358780829458854a4b0356df5ac5e685f0a34c8/src/RecordSift.Infrastructure.Csv/packages.config) | `nuget.org` | Production |
+| `Infrastructure.Csv` | `System.Runtime.CompilerServices.Unsafe` | `6.0.0` | [`packages.config`](https://github.com/infoconex/RecordSift/blob/8358780829458854a4b0356df5ac5e685f0a34c8/src/RecordSift.Infrastructure.Csv/packages.config) | `nuget.org` | Production |
+| `Infrastructure.Csv` | `System.Threading.Tasks.Extensions` | `4.5.4` | [`packages.config`](https://github.com/infoconex/RecordSift/blob/8358780829458854a4b0356df5ac5e685f0a34c8/src/RecordSift.Infrastructure.Csv/packages.config) | `nuget.org` | Production |
+| `Infrastructure.Xlsx` | `ExcelDataReader` | `3.9.0` | [`packages.config`](https://github.com/infoconex/RecordSift/blob/8358780829458854a4b0356df5ac5e685f0a34c8/src/RecordSift.Infrastructure.Xlsx/packages.config) | `nuget.org` | Production |
+| `Infrastructure.Xlsx` | `System.ValueTuple` | `4.5.0` | [`packages.config`](https://github.com/infoconex/RecordSift/blob/8358780829458854a4b0356df5ac5e685f0a34c8/src/RecordSift.Infrastructure.Xlsx/packages.config) | `nuget.org` | Production |
+| `Domain.Tests` | `NUnit` | `3.14.0` | [`packages.config`](https://github.com/infoconex/RecordSift/blob/8358780829458854a4b0356df5ac5e685f0a34c8/tests/RecordSift.Domain.Tests/packages.config) | `nuget.org` | Test framework |
+| `Domain.Tests` | `NUnit.ConsoleRunner` | `3.17.0` | [`packages.config`](https://github.com/infoconex/RecordSift/blob/8358780829458854a4b0356df5ac5e685f0a34c8/tests/RecordSift.Domain.Tests/packages.config) | `nuget.org` | Test runner tool |
+| `Application.Tests` | `NUnit` | `3.14.0` | [`packages.config`](https://github.com/infoconex/RecordSift/blob/8358780829458854a4b0356df5ac5e685f0a34c8/tests/RecordSift.Application.Tests/packages.config) | `nuget.org` | Test framework |
+| `Infrastructure.Csv.Tests` | `NUnit` | `3.14.0` | [`packages.config`](https://github.com/infoconex/RecordSift/blob/8358780829458854a4b0356df5ac5e685f0a34c8/tests/RecordSift.Infrastructure.Csv.Tests/packages.config) | `nuget.org` | Test framework |
+| `Infrastructure.Xlsx.Tests` | `NUnit` | `3.14.0` | [`packages.config`](https://github.com/infoconex/RecordSift/blob/8358780829458854a4b0356df5ac5e685f0a34c8/tests/RecordSift.Infrastructure.Xlsx.Tests/packages.config) | `nuget.org` | Test framework |
+| `Infrastructure.Reporting.Tests` | `NUnit` | `3.14.0` | [`packages.config`](https://github.com/infoconex/RecordSift/blob/8358780829458854a4b0356df5ac5e685f0a34c8/tests/RecordSift.Infrastructure.Reporting.Tests/packages.config) | `nuget.org` | Test framework |
 
 | Attribute | Value |
 |---|---|
 | NuGet package source | `https://api.nuget.org/v3/index.json` |
 | NuGet audit source | `https://api.nuget.org/v3/index.json` |
 | Package Source Mapping | Not configured in repository `NuGet.Config` |
-| Project dependency format | `packages.config` |
 | Published package dependency metadata | [`packaging/RecordSift.nuspec`](https://github.com/infoconex/RecordSift/blob/8358780829458854a4b0356df5ac5e685f0a34c8/packaging/RecordSift.nuspec) |
 | Distributable package dependencies | **11** exact-pinned production dependencies |
 | Distinct restored package versions | **13** ([EXP-011](experiments/EXP-011-nuget-dependency-inventory.md)) |
 | Per-package download origin | Not independently verified |
-| Test framework version | NUnit `3.14.0` |
-| Test runner version | NUnit.ConsoleRunner `3.17.0` |
 | Package output framework | `net48` |
 
 ### Other external dependencies

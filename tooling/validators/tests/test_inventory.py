@@ -12,7 +12,9 @@ class InventoryTests(unittest.TestCase):
     def setUp(self):
         self.temp = tempfile.TemporaryDirectory()
         self.addCleanup(self.temp.cleanup)
-        self.root = Path(self.temp.name)
+        self.base = Path(self.temp.name)
+        self.root = self.base / 'source'
+        self.root.mkdir()
 
     def write(self, name, text):
         p = self.root / name
@@ -69,7 +71,7 @@ class InventoryTests(unittest.TestCase):
     def test_malformed_source_is_partial_not_a_success(self):
         self.write('Broken.csproj', '<Project><PropertyGroup>')
         self.write('Good.csproj', '<Project/>')
-        output = self.root / 'result.json'
+        output = self.base / 'result.json'
         self.assertEqual(inventory.main(['--source', str(self.root), '--output', str(output)]), 2)
         result = json.loads(output.read_text(encoding='utf-8'))
         self.assertEqual(len(result['projects']), 1)
@@ -77,10 +79,13 @@ class InventoryTests(unittest.TestCase):
 
     def test_expected_commit_mismatch_exits_nonzero(self):
         self.write('Good.csproj', '<Project/>')
-        output = self.root / 'result.json'
+        output = self.base / 'result.json'
         self.assertEqual(inventory.main(['--source', str(self.root), '--output', str(output),
                                          '--expect-commit', '0' * 40]), 2)
         self.assertTrue(output.exists())
+        inside = self.root / 'result.json'
+        self.assertEqual(inventory.main(['--source', str(self.root), '--output', str(inside)]), 2)
+        self.assertFalse(inside.exists())
 
 
 if __name__ == '__main__':

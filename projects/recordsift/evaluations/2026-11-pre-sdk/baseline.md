@@ -1,64 +1,266 @@
-# RecordSift — Verified baseline
+# RecordSift — Verified application baseline
 
-**Repository:** [infoconex/RecordSift](https://github.com/infoconex/RecordSift)  
-**Branch / full commit:** main / `8358780829458854a4b0356df5ac5e685f0a34c8`  
-**Verification date:** November 2, 2026
+**Source:** [infoconex/RecordSift](https://github.com/infoconex/RecordSift) · `main@8358780829458854a4b0356df5ac5e685f0a34c8`  
+**Verification:** November 2, 2026 · **Source inventory:** November 3, 2026  
+**Status:** Source inventory verified; existing Windows CI compatibility baseline verified. Evaluated MSBuild properties and unexecuted variants are **not** assumed verified.
 
-## Source and project inventory
+This document records **the unchanged starting state**, not proposed modernization work. Technical explanations and recommendations are maintained in [experiments](experiments/README.md), [findings](findings.md), and the [roadmap](roadmap.md).
 
-Five production projects: RecordSift.Domain, RecordSift.Application, RecordSift.Infrastructure.Csv, RecordSift.Infrastructure.Xlsx, and RecordSift.Infrastructure.Reporting. Five corresponding NUnit test projects.
+## 1. Application overview
 
-All ten use traditional, non-SDK-style `*.csproj` files, `TargetFrameworkVersion=v4.8`, `LangVersion=7.3`, `OutputType=Library`, `AnyCPU`, `WarningLevel=4`, explicit compile/reference items, Debug/Release configurations, and imports of `Microsoft.CSharp.targets`.
+RecordSift imports CSV/XLSX records with schema mapping, validation, diagnostics and reporting. It is distributed as a NuGet library. [Application README](https://github.com/infoconex/RecordSift/blob/8358780829458854a4b0356df5ac5e685f0a34c8/README.md).
 
-Production-specific configuration generates XML documentation and enforces `CS1591` for documentation. Production assembly version is `0.1.0.0`. Preserve exact assembly and file metadata, project dependency ordering, output layouts, and per-assembly XML docs.
+| Attribute | Value |
+|---|---|
+| Application name | RecordSift |
+| Application type | Class library |
+| Visibility | Public |
+| HTTPS clone URL | `https://github.com/infoconex/RecordSift.git` |
+| SSH clone URL | `git@github.com:infoconex/RecordSift.git` |
+| License | MIT |
+| Supported operating system | Windows |
+| Published NuGet version | `0.1.0` |
+| Published NuGet package URL | [RecordSift 0.1.0 on NuGet.org](https://www.nuget.org/packages/RecordSift/0.1.0) |
+| Tracked `.nuspec` version | `0.1.0-rc.1` |
+| Production assembly version | `0.1.0.0` |
+| Production file version | `0.1.0.0` |
 
-### Actual repeated settings
+## 2. Solution and projects
 
-| Setting | Projects | Candidate | Reason |
-|---|---:|---|---|
-| C# language version 7.3 | 10 | Yes, verified | Identical across projects; safe isolated centralization tested. |
-| Warning level 4 | 10 | Maybe later | Duplicated but change still requires evaluated-property proof. |
-| Target .NET Framework v4.8 | 10 | Not yet | Public API checker reads raw project XML; centralization breaks current script assumption. |
-| Debug/Release and output paths | 10 | Not initially | Existing build, test, and packaging paths depend on layout. |
-| XML documentation and CS1591 | 5 production | Optional within src | Intentionally different from test projects. |
-| Resource logical names | Resource-bearing projects | No | Exact names are compatibility contracts. |
-| Package versions | Package-owning projects | Not with Directory.Packages.props yet | Current restore uses packages.config, not PackageReference. |
+### Solution
 
-## NuGet and packaging
+| Attribute | Value |
+|---|---|
+| Solution file | [`RecordSift.sln`](https://github.com/infoconex/RecordSift/blob/8358780829458854a4b0356df5ac5e685f0a34c8/RecordSift.sln) |
+| Solution format | Visual Studio `.sln` |
+| Format version | `12.00` |
+| Declared Visual Studio version | `16.0.28701.123` |
+| Declared minimum Visual Studio version | `10.0.40219.1` |
+| Debug configuration | `Debug\|Any CPU` |
+| Release configuration | `Release\|Any CPU` |
 
-`NuGet.Config` explicitly defines sources/audit sources. Dependencies are declared in pinned `packages.config` files. CI uses standalone `nuget restore`. Packaging is defined by `packaging/RecordSift.nuspec`, including five `lib/net48` DLLs, XML documentation, README/license/notices and explicit dependencies.
+### Projects
 
-Important resource identities:
-- `RecordSift.Resources.CsvMessages.resources`
-- `RecordSift.Resources.DomainMessages.resources`
-- `RecordSift.Resources.ReportingMessages.resources`
+Each project appears separately; settings are taken from its own `.csproj` at the baseline commit. Direct references are shown by project suffix (for example, `Domain` means `RecordSift.Domain`).
 
-## Baseline verification
+| Project | Role | Format | Framework | C# | Output | MSBuild Platform | ToolsVersion | Direct project references |
+|---|---|---|---|---|---|---|---|---|
+| [`RecordSift.Domain`](https://github.com/infoconex/RecordSift/blob/8358780829458854a4b0356df5ac5e685f0a34c8/src/RecordSift.Domain/RecordSift.Domain.csproj) | Production | Traditional | `v4.8` | `7.3` | `Library` | `AnyCPU` | `15.0` | — |
+| [`RecordSift.Application`](https://github.com/infoconex/RecordSift/blob/8358780829458854a4b0356df5ac5e685f0a34c8/src/RecordSift.Application/RecordSift.Application.csproj) | Production | Traditional | `v4.8` | `7.3` | `Library` | `AnyCPU` | `15.0` | `Domain` |
+| [`RecordSift.Infrastructure.Csv`](https://github.com/infoconex/RecordSift/blob/8358780829458854a4b0356df5ac5e685f0a34c8/src/RecordSift.Infrastructure.Csv/RecordSift.Infrastructure.Csv.csproj) | Production | Traditional | `v4.8` | `7.3` | `Library` | `AnyCPU` | `15.0` | `Application`, `Domain` |
+| [`RecordSift.Infrastructure.Xlsx`](https://github.com/infoconex/RecordSift/blob/8358780829458854a4b0356df5ac5e685f0a34c8/src/RecordSift.Infrastructure.Xlsx/RecordSift.Infrastructure.Xlsx.csproj) | Production | Traditional | `v4.8` | `7.3` | `Library` | `AnyCPU` | `15.0` | `Application`, `Domain` |
+| [`RecordSift.Infrastructure.Reporting`](https://github.com/infoconex/RecordSift/blob/8358780829458854a4b0356df5ac5e685f0a34c8/src/RecordSift.Infrastructure.Reporting/RecordSift.Infrastructure.Reporting.csproj) | Production | Traditional | `v4.8` | `7.3` | `Library` | `AnyCPU` | `15.0` | `Application`, `Domain` |
+| [`RecordSift.Domain.Tests`](https://github.com/infoconex/RecordSift/blob/8358780829458854a4b0356df5ac5e685f0a34c8/tests/RecordSift.Domain.Tests/RecordSift.Domain.Tests.csproj) | Test | Traditional | `v4.8` | `7.3` | `Library` | `AnyCPU` | `15.0` | `Domain` |
+| [`RecordSift.Application.Tests`](https://github.com/infoconex/RecordSift/blob/8358780829458854a4b0356df5ac5e685f0a34c8/tests/RecordSift.Application.Tests/RecordSift.Application.Tests.csproj) | Test | Traditional | `v4.8` | `7.3` | `Library` | `AnyCPU` | `15.0` | `Application`, `Domain` |
+| [`RecordSift.Infrastructure.Csv.Tests`](https://github.com/infoconex/RecordSift/blob/8358780829458854a4b0356df5ac5e685f0a34c8/tests/RecordSift.Infrastructure.Csv.Tests/RecordSift.Infrastructure.Csv.Tests.csproj) | Test | Traditional | `v4.8` | `7.3` | `Library` | `AnyCPU` | `15.0` | `Application.Tests`, `Infrastructure.Csv`, `Application`, `Domain` |
+| [`RecordSift.Infrastructure.Xlsx.Tests`](https://github.com/infoconex/RecordSift/blob/8358780829458854a4b0356df5ac5e685f0a34c8/tests/RecordSift.Infrastructure.Xlsx.Tests/RecordSift.Infrastructure.Xlsx.Tests.csproj) | Test | Traditional | `v4.8` | `7.3` | `Library` | `AnyCPU` | `15.0` | `Infrastructure.Xlsx`, `Application`, `Domain` |
+| [`RecordSift.Infrastructure.Reporting.Tests`](https://github.com/infoconex/RecordSift/blob/8358780829458854a4b0356df5ac5e685f0a34c8/tests/RecordSift.Infrastructure.Reporting.Tests/RecordSift.Infrastructure.Reporting.Tests.csproj) | Test | Traditional | `v4.8` | `7.3` | `Library` | `AnyCPU` | `15.0` | `Infrastructure.Csv`, `Infrastructure.Reporting`, `Application`, `Domain` |
 
-| NUnit assembly | Discovered | Passed | Skipped |
-|---|---:|---:|---:|
-| Domain.Tests | 123 | 123 | 0 |
-| Application.Tests | 62 | 62 | 0 |
-| Infrastructure.Csv.Tests | 132 | 131 | 1 |
-| Infrastructure.Reporting.Tests | 54 | 54 | 0 |
-| Infrastructure.Xlsx.Tests | 48 | 48 | 0 |
-| **Total** | **419** | **418** | **1** |
+The **MSBuild Platform** column records each project's declared `Platform` default (`AnyCPU`), not `PlatformTarget`, `Prefer32Bit`, runtime architecture or native dependency bitness.
 
-**Failed tests: 0.** The CSV skip is intentional, not an unexpected test failure. Existing validation confirms **425 public-API/packaging-metadata entries**, generated XML documentation and NuGet packaging. Existing CI also ran clean local package consumer and engineering-documentation workflows.
+### Project-specific configuration
 
-- [Main Windows build and tests](https://github.com/infoconex/RecordSift/actions/runs/41392848910)
-- [Clean Windows consumer](https://github.com/infoconex/RecordSift/actions/runs/41392848814)
-- [Engineering docs validation](https://github.com/infoconex/RecordSift/actions/runs/41392848879)
+Each project has one row per table. Separate Debug/Release columns are used **only when values differ**; identical values or predictable paths appear once. `—` means **not declared**, not an evaluated default.
 
-## Known documentation and script inconsistencies
+**Compiler settings**
 
-- `scripts/run_tests.ps1` locally runs **four** assemblies, omitting Infrastructure.Xlsx.Tests. The CI workflow runs **five**. Always use the five-suite baseline when judging changes.
-- Some engineering documentation says **379 tests**; the observed total is **419**.
-- `scripts/verify_public_api.ps1` reads `$project.Project.PropertyGroup[0].TargetFrameworkVersion` from raw XML. Moving framework declaration to imported props would require first updating the checker to use evaluated MSBuild properties.
-- The Windows PowerShell 5.1 host is significant for API verification: an initial experimental use of PowerShell 7 produced spurious reflection differences.
+| Project | DebugType (Debug) | DebugType (Release) | Optimize (Debug) | Optimize (Release) | DefineConstants (Debug) | DefineConstants (Release) | DebugSymbols (Debug) | DebugSymbols (Release) |
+|---|---|---|---|---|---|---|---|---|
+| `Domain` | `full` | `pdbonly` | `false` | `true` | `DEBUG;TRACE` | `TRACE` | `true` | — |
+| `Application` | `full` | `pdbonly` | `false` | `true` | `DEBUG;TRACE` | `TRACE` | `true` | — |
+| `Infrastructure.Csv` | `full` | `pdbonly` | `false` | `true` | `DEBUG;TRACE` | `TRACE` | `true` | — |
+| `Infrastructure.Xlsx` | `full` | `pdbonly` | `false` | `true` | `DEBUG;TRACE` | `TRACE` | `true` | — |
+| `Infrastructure.Reporting` | `full` | `pdbonly` | `false` | `true` | `DEBUG;TRACE` | `TRACE` | `true` | — |
+| `Domain.Tests` | `full` | `pdbonly` | `false` | `true` | `DEBUG;TRACE` | `TRACE` | `true` | — |
+| `Application.Tests` | `full` | `pdbonly` | `false` | `true` | `DEBUG;TRACE` | `TRACE` | `true` | — |
+| `Infrastructure.Csv.Tests` | `full` | `pdbonly` | `false` | `true` | `DEBUG;TRACE` | `TRACE` | `true` | — |
+| `Infrastructure.Xlsx.Tests` | `full` | `pdbonly` | `false` | `true` | `DEBUG;TRACE` | `TRACE` | `true` | — |
+| `Infrastructure.Reporting.Tests` | `full` | `pdbonly` | `false` | `true` | `DEBUG;TRACE` | `TRACE` | `true` | — |
 
-## Expected compatibility gates
+**Output and validation settings**
 
-Restore → Release build all ten projects → full five-suite NUnit (419/418/0/1) → 425-entry API/metadata baseline → assembly and embedded-resource identity checks → XML docs → package layout and dependency checks → clean installed-package consumer tests.
+| Project | OutputPath | WarningLevel | WarningsAsErrors | DocumentationFile |
+|---|---|---|---|---|
+| `Domain` | `bin\<Configuration>\` | `4` | `1591` | `bin\<Configuration>\RecordSift.Domain.xml` |
+| `Application` | `bin\<Configuration>\` | `4` | `1591` | `bin\<Configuration>\RecordSift.Application.xml` |
+| `Infrastructure.Csv` | `bin\<Configuration>\` | `4` | `1591` | `bin\<Configuration>\RecordSift.Infrastructure.Csv.xml` |
+| `Infrastructure.Xlsx` | `bin\<Configuration>\` | `4` | `1591` | `bin\<Configuration>\RecordSift.Infrastructure.Xlsx.xml` |
+| `Infrastructure.Reporting` | `bin\<Configuration>\` | `4` | `1591` | `bin\<Configuration>\RecordSift.Infrastructure.Reporting.xml` |
+| `Domain.Tests` | `bin\<Configuration>\` | `4` | — | — |
+| `Application.Tests` | `bin\<Configuration>\` | `4` | — | — |
+| `Infrastructure.Csv.Tests` | `bin\<Configuration>\` | `4` | — | — |
+| `Infrastructure.Xlsx.Tests` | `bin\<Configuration>\` | `4` | — | — |
+| `Infrastructure.Reporting.Tests` | `bin\<Configuration>\` | `4` | — | — |
 
-Do not interpret changed binary hashes or timestamps as compatibility failure unless deterministic equality is part of an explicit requirement.
+`<Configuration>` is a **display placeholder** representing the explicitly declared `Debug` and `Release` paths, not an MSBuild expression. Both warning properties have the same declared values in Debug and Release.
+
+**Project-wide metadata**
+
+| Project | Default Configuration | IsTestProject | FileAlignment | AppDesignerFolder | C# targets import |
+|---|---|---|---|---|---|
+| `Domain` | `Debug` | — | `512` | `Properties` | `Microsoft.CSharp.targets` |
+| `Application` | `Debug` | — | `512` | `Properties` | `Microsoft.CSharp.targets` |
+| `Infrastructure.Csv` | `Debug` | — | `512` | `Properties` | `Microsoft.CSharp.targets` |
+| `Infrastructure.Xlsx` | `Debug` | — | — | — | `Microsoft.CSharp.targets` |
+| `Infrastructure.Reporting` | `Debug` | — | `512` | — | `Microsoft.CSharp.targets` |
+| `Domain.Tests` | `Debug` | `true` | `512` | `Properties` | `Microsoft.CSharp.targets` |
+| `Application.Tests` | `Debug` | `true` | `512` | `Properties` | `Microsoft.CSharp.targets` |
+| `Infrastructure.Csv.Tests` | `Debug` | `true` | `512` | `Properties` | `Microsoft.CSharp.targets` |
+| `Infrastructure.Xlsx.Tests` | `Debug` | `true` | — | — | `Microsoft.CSharp.targets` |
+| `Infrastructure.Reporting.Tests` | `Debug` | `true` | `512` | — | `Microsoft.CSharp.targets` |
+
+The values above are declared in the frozen source, not measured by an independent MSBuild property-evaluation run.
+
+## 3. Repository structure and configuration
+
+### Directory structure
+
+| Directory | Purpose |
+|---|---|
+| `src/` | Production source code |
+| `tests/` | Automated tests and consumer verification |
+| `docs/` | Requirements, specifications, architecture and user/release documentation |
+| `scripts/` | Build, test, validation and packaging scripts |
+| `packaging/` | NuGet package definition |
+| `.github/` | Repository workflows, contribution templates and automation instructions |
+
+### Existing configuration files
+
+| File or mechanism | Present | Current purpose |
+|---|---|---|
+| `.editorconfig` | Yes | Formatting, C# style and IDE1006 naming rules |
+| `NuGet.Config` | Yes | NuGet restore and audit sources |
+| `packages.config` | Yes | Per-project NuGet dependencies |
+| `.gitignore` | Yes | Ignored build, test and package outputs |
+| `AGENTS.md` | Yes | Engineering instructions |
+| `.github/copilot-instructions.md` | Yes | Copilot instructions |
+| `Directory.Build.props` | No | — |
+| `Directory.Build.targets` | No | — |
+| `Directory.Build.rsp` | No | — |
+| `Directory.Solution.props` | No | — |
+| `Directory.Solution.targets` | No | — |
+| `Directory.Packages.props` | No | — |
+| `global.json` | No | — |
+| `packages.lock.json` | No | — |
+
+“Present” means tracked in the baseline commit; generated, imported and machine-wide settings are outside this source inventory.
+
+## 4. Dependencies and build
+
+### NuGet dependencies
+
+| Project | Package | Version | Declared in | Eligible feed | Usage |
+|---|---|---|---|---|---|
+| `Infrastructure.Csv` | `CsvHelper` | `33.1.0` | [`packages.config`](https://github.com/infoconex/RecordSift/blob/8358780829458854a4b0356df5ac5e685f0a34c8/src/RecordSift.Infrastructure.Csv/packages.config) | `nuget.org` | Production |
+| `Infrastructure.Csv` | `Microsoft.Bcl.AsyncInterfaces` | `8.0.0` | [`packages.config`](https://github.com/infoconex/RecordSift/blob/8358780829458854a4b0356df5ac5e685f0a34c8/src/RecordSift.Infrastructure.Csv/packages.config) | `nuget.org` | Production |
+| `Infrastructure.Csv` | `Microsoft.Bcl.HashCode` | `1.1.1` | [`packages.config`](https://github.com/infoconex/RecordSift/blob/8358780829458854a4b0356df5ac5e685f0a34c8/src/RecordSift.Infrastructure.Csv/packages.config) | `nuget.org` | Production |
+| `Infrastructure.Csv` | `Microsoft.CSharp` | `4.7.0` | [`packages.config`](https://github.com/infoconex/RecordSift/blob/8358780829458854a4b0356df5ac5e685f0a34c8/src/RecordSift.Infrastructure.Csv/packages.config) | `nuget.org` | Production |
+| `Infrastructure.Csv` | `System.Memory` | `4.5.5` | [`packages.config`](https://github.com/infoconex/RecordSift/blob/8358780829458854a4b0356df5ac5e685f0a34c8/src/RecordSift.Infrastructure.Csv/packages.config) | `nuget.org` | Production |
+| `Infrastructure.Csv` | `System.Buffers` | `4.5.1` | [`packages.config`](https://github.com/infoconex/RecordSift/blob/8358780829458854a4b0356df5ac5e685f0a34c8/src/RecordSift.Infrastructure.Csv/packages.config) | `nuget.org` | Production |
+| `Infrastructure.Csv` | `System.Numerics.Vectors` | `4.5.0` | [`packages.config`](https://github.com/infoconex/RecordSift/blob/8358780829458854a4b0356df5ac5e685f0a34c8/src/RecordSift.Infrastructure.Csv/packages.config) | `nuget.org` | Production |
+| `Infrastructure.Csv` | `System.Runtime.CompilerServices.Unsafe` | `6.0.0` | [`packages.config`](https://github.com/infoconex/RecordSift/blob/8358780829458854a4b0356df5ac5e685f0a34c8/src/RecordSift.Infrastructure.Csv/packages.config) | `nuget.org` | Production |
+| `Infrastructure.Csv` | `System.Threading.Tasks.Extensions` | `4.5.4` | [`packages.config`](https://github.com/infoconex/RecordSift/blob/8358780829458854a4b0356df5ac5e685f0a34c8/src/RecordSift.Infrastructure.Csv/packages.config) | `nuget.org` | Production |
+| `Infrastructure.Xlsx` | `ExcelDataReader` | `3.9.0` | [`packages.config`](https://github.com/infoconex/RecordSift/blob/8358780829458854a4b0356df5ac5e685f0a34c8/src/RecordSift.Infrastructure.Xlsx/packages.config) | `nuget.org` | Production |
+| `Infrastructure.Xlsx` | `System.ValueTuple` | `4.5.0` | [`packages.config`](https://github.com/infoconex/RecordSift/blob/8358780829458854a4b0356df5ac5e685f0a34c8/src/RecordSift.Infrastructure.Xlsx/packages.config) | `nuget.org` | Production |
+| `Domain.Tests` | `NUnit` | `3.14.0` | [`packages.config`](https://github.com/infoconex/RecordSift/blob/8358780829458854a4b0356df5ac5e685f0a34c8/tests/RecordSift.Domain.Tests/packages.config) | `nuget.org` | Test framework |
+| `Domain.Tests` | `NUnit.ConsoleRunner` | `3.17.0` | [`packages.config`](https://github.com/infoconex/RecordSift/blob/8358780829458854a4b0356df5ac5e685f0a34c8/tests/RecordSift.Domain.Tests/packages.config) | `nuget.org` | Test runner tool |
+| `Application.Tests` | `NUnit` | `3.14.0` | [`packages.config`](https://github.com/infoconex/RecordSift/blob/8358780829458854a4b0356df5ac5e685f0a34c8/tests/RecordSift.Application.Tests/packages.config) | `nuget.org` | Test framework |
+| `Infrastructure.Csv.Tests` | `NUnit` | `3.14.0` | [`packages.config`](https://github.com/infoconex/RecordSift/blob/8358780829458854a4b0356df5ac5e685f0a34c8/tests/RecordSift.Infrastructure.Csv.Tests/packages.config) | `nuget.org` | Test framework |
+| `Infrastructure.Xlsx.Tests` | `NUnit` | `3.14.0` | [`packages.config`](https://github.com/infoconex/RecordSift/blob/8358780829458854a4b0356df5ac5e685f0a34c8/tests/RecordSift.Infrastructure.Xlsx.Tests/packages.config) | `nuget.org` | Test framework |
+| `Infrastructure.Reporting.Tests` | `NUnit` | `3.14.0` | [`packages.config`](https://github.com/infoconex/RecordSift/blob/8358780829458854a4b0356df5ac5e685f0a34c8/tests/RecordSift.Infrastructure.Reporting.Tests/packages.config) | `nuget.org` | Test framework |
+
+**Usage** distinguishes production, test-framework and test-runner purposes; it does **not** establish historically direct versus transitive dependency status. [EXP-011](experiments/EXP-011-nuget-dependency-inventory.md) records that limitation.
+
+| Attribute | Value |
+|---|---|
+| NuGet package source | `https://api.nuget.org/v3/index.json` |
+| NuGet audit source | `https://api.nuget.org/v3/index.json` |
+| Package Source Mapping | Not configured in repository `NuGet.Config` |
+| Published package dependency metadata | [`packaging/RecordSift.nuspec`](https://github.com/infoconex/RecordSift/blob/8358780829458854a4b0356df5ac5e685f0a34c8/packaging/RecordSift.nuspec) |
+| Distributable package dependencies | **11** exact-pinned production dependencies |
+| Distinct restored package versions | **13** ([EXP-011](experiments/EXP-011-nuget-dependency-inventory.md)) |
+| Per-package download origin | Not independently verified |
+| Package output framework | `net48` |
+
+### Other external dependencies
+
+Source-only inspection of the ten project files in [`src/`](https://github.com/infoconex/RecordSift/tree/8358780829458854a4b0356df5ac5e685f0a34c8/src) and [`tests/`](https://github.com/infoconex/RecordSift/tree/8358780829458854a4b0356df5ac5e685f0a34c8/tests):
+
+| Dependency mechanism | Declared state |
+|---|---|
+| .NET Framework assembly references | Present, without `HintPath` |
+| Non-NuGet managed DLL `HintPath` | None; all 13 DLL paths refer to NuGet packages ([EXP-011](experiments/EXP-011-nuget-dependency-inventory.md)) |
+| `COMReference` | Not declared |
+| `COMFileReference` | Not declared |
+| Native-library reference elements in project XML | Not declared |
+| Runtime COM activation, native loading, or external services | Not assessed by the project-file inspection |
+
+### Build environment
+
+| Attribute | Observed value |
+|---|---|
+| CI build OS | Windows Server 2022 (`windows-2022` runner) |
+| Visual Studio | 2022 Enterprise (preinstalled on runner) |
+| MSBuild version | `17.14.60.43110` |
+| .NET SDK version observed | `10.0.403` |
+| NuGet CLI version observed | `7.9.0.83` |
+
+### Build and verification entry points
+
+| Operation | Command or script |
+|---|---|
+| Restore | `nuget restore RecordSift.sln -NonInteractive -PackagesDirectory packages -ConfigFile NuGet.Config` |
+| Release build | `msbuild RecordSift.sln /m /t:Rebuild /p:Configuration=Release "/p:Platform=Any CPU"` |
+| Full suite | [`.github/workflows/windows-net48.yml`](https://github.com/infoconex/RecordSift/blob/8358780829458854a4b0356df5ac5e685f0a34c8/.github/workflows/windows-net48.yml) |
+| Local tests | `scripts/run_tests.ps1` |
+| Public API verification | `scripts/verify_public_api.ps1` |
+| XML documentation verification | `scripts/verify_xml_documentation.ps1` |
+| Package creation | `scripts/build_release_candidate.ps1` |
+| Consumer verification | [`.github/workflows/verify-rc-consumer.yml`](https://github.com/infoconex/RecordSift/blob/8358780829458854a4b0356df5ac5e685f0a34c8/.github/workflows/verify-rc-consumer.yml) |
+| Documentation checks | [`.github/workflows/validate-docs.yml`](https://github.com/infoconex/RecordSift/blob/8358780829458854a4b0356df5ac5e685f0a34c8/.github/workflows/validate-docs.yml) |
+| C# naming checks | `dotnet format style` with `IDE1006` |
+
+## 5. Verification results
+
+EXP-001 established the historical **Release** baseline against the pinned unchanged application source, using Visual Studio-backed Windows CI. These are executed results, not simply project XML declarations.
+
+| NUnit assembly | Discovered | Passed | Failed | Skipped |
+|---|---:|---:|---:|---:|
+| Domain.Tests | 123 | 123 | 0 | 0 |
+| Application.Tests | 62 | 62 | 0 | 0 |
+| Infrastructure.Csv.Tests | 132 | 131 | 0 | 1 |
+| Infrastructure.Reporting.Tests | 54 | 54 | 0 | 0 |
+| Infrastructure.Xlsx.Tests | 48 | 48 | 0 | 0 |
+| **Total** | **419** | **418** | **0** | **1** |
+
+| Compatibility gate | Result | Evidence |
+|---|---|---|
+| NuGet restore | Passed | [Windows CI #41392848910](https://github.com/infoconex/RecordSift/actions/runs/41392848910) |
+| Release solution build | Passed; ten projects | [Windows CI #41392848910](https://github.com/infoconex/RecordSift/actions/runs/41392848910) |
+| NUnit tests | Passed; see assembly-level counts above | [Windows CI #41392848910](https://github.com/infoconex/RecordSift/actions/runs/41392848910) |
+| Public API compatibility | Passed; included in the **425-entry combined API/metadata snapshot** | [Windows CI #41392848910](https://github.com/infoconex/RecordSift/actions/runs/41392848910) |
+| Assembly identity | Passed as part of the API/metadata snapshot; no standalone count | [Windows CI #41392848910](https://github.com/infoconex/RecordSift/actions/runs/41392848910) |
+| Embedded resource identity | Separate comparison not recorded in EXP-001 | [Pinned project files](https://github.com/infoconex/RecordSift/tree/8358780829458854a4b0356df5ac5e685f0a34c8/src) |
+| Package metadata | Passed as part of the API/metadata snapshot; no standalone count | [Windows CI #41392848910](https://github.com/infoconex/RecordSift/actions/runs/41392848910) |
+| XML documentation | Passed; five production XML documents | [Windows CI #41392848910](https://github.com/infoconex/RecordSift/actions/runs/41392848910) |
+| NuGet package contents | Passed; unpublished release-candidate package | [Windows CI #41392848910](https://github.com/infoconex/RecordSift/actions/runs/41392848910) |
+| Pinned dependency validation | Passed | [Windows CI #41392848910](https://github.com/infoconex/RecordSift/actions/runs/41392848910) |
+| NuGet vulnerability audit | Passed for the baseline run | [Windows CI #41392848910](https://github.com/infoconex/RecordSift/actions/runs/41392848910) |
+| Installed NuGet package consumer | Passed | [Consumer CI #41392848814](https://github.com/infoconex/RecordSift/actions/runs/41392848814) |
+| Engineering documentation validation | Passed | [Documentation CI #41392848879](https://github.com/infoconex/RecordSift/actions/runs/41392848879) |
+
+The skipped CSV test is deliberate. The CI baseline included Visual Studio; it does **not** prove that Visual Studio Build Tools are required to build the application. SDK-only experiments have separate evidence.
+
+## 6. Known issues and verification gaps
+
+| Observation | Baseline implication |
+|---|---|
+| `scripts/run_tests.ps1` runs four suites, omitting XLSX, at the frozen `main` commit | CI runs **all five**; previously authorized [RecordSift PR #258](https://github.com/infoconex/RecordSift/pull/258) corrected the local runner on **`release/0.2` only** |
+| Some legacy engineering documentation says **379 tests** | Verified baseline is **419 discovered / 418 passed / 0 failed / 1 skipped** |
+| API verifier reads raw project XML and `packages.config` | Format/configuration changes may require a separately evaluated compatibility-check update ([EXP-012](experiments/EXP-012-packagereference-isolation.md), [EXP-013](experiments/EXP-013-migration-tooling-ci-readiness.md)) |
+| API verifier depends on Windows PowerShell **5.1** | A PowerShell 7 attempt produced spurious reflection differences; retain host provenance |
+| Project properties were inventoried from source XML | Not a complete evaluated-property inventory for every Configuration/Platform combination |
+| Existing CI proves Release compatibility in a tool-rich environment | Not proof of arbitrary custom/Debug gates, SDK-only negative cases, or cross-platform runtime support |
+
+**Future comparisons:** Reuse the applicable gates above, record any check not executed, and compare observable contracts rather than raw binary hashes unless deterministic byte identity is explicitly required.
+

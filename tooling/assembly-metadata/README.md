@@ -14,7 +14,7 @@ These are evidence derived from actual compiled files, unlike manually written c
 
 ## Build and run
 
-Requires the .NET 10 SDK to build and its runtime to execute. Input assemblies may target .NET Framework, .NET Standard, or modern .NET, because they are inspected as PE metadata rather than loaded.
+Requires **exact .NET SDK 10.0.403** to build (selected by the included global.json with roll-forward disabled) and .NET 10 runtime to execute. Input assemblies may target .NET Framework, .NET Standard, or modern .NET, because they are inspected as PE metadata rather than loaded.
 
     dotnet build tooling/assembly-metadata/src/AssemblyMetadata.csproj -c Release
 

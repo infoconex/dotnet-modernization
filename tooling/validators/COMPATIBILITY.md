@@ -28,6 +28,7 @@ Both checkouts should be **separate, reproducible source revisions**. Commit can
 python tooling/validators/compatibility.py capture \
   --source /path/to/baseline-checkout \
   --spec /path/to/baseline-spec.json \
+  --artifacts-root /external/evidence/baseline/generated \
   --expect-commit FULL_BASELINE_GIT_SHA \
   --output /external/evidence/baseline.json
 

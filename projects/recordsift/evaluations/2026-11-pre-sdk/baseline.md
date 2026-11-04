@@ -81,14 +81,12 @@ A dash means **not declared in that project**, not necessarily an evaluated defa
 
 | Setting | Debug | Release |
 |---|---|---|
-| Default configuration | `Debug` | `Debug` (if not overridden) |
-| Default platform | `AnyCPU` | `AnyCPU` |
 | `DebugType` | `full` | `pdbonly` |
 | `Optimize` | `false` | `true` |
 | `DefineConstants` | `DEBUG;TRACE` | `TRACE` |
 | `OutputPath` | `bin\\Debug\\` | `bin\\Release\\` |
 
-All ten projects explicitly import `$(MSBuildToolsPath)\\Microsoft.CSharp.targets`. Production projects declare per-project XML documentation paths; the test projects do not. The tables describe **source declarations**, not independently evaluated MSBuild values.
+All ten projects declare default `Configuration=Debug` and `Platform=AnyCPU`. They explicitly import `$(MSBuildToolsPath)\\Microsoft.CSharp.targets`. Production projects declare per-project XML documentation paths; the test projects do not. The tables describe **source declarations**, not independently evaluated MSBuild values.
 
 ## 3. Repository structure and configuration
 
@@ -126,29 +124,59 @@ All ten projects explicitly import `$(MSBuildToolsPath)\\Microsoft.CSharp.target
 
 ## 4. Dependencies and build
 
-### Dependencies and packaging
+### NuGet dependencies
 
-| Area | Starting state / source |
+RecordSift uses `packages.config` for project dependency declarations and [`RecordSift.nuspec`](https://github.com/infoconex/RecordSift/blob/8358780829458854a4b0356df5ac5e685f0a34c8/packaging/RecordSift.nuspec) for distributable package metadata. Recorded `.nuspec` dependency versions:
+
+| Package | Declared version |
 |---|---|
-| NuGet declaration | Seven `packages.config`, **17 entries**, **13 unique package IDs**; **13 explicit DLL `HintPath` references**; [EXP-011](experiments/EXP-011-nuget-dependency-inventory.md) |
-| Production package dependencies | **11 exact-pinned `net48` dependencies** in [`RecordSift.nuspec`](https://github.com/infoconex/RecordSift/blob/8358780829458854a4b0356df5ac5e685f0a34c8/packaging/RecordSift.nuspec), including CsvHelper 33.1.0, ExcelDataReader 3.9.0, System.Memory 4.5.5, System.Buffers 4.5.1, Unsafe 6.0.0, Microsoft.Bcl.AsyncInterfaces 8.0.0, Microsoft.Bcl.HashCode 1.1.1 |
-| Test framework / runner | NUnit **3.14.0**, separate NUnit.ConsoleRunner **3.17.0** |
-| Package contents | Five `lib/net48` DLLs and five XML docs, README, license, third-party notices |
-| NuGet feeds | `NuGet.Config`: nuget.org package and audit sources |
+| `CsvHelper` | `33.1.0` |
+| `ExcelDataReader` | `3.9.0` |
+| `Microsoft.Bcl.AsyncInterfaces` | `8.0.0` |
+| `Microsoft.Bcl.HashCode` | `1.1.1` |
+| `Microsoft.CSharp` | `4.7.0` |
+| `System.Memory` | `4.5.5` |
+| `System.Buffers` | `4.5.1` |
+| `System.Numerics.Vectors` | `4.5.0` |
+| `System.Runtime.CompilerServices.Unsafe` | `6.0.0` |
+| `System.Threading.Tasks.Extensions` | `4.5.4` |
+| `System.ValueTuple` | `4.5.0` |
 
-### Verified build environment and entry points
-
-| Component / operation | Baseline |
+| Attribute | Value |
 |---|---|
-| CI OS and tool provenance | GitHub-hosted `windows-2022` (Windows Server 2022); Visual Studio 2022 Enterprise tooling **preinstalled** |
-| Actual MSBuild | **17.14.60.43110**, discovered through Visual Studio `vswhere` in Windows CI |
-| Installed SDK / NuGet CLI | SDK **10.0.403**; NuGet CLI **7.9.0.83** (environment inventory, **not** a repository SDK pin) |
+| Project dependency declaration format | `packages.config` |
+| NuGet package source | nuget.org |
+| NuGet audit source | nuget.org |
+| Test framework version | NUnit `3.14.0` |
+| Test runner version | NUnit.ConsoleRunner `3.17.0` |
+| Package output framework | `net48` |
+
+[EXP-011](experiments/EXP-011-nuget-dependency-inventory.md) records the package-declaration and resolved-reference inventory.
+
+### Build environment
+
+| Attribute | Observed value |
+|---|---|
+| CI build OS | Windows Server 2022 (`windows-2022` runner) |
+| Visual Studio | 2022 Enterprise (preinstalled on runner) |
+| MSBuild version | `17.14.60.43110` |
+| .NET SDK version observed | `10.0.403` |
+| NuGet CLI version observed | `7.9.0.83` |
+
+### Build and verification entry points
+
+| Operation | Command or script |
+|---|---|
 | Restore | `nuget restore RecordSift.sln -NonInteractive -PackagesDirectory packages -ConfigFile NuGet.Config` |
 | Release build | `msbuild RecordSift.sln /m /t:Rebuild /p:Configuration=Release "/p:Platform=Any CPU"` |
-| Full NUnit | All five assemblies from `.github/workflows/windows-net48.yml` |
-| API / XML validation | `scripts/verify_public_api.ps1` (**Windows PowerShell 5.1**); `scripts/verify_xml_documentation.ps1` |
-| Package and consumer checks | `scripts/build_release_candidate.ps1`; `scripts/verify_clean_consumer.ps1` |
-| Style and source guards | `dotnet format style` / IDE1006, Python architecture/test/metadata/documentation guards |
+| Full suite | [`.github/workflows/windows-net48.yml`](https://github.com/infoconex/RecordSift/blob/8358780829458854a4b0356df5ac5e685f0a34c8/.github/workflows/windows-net48.yml) |
+| Local tests | `scripts/run_tests.ps1` |
+| Public API verification | `scripts/verify_public_api.ps1` |
+| XML documentation verification | `scripts/verify_xml_documentation.ps1` |
+| Package creation | `scripts/build_release_candidate.ps1` |
+| Consumer verification | [`.github/workflows/verify-rc-consumer.yml`](https://github.com/infoconex/RecordSift/blob/8358780829458854a4b0356df5ac5e685f0a34c8/.github/workflows/verify-rc-consumer.yml) |
+| Documentation checks | [`.github/workflows/validate-docs.yml`](https://github.com/infoconex/RecordSift/blob/8358780829458854a4b0356df5ac5e685f0a34c8/.github/workflows/validate-docs.yml) |
+| C# naming checks | `dotnet format style` with `IDE1006` |
 
 ## 5. Verification results
 

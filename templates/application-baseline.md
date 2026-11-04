@@ -109,14 +109,23 @@ Each external dependency/package occupies **one row** when individual versions a
 
 ## 5. Verification results
 
-| Gate | Result | Evidence |
+| Compatibility gate | Result | Evidence |
 |---|---|---|
-| Restore and build | <passed / failed / not run, configuration> | <run, immutable SHA> |
-| Full tests | <discovered/passed/failed/skipped> | <run/artifact> |
-| API/assembly/resource/XML compatibility | <relevant values and outcome> | <run/artifact> |
-| Packaging and consumer checks | <outcome or not applicable> | <run/artifact> |
+| Dependency restore | <passed / failed / not executed> | <run, immutable SHA> |
+| Solution/project build | <passed / failed / not executed; configuration> | <run> |
+| Automated tests | <discovered / passed / failed / skipped; detail in test table if useful> | <run/artifact> |
+| Public API compatibility | <result or not applicable> | <contract snapshot/run> |
+| Assembly identity | <result or not applicable> | <snapshot/run> |
+| Embedded resource identity | <result, not executed or not applicable> | <snapshot/run> |
+| XML documentation | <result or not applicable> | <run/artifact> |
+| Package contents | <result or not applicable> | <artifact/run> |
+| Package metadata | <result or not applicable> | <manifest/run> |
+| Dependency validation | <result or not applicable> | <restore/validator run> |
+| Vulnerability audit | <result or not executed> | <audit run> |
+| Installed-package consumer | <result or not applicable> | <consumer run> |
+| Application-specific integration checks | <result or not applicable> | <run/artifact> |
 
-Summarize additional application-specific gates only where useful. Reuse suitable existing evidence from the same baseline SHA; do not rerun sufficient checks just to fill a template.
+Use one row per separately checked fact, with the actual result and its evidence. Remove inapplicable gates or explicitly mark them as such. Reuse suitable existing evidence from the same baseline SHA; do not rerun sufficient checks just to fill a template.
 
 ## 6. Known issues and verification gaps
 

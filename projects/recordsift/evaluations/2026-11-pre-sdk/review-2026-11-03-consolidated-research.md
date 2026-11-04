@@ -79,11 +79,11 @@ Legend: **Verified** means the named checks actually ran or the source was inspe
 | Documentation Python source validators | EXP-013 both fail on generated `obj/**/*.cs` **even after original-format Windows build**; after cleanup `validate_core_messages.py` passes. XLSX guard still rejects converted source until format-aware fix. | Independent guard robustness improvement if docs/workflows ever run post-build. Current main Ubuntu docs workflow operates separately on clean checkout. Do not label as a PackageReference regression. | P2 conditional |
 | SDK-style project conversion / .NET runtime change | **Not executed / not authorized** in this evaluation. | Separate evaluation, baseline, resource/assembly identity analysis, and approval. | Out of current scope |
 
-## Documentation reconciliation defects to resolve before any merge
+## Historical documentation reconciliation defects (resolved in this draft)
 
 ### Finding-ID collisions — do not overwrite content
 
-**Two current draft branches assign the same IDs to unrelated findings:**
+**At the initial cross-PR review, two draft branches assigned the same IDs to unrelated findings:**
 
 | ID | Existing draft owner | Conflicting draft owner | Proposed canonical disposition |
 |---|---|---|---|
@@ -93,7 +93,7 @@ Legend: **Verified** means the named checks actually ran or the source was inspe
 **Other unique IDs:**
 - Keep **F-001–F-018** from the merged historical main record (including EXP-007's partial diagnosis, not silently revised).
 - Keep **F-021** from [PR #6](https://github.com/infoconex/dotnet-modernization/pull/6) for global.json/formatter verification.
-- **Proposed only** new unique IDs if an integrated findings table is approved: **F-024** scoped WarningLevel, **F-025** pinned legacy dependency inventory, **F-026** exact-pins PackageReference parity with unchanged-checker caveat, **F-027** four transitive-version downgrades, **F-028** unchanged NuGet restore/IDE1006 and changed package audit, **F-029** XLSX architecture guard positive/negative, **F-030** generated-obj validator build-order issue. These are reservation suggestions, **not inserted into the existing draft PRs**.
+- **Initially proposed and subsequently applied to this draft integration:** new unique IDs: **F-024** scoped WarningLevel, **F-025** pinned legacy dependency inventory, **F-026** exact-pins PackageReference parity with unchanged-checker caveat, **F-027** four transitive-version downgrades, **F-028** unchanged NuGet restore/IDE1006 and changed package audit, **F-029** XLSX architecture guard positive/negative, **F-030** generated-obj validator build-order issue. These assignments are now in the integrated [findings table](findings.md), while the original source PRs retain their historical content.
 
 **ID policy:** do not reuse an assigned finding ID merely because it resides only in an unmerged branch. Reconcile and verify IDs against all reviewed PRs before integrating. Original experiment documents retain their own immutable experiment ID and historical outcomes.
 
@@ -101,7 +101,7 @@ Legend: **Verified** means the named checks actually ran or the source was inspe
 
 All eight drafts share the **same base main SHA** and independently update common files; accepting a branch's latest version may discard rows from the others. The overlapping files include `status.md`, `roadmap.md`, `risks.md`, `experiments/README.md`, `evidence/manifest.md`, and for early PRs `findings.md` / `decisions.md`. This is a **manual content-reconciliation requirement**, not merely a Git line-conflict problem.
 
-| Canonical section | Consolidated correction (proposal, no committed integration) |
+| Canonical section | Reconciliation completed in draft integration (not merged) |
 |---|---|
 | **Stakeholder decisions** | Preserve **P-001–P-011** including P-011's accepted strict-acceptance-evidence limitation, and incorporate **P-012** research-only/branch boundary recorded in PR #4. Historical P-004/P-011 text saying PR #1 should not be merged reflects its **earlier approval stage**; [PR #1 was subsequently merged](https://github.com/infoconex/dotnet-modernization/pull/1) on November 3, 2026. Its merge does **not** authorize later research-draft merges or application implementation. P-012 must not be discarded by other branches based on an earlier decisions version. |
 | **D-001** | Note correction already merged into RecordSift **release/0.2** via PR #258, still absent from app main. Mark it **already implemented on its authorized branch**, not a new P0 work item or a recommendation to promote it. |

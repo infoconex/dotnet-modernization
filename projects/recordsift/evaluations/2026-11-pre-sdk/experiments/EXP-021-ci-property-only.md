@@ -1,6 +1,6 @@
 # EXP-021 — Does ContinuousIntegrationBuild alone normalize paths in traditional net48 projects?
 
-**Assessment:** November 4, 2026. **Status:** Pending actual Windows CI evidence.
+**Assessment:** November 4, 2026. **Status:** Verified *negative* CI-only result: both experimental builds failed, and original deterministic-only controls passed. Draft/unmerged.
 **Application:** infoconex/RecordSift, immutable SHA 8358780829458854a4b0356df5ac5e685f0a34c8.
 **Research branch dependency:** Stacked on unmerged EXP-020 draft PR #34, and ultimately unmerged EXP-019 PR #33 / EXP-018 PR #32. The other research PRs #28 and #30 remain independent and unmerged. None authorize application or research main merges.
 
@@ -52,4 +52,29 @@ Microsoft Roslyn targets define the relationship between Deterministic and Conti
 
 Suggested review lenses: MSBuild import/target behavior, compiler inputs and PDB metadata, package restore and dependencies, original release compatibility, source provenance, security and documentation quality. External independent human reviews are not claimed.
 
-**Actual result:** Pending Windows CI and 30-day research artifact. No merges authorized.
+## Actual Windows finding — property recognized, missing source roots block build
+
+**[GitHub Actions run 41914769339](https://github.com/infoconex/dotnet-modernization/actions/runs/41914769339) completed successfully as a *research execution*** at research SHA `a11fa1daade734635e048a6b01d5b5d94dd45225`, with [artifact 13365305223](https://github.com/infoconex/dotnet-modernization/actions/runs/41914769339/artifacts/13365305223), SHA-256 `7e8c073da037fedba93862906d9691f2c1d7f928c1c9c234157b72638c61d4c5`, 30-day retention.
+
+**Four existing-source EXP-019 control builds passed** their original 425-entry API, 419/418/0/1 NUnit, five XML docs, local unpublished NuGet packaging and installed net48 consumer gates. The deterministic-only controls preserved the same-directory reproducibility and different-directory byte differences. No source modifications were committed or pushed.
+
+All 80 Release MSBuild property evaluations succeeded. In the representative RecordSift.Domain project (and the other four production projects), effective values were:
+
+| Property | Deterministic-only control | Added CI flag |
+| --- | --- | --- |
+| Deterministic | true | true |
+| ContinuousIntegrationBuild | empty | **true** |
+| DeterministicSourcePaths | empty | **true** |
+| PathMap | empty | empty |
+
+**Both CI-property-only candidate builds failed to compile**. The actual failure was raised in Visual Studio 2022's `Roslyn/Microsoft.Managed.Core.targets` with the diagnostic:
+
+> SourceRoot items must include at least one top-level (not nested) item when DeterministicSourcePaths is true
+
+This is a successful observation of a *nonviable isolated setting*, **not a successful candidate build**. No candidate DLL/IL byte comparison, package, NUnit, API or consumer verification was possible. The research script correctly classified the outcome as `ci_only_build_blocked`, recorded the actual compiler diagnostics, and rejected any claim that the CI property alone was compatible.
+
+**Implications:** Traditional .NET Framework 4.8 builds using this actual MSBuild/Roslyn toolchain **do recognize ContinuousIntegrationBuild and set DeterministicSourcePaths=true**. Thus a blanket claim that traditional MSBuild has no awareness of the CI property is disproved for RecordSift. However, without initialized top-level `SourceRoot` items, the mapped-path target blocks compilation. This does not yet establish that a given Source Link package will supply the root or that its source URLs/PDBs are valid.
+
+**Next isolated experiment:** Verify a pinned Microsoft.SourceLink.GitHub package and its exact traditional `packages.config` build imports, test whether source-control metadata populates top-level SourceRoot and permits `ContinuousIntegrationBuild=true` to compile, and check PDB source mapping. Do not change DebugType, packages.config dependency policy, or publish any symbols before isolating support.
+
+**Approval:** Documentation and research only. No RecordSift or modernization main merge authorized.

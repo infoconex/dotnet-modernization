@@ -89,6 +89,10 @@ foreach ($row in @($evaluations | Where-Object { $_.side -eq 'original' })) {
     if ($other.Count -ne 1 -or $other[0]['value'] -cne $row['value']) { throw "Effective property parity mismatch for $($row['project']) $($row['property'])" }
 }
 if ($evaluations.Count -ne 80) { throw "Incomplete property matrix: $($evaluations.Count)" }
+Write-Host 'EXP-018 effective Release MSBuild properties in frozen original source:'
+foreach ($row in @($evaluations | Where-Object { $_.side -eq 'original' })) {
+    Write-Host ("$($row['project']) $($row['property'])=$($row['value'])")
+}
 Invoke-FrozenRelease $application 'original'
 Invoke-FrozenRelease $independent 'independent'
 Invoke-FrozenRelease $application 'same-path-rebuild'

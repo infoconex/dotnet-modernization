@@ -4,7 +4,7 @@ A reusable process for assessing .NET applications regardless of whether the pro
 
 - [Evaluation process and first-contact protocol](evaluation-process.md#start-here-first-contact-protocol) — inspect, interview, approve scope, investigate, track and complete. **Authoritative** for AI and human workflow rules.
 - [Evidence standards](evidence-standards.md) — reproduction metadata, test gates, and outcome terminology.
-- [Reusable validation tools](../tooling/validators/README.md) — source-only baseline inventory and per-gate machine-readable evidence (draft, separately tested).
+- [Reusable validation tools](../tooling/validators/README.md) — source inventory, observed toolchains, evaluated MSBuild property matrices, existing NuGet restore graphs and per-gate machine-readable evidence.
 - [Baseline variation and applicability guide](baseline-variation-guide.md) — field-by-field alternatives to check before completing a factual baseline.
 - [Investigation catalog](investigation-catalog.md) — screen modernization areas for relevance before choosing experiments or changes.
 - [Repository configuration and tooling](repository-configuration.md) — how to assess applicable .NET central files without prescribing unnecessary ones.

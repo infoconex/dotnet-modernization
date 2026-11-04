@@ -1,15 +1,62 @@
-# Reusable .NET evaluation validators (draft)
+# Reusable .NET evaluation validators
 
-**Status:** First toolkit increment, tested locally with Python's standard-library unit tests. These scripts are intentionally **independent of RecordSift**. They are not a substitute for application-specific build, API, resource, packaging and consumer checks.
+**Status:** Reusable, tested toolkit under continuing development. These scripts are intentionally **independent of RecordSift**. Their observations do not substitute for application-specific builds, API/resource checks, packaging, consumer or security verification.
 
 ## Requirements and scope
 
 - Python **3.9 or newer**, standard library only. Git is recommended to capture and verify the complete source revision. To execute .NET build/test gates, install or provision the actual .NET/MSBuild/NuGet/test tools separately.
 - **inventory.py:** reads project XML and package declarations without invoking MSBuild. Detects traditional and SDK-style MSBuild projects, explicit property declarations **with conditions**, imports, direct project/assembly/COM references, PackageReference, packages.config, central PackageVersion declarations, .nuspec dependencies, solution filenames and configuration file presence. Records source Git revision, branch and dirty paths.
 - **gates.py:** executes an explicit, reviewed array of argv commands **without a shell**, using the application checkout as its working root. Captures stdout/stderr to separate log files and records each gate's exit code, duration, status, expected-negative controls, and optionally NUnit 3 test counts. Records Git revision and source dirty paths before/after execution. Machine-readable output is **JSON schema version 1**.
-- Both scripts use **only Python's standard library**. Their own tests do not require .NET, Visual Studio or RecordSift.
+- All toolkit scripts use **only Python's standard library**. Unit fixtures do not require Visual Studio or RecordSift; the live MSBuild smoke test runs only when the SDK is installed.
 
-They intentionally do **not** evaluate inherited MSBuild properties, prove package feed acquisition origins, scan runtime/native/COM activation, compile projects automatically, resolve NuGet transitive closure, or independently compare binary/API/resource/consumer contracts. Supply those commands as explicit gates once your application has appropriate trusted checks. Do not call a successful workflow a validated upgrade merely because these tools ran.
+The original inventory and gate runner remain separate from the **new** evaluated-property and existing-restore-graph probes. Taken together, these tools still do **not** prove package feed acquisition origins, scan all runtime/native/COM activation, compile projects automatically, reconstruct complete legacy NuGet transitive closure, or independently compare binary/API/resource/consumer contracts. Supply those commands as explicit gates once your application has appropriate trusted checks. Do not call a successful workflow a validated upgrade merely because these tools ran.
+
+## Toolchain, evaluated MSBuild settings and dependencies
+
+These additional commands emit independent, versioned JSON reports. They **do not change source files, run a build, restore packages, validate consumers, or authorize a modernization change**. All output paths must be outside the application's checkout.
+
+Each new report contains its own Git **source commit**, branch and dirty-path observation. Pass `--expect-commit FULL_40_CHARACTER_GIT_SHA` to **every** collector in a frozen-baseline evaluation; the command exits with an error before probing if the checkout doesn't match. Without that option, Git provenance is informative but not enforced. A matching commit does not guarantee a clean worktree; inspect the recorded dirty paths and use an isolated checkout.
+
+### Host toolchain observations
+
+~~~shell
+python tooling/validators/toolchain.py \
+  --source /path/to/application \
+  --output /path/outside/application/evidence/toolchain.json
+~~~
+
+Captures OS/architecture/Python, `dotnet` selected SDK version **from the application's working directory** (so `global.json` matters), enumerated SDKs and runtimes, the SDK's MSBuild version, any stand-alone `msbuild` and `nuget` available on `PATH`, installed .NET targeting packs in probed SDK roots, and conventional Windows .NET Framework reference-assembly folder versions. Missing tools and SDK-selection failures are explicit. **This is not a complete Visual Studio/Build Tools inventory**, does not authenticate binaries or image digests, and does not prove that a package/SDK builds an application.
+
+### MSBuild evaluated-property matrix
+
+Copy and edit [the sample matrix](examples/property-matrix.example.json). Choose the actual project(s), properties and explicit build contexts you need.
+
+~~~shell
+python tooling/validators/properties.py \
+  --source /path/to/application \
+  --project path/inside/application/Library.csproj \
+  --matrix tooling/validators/examples/property-matrix.example.json \
+  --engine dotnet \
+  --output /path/outside/application/evidence/evaluated-properties.json
+~~~
+
+Repeat `--project` for multiple projects. `--engine msbuild` selects stand-alone `MSBuild.exe` where it is discoverable on `PATH`; the default is `dotnet msbuild`. This feature requires an MSBuild version supporting `-getProperty` (MSBuild 17.8+). Values are obtained **one property at a time**, in each requested `Configuration`, `Platform`, `TargetFramework` or `RuntimeIdentifier` context. The tool records actual evaluated values, explicit empty-or-undefined outcomes and blocked/failed/timeout statuses. An ordinary failed query makes the command return a nonzero status. No `-target:Build` invocation or automatic restore is performed.
+
+**Important:** MSBuild evaluates imported project code and SDK resolvers. Use trusted, isolated checkouts and verify that an experiment cannot invoke unwanted custom behavior. Source-declared settings from `inventory.py` and effective settings from `properties.py` are *different evidence*. An empty result does not distinguish an omitted property from one deliberately set to empty. The CLI restricts property names and context values and does not capture verbose MSBuild error text, but sensitive values can still be present in property results: review plans and generated evidence before sharing.
+
+### Existing NuGet restore graph
+
+~~~shell
+python tooling/validators/dependencies.py \
+  --source /path/to/application \
+  --output /path/outside/application/evidence/dependencies.json
+~~~
+
+For **PackageReference** projects with an existing `obj/project.assets.json`, captures the *previous restore's* target-framework/RID-specific package and project library graph, resolved versions and dependency edges, direct declarations when supported by restore metadata, and counts of available compile/runtime/native assets. If no direct-classification metadata exists it reports **unknown**, not transitive. Graph edges can be explicitly unresolved or ambiguous.
+
+For **legacy `packages.config`**, captures exact source-declared versions and target frameworks, with optional folder-presence evidence using `--packages-dir /path/to/restored/packages`. **This is not a complete transitive dependency graph** for legacy projects; directories are not proof of an authentic restore. Reports explicitly distinguish `assets_available`, `legacy_metadata_only`, `no_restore_evidence`, and `partial` (parse failures). The command **never executes NuGet restore**. Stale `obj` data and restore sources must be independently checked. A complete security/dependency provenance review needs additional controls.
+
+**Example evidence order:** capture the immutable source SHA, run source inventory and toolchain inventory, perform an authorized normal restore through the application-provided gate runner, then collect the resolved graph and evaluated settings. Use an isolated workspace and compare *before* and *after* modernization candidates; preserve all logs and note missing gates.
 
 ## Source inventory
 
@@ -37,7 +84,7 @@ python tooling/validators/gates.py \
   --evidence-dir /path/outside/application/gates
 ~~~
 
-A plan has a required \`schema_version: 1\`, an optional application name, an optional immutable \`expected_commit\` (40 hex characters) and a nonempty \`gates\` array. A gate looks like:
+A plan has a required `schema_version: 1`, an optional application name, an optional immutable `expected_commit` (40 hex characters) and a nonempty `gates` array. A gate looks like:
 
 ~~~json
 {
@@ -51,7 +98,7 @@ A plan has a required \`schema_version: 1\`, an optional application name, an op
 }
 ~~~
 
-This is **illustrative**, not a promise that a particular NUnit runner accepts those arguments. Configure the actual command and result-file path for the application. To verify multiple NUnit assemblies, use multiple gates or a trusted aggregate check. NUnit validation accepts the NUnit 3 \`<test-run>\` XML root and compares every configured count; a changed skip is a failing compatibility check.
+This is **illustrative**, not a promise that a particular NUnit runner accepts those arguments. Configure the actual command and result-file path for the application. To verify multiple NUnit assemblies, use multiple gates or a trusted aggregate check. NUnit validation accepts the NUnit 3 `<test-run>` XML root and compares every configured count; a changed skip is a failing compatibility check.
 
 **Intentional negative control:**
 
@@ -61,17 +108,17 @@ This is **illustrative**, not a promise that a particular NUnit runner accepts t
  "expected_exit_codes": [1], "timeout_seconds": 60}
 ~~~
 
-A negative control reports \`expected_negative\` **only if the command exits with one of the configured nonzero codes**. Exit code 0 makes the negative control fail. This prevents deliberate failures from being incorrectly treated as application regressions or a green workflow from concealing an unchecked negative control.
+A negative control reports `expected_negative` **only if the command exits with one of the configured nonzero codes**. Exit code 0 makes the negative control fail. This prevents deliberate failures from being incorrectly treated as application regressions or a green workflow from concealing an unchecked negative control.
 
-The result directory is required **outside the source checkout** to avoid contaminating the observed source status. Each gate creates \`<gate-id>.log\`; \`results.json\` contains per-gate status: \`passed\`, \`expected_negative\`, \`failed\`, \`blocked\`, \`timed_out\`, \`not_executed\`. The overall result is \`passed\` only if **every** gate succeeded or produced its intended negative; otherwise it is \`incomplete_or_failed\`. Use \`--fail-fast\` to skip later checks explicitly, never silently. Exit codes: **0** all accepted; **1** a gate failed/blocked/incomplete; **2** invalid plan, wrong SHA or configuration failure.
+The result directory is required **outside the source checkout** to avoid contaminating the observed source status. Each gate creates `<gate-id>.log`; `results.json` contains per-gate status: `passed`, `expected_negative`, `failed`, `blocked`, `timed_out`, `not_executed`. The overall result is `passed` only if **every** gate succeeded or produced its intended negative; otherwise it is `incomplete_or_failed`. Use `--fail-fast` to skip later checks explicitly, never silently. Exit codes: **0** all accepted; **1** a gate failed/blocked/incomplete; **2** invalid plan, wrong SHA or configuration failure.
 
 ## Safety and trustworthy evidence
 
 - **Only run plans you have inspected and authorized**: the gate runner executes the plan's commands; a no-shell invocation does not make arbitrary commands inherently safe. Use disposable, least-privilege environments. Do not run production publishing, deployment or migration by accident.
 - **Do not put secrets in command arguments, output filenames or source files**. The runner records complete argument arrays and command output; logs and inventories may be confidential. Control access and retention for evidence.
 - Source SHA guards check the **commit**, not the workspace's cleanliness. Every report includes dirty state; review it and use an isolated clean checkout for meaningful baselines. Temporary migration branches can be deliberately dirty; **do not** treat that as a production approval.
-- Git not installed/unavailable is reported as a missing source commit; pass \`expected_commit\` in your plans to **require** a matching Git checkout, otherwise explicitly label provenance as insufficient.
-- Original RecordSift test runner on frozen \`main\` omits XLSX. Do not reuse it as a five-suite acceptance check without the correct workflow/branch. The verified baseline is **419 discovered, 418 passed, 0 failed, 1 skipped**, but these are **not default values** in the new tools.
+- Git not installed/unavailable is reported as a missing source commit; pass `expected_commit` in your plans to **require** a matching Git checkout, otherwise explicitly label provenance as insufficient.
+- Original RecordSift test runner on frozen `main` omits XLSX. Do not reuse it as a five-suite acceptance check without the correct workflow/branch. The verified baseline is **419 discovered, 418 passed, 0 failed, 1 skipped**, but these are **not default values** in the new tools.
 - Reuse the [modernization evidence standard](../../methodology/evidence-standards.md). Application-specific API/metadata, resource, XML, NuGet and consumer scripts remain application-owned until separated and tested.
 
 ## Tests
@@ -80,10 +127,10 @@ The result directory is required **outside the source checkout** to avoid contam
 python -m unittest discover -s tooling/validators/tests -v
 ~~~
 
-The tests exercise both legacy and SDK-style project XML, conditional property declarations, central package version declarations, COM and DLL references, partial malformed XML, SHA mismatch, redaction, negative controls, missing executables, fail-fast, NUnit counts, invalid paths, timeouts, and output isolation.
+The tests exercise legacy/SDK-style XML, NuGet restore graph fixtures, declared/direct ambiguity, tool availability, conditional and evaluated MSBuild settings, basic MSBuild execution when installed, negative controls, NUnit counts, malformed files, timeouts, and evidence isolation.
 
-**Verified locally:** 13/13 tests passed on Python 3.13.5 (Linux). Source/test files on this draft branch have Git blob IDs matching the tested local files. A separate pull-request CI workflow runs the suite on Ubuntu and Windows; its result is **not claimed passed until GitHub reports it**.
+**Verification for this increment:** Locally, 29 tests passed (Python 3.13.5 on Linux, including one live MSBuild smoke test skipped because no SDK is installed). The existing GitHub Actions test workflow checks the full suite on Windows and Ubuntu; consult the current PR checks for hosted outcomes rather than assuming they passed.
 
 ## Next increments
 
-After stakeholder review, consider a separate source-controlled module for toolchain fingerprinting (MSBuild executable/tool provenance, SDKs/targeting packs, container digests), evaluated-property matrices with controlled configuration/TFM/platform, NuGet restore-resolution closure, explicit API/assembly/resource/package diff checks, and a common report summary/JSON schema contract. Each needs focused tests on **legacy and SDK-style fixtures** before it is generalized. Keep the [historical RecordSift archive in draft PR #21](https://github.com/infoconex/dotnet-modernization/pull/21) unchanged; use it as evidence and regression input rather than treating it as automatically portable.
+After stakeholder review, consider deeper tool provenance (Visual Studio/Build Tools and pinned image digests), effective imported-property origins, legacy NuGet transitive resolution, explicit API/assembly/resource/package diff checks, and a common result schema and summary. The new modules provide **observational foundations**, not those comprehensive compatibility proofs. Each needs focused tests on **legacy and SDK-style fixtures** before it is generalized. Keep the [merged historical RecordSift archive (PR #21)](https://github.com/infoconex/dotnet-modernization/pull/21) unchanged; use it as evidence and regression input rather than treating it as automatically portable.

@@ -151,32 +151,40 @@ The values above are declared in the frozen source, not measured by an independe
 
 ### NuGet dependencies
 
-RecordSift uses `packages.config` for project dependency declarations and [`RecordSift.nuspec`](https://github.com/infoconex/RecordSift/blob/8358780829458854a4b0356df5ac5e685f0a34c8/packaging/RecordSift.nuspec) for distributable package metadata. Recorded `.nuspec` dependency versions:
+| Project | Package | Version | Declared in | Eligible feed | Observed origin |
+|---|---|---|---|---|---|
+| `Infrastructure.Csv` | `CsvHelper` | `33.1.0` | [`packages.config`](https://github.com/infoconex/RecordSift/blob/8358780829458854a4b0356df5ac5e685f0a34c8/src/RecordSift.Infrastructure.Csv/packages.config) | `nuget.org` | Not recorded |
+| `Infrastructure.Csv` | `Microsoft.Bcl.AsyncInterfaces` | `8.0.0` | [`packages.config`](https://github.com/infoconex/RecordSift/blob/8358780829458854a4b0356df5ac5e685f0a34c8/src/RecordSift.Infrastructure.Csv/packages.config) | `nuget.org` | Not recorded |
+| `Infrastructure.Csv` | `Microsoft.Bcl.HashCode` | `1.1.1` | [`packages.config`](https://github.com/infoconex/RecordSift/blob/8358780829458854a4b0356df5ac5e685f0a34c8/src/RecordSift.Infrastructure.Csv/packages.config) | `nuget.org` | Not recorded |
+| `Infrastructure.Csv` | `Microsoft.CSharp` | `4.7.0` | [`packages.config`](https://github.com/infoconex/RecordSift/blob/8358780829458854a4b0356df5ac5e685f0a34c8/src/RecordSift.Infrastructure.Csv/packages.config) | `nuget.org` | Not recorded |
+| `Infrastructure.Csv` | `System.Memory` | `4.5.5` | [`packages.config`](https://github.com/infoconex/RecordSift/blob/8358780829458854a4b0356df5ac5e685f0a34c8/src/RecordSift.Infrastructure.Csv/packages.config) | `nuget.org` | Not recorded |
+| `Infrastructure.Csv` | `System.Buffers` | `4.5.1` | [`packages.config`](https://github.com/infoconex/RecordSift/blob/8358780829458854a4b0356df5ac5e685f0a34c8/src/RecordSift.Infrastructure.Csv/packages.config) | `nuget.org` | Not recorded |
+| `Infrastructure.Csv` | `System.Numerics.Vectors` | `4.5.0` | [`packages.config`](https://github.com/infoconex/RecordSift/blob/8358780829458854a4b0356df5ac5e685f0a34c8/src/RecordSift.Infrastructure.Csv/packages.config) | `nuget.org` | Not recorded |
+| `Infrastructure.Csv` | `System.Runtime.CompilerServices.Unsafe` | `6.0.0` | [`packages.config`](https://github.com/infoconex/RecordSift/blob/8358780829458854a4b0356df5ac5e685f0a34c8/src/RecordSift.Infrastructure.Csv/packages.config) | `nuget.org` | Not recorded |
+| `Infrastructure.Csv` | `System.Threading.Tasks.Extensions` | `4.5.4` | [`packages.config`](https://github.com/infoconex/RecordSift/blob/8358780829458854a4b0356df5ac5e685f0a34c8/src/RecordSift.Infrastructure.Csv/packages.config) | `nuget.org` | Not recorded |
+| `Infrastructure.Xlsx` | `ExcelDataReader` | `3.9.0` | [`packages.config`](https://github.com/infoconex/RecordSift/blob/8358780829458854a4b0356df5ac5e685f0a34c8/src/RecordSift.Infrastructure.Xlsx/packages.config) | `nuget.org` | Not recorded |
+| `Infrastructure.Xlsx` | `System.ValueTuple` | `4.5.0` | [`packages.config`](https://github.com/infoconex/RecordSift/blob/8358780829458854a4b0356df5ac5e685f0a34c8/src/RecordSift.Infrastructure.Xlsx/packages.config) | `nuget.org` | Not recorded |
+| `Domain.Tests` | `NUnit` | `3.14.0` | [`packages.config`](https://github.com/infoconex/RecordSift/blob/8358780829458854a4b0356df5ac5e685f0a34c8/tests/RecordSift.Domain.Tests/packages.config) | `nuget.org` | Not recorded |
+| `Domain.Tests` | `NUnit.ConsoleRunner` | `3.17.0` | [`packages.config`](https://github.com/infoconex/RecordSift/blob/8358780829458854a4b0356df5ac5e685f0a34c8/tests/RecordSift.Domain.Tests/packages.config) | `nuget.org` | Not recorded |
+| `Application.Tests` | `NUnit` | `3.14.0` | [`packages.config`](https://github.com/infoconex/RecordSift/blob/8358780829458854a4b0356df5ac5e685f0a34c8/tests/RecordSift.Application.Tests/packages.config) | `nuget.org` | Not recorded |
+| `Infrastructure.Csv.Tests` | `NUnit` | `3.14.0` | [`packages.config`](https://github.com/infoconex/RecordSift/blob/8358780829458854a4b0356df5ac5e685f0a34c8/tests/RecordSift.Infrastructure.Csv.Tests/packages.config) | `nuget.org` | Not recorded |
+| `Infrastructure.Xlsx.Tests` | `NUnit` | `3.14.0` | [`packages.config`](https://github.com/infoconex/RecordSift/blob/8358780829458854a4b0356df5ac5e685f0a34c8/tests/RecordSift.Infrastructure.Xlsx.Tests/packages.config) | `nuget.org` | Not recorded |
+| `Infrastructure.Reporting.Tests` | `NUnit` | `3.14.0` | [`packages.config`](https://github.com/infoconex/RecordSift/blob/8358780829458854a4b0356df5ac5e685f0a34c8/tests/RecordSift.Infrastructure.Reporting.Tests/packages.config) | `nuget.org` | Not recorded |
 
-| Package | Declared version |
-|---|---|
-| `CsvHelper` | `33.1.0` |
-| `ExcelDataReader` | `3.9.0` |
-| `Microsoft.Bcl.AsyncInterfaces` | `8.0.0` |
-| `Microsoft.Bcl.HashCode` | `1.1.1` |
-| `Microsoft.CSharp` | `4.7.0` |
-| `System.Memory` | `4.5.5` |
-| `System.Buffers` | `4.5.1` |
-| `System.Numerics.Vectors` | `4.5.0` |
-| `System.Runtime.CompilerServices.Unsafe` | `6.0.0` |
-| `System.Threading.Tasks.Extensions` | `4.5.4` |
-| `System.ValueTuple` | `4.5.0` |
+All 17 entries use `packages.config`; there are no `PackageReference` declarations at the frozen commit. [EXP-011](experiments/EXP-011-nuget-dependency-inventory.md) verified that the corresponding 13 distinct package versions were restored. `NuGet.Config` [configures](https://github.com/infoconex/RecordSift/blob/8358780829458854a4b0356df5ac5e685f0a34c8/NuGet.Config) `nuget.org` as the sole package source for the recorded restore, but package-by-package acquisition origins were **not** independently captured. `Observed origin` therefore remains `Not recorded`; a package cache may satisfy restore without a feed download.
+
+The distributable [`RecordSift.nuspec`](https://github.com/infoconex/RecordSift/blob/8358780829458854a4b0356df5ac5e685f0a34c8/packaging/RecordSift.nuspec) separately declares **11 exact-pinned production dependencies** matching the production `packages.config` versions. The five test projects and test runner are not part of that distributable dependency list.
 
 | Attribute | Value |
 |---|---|
-| Project dependency declaration format | `packages.config` |
-| NuGet package source | nuget.org |
-| NuGet audit source | nuget.org |
+| NuGet package source | `https://api.nuget.org/v3/index.json` |
+| NuGet audit source | `https://api.nuget.org/v3/index.json` |
+| Package Source Mapping | Not configured in repository `NuGet.Config` |
+| Project dependency format | `packages.config` |
+| Published package dependency metadata | `packaging/RecordSift.nuspec` |
 | Test framework version | NUnit `3.14.0` |
 | Test runner version | NUnit.ConsoleRunner `3.17.0` |
 | Package output framework | `net48` |
-
-[EXP-011](experiments/EXP-011-nuget-dependency-inventory.md) records the package-declaration and resolved-reference inventory.
 
 ### Build environment
 

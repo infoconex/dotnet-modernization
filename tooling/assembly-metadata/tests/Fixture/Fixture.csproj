@@ -1,0 +1,13 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <TargetFramework>net10.0</TargetFramework>
+    <Nullable>enable</Nullable>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <GenerateAssemblyInfo>true</GenerateAssemblyInfo>
+    <AssemblyName>Fixture.Library</AssemblyName>
+    <AssemblyVersion>2.3.4.5</AssemblyVersion>
+    <FileVersion>2.3.4.6</FileVersion>
+    <InformationalVersion>2.3.4-test</InformationalVersion>
+  </PropertyGroup>
+  <ItemGroup><EmbeddedResource Include="Message.txt" LogicalName="Fixture.Messages.resources" /></ItemGroup>
+</Project>

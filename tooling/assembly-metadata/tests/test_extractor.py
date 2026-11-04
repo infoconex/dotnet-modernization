@@ -100,6 +100,47 @@ class ExtractorTests(unittest.TestCase):
         self.assertTrue(any('System.Int32' in str(x) for x in changes))
         self.assertTrue(any('System.Double' in str(x) for x in changes))
 
+    def test_public_constant_value_change_is_detected(self):
+        baseline = self.scratch / 'constants-before'
+        self.assertEqual(self.extract(self.binary, baseline).returncode, 0)
+        candidate_fixture = self.scratch / 'fixture-constants-changed'
+        shutil.copytree(FIXTURE, candidate_fixture)
+        source = candidate_fixture / 'Api.cs'
+        source.write_text(source.read_text().replace('public const int Number = 42',
+                                                     'public const int Number = 99'))
+        self.build(candidate_fixture / 'Fixture.csproj')
+        candidate = self.scratch / 'constants-after'
+        path = candidate_fixture / 'bin' / 'Release' / 'net10.0' / 'Fixture.Library.dll'
+        self.assertEqual(self.extract(path, candidate).returncode, 0)
+        before = (baseline / 'public-api.txt').read_text()
+        after = (candidate / 'public-api.txt').read_text()
+        self.assertIn('value=42', before)
+        self.assertIn('value=99', after)
+        self.assertNotEqual(before, after)
+
+    def test_external_evidence_root_integrates_with_clean_source_provenance(self):
+        artifacts = self.scratch / 'external-capture'
+        self.assertEqual(self.extract(self.binary, artifacts).returncode, 0)
+        source = self.scratch / 'recorded-checkout'
+        source.mkdir()
+        (source / 'README.md').write_text('synthetic, source-only attribution test')
+        subprocess.run(['git', 'init', '-q', str(source)], check=True)
+        subprocess.run(['git', '-C', str(source), 'add', '.'], check=True)
+        subprocess.run(['git', '-C', str(source), '-c', 'user.name=Fixture',
+                        '-c', 'user.email=fixture@example.test', 'commit',
+                        '-m', 'fixture', '-q'], check=True)
+        sha = subprocess.check_output(['git', '-C', str(source), 'rev-parse', 'HEAD'],
+                                      text=True).strip()
+        sys.path.insert(0, str(SOURCE.parent / 'validators'))
+        import compatibility
+        spec = {'schema_version': 1, 'components': {'api': 'public-api.txt',
+                'assemblies': 'assembly-identities.json', 'resources': 'resources.json'}}
+        baseline = compatibility.capture(source, spec, sha, artifacts_root=artifacts)
+        candidate = compatibility.capture(source, spec, sha, artifacts_root=artifacts)
+        self.assertFalse(baseline['capture_errors'])
+        self.assertEqual(compatibility.compare(baseline, candidate)['overall'], 'matched')
+        self.assertEqual(baseline['source']['dirty_paths'], [])
+
     def test_invalid_binary_and_in_place_output_are_rejected(self):
         wrong = self.scratch / 'not-a-pe.dll'
         wrong.write_bytes(b'not managed assembly')

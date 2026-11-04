@@ -171,17 +171,16 @@ The values above are declared in the frozen source, not measured by an independe
 | `Infrastructure.Xlsx.Tests` | `NUnit` | `3.14.0` | [`packages.config`](https://github.com/infoconex/RecordSift/blob/8358780829458854a4b0356df5ac5e685f0a34c8/tests/RecordSift.Infrastructure.Xlsx.Tests/packages.config) | `nuget.org` |
 | `Infrastructure.Reporting.Tests` | `NUnit` | `3.14.0` | [`packages.config`](https://github.com/infoconex/RecordSift/blob/8358780829458854a4b0356df5ac5e685f0a34c8/tests/RecordSift.Infrastructure.Reporting.Tests/packages.config) | `nuget.org` |
 
-All 17 entries use `packages.config`; there are no `PackageReference` declarations at the frozen commit. [EXP-011](experiments/EXP-011-nuget-dependency-inventory.md) verified that the corresponding 13 distinct package versions were restored. `NuGet.Config` [configures](https://github.com/infoconex/RecordSift/blob/8358780829458854a4b0356df5ac5e685f0a34c8/NuGet.Config) `nuget.org` as the sole package source for the recorded restore, but **individual acquisition origins were not independently captured**; cached packages may satisfy restore without a feed download.
-
-The distributable [`RecordSift.nuspec`](https://github.com/infoconex/RecordSift/blob/8358780829458854a4b0356df5ac5e685f0a34c8/packaging/RecordSift.nuspec) separately declares **11 exact-pinned production dependencies** matching the production `packages.config` versions. The five test projects and test runner are not part of that distributable dependency list.
-
 | Attribute | Value |
 |---|---|
 | NuGet package source | `https://api.nuget.org/v3/index.json` |
 | NuGet audit source | `https://api.nuget.org/v3/index.json` |
 | Package Source Mapping | Not configured in repository `NuGet.Config` |
 | Project dependency format | `packages.config` |
-| Published package dependency metadata | `packaging/RecordSift.nuspec` |
+| Published package dependency metadata | [`packaging/RecordSift.nuspec`](https://github.com/infoconex/RecordSift/blob/8358780829458854a4b0356df5ac5e685f0a34c8/packaging/RecordSift.nuspec) |
+| Distributable package dependencies | **11** exact-pinned production dependencies |
+| Distinct restored package versions | **13** ([EXP-011](experiments/EXP-011-nuget-dependency-inventory.md)) |
+| Per-package download origin | Not independently verified |
 | Test framework version | NUnit `3.14.0` |
 | Test runner version | NUnit.ConsoleRunner `3.17.0` |
 | Package output framework | `net48` |

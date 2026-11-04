@@ -5,7 +5,7 @@
 **RecordSift frozen baseline:** `8358780829458854a4b0356df5ac5e685f0a34c8` (`main` and `research/dotnet-modernization` unchanged).  
 **Research-only RecordSift branch:** `research/nuget-graph-20261103`, adding **only** an isolated GitHub Actions workflow, `.github/workflows/research-exp011-nuget-graph.yml`. No committed `.csproj`, package, `packages.config`, `.nuspec`, `NuGet.Config`, or product script changes.  
 **Successful definitive execution:** [GitHub Actions 41728933974](https://github.com/infoconex/RecordSift/actions/runs/41728933974), workflow commit `a94381f97843d692265e805aeb899e616c60a7bb`, [artifact 13274828527](https://github.com/infoconex/RecordSift/actions/runs/41728933974/artifacts/13274828527). Earlier [41728599985](https://github.com/infoconex/RecordSift/actions/runs/41728599985), artifact 13275169273, verified the full inventory except the stricter final HintPath-file check.  
-**Outcome:** **Verified** pinned source and clean restore/package metadata consistency. **Not verified:** automatic top-level/transitive classification for PackageReference, an actual migration, changed consumer package behavior, or post-migration tests. Follow-up run adds strict validation of resolved HintPaths; see below.
+**Outcome:** **Verified** pinned source and clean restore/package metadata consistency. **Not verified:** automatic top-level/transitive classification for PackageReference, an actual migration, changed consumer package behavior, or post-migration tests. The definitive follow-up run also validated resolved HintPath files; see below.
 
 ## Objective and hypothesis
 

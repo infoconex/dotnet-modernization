@@ -107,6 +107,14 @@ def xml_tag(element):
     return element.tag.rsplit('}', 1)[-1]
 
 
+def normalized_xml_contract(element):
+    children = [normalized_xml_contract(child) for child in element]
+    return {'tag': xml_tag(element),
+            'attributes': dict(sorted(element.attrib.items())),
+            'text': (element.text or '').strip(),
+            'children': sorted(children, key=lambda x: json.dumps(x, sort_keys=True))}
+
+
 def nuspec_contract(data):
     root = ET.fromstring(data)
     if xml_tag(root) != 'package':
@@ -137,7 +145,22 @@ def nuspec_contract(data):
                                  'exclude': dep.get('exclude')})
     if any(not d['id'] or not d['version'] for d in dependencies):
         raise ValueError('NuGet dependency lacks id or version')
-    return {'id': ident, 'version': version,
+    dependency_groups = sorted([
+        node.get('targetFramework') for section in metadata if xml_tag(section) == 'dependencies'
+        for node in section if xml_tag(node) == 'group'
+    ], key=lambda x: x or '')
+    semantic_sections = ('references', 'frameworkReferences', 'frameworkAssemblies',
+                         'contentFiles', 'packageTypes')
+    extras = {}
+    for section_name in semantic_sections:
+        elements = [normalized_xml_contract(node) for node in metadata if xml_tag(node) == section_name]
+        if elements:
+            extras[section_name] = elements
+    return {'id': ident, 'version': version, 'min_client_version': root.get('minClientVersion'),
+            'development_dependency': field('developmentDependency'),
+            'require_license_acceptance': field('requireLicenseAcceptance'),
+            'dependency_groups': dependency_groups,
+            'additional_contracts': extras,
             'dependencies': sorted(dependencies, key=lambda x: (
                 x['target_framework'] or '', x['id'].lower(), x['version']))}
 

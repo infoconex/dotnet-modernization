@@ -4,11 +4,13 @@
 [CmdletBinding()]
 param(
     [Parameter(Mandatory = $true)][string]$ApplicationRoot,
-    [Parameter(Mandatory = $true)][string]$EvidenceRoot
+    [Parameter(Mandatory = $true)][string]$EvidenceRoot,
+    [string]$ExpectedCommit = '8358780829458854a4b0356df5ac5e685f0a34c8',
+    [string]$ExperimentId = 'EXP-014'
 )
 $ErrorActionPreference = 'Stop'
 Set-StrictMode -Version Latest
-$expected = '8358780829458854a4b0356df5ac5e685f0a34c8'
+$expected = $ExpectedCommit
 $application = (Resolve-Path -LiteralPath $ApplicationRoot).Path
 $repoRoot = (Resolve-Path (Join-Path $PSScriptRoot '../../../..')).Path
 $evidence = [IO.Path]::GetFullPath($EvidenceRoot)
@@ -164,7 +166,7 @@ $assemblyHashes = @($assemblies | ForEach-Object {
     [ordered]@{ name = [IO.Path]::GetFileName($_); sha256 = (Get-FileHash -LiteralPath $_ -Algorithm SHA256).Hash.ToLowerInvariant() }
 })
 $report = [ordered]@{
-    experiment = 'EXP-014'
+    experiment = $ExperimentId
     source_repository = 'infoconex/RecordSift'
     source_commit = $expected
     provenance_worktree = 'separate clean detached worktree at same exact SHA'

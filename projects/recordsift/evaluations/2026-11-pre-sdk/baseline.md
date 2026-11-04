@@ -196,11 +196,13 @@ EXP-001 established the historical **Release** baseline against the pinned uncha
 | NuGet restore | Passed | [Windows CI #41392848910](https://github.com/infoconex/RecordSift/actions/runs/41392848910) |
 | Release solution build | Passed; ten projects | [Windows CI #41392848910](https://github.com/infoconex/RecordSift/actions/runs/41392848910) |
 | NUnit tests | Passed; see assembly-level counts above | [Windows CI #41392848910](https://github.com/infoconex/RecordSift/actions/runs/41392848910) |
-| Public API compatibility | Passed; part of the **425-entry combined API/metadata baseline** | [Windows CI #41392848910](https://github.com/infoconex/RecordSift/actions/runs/41392848910) |
-| Assembly identity and metadata | Passed within the combined API/metadata verifier; no separate count reported | [Windows CI #41392848910](https://github.com/infoconex/RecordSift/actions/runs/41392848910) |
+| Public API compatibility | Passed; included in the **425-entry combined API/metadata snapshot** | [Windows CI #41392848910](https://github.com/infoconex/RecordSift/actions/runs/41392848910) |
+| Assembly identity | Passed as part of the API/metadata snapshot; no standalone count | [Windows CI #41392848910](https://github.com/infoconex/RecordSift/actions/runs/41392848910) |
+| Package metadata | Passed as part of the API/metadata snapshot; no standalone count | [Windows CI #41392848910](https://github.com/infoconex/RecordSift/actions/runs/41392848910) |
 | XML documentation | Passed; five production XML documents | [Windows CI #41392848910](https://github.com/infoconex/RecordSift/actions/runs/41392848910) |
 | NuGet package contents | Passed; unpublished release-candidate package | [Windows CI #41392848910](https://github.com/infoconex/RecordSift/actions/runs/41392848910) |
-| Dependency validation and vulnerability audit | Passed in the baseline workflow | [Windows CI #41392848910](https://github.com/infoconex/RecordSift/actions/runs/41392848910) |
+| Pinned dependency validation | Passed | [Windows CI #41392848910](https://github.com/infoconex/RecordSift/actions/runs/41392848910) |
+| NuGet vulnerability audit | Passed for the baseline run | [Windows CI #41392848910](https://github.com/infoconex/RecordSift/actions/runs/41392848910) |
 | Installed NuGet package consumer | Passed | [Consumer CI #41392848814](https://github.com/infoconex/RecordSift/actions/runs/41392848814) |
 | Engineering documentation validation | Passed | [Documentation CI #41392848879](https://github.com/infoconex/RecordSift/actions/runs/41392848879) |
 

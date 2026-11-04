@@ -194,8 +194,11 @@ def main(argv=None):
     parser.add_argument('--expect-commit', help='Required immutable baseline SHA; mismatch exits nonzero')
     args = parser.parse_args(argv)
     try:
-        report = generate(args.source)
+        source_root = args.source.resolve(strict=True)
         target = args.output.resolve()
+        if target == source_root or target.is_relative_to(source_root):
+            raise ValueError('output must be outside the application checkout')
+        report = generate(source_root)
         target.parent.mkdir(parents=True, exist_ok=True)
         target.write_text(json.dumps(report, indent=2, sort_keys=True) + '\n', encoding='utf-8')
         if args.expect_commit and report['source']['commit'] != args.expect_commit:

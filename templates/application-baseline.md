@@ -22,6 +22,7 @@ Record **observed facts once**, at their correct scope. Consult the [variation g
 | License | `<license>` |
 | Supported OS | `<OS/platform>` |
 | Published application/package version | `<value and source>` |
+| Published package or release URL | `<exact public/package/release URL, if applicable>` |
 | Source manifest version | `<value and source>` |
 | Assembly version | `<value and source, if applicable>` |
 | File version | `<value and source, if applicable>` |

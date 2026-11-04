@@ -11,6 +11,8 @@ import shutil
 import subprocess
 import sys
 
+from provenance import snapshot, require_commit
+
 SCHEMA_VERSION = 1
 COMMAND_TIMEOUT = 20
 MAX_OUTPUT = 32768
@@ -121,7 +123,7 @@ def collect(source):
     return {'schema_version': SCHEMA_VERSION, 'kind': 'observed-toolchain-inventory',
             'generated_utc': dt.datetime.now(dt.timezone.utc).isoformat(),
             'host': {'os': platform.platform(), 'architecture': platform.machine(), 'python': platform.python_version()},
-            'source_root': str(source), 'tools': tools, 'sdk_targeting_packs': packs,
+            'source_root': str(source), 'source': snapshot(source), 'tools': tools, 'sdk_targeting_packs': packs,
             'framework_reference_versions': framework_reference_directories(),
             'limitations': [
                 'PATH tool probes, dotnet SDK packs and conventional framework reference folders only; not an exhaustive machine inventory.',
@@ -135,12 +137,14 @@ def main(argv=None):
     p = argparse.ArgumentParser(description=__doc__)
     p.add_argument('--source', type=Path, required=True)
     p.add_argument('--output', type=Path, required=True)
+    p.add_argument('--expect-commit', help='Require an exact 40-character Git SHA')
     args = p.parse_args(argv)
     try:
         source = args.source.resolve(strict=True)
         out = args.output.resolve()
         if out == source or out.is_relative_to(source):
             raise ValueError('output must be outside source checkout')
+        require_commit(snapshot(source)['commit'], args.expect_commit)
         report = collect(source)
         out.parent.mkdir(parents=True, exist_ok=True)
         out.write_text(json.dumps(report, indent=2, sort_keys=True) + '\n', encoding='utf-8')

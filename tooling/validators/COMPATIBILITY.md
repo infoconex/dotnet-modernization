@@ -6,7 +6,7 @@ The standard-library `compatibility.py` implementation works independently of Re
 
 ## Evidence contract
 
-The [specification example](examples/compatibility-spec.example.json) selects only components actually being assessed. All file paths are relative to `--source`; source artifacts must exist under that checkout, and the output must be **outside** it.
+The [specification example](examples/compatibility-spec.example.json) selects only components actually being assessed. By default evidence paths are relative to `--source`. For generated build artifacts, pass `--artifacts-root /separate/artifacts` to keep the Git source checkout clean. Source revision is recorded from `--source`, while manifest paths and SHA-256 fingerprints come from the artifacts root. The output must be **outside** the source checkout.
 
 | Component | Artifact contract | What is compared |
 |---|---|---|

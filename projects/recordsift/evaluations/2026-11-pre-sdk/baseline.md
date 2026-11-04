@@ -20,6 +20,7 @@ RecordSift imports CSV/XLSX records with schema mapping, validation, diagnostics
 | License | MIT |
 | Supported operating system | Windows |
 | Published NuGet version | `0.1.0` |
+| Published NuGet package URL | [RecordSift 0.1.0 on NuGet.org](https://www.nuget.org/packages/RecordSift/0.1.0) |
 | Tracked `.nuspec` version | `0.1.0-rc.1` |
 | Production assembly version | `0.1.0.0` |
 | Production file version | `0.1.0.0` |

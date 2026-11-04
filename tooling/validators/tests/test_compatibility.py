@@ -94,8 +94,9 @@ class CompatibilityTests(unittest.TestCase):
         self.assertEqual(set(report['components']), set(compatibility.COMPONENTS))
         self.assertTrue(all(v['status'] == 'matched' for v in report['components'].values()))
         self.assertEqual(old['components']['tests']['data']['unit']['counts']['skipped'], 1)
+        self.assertEqual(len(old['components']['packages']['input_artifacts'][0]['sha256']), 64)
         self.assertEqual(old['components']['packages']['data']['library']['dependencies'][0]['target_framework'], 'net48')
-        self.assertEqual(old['components']['api']['data'][0], 'T My.Lib.Thing' if False else 'T My.Lib.Thing')
+        self.assertIn('T My.Lib.Thing', old['components']['api']['data'])
         self.assertFalse(list(self.root.glob('evidence*')))
 
     def test_api_addition_removal_and_package_dependency_change_detected(self):
@@ -137,6 +138,19 @@ class CompatibilityTests(unittest.TestCase):
         self.assertEqual(before, after)
         self.nuget(extra=True)
         self.assertIn('lib/net48/Other.dll', compatibility.package_contract(self.root / 'sample.1.0.0.nupkg')['payload_paths'])
+
+    def test_package_byte_fingerprint_changes_without_false_contract_drift(self):
+        self.nuget()
+        spec = {'schema_version': 1, 'components': {'packages': [{'id': 'library', 'path': 'sample.1.0.0.nupkg'}]}}
+        before = compatibility.capture(self.root, spec)
+        with zipfile.ZipFile(self.root / 'sample.1.0.0.nupkg', 'w') as archive:
+            archive.writestr('sample.nuspec', '<package><metadata><id>sample</id><version>1.0.0</version><dependencies><group targetFramework="net48"><dependency id="CsvHelper" version="[2.1.0]"/></group></dependencies></metadata></package>')
+            archive.writestr('lib/net48/My.Lib.dll', b'different DLL bytes')
+        after = compatibility.capture(self.root, spec)
+        result = compatibility.compare(before, after)
+        self.assertEqual(result['components']['packages']['status'], 'matched')
+        self.assertNotEqual(result['components']['packages']['baseline_input_artifacts'][0]['sha256'],
+                            result['components']['packages']['candidate_input_artifacts'][0]['sha256'])
 
     def test_missing_category_and_incomplete_capture_are_not_green(self):
         self.api()
@@ -211,6 +225,16 @@ class CompatibilityTests(unittest.TestCase):
         self.assertEqual(compatibility.main(['compare', '--baseline', str(before), '--candidate', str(after),
                                             '--output', str(self.out / 'comparison.json')]), 1)
         self.assertEqual(json.loads((self.out / 'comparison.json').read_text())['overall'], 'matched_unverified_provenance')
+
+    def test_compare_cannot_overwrite_source_snapshot(self):
+        self.api()
+        report = compatibility.capture(self.root, {'schema_version': 1, 'components': {'api': 'contracts/api.txt'}})
+        self.out.mkdir()
+        path = self.out / 'snapshot.json'
+        path.write_text(json.dumps(report))
+        self.assertEqual(compatibility.main(['compare', '--baseline', str(path), '--candidate', str(path),
+                                            '--output', str(path)]), 2)
+        self.assertEqual(json.loads(path.read_text())['kind'], 'compatibility-snapshot')
 
     def test_capture_errors_report_without_exception(self):
         report = compatibility.capture(self.root, {'schema_version': 1, 'components': {'api': 'missing.txt'}})

@@ -144,6 +144,32 @@ class ExtractorTests(unittest.TestCase):
         self.assertEqual(compatibility.compare(baseline, candidate)['overall'], 'matched')
         self.assertEqual(baseline['source']['dirty_paths'], [])
 
+    def test_multiple_assemblies_with_same_type_names_have_distinct_api_records(self):
+        second_fixture = self.scratch / 'second-assembly'
+        shutil.copytree(FIXTURE, second_fixture)
+        project = second_fixture / 'Fixture.csproj'
+        project.write_text(project.read_text().replace(
+            '<AssemblyName>Fixture.Library</AssemblyName>',
+            '<AssemblyName>Fixture.Second</AssemblyName>'))
+        self.build(project)
+        second = second_fixture / 'bin' / 'Release' / 'net10.0' / 'Fixture.Second.dll'
+        out = self.scratch / 'multiple-assemblies'
+        cmd = ['dotnet', str(self.program), '--assembly', str(self.binary),
+               '--assembly', str(second), '--output-dir', str(out)]
+        result = subprocess.run(cmd, cwd=self.scratch, capture_output=True, text=True,
+                                timeout=30, check=False)
+        self.assertEqual(result.returncode, 0, result.stderr)
+        names = [a['name'] for a in json.loads(
+            (out / 'assembly-identities.json').read_text())['assemblies']]
+        self.assertEqual(names, ['Fixture.Library', 'Fixture.Second'])
+        lines = (out / 'public-api.txt').read_text().splitlines()
+        self.assertTrue(any(x.startswith('assembly Fixture.Library :: ') for x in lines))
+        self.assertTrue(any(x.startswith('assembly Fixture.Second :: ') for x in lines))
+        self.assertEqual(len(lines), len(set(lines)))
+        sys.path.insert(0, str(SOURCE.parent / 'validators'))
+        import compatibility
+        self.assertTrue(compatibility.api_lines(out / 'public-api.txt'))
+
     def test_missing_optional_assembly_attributes_are_omitted(self):
         fixture = self.scratch / 'fixture-no-assembly-attributes'
         shutil.copytree(FIXTURE, fixture)

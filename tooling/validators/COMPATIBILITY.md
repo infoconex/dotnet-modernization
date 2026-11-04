@@ -43,7 +43,11 @@ python tooling/validators/compatibility.py compare \
   --output /external/evidence/comparison.json
 ```
 
+Each captured component records **SHA-256 fingerprints of its exact source input files** (including raw `.nupkg` bytes). The comparison preserves both sides' input hashes separately from the *logical* contract differences: a package's binary bytes can differ even when the selected `.nuspec` fields and payload paths match. Review these fingerprints together with full binary/consumer gates. They are evidence fingerprints, not signatures or an attestation of authenticity.
+
 **Capture exit statuses:** 0 = requested evidence captured; 1 = one or more requested components missing/invalid; 2 = bad configuration or Git SHA mismatch. Capture writes per-component `captured`/`error` and a list of capture errors.
+
+The comparison refuses to overwrite either supplied snapshot file. Its output remains a distinct evidence artifact.
 
 **Comparison exit statuses:** 0 = all requested contracts matched **and both snapshots have full, clean Git commits**; 1 = changed, incomplete, or unverified/dirty; 2 = invalid snapshot or I/O error. The JSON `overall` is:
 

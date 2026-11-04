@@ -5,7 +5,7 @@
 **Source inventory date:** <YYYY-MM-DD> · **Verification date:** <YYYY-MM-DD or not executed>  
 **Evidence status:** <verified / partial / blocked; identify gaps>
 
-Document the **unchanged application**. Record facts once, using exact source values and evidence. Move modernization findings and recommendations into the evaluation, not this baseline. See the [evaluation process](../methodology/evaluation-process.md#2-establish-the-baseline).
+Document the **unchanged application**. Record facts once, using exact source values and evidence. **Before filling each section, consult the [field-by-field variation guide](../methodology/baseline-variation-guide.md)**: project, configuration, framework, dependency, host and provenance may vary within a repository. Add applicable columns/rows/focused tables, mark unknowns, and do **not** copy the guide's unobserved possibilities into the baseline. The [evaluation process](../methodology/evaluation-process.md#2-establish-the-baseline) defines verification; modernization proposals belong elsewhere.
 
 ## 1. Application overview
 
@@ -30,13 +30,13 @@ Document the **unchanged application**. Record facts once, using exact source va
 | Assembly version | <value and source, if applicable> |
 | File version | <value and source, if applicable> |
 
-Only include attributes that apply. Keep distinct version concepts in separate rows.
+Only include applicable fields. Multiple applications, runtime environments or separately versioned artifacts may require scoped rows. Keep distinct version concepts separate.
 
 ## 2. Solution and projects
 
 ### Solutions
 
-One row per solution. If no solution exists, inventory standalone project entry points instead.
+One row per solution (`.sln`, `.slnx`, and relevant filters). Support **none, one or several** solutions, overlapping project memberships and standalone projects. Where mapping varies, add per-configuration/project build-inclusion detail.
 
 | Solution path | Format | Format version | Declared IDE version | Configurations | Platforms |
 |---|---|---|---|---|---|
@@ -46,7 +46,7 @@ Document relevant solution-level build inclusion/exclusions, nested solution fol
 
 ### Project inventory
 
-**One row for each project** in scope, including standalone projects not included in any solution. Record that project's own values; do not assume all projects share the same settings.
+**One row for each project**, including projects outside solutions. Inspect each project's language, framework(s), format, toolchain, platform and references. If a value is conditional, inherited, multi-targeted or configuration-dependent, show the actual scoped values rather than asserting one project-wide setting.
 
 | Project path/name | Role | Format | Target framework(s) | Language version | Output type | Platform | ToolsVersion / SDK | Direct project references |
 |---|---|---|---|---|---|---|---|---|
@@ -54,7 +54,7 @@ Document relevant solution-level build inclusion/exclusions, nested solution fol
 
 ### Project-specific configuration
 
-**Use one row per project.** Include separate Debug and Release columns **only when their declared values differ**; collapse identical values and verified configuration-based path patterns into one column. When a project has different values that cannot be expressed with a shared pattern, show each configuration explicitly. Treat additional configurations similarly. Keep related settings in focused tables and include only properties relevant to the evaluation.
+**Use one row per project in each relevant table.** Separate Debug/Release columns only where values differ; combine identical values and verified path patterns. Support additional named configurations, platforms, target frameworks and conditional/inherited properties using additional columns or focused tables. `Debug` and `Release` are examples, not guaranteed configurations.
 
 **Compiler settings**
 
@@ -86,7 +86,7 @@ Record additional settings (e.g., DebugSymbols, signing, resources, platform tar
 |---|---|
 | <directory> | <one-line purpose, not a count of files> |
 
-Record existing modernization and build configuration files, including relevant *absent* mechanisms, without generating an exhaustive list of unrelated filenames.
+Record meaningful existing and absent configuration files. Check root, nested, imported, machine/user, and CI scopes when they may affect evaluation; do not list unrelated files just to fill the table.
 
 | File or mechanism | Present? | Existing purpose |
 |---|---|---|
@@ -102,13 +102,13 @@ Capture **all externally supplied dependencies**, not only NuGet packages. Proje
 
 **NuGet package declarations**
 
-Record one row per project/package declaration. Different projects may use `packages.config`, `PackageReference`, centrally managed versions, or a mixture.
+Record one row per project/package declaration, accounting for `packages.config`, `PackageReference`, centrally managed versions, conditional packages, different version expressions, restore sources and multiple TFMs. Never assume one project's dependency format applies to another.
 
 | Project | Package | Declared version | Declared in | Eligible feed(s) |
 |---|---|---|---|---|
 | <project> | <package ID> | <version or range> | <linked `packages.config`, project `PackageReference`, central-version file if applicable> | <configured source key(s), or not established> |
 
-The configured feed is **not necessarily the actual download origin**. Capture package-source mappings, NuGet restore overrides and source configuration. Add a verified **Resolved version** or **Observed origin** column when useful evidence exists; otherwise record the gap once. Keep the distributable package's own dependency metadata (such as a `.nuspec`) separate from project declarations.
+The configured feed is **not necessarily the actual download origin**, and a DLL reference with `HintPath` may be package-owned or independently supplied. Capture package-source mappings, NuGet restore overrides and source configuration. Add a verified **Resolved version** or **Observed origin** column when useful evidence exists; otherwise record the gap once. Keep the distributable package's own dependency metadata (such as a `.nuspec`) separate from project declarations.
 
 **Other external dependencies (when present)**
 
@@ -119,9 +119,11 @@ The configured feed is **not necessarily the actual download origin**. Capture p
 | <project> | <native library> | <P/Invoke or dynamic native load> | <code or build manifest> | <DLL name/version/architecture> | <deployment path or runtime search behavior> |
 | <application> | <database/service> | <runtime service/API dependency> | <documented configuration or code> | <endpoint type/protocol/version if applicable> | <host/environment; omit secrets> |
 
-Additional mechanisms may include framework references, GAC-resolved assemblies, reference assemblies, custom build tasks, generated code, shared files, native packages or deployment-installed components. **Do not equate `Reference` without `HintPath` with proven GAC resolution**: an actual build or loader trace may be needed. For COM, include registration, platform bitness and interop requirements if known. For local DLLs, identify whether the referenced file is tracked, generated, installed externally, or missing. Source-only scans may not reveal reflection, runtime COM activation, native loading or external-service calls; mark those as **not assessed** rather than absent.
+Additional mechanisms include framework references, potential GAC resolution, reference assemblies, custom tasks, generated or shared files, native packages and deployment-installed components. Identify each at its actual **project, target framework, architecture or host** scope. **Do not equate `Reference` without `HintPath` with proven GAC resolution**: an actual build or loader trace may be needed. For COM, include registration, platform bitness and interop requirements if known. For local DLLs, identify whether the referenced file is tracked, generated, installed externally, or missing. Source-only scans may not reveal reflection, runtime COM activation, native loading or external-service calls; mark those as **not assessed** rather than absent.
 
 ### Build environment
+
+For materially different host/toolchains (local, CI, VM, SDK-only, Windows/Linux, architectures), record each separately; do not infer a single toolchain across every execution.
 
 | Attribute | Observed value |
 |---|---|
@@ -132,6 +134,8 @@ Additional mechanisms may include framework references, GAC-resolved assemblies,
 | Test runner version | <observed version> |
 
 ### Entry points
+
+Distinguish entry points by solution, configuration, platform, target framework, CI matrix or deployment environment where their commands differ.
 
 | Operation | Command, script or workflow |
 |---|---|
@@ -160,7 +164,7 @@ Additional mechanisms may include framework references, GAC-resolved assemblies,
 | Installed-package consumer | <result or not applicable> | <consumer run> |
 | Application-specific integration checks | <result or not applicable> | <run/artifact> |
 
-Use one row per separately checked fact, with the actual result and its evidence. Remove inapplicable gates or explicitly mark them as such. Reuse suitable existing evidence from the same baseline SHA; do not rerun sufficient checks just to fill a template.
+Use one row per independently checked fact **and execution combination where outcomes differ** (configuration, OS, TFM, platform, consumer). Distinguish passed, failed, partial, blocked, not executed and not applicable; preserve deliberate negative controls and harness failures separately. Remove unrelated gates or mark them not applicable. Reuse suitable existing evidence from the same baseline SHA; do not rerun sufficient checks just to fill a template.
 
 ## 6. Known issues and verification gaps
 

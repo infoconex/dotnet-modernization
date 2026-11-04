@@ -1,6 +1,6 @@
 # EXP-014 — Read-only RecordSift .NET Framework 4.8 compiled-metadata pilot
 
-**Status: Verified on the frozen .NET Framework 4.8 release baseline (November 4, 2026).** [Successful Windows CI run #41858448425](https://github.com/infoconex/dotnet-modernization/actions/runs/41858448425). The research is in **draft PR #26**, stacked on **draft PR #25** (unmerged extractor); neither is approved to merge. RecordSift's frozen source commit and main branch remain unchanged.
+**Status: Verified on the frozen .NET Framework 4.8 release baseline (November 4, 2026).** [Successful Windows CI run #41858448425](https://github.com/infoconex/dotnet-modernization/actions/runs/41858448425). The research and extractor were **approved and squash-merged** through [PR #25](https://github.com/infoconex/dotnet-modernization/pull/25) and [PR #26](https://github.com/infoconex/dotnet-modernization/pull/26) into dotnet-modernization/main. The merged commits are 006cd800023e6fcf3e4e018a3af0924c0ca07430 and 210d3c65c9df7364ae4e316598e7f03920fe7cac respectively. RecordSift's frozen source and main branch remain unchanged.
 
 ## Question
 
@@ -9,7 +9,7 @@ Can the generic metadata extractor read **actual** RecordSift 0.1 .NET Framework
 ## Fixed inputs and validation
 
 - Repository: `infoconex/RecordSift`, exact source commit `8358780829458854a4b0356df5ac5e685f0a34c8`; public repository checked out to the **Windows 2022 GitHub Actions runner**, no push/write credentials.
-- Analyzer: `tooling/assembly-metadata` on the currently **draft** metadata-extractor branch from PR #25, built using pinned **.NET SDK 10.0.403**.
+- Analyzer: `tooling/assembly-metadata`, now merged into dotnet-modernization/main through PR #25, built using pinned **.NET SDK 10.0.403**.
 - Restores the traditional solution's `packages.config` dependencies with `NuGet.Config`, then builds all 10 projects in Release using the Visual Studio installation's MSBuild.
 - Verifies application-owned `scripts/verify_public_api.ps1` against the established combined 425-record API/package baseline and `scripts/verify_xml_documentation.ps1` against all five assemblies.
 - Runs **five separate NUnit 3 test assemblies**, not the frozen `scripts/run_tests.ps1` which omits XLSX; requires 419 discovered / 418 passed / 0 failed / 1 skipped, and records suite-level XML.
@@ -68,4 +68,6 @@ The workflow `.github/workflows/validate-recordsift-metadata-pilot.yml` runs onl
 - [Compatibility evidence guide](../../../../../tooling/validators/COMPATIBILITY.md)
 - [Experiment scripts](../../../../../tooling/pilots/recordsift/EXP-014/run.ps1)
 
-**Not authorized:** merging PR #25 or this stacked pilot PR to main, making changes to RecordSift, changing framework/SDK project style, or treating a clean repeat comparison as full compatibility certification.
+**Authorization update (November 4, 2026):** PRs #25 and #26 were explicitly approved and merged. **Still not authorized:** implementing changes in RecordSift main, changing framework/SDK project style, publishing packages, or treating a clean repeat comparison as full compatibility certification.
+
+**Rebased PR #26 CI check:** All three redundant validation runs for final PR head `7a352f41598581db3174ad902f27f99f6b357816` completed successfully: [tooling 41863331558](https://github.com/infoconex/dotnet-modernization/actions/runs/41863331558), [metadata extractor 41863331429](https://github.com/infoconex/dotnet-modernization/actions/runs/41863331429), and [RecordSift pilot 41863331512](https://github.com/infoconex/dotnet-modernization/actions/runs/41863331512). Their success is redundancy on an identical tree, not an independent candidate evaluation. See [EXP-015](EXP-015-actual-langversion-candidate.md) for the next experiment.

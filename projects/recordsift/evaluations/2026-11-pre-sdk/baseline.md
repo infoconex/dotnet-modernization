@@ -191,11 +191,18 @@ EXP-001 established the historical **Release** baseline against the pinned uncha
 | Infrastructure.Xlsx.Tests | 48 | 48 | 0 | 0 |
 | **Total** | **419** | **418** | **0** | **1** |
 
-| Compatibility gate | Verified baseline / evidence |
-|---|---|
-| Restore, full Release build, NUnit, XML docs, API/package metadata | [Windows build and test run #41392848910](https://github.com/infoconex/RecordSift/actions/runs/41392848910); **425 API/metadata entries**, **five production XML docs** |
-| Clean installed-package consumers | [Consumer run #41392848814](https://github.com/infoconex/RecordSift/actions/runs/41392848814) |
-| Engineering documentation checks | [Docs run #41392848879](https://github.com/infoconex/RecordSift/actions/runs/41392848879) |
+| Compatibility gate | Result | Evidence |
+|---|---|---|
+| NuGet restore | Passed | [Windows CI #41392848910](https://github.com/infoconex/RecordSift/actions/runs/41392848910) |
+| Release solution build | Passed; ten projects | [Windows CI #41392848910](https://github.com/infoconex/RecordSift/actions/runs/41392848910) |
+| NUnit tests | Passed; see assembly-level counts above | [Windows CI #41392848910](https://github.com/infoconex/RecordSift/actions/runs/41392848910) |
+| Public API compatibility | Passed; part of the **425-entry combined API/metadata baseline** | [Windows CI #41392848910](https://github.com/infoconex/RecordSift/actions/runs/41392848910) |
+| Assembly identity and metadata | Passed within the combined API/metadata verifier; no separate count reported | [Windows CI #41392848910](https://github.com/infoconex/RecordSift/actions/runs/41392848910) |
+| XML documentation | Passed; five production XML documents | [Windows CI #41392848910](https://github.com/infoconex/RecordSift/actions/runs/41392848910) |
+| NuGet package contents | Passed; unpublished release-candidate package | [Windows CI #41392848910](https://github.com/infoconex/RecordSift/actions/runs/41392848910) |
+| Dependency validation and vulnerability audit | Passed in the baseline workflow | [Windows CI #41392848910](https://github.com/infoconex/RecordSift/actions/runs/41392848910) |
+| Installed NuGet package consumer | Passed | [Consumer CI #41392848814](https://github.com/infoconex/RecordSift/actions/runs/41392848814) |
+| Engineering documentation validation | Passed | [Documentation CI #41392848879](https://github.com/infoconex/RecordSift/actions/runs/41392848879) |
 
 The skipped CSV test is deliberate. The CI baseline included Visual Studio; it does **not** prove that Visual Studio Build Tools are required to build the application. SDK-only experiments have separate evidence.
 

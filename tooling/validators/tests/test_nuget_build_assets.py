@@ -81,7 +81,12 @@ class NugetBuildAssetAuditTests(unittest.TestCase):
             mod.inspect(self.archive, 'Microsoft.SourceLink.GitHub', '10.0.403')
 
     def test_double_backslash_path_fails_closed(self):
-        self.create({'Microsoft.SourceLink.GitHub.nuspec': NUSPEC, 'build\\bad.targets': b'bad'})
+        self.create({'Microsoft.SourceLink.GitHub.nuspec': NUSPEC, 'build/bad.targets': b'bad'})
+        # Patch raw ZIP local/central filenames directly. zipfile normalizes
+        # backslashes while WRITING on Windows, which made this test vacuous.
+        raw = self.archive.read_bytes()
+        self.assertEqual(raw.count(b'build/bad.targets'), 2)
+        self.archive.write_bytes(raw.replace(b'build/bad.targets', b'build\\bad.targets'))
         with self.assertRaisesRegex(ValueError, 'Unsafe'):
             mod.inspect(self.archive, 'Microsoft.SourceLink.GitHub', '10.0.403')
 

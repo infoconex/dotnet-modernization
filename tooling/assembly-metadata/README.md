@@ -20,7 +20,7 @@ Requires **exact .NET SDK 10.0.403** to build (selected by the included global.j
 
     dotnet tooling/assembly-metadata/src/bin/Release/net10.0/AssemblyMetadata.dll --assembly /path/to/Domain.dll --assembly /path/to/Application.dll --output-dir /external/evidence/assembly
 
-Pass --assembly one to 100 times. Duplicate assembly paths/names, absent or invalid/nonmanaged files and malformed metadata cause nonzero exit. The tool requires a separate output directory from each assembly input directory and limits input file size to 512 MiB.
+Pass --assembly one to 100 times. Duplicate assembly paths/names, absent or invalid/nonmanaged files and malformed metadata cause nonzero exit. The tool requires an **empty, separate** output directory from each assembly input directory to avoid stale evidence and limits input file size to 512 MiB. Every API record is prefixed by its declaring assembly name to distinguish overlapping type names across different DLLs.
 
 No application restore, build, source change, loading, dependency resolution, package publication or network access is performed by the extractor.
 

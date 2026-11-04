@@ -6,6 +6,7 @@ import json
 import os
 from pathlib import Path
 import platform
+import re
 import subprocess
 import sys
 import xml.etree.ElementTree as ET
@@ -18,6 +19,7 @@ CONFIG_NAMES = frozenset({'global.json', '.editorconfig', 'nuget.config', 'direc
     'directory.solution.targets', 'directory.packages.props', 'packages.lock.json',
     'app.config', 'web.config', '.gitattributes'})
 MAX_XML_BYTES = 8 * 1024 * 1024
+SECRET_NAME = re.compile(r"password|secret|credential|connection.?string|access.?token|api.?key|private.?key", re.I)
 
 
 def local(tag):
@@ -50,12 +52,12 @@ def parse_xml(path):
     return ET.parse(path).getroot()
 
 
+def redact(name, value):
+    return "<redacted>" if SECRET_NAME.search(name) else value
+
+
 def attributes(element):
-    return {local(k): v for k, v in sorted(element.attrib.items())}
-
-
-def get_children(element, tag):
-    return [c for c in element if local(c.tag) == tag]
+    return {local(k): redact(local(k), v) for k, v in sorted(element.attrib.items())}
 
 
 def inventory_project(path, rel):
@@ -80,13 +82,13 @@ def inventory_project(path, rel):
                     value = ET.tostring(child, encoding='unicode')
                 else:
                     value = (child.text or '').strip()
-                result['properties'].append({'name': local(child.tag), 'declared_value': value,
+                result['properties'].append({'name': local(child.tag), 'declared_value': redact(local(child.tag), value),
                     'group_condition': group_cond, 'condition': child.get('Condition')})
         elif kind == 'ItemGroup':
             group_cond = element.get('Condition')
             for child in element:
                 entry = {'item': local(child.tag), **attributes(child), 'group_condition': group_cond}
-                meta = {local(c.tag): {'value': (c.text or '').strip(),
+                meta = {local(c.tag): {'value': redact(local(c.tag), (c.text or '').strip()),
                                       'condition': c.get('Condition')}
                         for c in child if len(c) == 0}
                 if meta:
@@ -133,6 +135,7 @@ def generate(source):
                    'dirty_paths': (git(source, 'status', '--porcelain', '--untracked-files=normal') or '').splitlines()},
         'environment': {'os': platform.platform(), 'python': platform.python_version()},
         'solutions': [], 'projects': [], 'packages_config': [], 'nuspec': [],
+        'central_package_versions': [],
         'configuration_files': [], 'errors': [],
         'limitations': ['Source declarations only, not evaluated MSBuild properties or executed behavior.',
                         'PackageReference and packages.config do not by themselves establish historical direct/transitive origin.',
@@ -152,6 +155,12 @@ def generate(source):
                 result['nuspec'].append(inventory_nuspec(full, rel))
             elif lname in CONFIG_NAMES or lname.endswith(('.props', '.targets')):
                 result['configuration_files'].append({'path': rel})
+                if lname == 'directory.packages.props':
+                    xml_root = parse_xml(full)
+                    for item in xml_root.iter():
+                        if local(item.tag) in {'PackageVersion', 'GlobalPackageReference'}:
+                            result['central_package_versions'].append(
+                                {'path': rel, 'item': local(item.tag), **attributes(item)})
         except (OSError, ET.ParseError, ValueError) as ex:
             result['errors'].append({'path': rel, 'problem': type(ex).__name__, 'detail': str(ex)[:240]})
     return result

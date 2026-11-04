@@ -1,0 +1,156 @@
+name: EXP-011 NuGet legacy dependency graph evidence
+on:
+  push:
+    branches: [research/nuget-graph-20261103]
+permissions:
+  contents: read
+jobs:
+  dependency-inventory:
+    runs-on: windows-2022
+    timeout-minutes: 20
+    steps:
+      - name: Checkout immutable baseline with isolated workflow
+        uses: actions/checkout@08c6903cd8c0fde910a37f88322edcfb5dd907a8 # v5.0.0
+        with:
+          persist-credentials: false
+          fetch-depth: 0
+      - name: Restore original source and inventory actual package metadata
+        shell: pwsh
+        run: |
+          $ErrorActionPreference = 'Stop'
+          Set-StrictMode -Version Latest
+          $baseline='8358780829458854a4b0356df5ac5e685f0a34c8'
+          $head=(& git rev-parse HEAD).Trim()
+          $changes=@(& git diff --name-only $baseline HEAD)
+          if($changes.Count -ne 1 -or $changes[0] -cne '.github/workflows/research-exp011-nuget-graph.yml'){
+            throw "Research workflow-only diff expected, observed $($changes -join ', ')"
+          }
+          New-Item -ItemType Directory -Force -Path TestResults | Out-Null
+          Write-Host "EXP011 SOURCE baseline=$baseline workflow=$head"
+          Write-Host "EXP011 OS=$([Environment]::OSVersion.VersionString) PowerShell=$($PSVersionTable.PSVersion) SDK=$(dotnet --version)"
+          $vswhere=Join-Path ([Environment]::GetFolderPath('ProgramFilesX86')) 'Microsoft Visual Studio\Installer\vswhere.exe'
+          $msbuild=(& $vswhere -latest -requires Microsoft.Component.MSBuild -find 'MSBuild\**\Bin\MSBuild.exe' | Select-Object -First 1)
+          if(-not $msbuild){throw 'Expected normal Windows VS MSBuild not installed'}
+          Write-Host "EXP011 MSBuild=$msbuild"
+          & $msbuild -version -nologo
+          $nugetVersion=(& nuget help | Select-Object -First 1).Trim()
+          Write-Host "EXP011 NuGet=$nugetVersion"
+          $configFiles=@(Get-ChildItem src,tests -Recurse -File -Filter packages.config | Sort-Object FullName)
+          if($configFiles.Count -ne 7){throw "Expected 7 packages.config files; found $($configFiles.Count)"}
+          $declarations=@()
+          foreach($c in $configFiles) {
+            [xml]$x=Get-Content -LiteralPath $c.FullName -Raw
+            $p=($c.FullName.Replace((Get-Location).Path+'\','')).Replace('\','/')
+            foreach($node in @($x.packages.package)) {
+              $declarations += [pscustomobject]@{projectFile=$p;id=[string]$node.id;version=[string]$node.version;framework=[string]$node.targetFramework;developmentDependency=[string]$node.GetAttribute('developmentDependency')}
+            }
+          }
+          $uniqueIds=@($declarations.id | Sort-Object -Unique)
+          if($declarations.Count -ne 17 -or $uniqueIds.Count -ne 13){throw "Expected 17 entries 13 IDs; found $($declarations.Count) entries $($uniqueIds.Count) IDs"}
+          $conflicts=@($declarations | Group-Object id | Where-Object { @($_.Group.version | Sort-Object -Unique).Count -gt 1 })
+          if($conflicts.Count -gt 0){throw "Multiple versions for same package: $($conflicts.Name -join ',')"}
+          $production=@($declarations | Where-Object {$_.projectFile.StartsWith('src/')})
+          $prodIds=@($production.id | Sort-Object -Unique)
+          if($prodIds.Count -ne 11){throw "Expected 11 production packages, got $($prodIds.Count)"}
+          [xml]$nuspec=Get-Content packaging/RecordSift.nuspec -Raw
+          $packageDeps=@($nuspec.package.metadata.dependencies.group.dependency | ForEach-Object { [pscustomobject]@{id=[string]$_.id;version=[string]$_.version} })
+          if($packageDeps.Count -ne 11){throw "Expected 11 library nuspec dependencies, got $($packageDeps.Count)"}
+          foreach($entry in $production) {
+            $matching=@($packageDeps | Where-Object { $_.id -ceq $entry.id -and $_.version -ceq ('['+$entry.version+']') })
+            if($matching.Count -ne 1){throw "Library manifest drift: $($entry.id) $($entry.version)"}
+          }
+          foreach($entry in $packageDeps) {
+            if($entry.id -cnotin $prodIds){throw "Unexpected manifest-only package $($entry.id)"}
+          }
+          Write-Host "EXP011 baseline projects=10 configs=7 declarations=$($declarations.Count) uniqueIds=$($uniqueIds.Count) prodIds=$($prodIds.Count) nuspecIds=$($packageDeps.Count)"
+          & nuget restore RecordSift.sln -NonInteractive -PackagesDirectory packages -ConfigFile NuGet.Config -Verbosity normal *>&1 | Tee-Object -FilePath TestResults/exp011-restore.log
+          if($LASTEXITCODE -ne 0){throw "NuGet restore failed $LASTEXITCODE"}
+          $installedDirectories=@(Get-ChildItem packages -Directory | Sort-Object Name)
+          $instNames=@($installedDirectories.Name)
+          if($installedDirectories.Count -ne 13){throw "Expected 13 installed package directories, got $($installedDirectories.Count): $($instNames -join ', ')"}
+          $packages=@()
+          foreach($id in $uniqueIds) {
+            $declarationsForId=@($declarations | Where-Object {$_.id -ceq $id})
+            $version=$declarationsForId[0].version
+            $folder=Join-Path (Get-Location).Path ("packages\"+$id+"."+$version)
+            if(-not(Test-Path $folder)){throw "Restored package directory missing $folder"}
+            # packages.config nuget restore keeps the nuspec INSIDE the .nupkg archive.
+            # Open archive metadata read-only; do not assume a sidecar .nuspec is extracted.
+            Add-Type -AssemblyName System.IO.Compression.FileSystem
+            $archives=@(Get-ChildItem -LiteralPath $folder -Filter '*.nupkg' -File)
+            if($archives.Count -ne 1){throw "Expected one .nupkg for $id, got $($archives.Count)"}
+            $zip=[IO.Compression.ZipFile]::OpenRead($archives[0].FullName)
+            try {
+              $nuspecEntries=@($zip.Entries | Where-Object {$_.FullName -match '(?i)^[^/]+\.nuspec$'})
+              if($nuspecEntries.Count -ne 1){throw "Expected one nuspec entry in $id archive, got $($nuspecEntries.Count)"}
+              $reader=[IO.StreamReader]::new($nuspecEntries[0].Open(),[Text.Encoding]::UTF8)
+              try { [xml]$p=$reader.ReadToEnd() } finally { $reader.Dispose() }
+            } finally { $zip.Dispose() }
+            $deps=@()
+            foreach($node in @($p.SelectNodes("//*[local-name()='dependencies']/*[local-name()='dependency'] | //*[local-name()='dependencies']/*[local-name()='group']/*[local-name()='dependency']"))) {
+              $group=$node.ParentNode
+              $tfm=if($group.LocalName -eq 'group'){$group.GetAttribute('targetFramework')}else{''}
+              $deps += [pscustomobject]@{id=$node.GetAttribute('id');versionRange=$node.GetAttribute('version');group=$tfm}
+            }
+            $contents=@(Get-ChildItem -LiteralPath $folder -Recurse -File | ForEach-Object {
+              $_.FullName.Substring($folder.Length+1).Replace('\','/')
+            })
+            $buildFiles=@($contents | Where-Object {$_ -match '(?i)^(build|buildTransitive|tools|content|contentFiles)/' -or $_ -match '(?i)\.(props|targets)$'})
+            $libPaths=@($contents | Where-Object {$_ -match '(?i)^lib/[^/]+/[^/]+\.(dll|exe)$'})
+            $packages += [pscustomobject]@{id=$id;version=$version;targetFrameworks=@($libPaths | ForEach-Object {($_ -split '/')[1]} | Sort-Object -Unique);metadataDependencies=$deps;buildContentFiles=$buildFiles;libAssets=$libPaths}
+          }
+          $projects=@(Get-ChildItem src,tests -Recurse -Filter '*.csproj' -File | Sort-Object FullName)
+          if($projects.Count -ne 10){throw "Expected ten projects; got $($projects.Count)"}
+          $references=@()
+          foreach($project in $projects) {
+            [xml]$xml=Get-Content -LiteralPath $project.FullName -Raw
+            $projectPath=$project.FullName.Substring((Get-Location).Path.Length+1).Replace('\','/')
+            foreach($r in @($xml.SelectNodes("//*[local-name()='Reference']"))) {
+              $hintNode=$r.SelectSingleNode("*[local-name()='HintPath']")
+              $hint=if($null -ne $hintNode){[string]$hintNode.InnerText}else{''}
+              if($hint) {
+                $normalized=$hint.Replace('/','\')
+                $m=[regex]::Match($normalized,'(?i)packages\\+([^\\]+)\\+')
+                $packageFolderName=''
+                if($m.Success){$packageFolderName=$m.Groups[1].Value}
+                if(-not $packageFolderName){throw "Unable to classify package HintPath: $projectPath $hint"}
+                if($packageFolderName -cnotin $instNames){throw "HintPath package not restored: $projectPath $packageFolderName"}
+                $hintFile=[IO.Path]::GetFullPath((Join-Path $project.DirectoryName $normalized))
+                if(-not (Test-Path -LiteralPath $hintFile -PathType Leaf)){throw "HintPath target does not exist: $projectPath => $hintFile"}
+                $references += [pscustomobject]@{project=$projectPath;include=[string]$r.Include;hintPath=$hint;packageDirectory=$packageFolderName;resolvedFilePresent=$true}
+              }
+            }
+          }
+          $imports=@()
+          foreach($proj in $projects) {
+            [xml]$xml=Get-Content -LiteralPath $proj.FullName -Raw
+            $path=$proj.FullName.Substring((Get-Location).Path.Length+1).Replace('\','/')
+            foreach($import in @($xml.SelectNodes("//*[local-name()='Import']"))){$imports += [pscustomobject]@{project=$path;import=$import.GetAttribute('Project')}}
+          }
+          $exp=[ordered]@{
+            baselineSha=$baseline;workflowSha=$head
+            environment=[ordered]@{os=[Environment]::OSVersion.VersionString;powershell="$($PSVersionTable.PSVersion)";sdk=(& dotnet --version).Trim();msbuildPath=$msbuild;nuget=$nugetVersion}
+            counts=[ordered]@{projects=$projects.Count;configs=$configFiles.Count;entries=$declarations.Count;uniquePackageIds=$uniqueIds.Count;productionPackages=$prodIds.Count;manifestDependencies=$packageDeps.Count;restoredPackageDirectories=$installedDirectories.Count;projectPackageHintPaths=$references.Count}
+            declarations=$declarations
+            manifestDependencies=$packageDeps
+            packages=$packages
+            projectPackageHintPaths=$references
+            projectImports=$imports
+          }
+          $json=ConvertTo-Json -InputObject $exp -Depth 20
+          [IO.File]::WriteAllText((Join-Path (Get-Location).Path 'TestResults\exp011-inventory.json'),$json,[Text.UTF8Encoding]::new($false))
+          Write-Host "EXP011 reconciled source/manifests/restore $($uniqueIds.Count) packages; HintPaths=$($references.Count)"
+          foreach($package in $packages) {
+            $edgeSummary=@($package.metadataDependencies | ForEach-Object {"$($_.group):$($_.id)$($_.versionRange)"}) -join ';'
+            Write-Host "EXP011 PKG $($package.id)@$($package.version) libs=$(@($package.libAssets).Count) buildContent=$(@($package.buildContentFiles).Count) depGroups=$edgeSummary"
+          }
+          Write-Host "EXP011 source checkout remains unchanged $(git status --short)"
+      - name: Upload small textual evidence
+        if: always()
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4.6.2
+        with:
+          name: exp011-nuget-inventory
+          path: |
+            TestResults/exp011-inventory.json
+            TestResults/exp011-restore.log
+          if-no-files-found: warn

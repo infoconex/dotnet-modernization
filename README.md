@@ -8,7 +8,8 @@ An evaluation is not an upgrade: a successful experiment proves a narrowly defin
 
 - [Methodology](methodology/README.md) — how to assess applications and grade evidence consistently.
 - [Projects](projects/README.md) — individual applications, each with independent, dated evaluations.
-- [Research](research/README.md) — reusable tooling and modernization knowledge, linked to original evidence.
+- [Research](research/README.md) — generalizable modernization knowledge, linked to original evidence.
+- [Validation tooling archive](tooling/README.md) — preserved experiment workflows, provenance and a safe route to future reusable validators.
 - [Articles](articles/README.md) — mapping technical evidence to future articles, without mixing publication drafts into research.
 - [Templates](templates/) — lightweight starting points for future assessments and experiments.
 

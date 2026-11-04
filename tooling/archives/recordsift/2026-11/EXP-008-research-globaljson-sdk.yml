@@ -1,0 +1,150 @@
+name: Research only - global.json and formatter compatibility
+on:
+  push:
+    branches:
+      - research/globaljson-formatter-20261103
+
+permissions:
+  contents: read
+
+jobs:
+  sdk-formatter-probe:
+    name: Compare unpinned and pinned .NET SDK on traditional net48
+    runs-on: windows-2022
+    timeout-minutes: 22
+    steps:
+      - name: Checkout unchanged application baseline
+        uses: actions/checkout@08c6903cd8c0fde910a37f88322edcfb5dd907a8 # v5.0.0
+        with:
+          persist-credentials: false
+
+      - name: Unpinned SDK - inventory, restore, formatter and Release build
+        shell: pwsh
+        run: |
+          $ErrorActionPreference = 'Stop'
+          Write-Host 'Research-only probe; never publish or commit application changes.'
+          Write-Host '=== Available SDKs ==='
+          & dotnet --list-sdks
+          if ($LASTEXITCODE -ne 0) { throw 'Cannot list SDKs.' }
+          $sdk = (& dotnet --version).Trim()
+          if ($LASTEXITCODE -ne 0) { throw 'Unpinned SDK not selected.' }
+          Write-Host "UNPINNED_SDK=$sdk"
+          "Unpinned SDK: $sdk" | Out-File $env:GITHUB_STEP_SUMMARY -Append -Encoding utf8
+          & nuget restore RecordSift.sln -NonInteractive -PackagesDirectory packages -ConfigFile NuGet.Config
+          if ($LASTEXITCODE -ne 0) { throw "Unpinned NuGet restore failed: $LASTEXITCODE" }
+          & dotnet format style RecordSift.sln --no-restore --verify-no-changes --diagnostics IDE1006 --severity error --verbosity normal
+          if ($LASTEXITCODE -ne 0) { throw "Unpinned IDE1006 formatter failed: $LASTEXITCODE" }
+          "Unpinned formatter IDE1006: PASSED" | Out-File $env:GITHUB_STEP_SUMMARY -Append -Encoding utf8
+          & dotnet msbuild RecordSift.sln /t:Rebuild /p:Configuration=Release '/p:Platform=Any CPU' /verbosity:minimal
+          if ($LASTEXITCODE -ne 0) { throw "Unpinned dotnet MSBuild Release rebuild failed: $LASTEXITCODE" }
+          "Unpinned dotnet MSBuild Release: PASSED" | Out-File $env:GITHUB_STEP_SUMMARY -Append -Encoding utf8
+
+      - name: Provision exact SDK for isolation (not application dependency)
+        uses: actions/setup-dotnet@a98b56852c35b8e3190ac28c8c2271da59106c68 # v6.0.0
+        with:
+          dotnet-version: '10.0.403'
+
+      - name: Temporary global.json pin - formatting, Release build, tests and contract checks
+        shell: pwsh
+        run: |
+          $ErrorActionPreference = 'Stop'
+          if (Test-Path -LiteralPath global.json) { throw 'Baseline unexpectedly contains global.json.' }
+          $globalJson = '{"sdk":{"version":"10.0.403","rollForward":"disable","allowPrerelease":false}}'
+          [IO.File]::WriteAllText((Join-Path (Get-Location) 'global.json'), $globalJson, [Text.UTF8Encoding]::new($false))
+          try {
+            $sdk = (& dotnet --version).Trim()
+            if ($LASTEXITCODE -ne 0 -or $sdk -cne '10.0.403') { throw "Expected pin=10.0.403; got $sdk" }
+            Write-Host "PINNED_SDK=$sdk"
+            "Exact global.json pin: $sdk" | Out-File $env:GITHUB_STEP_SUMMARY -Append -Encoding utf8
+
+            & dotnet format style RecordSift.sln --no-restore --verify-no-changes --diagnostics IDE1006 --severity error --verbosity normal
+            if ($LASTEXITCODE -ne 0) { throw "Pinned IDE1006 formatter failed: $LASTEXITCODE" }
+            "Pinned IDE1006 formatter: PASSED" | Out-File $env:GITHUB_STEP_SUMMARY -Append -Encoding utf8
+
+            & dotnet msbuild RecordSift.sln /t:Rebuild /p:Configuration=Release '/p:Platform=Any CPU' /verbosity:minimal
+            if ($LASTEXITCODE -ne 0) { throw "Pinned dotnet MSBuild Release rebuild failed: $LASTEXITCODE" }
+            "Pinned dotnet MSBuild Release: PASSED" | Out-File $env:GITHUB_STEP_SUMMARY -Append -Encoding utf8
+
+            $runner = 'packages\NUnit.ConsoleRunner.3.17.0\tools\nunit3-console.exe'
+            $assemblies = @(
+              'tests\RecordSift.Domain.Tests\bin\Release\RecordSift.Domain.Tests.dll',
+              'tests\RecordSift.Application.Tests\bin\Release\RecordSift.Application.Tests.dll',
+              'tests\RecordSift.Infrastructure.Csv.Tests\bin\Release\RecordSift.Infrastructure.Csv.Tests.dll',
+              'tests\RecordSift.Infrastructure.Reporting.Tests\bin\Release\RecordSift.Infrastructure.Reporting.Tests.dll',
+              'tests\RecordSift.Infrastructure.Xlsx.Tests\bin\Release\RecordSift.Infrastructure.Xlsx.Tests.dll'
+            )
+            New-Item -ItemType Directory -Force TestResults | Out-Null
+            & $runner @assemblies '--result=TestResults/globaljson-pinned-nunit.xml;format=nunit3' --noheader
+            if ($LASTEXITCODE -ne 0) { throw "Pinned NUnit failed: $LASTEXITCODE" }
+            [xml]$xml = Get-Content -LiteralPath TestResults/globaljson-pinned-nunit.xml -Raw
+            $total = [int]$xml.'test-run'.total
+            $passed = [int]$xml.'test-run'.passed
+            $failed = [int]$xml.'test-run'.failed
+            $skipped = [int]$xml.'test-run'.skipped
+            if ($total -ne 419 -or $passed -ne 418 -or $failed -ne 0 -or $skipped -ne 1) {
+              throw "Pinned NUnit baseline mismatch: total=$total passed=$passed failed=$failed skipped=$skipped"
+            }
+            "Pinned NUnit: 419 discovered, 418 passed, 0 failed, 1 skipped" | Out-File $env:GITHUB_STEP_SUMMARY -Append -Encoding utf8
+            & .\scripts\verify_xml_documentation.ps1
+            if ($LASTEXITCODE -ne 0) { throw "Pinned XML-docs verification failed: $LASTEXITCODE" }
+            & powershell.exe -NoProfile -ExecutionPolicy Bypass -File scripts\verify_public_api.ps1
+            if ($LASTEXITCODE -ne 0) { throw "Pinned public API verification failed: $LASTEXITCODE" }
+            "Pinned XML docs and API: PASSED" | Out-File $env:GITHUB_STEP_SUMMARY -Append -Encoding utf8
+          } finally {
+            Remove-Item -LiteralPath global.json -Force -ErrorAction SilentlyContinue
+          }
+          if (Test-Path -LiteralPath global.json) { throw 'Temporary global.json cleanup failed.' }
+          Write-Host 'Temporary global.json removed; no application file was committed.'
+
+      - name: Older SDK exact pin 10.0.303 - IDE1006 formatter and Release/NUnit parity
+        shell: pwsh
+        run: |
+          $ErrorActionPreference = 'Stop'
+          $installed = @(& dotnet --list-sdks)
+          if (-not ($installed | Where-Object { $_ -match '^10\.0\.303\s' })) { throw 'Required comparison SDK 10.0.303 not installed; this scenario is blocked.' }
+          if (Test-Path global.json) { throw 'Unexpected global.json before comparison.' }
+          [IO.File]::WriteAllText((Join-Path (Get-Location) 'global.json'), '{"sdk":{"version":"10.0.303","rollForward":"disable","allowPrerelease":false}}', [Text.UTF8Encoding]::new($false))
+          try {
+            $sdk = (& dotnet --version).Trim()
+            if ($LASTEXITCODE -ne 0 -or $sdk -cne '10.0.303') { throw "Expected SDK 10.0.303, got $sdk" }
+            Write-Host "OLDER_PINNED_SDK=$sdk"
+            "Older exact pin: $sdk" | Out-File $env:GITHUB_STEP_SUMMARY -Append -Encoding utf8
+            & dotnet format style RecordSift.sln --no-restore --verify-no-changes --diagnostics IDE1006 --severity error --verbosity normal
+            if ($LASTEXITCODE -ne 0) { throw "SDK 10.0.303 IDE1006 formatter failed: $LASTEXITCODE" }
+            "Older pinned formatter: PASSED" | Out-File $env:GITHUB_STEP_SUMMARY -Append -Encoding utf8
+            & dotnet msbuild RecordSift.sln /t:Rebuild /p:Configuration=Release '/p:Platform=Any CPU' /verbosity:minimal
+            if ($LASTEXITCODE -ne 0) { throw "SDK 10.0.303 rebuild failed: $LASTEXITCODE" }
+            "Older pinned rebuild: PASSED" | Out-File $env:GITHUB_STEP_SUMMARY -Append -Encoding utf8
+            $runner = 'packages\NUnit.ConsoleRunner.3.17.0\tools\nunit3-console.exe'
+            $assemblies = @(
+              'tests\RecordSift.Domain.Tests\bin\Release\RecordSift.Domain.Tests.dll',
+              'tests\RecordSift.Application.Tests\bin\Release\RecordSift.Application.Tests.dll',
+              'tests\RecordSift.Infrastructure.Csv.Tests\bin\Release\RecordSift.Infrastructure.Csv.Tests.dll',
+              'tests\RecordSift.Infrastructure.Reporting.Tests\bin\Release\RecordSift.Infrastructure.Reporting.Tests.dll',
+              'tests\RecordSift.Infrastructure.Xlsx.Tests\bin\Release\RecordSift.Infrastructure.Xlsx.Tests.dll'
+            )
+            & $runner @assemblies '--result=TestResults/globaljson-older-nunit.xml;format=nunit3' --noheader
+            if ($LASTEXITCODE -ne 0) { throw "Older pinned NUnit failed: $LASTEXITCODE" }
+            [xml]$xml = Get-Content TestResults/globaljson-older-nunit.xml -Raw
+            if ([int]$xml.'test-run'.total -ne 419 -or [int]$xml.'test-run'.passed -ne 418 -or [int]$xml.'test-run'.failed -ne 0 -or [int]$xml.'test-run'.skipped -ne 1) {
+              throw 'Older pinned NUnit deviated from immutable baseline.'
+            }
+            "Older pinned NUnit: 419 discovered / 418 pass / 0 fail / 1 skip" | Out-File $env:GITHUB_STEP_SUMMARY -Append -Encoding utf8
+            & powershell.exe -NoProfile -ExecutionPolicy Bypass -File scripts\verify_public_api.ps1
+            if ($LASTEXITCODE -ne 0) { throw "Older pinned public API check failed: $LASTEXITCODE" }
+            & .\scripts\verify_xml_documentation.ps1
+            if ($LASTEXITCODE -ne 0) { throw "Older pinned XML documentation check failed: $LASTEXITCODE" }
+          } finally {
+            Remove-Item -LiteralPath global.json -Force -ErrorAction SilentlyContinue
+          }
+          if (Test-Path global.json) { throw 'Older global.json cleanup failed' }
+          Write-Host 'Older SDK comparison complete; temporary global.json removed.'
+
+      - name: Record short-lived NUnit evidence
+        if: always()
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4.6.2
+        with:
+          name: research-globaljson-nunit
+          path: TestResults/globaljson-*-nunit.xml
+          if-no-files-found: ignore
+          retention-days: 7

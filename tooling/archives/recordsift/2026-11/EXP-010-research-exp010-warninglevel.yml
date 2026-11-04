@@ -1,0 +1,179 @@
+name: EXP-010 research WarningLevel property centralization
+on:
+  push:
+    branches: [research/warninglevel-20261103]
+permissions:
+  contents: read
+jobs:
+  warning-level:
+    runs-on: windows-2022
+    timeout-minutes: 35
+    steps:
+      - name: Checkout frozen application sources
+        uses: actions/checkout@08c6903cd8c0fde910a37f88322edcfb5dd907a8 # v5.0.0
+        with:
+          persist-credentials: false
+          fetch-depth: 0
+      - name: Inspect, experiment in workspace, and verify compatibility
+        shell: pwsh
+        run: |
+          $ErrorActionPreference = 'Stop'
+          Set-StrictMode -Version Latest
+          New-Item -ItemType Directory -Force TestResults | Out-Null
+          $expected='8358780829458854a4b0356df5ac5e685f0a34c8'
+          $parent=(& git rev-parse HEAD).Trim()
+          $changed=@(& git diff --name-only $expected HEAD)
+          if ($changed.Count -ne 1 -or $changed[0] -cne '.github/workflows/research-exp010-warninglevel.yml') {
+            throw "Experiment branch must change only isolated workflow; actual differences: $($changed -join ', ')"
+          }
+          Write-Host "EXP010 checkout=$parent baseline=$expected GitHubRunner=$env:RUNNER_OS"
+          Write-Host "EXP010 OS=$([Environment]::OSVersion.VersionString) PowerShell=$($PSVersionTable.PSVersion) SDK=$(dotnet --version)"
+          $vswhere=Join-Path ([Environment]::GetFolderPath('ProgramFilesX86')) 'Microsoft Visual Studio\Installer\vswhere.exe'
+          $msbuild=(& $vswhere -latest -requires Microsoft.Component.MSBuild -find 'MSBuild\**\Bin\MSBuild.exe' | Select-Object -First 1)
+          if (-not $msbuild) { throw 'Visual Studio MSBuild unavailable on normal Windows runner' }
+          Write-Host "EXP010 MSBuild=$msbuild"
+          & $msbuild -version -nologo
+          Write-Host "EXP010 NuGet=$(nuget help | Select-Object -First 1)"
+          $projects=@(Get-ChildItem src,tests -Filter '*.csproj' -File -Recurse | Sort-Object FullName)
+          if ($projects.Count -ne 10) { throw "Expected 10 projects, got $($projects.Count)" }
+          function Read-WarningLevel([string]$project,[string]$configuration) {
+            $lines=@(& $msbuild $project -nologo -verbosity:quiet "/p:Configuration=$configuration" '/p:Platform=AnyCPU' -getProperty:WarningLevel 2>&1)
+            if ($LASTEXITCODE -ne 0) { throw "GetProperty failed: $project $configuration : $($lines -join ' ')" }
+            $matches=@($lines | Where-Object { "$_" -match '^\s*[0-9]+\s*$' })
+            if ($matches.Count -eq 0 -and @($lines | Where-Object { "$_".Trim() -ne '' }).Count -eq 0) { return '' }
+            if ($matches.Count -ne 1) { throw "Unparseable WarningLevel for $project $configuration : $($lines -join ' / ')" }
+            return "$($matches[0])".Trim()
+          }
+          $before=[ordered]@{}
+          foreach($p in $projects) {
+            foreach($cfg in @('Debug','Release')) {
+              $key="$($p.BaseName):$cfg"
+              $before[$key]=Read-WarningLevel $p.FullName $cfg
+              if($before[$key] -cne '4'){throw "Unexpected baseline WarningLevel $key=$($before[$key])"}
+            }
+          }
+          $customBefore=[ordered]@{}
+          foreach($p in @($projects[0],$projects[5])) {
+            $customBefore[$p.BaseName]=Read-WarningLevel $p.FullName 'Custom'
+          }
+          Write-Host "EXP010 baseline 20 effective WarningLevel values=$($before.Values -join ',')"
+          Write-Host "EXP010 custom baseline=$($customBefore | ConvertTo-Json -Compress)"
+          $removed=0
+          foreach($p in $projects) {
+            $s=[IO.File]::ReadAllText($p.FullName)
+            $pattern='<WarningLevel>4</WarningLevel>'
+            $count=[regex]::Matches($s,$pattern).Count
+            if($count -ne 2){throw "Expected 2 WarningLevel declarations in $($p.Name), found $count"}
+            [IO.File]::WriteAllText($p.FullName,[regex]::Replace($s,$pattern,''),[Text.UTF8Encoding]::new($false))
+            $removed+=$count
+          }
+          if($removed -ne 20){throw "Expected 20 declarations removed: $removed"}
+          $propsPath=Join-Path (Get-Location).Path 'Directory.Build.props'
+          $shared=@'
+          <Project>
+            <PropertyGroup>
+              <WarningLevel Condition="'$(WarningLevel)' == ''">4</WarningLevel>
+            </PropertyGroup>
+          </Project>
+          '@
+          [IO.File]::WriteAllText($propsPath,$shared,[Text.UTF8Encoding]::new($false))
+          $after=[ordered]@{}
+          foreach($p in $projects) {
+            foreach($cfg in @('Debug','Release')) {
+              $key="$($p.BaseName):$cfg"
+              $after[$key]=Read-WarningLevel $p.FullName $cfg
+              if($after[$key] -cne $before[$key]){throw "WarningLevel changed: $key from $($before[$key]) to $($after[$key])"}
+            }
+          }
+          $customAfter=[ordered]@{}
+          foreach($p in @($projects[0],$projects[5])) {
+            $customAfter[$p.BaseName]=Read-WarningLevel $p.FullName 'Custom'
+          }
+          Write-Host "EXP010 conditional4 20/20 effective values match baseline"
+          Write-Host "EXP010 unrestricted custom after=$($customAfter | ConvertTo-Json -Compress)"
+          # Scope the value to the two configurations that declared it in the baseline.
+          # An unrestricted root value changes the *evaluated property* for Custom.
+          $scoped=@'
+          <Project>
+            <PropertyGroup>
+              <WarningLevel Condition="'$(WarningLevel)' == '' and ('$(Configuration)|$(Platform)' == 'Debug|AnyCPU' or '$(Configuration)|$(Platform)' == 'Release|AnyCPU')">4</WarningLevel>
+            </PropertyGroup>
+          </Project>
+          '@
+          [IO.File]::WriteAllText($propsPath,$scoped,[Text.UTF8Encoding]::new($false))
+          $customScoped=[ordered]@{}
+          foreach($p in @($projects[0],$projects[5])) {
+            $customScoped[$p.BaseName]=Read-WarningLevel $p.FullName 'Custom'
+            if($customScoped[$p.BaseName] -cne $customBefore[$p.BaseName]){throw 'Scoped shared props altered nonstandard configuration'}
+          }
+          Write-Host "EXP010 scoped custom after=$($customScoped | ConvertTo-Json -Compress)"
+          $shared=$scoped
+          $control3=$shared.Replace('>4</WarningLevel>','>3</WarningLevel>')
+          [IO.File]::WriteAllText($propsPath,$control3,[Text.UTF8Encoding]::new($false))
+          $actual3=[ordered]@{}
+          foreach($p in @($projects[0],$projects[5])) {
+            foreach($cfg in @('Debug','Release','Custom')){
+              $key="$($p.BaseName):$cfg"
+              $actual3[$key]=Read-WarningLevel $p.FullName $cfg
+            }
+          }
+          Write-Host "EXP010 shared conditional3 control=$($actual3 | ConvertTo-Json -Compress)"
+          $propagated=@($actual3.Values | Where-Object { $_ -ceq '3' }).Count
+          [IO.File]::WriteAllText($propsPath,$shared,[Text.UTF8Encoding]::new($false))
+          $domain=@($projects | Where-Object {$_.BaseName -eq 'RecordSift.Domain'})[0]
+          $src=[IO.File]::ReadAllText($domain.FullName)
+          $needle='<LangVersion>7.3</LangVersion>'
+          if(-not $src.Contains($needle)){throw 'Local override insertion point missing'}
+          [IO.File]::WriteAllText($domain.FullName,$src.Replace($needle,$needle+[Environment]::NewLine+'    <WarningLevel>3</WarningLevel>'),[Text.UTF8Encoding]::new($false))
+          $overrideDebug=Read-WarningLevel $domain.FullName 'Debug'
+          $overrideRelease=Read-WarningLevel $domain.FullName 'Release'
+          [IO.File]::WriteAllText($domain.FullName,$src,[Text.UTF8Encoding]::new($false))
+          Write-Host "EXP010 project override Debug=$overrideDebug Release=$overrideRelease"
+          if($overrideDebug -cne '3' -or $overrideRelease -cne '3'){throw 'Shared default overrode project-local WarningLevel'}
+          if((Read-WarningLevel $domain.FullName 'Release') -cne '4'){throw 'Failed restoring project-local override'}
+          $manifest=[ordered]@{
+            sourceSha=$parent; baselineSha=$expected; msbuild=$msbuild
+            originalCount=20; removedCount=$removed
+            baseline=$before; candidate=$after
+            customBefore=$customBefore; unrestrictedCustom=$customAfter; scopedCustom=$customScoped
+            shared3Probe=$actual3; shared3Propagated=$propagated
+            projectOverride=@{Debug=$overrideDebug;Release=$overrideRelease}
+          }
+          $manifest | ConvertTo-Json -Depth 12 | Set-Content TestResults/warninglevel-props.json -Encoding utf8
+          if($propagated -eq 0){Write-Warning "Conditional shared value did not propagate to probed projects; review import defaults before recommending centralization"}
+          & nuget restore RecordSift.sln -NonInteractive -PackagesDirectory packages -ConfigFile NuGet.Config
+          if($LASTEXITCODE -ne 0){throw "NuGet restore failed $LASTEXITCODE"}
+          foreach($configuration in @('Debug','Release')){
+            Write-Host "EXP010 $configuration build all 10 projects"
+            & $msbuild RecordSift.sln /m /t:Rebuild "/p:Configuration=$configuration" '/p:Platform=Any CPU' /verbosity:minimal
+            if($LASTEXITCODE -ne 0){throw "$configuration build failed $LASTEXITCODE"}
+          }
+          & .\scripts\verify_xml_documentation.ps1
+          if(-not $?){throw 'Positive XML check failed'}
+          & powershell.exe -NoProfile -NonInteractive -File .\scripts\verify_public_api.ps1
+          if($LASTEXITCODE -ne 0){throw '425 API verification failed'}
+          $runner='packages\NUnit.ConsoleRunner.3.17.0\tools\nunit3-console.exe'
+          $assemblies=@('Domain','Application','Infrastructure.Csv','Infrastructure.Reporting','Infrastructure.Xlsx') | ForEach-Object {
+            Join-Path (Get-Location).Path "tests\RecordSift.$_.Tests\bin\Release\RecordSift.$_.Tests.dll"
+          }
+          & $runner @assemblies '--result=TestResults/warninglevel-nunit.xml;format=nunit3' --noheader
+          if($LASTEXITCODE -ne 0){throw 'NUnit execution failed'}
+          [xml]$nunit=Get-Content TestResults/warninglevel-nunit.xml
+          Write-Host "EXP010 NUnit total=$($nunit.'test-run'.total) passed=$($nunit.'test-run'.passed) failed=$($nunit.'test-run'.failed) skipped=$($nunit.'test-run'.skipped)"
+          if([int]$nunit.'test-run'.total -ne 419 -or [int]$nunit.'test-run'.passed -ne 418 -or [int]$nunit.'test-run'.failed -ne 0 -or [int]$nunit.'test-run'.skipped -ne 1){throw '419 baseline mismatch'}
+          $feed=Join-Path $env:RUNNER_TEMP 'EXP010-RecordSift-RC'
+          & .\scripts\build_release_candidate.ps1 -OutputDirectory $feed
+          if(-not $?){throw 'Local package validation failed'}
+          & .\scripts\verify_clean_consumer.ps1 -CandidateDirectory $feed
+          if(-not $?){throw 'Clean consumer validation failed'}
+          & .\scripts\verify_xml_documentation.ps1 -Negative
+          if(-not $?){throw 'CS1591 negative enforcement control failed'}
+          Write-Host 'EXP010 all compatibility checks completed; only workspace-local project and props edits'
+          Write-Host "EXP010 status=$(git status --short | Out-String)"
+      - name: Preserve experiment evidence
+        if: always()
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4.6.2
+        with:
+          name: warninglevel-evidence
+          path: TestResults/warninglevel-*
+          if-no-files-found: warn

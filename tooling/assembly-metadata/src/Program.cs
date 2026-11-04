@@ -39,7 +39,10 @@ internal static class Program
             var options = new JsonSerializerOptions { WriteIndented = true };
             string identityJson = JsonSerializer.Serialize(new { schema_version = 1, assemblies = sorted.Select(x => x.Identity) }, options) + "\n";
             string resourcesJson = JsonSerializer.Serialize(new { schema_version = 1, assemblies = sorted.Select(x => x.Resources) }, options) + "\n";
-            string apiText = string.Join("\n", sorted.SelectMany(x => x.Api).OrderBy(x => x, StringComparer.Ordinal)) + "\n";
+            string apiText = string.Join("\n", sorted.SelectMany(x => x.Api.Select(line => "assembly " + x.Identity.name + " :: " + line))
+                .OrderBy(x => x, StringComparer.Ordinal)) + "\n";
+            if (Directory.Exists(outDir) && Directory.EnumerateFileSystemEntries(outDir).Any())
+                throw new InvalidOperationException("Output directory must be empty to prevent stale or mixed evidence");
             Directory.CreateDirectory(outDir);
             File.WriteAllText(Path.Combine(outDir, "assembly-identities.json"), identityJson);
             File.WriteAllText(Path.Combine(outDir, "resources.json"), resourcesJson);

@@ -21,7 +21,7 @@ The [research-only workflow](../../../../../.github/workflows/validate-recordsif
 6. Extract actual compiled public API, assembly identity and resource-name manifests from the five production assemblies per revision. Independently capture and compare source-verified snapshots of APIs, identities, resources, NuGet package contracts and test cases.
 7. Preserve internal repeat and deliberately changed **external evidence** negative controls from EXP-014 on both revisions. Require a separate baseline-versus-candidate result of **matched**; missing components are failures, not success.
 
-Unlike EXP-014, the two principal source revisions and their independently built binaries are different. The candidate commit SHA exists only on CI, so the retained patch and deterministic source transformation are essential replay evidence. Distinct worktree build and restore roots minimize accidental baseline/candidate contamination.
+Unlike EXP-014, the two principal source revisions and their independently built binaries are different. The candidate commit SHA exists only on CI, so the retained patch and deterministic source transformation are essential replay evidence. The adapter also records both Git **tree SHAs**, because local commit timestamps can change the ephemeral candidate commit SHA across reruns even when the material source tree is identical. A tree hash identifies source contents, not a remotely retrievable branch or proof that all build inputs were hermetic. Distinct worktree build and restore roots minimize accidental baseline/candidate contamination.
 
 ## Acceptance and evidence retention
 

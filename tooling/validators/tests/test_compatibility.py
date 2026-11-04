@@ -187,6 +187,22 @@ class CompatibilityTests(unittest.TestCase):
         self.assertEqual(report['overall'], 'incomplete')
         self.assertEqual(report['components']['api']['status'], 'missing_evidence')
 
+    def test_external_artifacts_keep_clean_git_source_and_detect_api_drift(self):
+        self.api()
+        sha = self.init_git()
+        artifacts = self.out / 'generated'
+        artifacts.mkdir(parents=True)
+        (artifacts / 'public-api.txt').write_text('T Fixture.Original\\n')
+        spec = {'schema_version': 1, 'components': {'api': 'public-api.txt'}}
+        baseline = compatibility.capture(self.root, spec, sha, artifacts_root=artifacts)
+        self.assertEqual(baseline['source']['dirty_paths'], [])
+        self.assertEqual(baseline['artifacts_root'], str(artifacts))
+        (artifacts / 'public-api.txt').write_text('T Fixture.Changed\\n')
+        candidate = compatibility.capture(self.root, spec, sha, artifacts_root=artifacts)
+        result = compatibility.compare(baseline, candidate)
+        self.assertEqual(result['overall'], 'changes_detected')
+        self.assertEqual(result['provenance'], 'clean_committed')
+
     def test_no_git_provenance_cannot_yield_verified_match(self):
         self.api()
         obj = compatibility.capture(self.root, {'schema_version': 1, 'components': {'api': 'contracts/api.txt'}})

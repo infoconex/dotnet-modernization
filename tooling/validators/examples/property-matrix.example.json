@@ -1,0 +1,15 @@
+{
+  "schema_version": 1,
+  "properties": [
+    "TargetFrameworkVersion",
+    "TargetFramework",
+    "LangVersion",
+    "WarningLevel",
+    "OutputPath",
+    "IsTestProject"
+  ],
+  "contexts": [
+    {"Configuration": "Debug", "Platform": "AnyCPU"},
+    {"Configuration": "Release", "Platform": "AnyCPU"}
+  ]
+}

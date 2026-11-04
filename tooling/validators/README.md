@@ -22,7 +22,7 @@ python tooling/validators/inventory.py \
   --expect-commit FULL_40_CHARACTER_GIT_SHA
 ~~~
 
-The output is a **source-declarations report**, not an evaluated MSBuild property graph or an execution success. Conditional declarations remain distinct. An invalid XML file produces a partial report with an **error exit code 2**; a revision mismatch also returns **2**. Evidence status needs to reflect either condition.
+The output must be **outside the application checkout**; the inventory command rejects an in-checkout path to avoid changing the starting state. The output is a **source-declarations report**, not an evaluated MSBuild property graph or an execution success. Conditional declarations remain distinct. An invalid XML file produces a partial report with an **error exit code 2**; a revision mismatch also returns **2**. Evidence status needs to reflect either condition.
 
 NuGet declarations are recorded as seen, without guessing historical direct/transitive roles. Package source acquisition, compiled DLL ownership and actual runtime dependencies need separate verification. Configuration files are inventoried by presence/path only. Common sensitive property/metadata names are redacted, but **redaction is best effort**: review evidence before sharing or uploading it; do not use source files containing actual secrets.
 

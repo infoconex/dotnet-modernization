@@ -15,6 +15,8 @@ The original inventory and gate runner remain separate from the **new** evaluate
 
 These additional commands emit independent, versioned JSON reports. They **do not change source files, run a build, restore packages, validate consumers, or authorize a modernization change**. All output paths must be outside the application's checkout.
 
+Each new report contains its own Git **source commit**, branch and dirty-path observation. Pass `--expect-commit FULL_40_CHARACTER_GIT_SHA` to **every** collector in a frozen-baseline evaluation; the command exits with an error before probing if the checkout doesn't match. Without that option, Git provenance is informative but not enforced. A matching commit does not guarantee a clean worktree; inspect the recorded dirty paths and use an isolated checkout.
+
 ### Host toolchain observations
 
 ~~~shell
@@ -127,7 +129,7 @@ python -m unittest discover -s tooling/validators/tests -v
 
 The tests exercise legacy/SDK-style XML, NuGet restore graph fixtures, declared/direct ambiguity, tool availability, conditional and evaluated MSBuild settings, basic MSBuild execution when installed, negative controls, NUnit counts, malformed files, timeouts, and evidence isolation.
 
-**Verification for this increment:** Locally, 27 tests passed (Python 3.13.5 on Linux, including one live MSBuild smoke test skipped because no SDK is installed). The existing GitHub Actions test workflow checks the full suite on Windows and Ubuntu; consult the current PR checks for hosted outcomes rather than assuming they passed.
+**Verification for this increment:** Locally, 29 tests passed (Python 3.13.5 on Linux, including one live MSBuild smoke test skipped because no SDK is installed). The existing GitHub Actions test workflow checks the full suite on Windows and Ubuntu; consult the current PR checks for hosted outcomes rather than assuming they passed.
 
 ## Next increments
 

@@ -26,7 +26,7 @@ $controls = Join-Path $evidence 'unmapped-deterministic-control'
 & (Join-Path $repo 'tooling/pilots/recordsift/EXP-019/run.ps1') -ApplicationRoot $application -EvidenceRoot $controls
 if ($LASTEXITCODE -ne 0) { throw 'EXP-019 unmapped deterministic negative control was not accepted.' }
 $controlReport = Get-Content (Join-Path $controls 'experiment-report.json') -Raw | ConvertFrom-Json
-if ($controlReport.source_sha -cne $frozen -or $controlReport.deterministic_reproducibility.independent_worktree.different_binaries -le 0 -or
+if ($controlReport.frozen_source_sha -cne $frozen -or $controlReport.deterministic_reproducibility.independent_worktree.different_binaries -le 0 -or
     $controlReport.deterministic_reproducibility.same_worktree_rebuild.identical_binaries -ne 5) {
     throw 'Unmapped deterministic controls did not preserve expected verified behavior.'
 }

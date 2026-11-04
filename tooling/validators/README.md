@@ -9,7 +9,7 @@
 - **gates.py:** executes an explicit, reviewed array of argv commands **without a shell**, using the application checkout as its working root. Captures stdout/stderr to separate log files and records each gate's exit code, duration, status, expected-negative controls, and optionally NUnit 3 test counts. Records Git revision and source dirty paths before/after execution. Machine-readable output is **JSON schema version 1**.
 - Both scripts use **only Python's standard library**. Their own tests do not require .NET, Visual Studio or RecordSift.
 
-They intentionally do **not** evaluate inherited MSBuild properties, prove package feed acquisition origins, scan runtime/native/COM activation, compile projects automatically, resolve NuGet transitive closure, or independently compare binary/API/resource/consumer contracts. Supply those commands as explicit gates once your application has appropriate trusted checks. Do not call a successful workflow a validated upgrade merely because these tools ran.
+The original inventory and gate runner remain separate from the **new** evaluated-property and existing-restore-graph probes. Taken together, these tools still do **not** prove package feed acquisition origins, scan all runtime/native/COM activation, compile projects automatically, reconstruct complete legacy NuGet transitive closure, or independently compare binary/API/resource/consumer contracts. Supply those commands as explicit gates once your application has appropriate trusted checks. Do not call a successful workflow a validated upgrade merely because these tools ran.
 
 ## Toolchain, evaluated MSBuild settings and dependencies
 

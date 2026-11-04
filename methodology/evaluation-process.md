@@ -47,9 +47,18 @@ Present the proposal to the stakeholder and request explicit approval or revisio
 
 ## 2. Establish the baseline
 
-Record branch/commit, source inventory, explicit and implicit build dependencies, restore commands, compilation, full test count, API/resource/assembly identities, packaging and consumer compatibility. Note failed, skipped, and unavailable checks.
+Establish **two complementary records for the unchanged application** before modernization experiments:
 
-**Output:** baseline document with evidence references.
+1. **Source-backed discovery:** At an immutable full Git SHA, inventory the application's identity and versions, Git repository and directory structure, existing configuration files (including modernization-related files that are absent), all relevant `.sln`/`.slnx` and project files, configurations, direct/dependency graph, build inputs, scripts, CI, packaging and runtime requirements.
+2. **Executed compatibility verification:** Record the actual host/toolchain and commands, restore/build results, all discovered/passed/failed/skipped tests, relevant public APIs/assembly/resources/XML contracts, package/consumer results, and links to logs/artifacts. State any unexecuted or failing gate explicitly.
+
+**Use the [application baseline template](../templates/application-baseline.md)** for a substantial application and keep the inventory in a single `baseline.md`. Smaller evaluations can summarize equivalent relevant facts in the [evaluation overview](../templates/evaluation-overview.md). The template owns the detailed field checklist; **do not duplicate it in the methodology or repeat facts across baseline sections**. A baseline should describe what exists, not propose implementation.
+
+**Baseline field-design rule:** Before representing each field, identify its **applicable scope**, **material variations**, **source of truth**, and **verification status**. Check the [baseline variation guide](baseline-variation-guide.md) for possibilities beyond the pilot application's configuration, then document only the facts observed in the evaluated application. Add relevant columns, rows or focused tables when values vary; do not turn the guide into mandatory empty fields or copy its hypothetical examples into the baseline.
+
+**Provenance:** Distinguish source-declared values, actual MSBuild-evaluated values, installed tools, mutable hosting metadata and executed behavior. Absence of an optional file is not a reason to create it. Reuse adequate existing verification from the same exact source revision and relevant environment; a baseline with known failures may still be a valid, documented starting point. Preserve evidence gaps and avoid unnecessary reruns.
+
+**Output:** Source-verified inventory plus traceable reproducible compatibility evidence, with an explicit baseline disposition.
 
 ## 3. Reproduce the environment
 

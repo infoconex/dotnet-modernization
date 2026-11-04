@@ -1,0 +1,80 @@
+name: Read-only RecordSift .NET Framework 4.8 assembly metadata pilot
+
+on:
+  pull_request:
+    paths:
+      - ".github/workflows/validate-recordsift-metadata-pilot.yml"
+      - "tooling/pilots/recordsift/EXP-014/**"
+      - "projects/recordsift/evaluations/2026-11-pre-sdk/experiments/EXP-014-real-binary-metadata-pilot.md"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  frozen-recordsift-real-assemblies:
+    name: Frozen RecordSift net48 build, metadata, API, five suites and consumer
+    runs-on: windows-2022
+    timeout-minutes: 35
+    steps:
+      - name: Checkout methodology and extractor (PR branch)
+        uses: actions/checkout@08c6903cd8c0fde910a37f88322edcfb5dd907a8 # v5.0.0
+        with:
+          persist-credentials: false
+      - name: Checkout immutable public RecordSift source (not a writable branch)
+        uses: actions/checkout@08c6903cd8c0fde910a37f88322edcfb5dd907a8 # v5.0.0
+        with:
+          repository: infoconex/RecordSift
+          ref: 8358780829458854a4b0356df5ac5e685f0a34c8
+          path: recordsift
+          persist-credentials: false
+      - name: Provision pinned .NET 10 extractor SDK
+        uses: actions/setup-dotnet@a98b56852c35b8e3190ac28c8c2271da59106c68 # v6.0.0
+        with:
+          dotnet-version: "10.0.403"
+      - name: Build approved metadata-only extractor (no application build in this step)
+        working-directory: tooling/assembly-metadata
+        shell: pwsh
+        run: |
+          $sdk = (& dotnet --version).Trim()
+          if ($LASTEXITCODE -ne 0 -or $sdk -cne "10.0.403") { throw "Unexpected extractor SDK: $sdk" }
+          dotnet build src/AssemblyMetadata.csproj -c Release -nologo -v minimal
+          if ($LASTEXITCODE -ne 0) { throw "Metadata extractor build failed" }
+      - name: Restore exact packages.config baseline dependencies
+        working-directory: recordsift
+        shell: pwsh
+        run: |
+          nuget restore RecordSift.sln -NonInteractive -PackagesDirectory packages -ConfigFile NuGet.Config
+          if ($LASTEXITCODE -ne 0) { throw "Frozen RecordSift NuGet restore failed" }
+      - name: Compile frozen .NET Framework 4.8 source in Release using Visual Studio MSBuild
+        working-directory: recordsift
+        shell: pwsh
+        run: |
+          $vswhere = Join-Path ([Environment]::GetFolderPath('ProgramFilesX86')) 'Microsoft Visual Studio\Installer\vswhere.exe'
+          $msbuild = & $vswhere -latest -requires Microsoft.Component.MSBuild -find 'MSBuild\**\Bin\MSBuild.exe' | Select-Object -First 1
+          if (-not $msbuild) { throw "Visual Studio MSBuild was not installed" }
+          & $msbuild RecordSift.sln /m /t:Rebuild /p:Configuration=Release '/p:Platform=Any CPU' /verbosity:minimal
+          if ($LASTEXITCODE -ne 0) { throw "Frozen RecordSift MSBuild failed" }
+      - name: Run original release checks and compare extracted metadata from real DLLs
+        shell: pwsh
+        run: |
+          & ./tooling/pilots/recordsift/EXP-014/run.ps1 -ApplicationRoot (Join-Path $env:GITHUB_WORKSPACE 'recordsift') -EvidenceRoot (Join-Path $env:RUNNER_TEMP 'RecordSift-EXP-014')
+          if ($LASTEXITCODE -ne 0) { throw "EXP-014 pilot failed" }
+      - name: Retain research-only evidence (no binaries, nupkg or package publication)
+        if: always()
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4.6.2
+        with:
+          name: recordsift-exp014-research-evidence
+          path: |
+            ${{ runner.temp }}/RecordSift-EXP-014/pilot-report.json
+            ${{ runner.temp }}/RecordSift-EXP-014/baseline.json
+            ${{ runner.temp }}/RecordSift-EXP-014/repeat.json
+            ${{ runner.temp }}/RecordSift-EXP-014/comparison.json
+            ${{ runner.temp }}/RecordSift-EXP-014/negative.json
+            ${{ runner.temp }}/RecordSift-EXP-014/negative-comparison.json
+            ${{ runner.temp }}/RecordSift-EXP-014/first/public-api.txt
+            ${{ runner.temp }}/RecordSift-EXP-014/first/assembly-identities.json
+            ${{ runner.temp }}/RecordSift-EXP-014/first/resources.json
+            ${{ runner.temp }}/RecordSift-EXP-014/nunit-*.xml
+          if-no-files-found: warn
+          retention-days: 30

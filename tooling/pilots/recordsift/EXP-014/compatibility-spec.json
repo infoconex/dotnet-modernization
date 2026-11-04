@@ -1,0 +1,36 @@
+{
+  "schema_version": 1,
+  "components": {
+    "api": "public-api.txt",
+    "assemblies": "assembly-identities.json",
+    "resources": "resources.json",
+    "packages": [
+      {
+        "id": "RecordSift.0.1.0",
+        "path": "RecordSift.0.1.0.nupkg"
+      }
+    ],
+    "tests": [
+      {
+        "id": "domain",
+        "path": "nunit-domain.xml"
+      },
+      {
+        "id": "application",
+        "path": "nunit-application.xml"
+      },
+      {
+        "id": "csv",
+        "path": "nunit-infrastructure-csv.xml"
+      },
+      {
+        "id": "reporting",
+        "path": "nunit-infrastructure-reporting.xml"
+      },
+      {
+        "id": "xlsx",
+        "path": "nunit-infrastructure-xlsx.xml"
+      }
+    ]
+  }
+}

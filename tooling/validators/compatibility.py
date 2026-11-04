@@ -29,7 +29,7 @@ def load_json(path):
 def relative_file(root, raw):
     if not isinstance(raw, str) or not raw:
         raise ValueError('evidence filename must be a nonempty relative path')
-    path = (root / raw).resolve(strict=True)
+    path = (root / raw).resolve()
     if not path.is_relative_to(root) or not path.is_file():
         raise ValueError('evidence file must exist inside the source checkout')
     if path.stat().st_size > MAX_INPUT:

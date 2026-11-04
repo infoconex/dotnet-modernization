@@ -1,6 +1,7 @@
 # `<Application>` — Application baseline
 
 **Repository:** `<owner/repository browser link>`  
+**Baseline source ref:** `<branch, tag, or detached commit>`  
 **Baseline commit:** `<full immutable SHA>`  
 **Source inventory date:** `<YYYY-MM-DD>` · **Verification date:** `<YYYY-MM-DD or not executed>`  
 **Evidence status:** `<verified / partial / blocked; identify gaps>`
@@ -105,7 +106,7 @@ Record one row per project/package declaration. Identify its source file (`packa
 |---|---|---|---|---|---|
 | `<project>` | `<package ID>` | `<version or range>` | `<declaration file and central version file if applicable>` | `<configured feed(s) or not established>` | `<production, test, tool, or other evidenced purpose>` |
 
-Capture configured feeds separately from **verified acquisition origin**. If the latter is unverified, note that once. Relate package-owned assemblies to their package instead of duplicating them. Published `.nuspec` dependencies are a separate consumer contract.
+The **Usage** column identifies the consuming project's purpose; it does **not** establish whether a package was historically direct or transitive. Capture configured feeds separately from **verified acquisition origin**. If the latter is unverified, note that once. Relate package-owned assemblies to their package instead of duplicating them. Published `.nuspec` dependencies are a separate consumer contract.
 
 **Other external dependencies (when present)**
 

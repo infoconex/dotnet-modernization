@@ -77,12 +77,14 @@ internal sealed class SignatureText : ISignatureTypeProvider<string, SignatureCo
         return string.IsNullOrEmpty(ns) ? name : ns + "." + name;
     }
 
-    public string Resolve(MetadataReader reader, EntityHandle handle, SignatureContext context) => handle.Kind switch
+    public string Resolve(MetadataReader reader, EntityHandle handle, SignatureContext context) =>
+        handle.IsNil ? "" : ResolvePresent(reader, handle, context);
+
+    private string ResolvePresent(MetadataReader reader, EntityHandle handle, SignatureContext context) => handle.Kind switch
     {
         HandleKind.TypeDefinition => GetTypeFromDefinition(reader, (TypeDefinitionHandle)handle, 0),
         HandleKind.TypeReference => GetTypeFromReference(reader, (TypeReferenceHandle)handle, 0),
         HandleKind.TypeSpecification => GetTypeFromSpecification(reader, context, (TypeSpecificationHandle)handle, 0),
-        HandleKind.Nil => "",
         _ => throw new BadImageFormatException($"Unsupported type handle: {handle.Kind}")
     };
 }

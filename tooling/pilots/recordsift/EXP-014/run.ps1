@@ -51,6 +51,10 @@ try {
             throw "Expected enum public API regression not reported by the original checker (exit=$apiExit)."
         }
         Write-Host 'EXPECTED NEGATIVE: original 425-entry gate detected Canceled enum value 3 to 42.'
+        # The intentional failed native powershell.exe invocation leaves LASTEXITCODE nonzero.
+        # Clear only its process status after validating the exact expected mismatch; otherwise
+        # the following successful PowerShell-only XML script can inherit a false failure.
+        $global:LASTEXITCODE = 0
     }
     elseif ($apiExit -ne 0) { throw "Existing RecordSift public API gate failed: $apiExit" }
     & (Join-Path $application 'scripts/verify_xml_documentation.ps1')

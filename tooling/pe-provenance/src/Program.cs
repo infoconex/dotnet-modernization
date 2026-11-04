@@ -9,6 +9,8 @@ using System.Text.Json.Serialization;
 
 namespace PeProvenance;
 
+internal sealed record Inspected(string assembly, object data);
+
 internal static class Program
 {
     private const long MaxInputBytes = 512L * 1024 * 1024;
@@ -49,7 +51,7 @@ internal static class Program
                 schema_version = 1,
                 kind = "managed-pe-provenance",
                 source_policy = "hash and CLR metadata only; never load or execute assembly",
-                assemblies = records
+                assemblies = records.Select(x => x.data)
             }, new JsonSerializerOptions { WriteIndented = true, DefaultIgnoreCondition = JsonIgnoreCondition.WhenWritingNull }) + "\n",
                 new UTF8Encoding(false));
             Console.WriteLine($"Captured {records.Length} managed PE files with MVID, COFF, debug/PDB pointers and raw method IL hashes.");
@@ -63,7 +65,7 @@ internal static class Program
         }
     }
 
-    private static object Inspect(string path)
+    private static Inspected Inspect(string path)
     {
         using FileStream stream = File.OpenRead(path);
         if (stream.Length > MaxInputBytes) throw new InvalidDataException("Managed PE exceeds 512 MiB");
@@ -124,7 +126,7 @@ internal static class Program
                 sha256 = Convert.ToHexString(SHA256.HashData(bytes)).ToLowerInvariant()
             });
         }
-        return new
+        return new Inspected(name, new
         {
             assembly = name,
             filename = Path.GetFileName(path),
@@ -138,6 +140,6 @@ internal static class Program
             method_il_total_bytes = ilBytes,
             method_bodies = methodBodies,
             debug_directory = debug
-        };
+        });
     }
 }

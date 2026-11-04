@@ -1,6 +1,6 @@
 # EXP-019 — explicit deterministic compiler property on traditional net48
 
-**Date:** November 4, 2026. **Status:** Pending verified CI evidence.
+**Date:** November 4, 2026. **Status:** Verified for the tested Windows Release builds and scoped compatibility contracts; draft research PR #33 unmerged.
 **Frozen application:** infoconex/RecordSift at immutable main commit 8358780829458854a4b0356df5ac5e685f0a34c8.
 **Dependency:** [EXP-018 draft PR #32](https://github.com/infoconex/dotnet-modernization/pull/32). This experiment is stacked on the **unmerged EXP-018 research branch** to reuse its managed PE reader. The research dependency does not authorize either merge or a production application change.
 
@@ -35,4 +35,25 @@ Only the deterministic property is explicitly altered, **not** PathMap, DebugTyp
 
 Review through architecture/source provenance, C#/MSBuild compilation, NUnit/consumer compatibility, supply-chain, reusable tooling and technical documentation perspectives. These are internal analytical lenses, not outside independent signoff.
 
-**Results:** Awaiting successful full Windows CI, source-tree evidence, per-assembly hash comparison and traceable artifact reference. Keep draft/unmerged without explicit stakeholder authorization.
+## Verified Windows results — scoped compiler-property experiment
+
+**[GitHub Actions run 41903901066](https://github.com/infoconex/dotnet-modernization/actions/runs/41903901066) passed** on research head 692a1d5e67fb213cb4816622e3640f4e2023d381. [Retained evidence artifact 13359826842](https://github.com/infoconex/dotnet-modernization/actions/runs/41903901066/artifacts/13359826842), SHA-256 digest ec3fe5324f235872c465b5a0b1929d368b75bb78a26dae25b031e9bd27c6d57f, 30-day retention. The evidence includes source SHA/tree and actual per-assembly PE SHA-256, MVID, COFF/debug and method IL hashes (not assembly/package bytes). The frozen RecordSift Git source in all four builds was 8358780829458854a4b0356df5ac5e685f0a34c8. No source/project file was changed.
+
+| Exact PE comparison (all same Git source SHA) | Identical DLL byte hashes | MVID/COFF/debug differences | Raw method IL token changes |
+| --- | ---: | ---: | ---: |
+| Historical unmodified baseline vs first explicitly deterministic build | **0/5** | 5/5 changed | 0/5 |
+| First explicit deterministic build vs another worktree's identical-source explicit deterministic build | **0/5** | 5/5 changed | 0/5 |
+| First explicit deterministic build vs **same-directory** explicit deterministic rebuild | **5/5** | **0/5 changed** | 0/5 |
+
+The original/opted-in MSBuild Release Deterministic setting was evaluated for five production projects in each mode: the original setting was observed separately, and each explicit override evaluated to **true**. The experiment did **not** capture the complete C# compiler command line; distinguish effective MSBuild property evaluation from an independently validated compiler switch.
+
+For each of the four separately restored and rebuilt ten-project Release solutions, original application gates were **passed**: **425 compiled public API/metadata baseline entries**, **419 NUnit test discoveries (418 passed, 0 failed, 1 skipped)**, five XML documentation outputs, unpublished NuGet 0.1.0 packaging, and separately installed net48 clean consumer plus examples. The five selected logical compatibility components **matched** between default baseline and *each* opted-in build. The independently read 5 actual compiled DLLs per build provide the byte evidence; no binary or NuGet package file was uploaded or published.
+
+**What this establishes:** For this source, build tools and runner, an explicit global Deterministic=true property **yielded exact repeat DLL bytes when rebuilding in the same source path**. It did **not** yield identical DLL bytes when the same source was compiled at another filesystem path. The observed raw method-body IL hashes remained equal throughout. This is not an application defect or a reason to merge a compiler setting into RecordSift.
+
+**What it does not establish:** This experiment did not prove hermetic compilation, compiler argv, cross-run repeatability, portable-source paths, stable package archive bytes, signed artifact identities, unexamined PE metadata equivalence or runtime compatibility outside tested consumers. Source-path differences are a plausible input but **not yet proven as the cause**. Do not silently add PathMap or alternate PDB settings to this one-property research result.
+
+**Recommendation:** A separately scoped subsequent experiment should test a conditional, explicitly normalized C# source PathMap with Deterministic=true on two disposable worktrees, plus negative controls (without mapping and intentionally wrong mapping). Validate all original application gates again; retain toolchain/source-path observations without exposing secrets. This recommendation is for **further research only**, not production adoption.
+
+**Review status:** Complete scoped experiment evidence. The draft PR is stacked on still-unmerged EXP-018 PR #32; no merge to modernization main or RecordSift is authorized.
+

@@ -54,6 +54,8 @@ Establish **two complementary records for the unchanged application** before mod
 
 **Use the [application baseline template](../templates/application-baseline.md)** for a substantial application and keep the inventory in a single `baseline.md`. Smaller evaluations can summarize equivalent relevant facts in the [evaluation overview](../templates/evaluation-overview.md). The template owns the detailed field checklist; **do not duplicate it in the methodology or repeat facts across baseline sections**. A baseline should describe what exists, not propose implementation.
 
+**Baseline field-design rule:** Before representing each field, identify its **applicable scope**, **material variations**, **source of truth**, and **verification status**. Check the [baseline variation guide](baseline-variation-guide.md) for possibilities beyond the pilot application's configuration, then document only the facts observed in the evaluated application. Add relevant columns, rows or focused tables when values vary; do not turn the guide into mandatory empty fields or copy its hypothetical examples into the baseline.
+
 **Provenance:** Distinguish source-declared values, actual MSBuild-evaluated values, installed tools, mutable hosting metadata and executed behavior. Absence of an optional file is not a reason to create it. Reuse adequate existing verification from the same exact source revision and relevant environment; a baseline with known failures may still be a valid, documented starting point. Preserve evidence gaps and avoid unnecessary reruns.
 
 **Output:** Source-verified inventory plus traceable reproducible compatibility evidence, with an explicit baseline disposition.

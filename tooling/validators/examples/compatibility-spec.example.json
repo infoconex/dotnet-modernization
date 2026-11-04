@@ -1,0 +1,15 @@
+{
+  "schema_version": 1,
+  "components": {
+    "api": "artifacts/public-api.txt",
+    "assemblies": "artifacts/assembly-identities.json",
+    "resources": "artifacts/resources.json",
+    "packages": [
+      {"id": "library", "path": "artifacts/Library.1.0.0.nupkg"}
+    ],
+    "tests": [
+      {"id": "domain-tests", "path": "TestResults/Domain.Tests.xml"},
+      {"id": "application-tests", "path": "TestResults/Application.Tests.xml"}
+    ]
+  }
+}

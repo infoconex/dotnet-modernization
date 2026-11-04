@@ -1,0 +1,75 @@
+name: EXP-016 compiled-source API regression negative controls
+
+on:
+  pull_request:
+    paths:
+      - ".github/workflows/validate-recordsift-source-api-regression.yml"
+      - "tooling/pilots/recordsift/EXP-014/**"
+      - "tooling/pilots/recordsift/EXP-016/**"
+      - "tooling/validators/compatibility.py"
+      - "tooling/assembly-metadata/**"
+      - "projects/recordsift/evaluations/2026-11-pre-sdk/experiments/EXP-016-source-api-regression.md"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  source-enum-break-detected:
+    runs-on: windows-2022
+    timeout-minutes: 75
+    steps:
+      - name: Checkout research branch
+        uses: actions/checkout@08c6903cd8c0fde910a37f88322edcfb5dd907a8 # v5.0.0
+        with:
+          persist-credentials: false
+      - name: Checkout immutable RecordSift baseline without push credentials
+        uses: actions/checkout@08c6903cd8c0fde910a37f88322edcfb5dd907a8 # v5.0.0
+        with:
+          repository: infoconex/RecordSift
+          ref: 8358780829458854a4b0356df5ac5e685f0a34c8
+          path: recordsift
+          fetch-depth: 0
+          persist-credentials: false
+      - name: Pin .NET metadata reader SDK
+        uses: actions/setup-dotnet@a98b56852c35b8e3190ac28c8c2271da59106c68 # v6.0.0
+        with:
+          dotnet-version: "10.0.403"
+      - name: Build metadata-only extractor
+        shell: pwsh
+        run: |
+          $sdk = (& dotnet --version).Trim()
+          if ($LASTEXITCODE -ne 0 -or $sdk -cne '10.0.403') { throw "Unexpected SDK $sdk" }
+          dotnet build tooling/assembly-metadata/src/AssemblyMetadata.csproj -c Release -nologo -v minimal
+          if ($LASTEXITCODE -ne 0) { throw 'Metadata extractor build failed.' }
+      - name: Exercise actual source-level enum regression with complete release gates
+        shell: pwsh
+        run: |
+          & ./tooling/pilots/recordsift/EXP-016/run.ps1 -ApplicationRoot (Join-Path $env:GITHUB_WORKSPACE 'recordsift') -EvidenceRoot (Join-Path $env:RUNNER_TEMP 'RecordSift-EXP-016')
+          if ($LASTEXITCODE -ne 0) { throw 'EXP-016 did not satisfy strict positive and negative controls.' }
+      - name: Preserve research evidence only (no DLLs, symbols, or packages)
+        if: always()
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4.6.2
+        with:
+          name: recordsift-exp016-source-api-regression-evidence
+          retention-days: 30
+          if-no-files-found: warn
+          path: |
+            ${{ runner.temp }}/RecordSift-EXP-016/candidate.patch
+            ${{ runner.temp }}/RecordSift-EXP-016/toolchain.json
+            ${{ runner.temp }}/RecordSift-EXP-016/experiment-report.json
+            ${{ runner.temp }}/RecordSift-EXP-016/source-api-regression-comparison.json
+            ${{ runner.temp }}/RecordSift-EXP-016/missing-api-snapshot.json
+            ${{ runner.temp }}/RecordSift-EXP-016/missing-api-comparison.json
+            ${{ runner.temp }}/RecordSift-EXP-016/baseline-evidence/pilot-report.json
+            ${{ runner.temp }}/RecordSift-EXP-016/candidate-evidence/pilot-report.json
+            ${{ runner.temp }}/RecordSift-EXP-016/baseline-evidence/baseline.json
+            ${{ runner.temp }}/RecordSift-EXP-016/candidate-evidence/baseline.json
+            ${{ runner.temp }}/RecordSift-EXP-016/baseline-evidence/first/public-api.txt
+            ${{ runner.temp }}/RecordSift-EXP-016/candidate-evidence/first/public-api.txt
+            ${{ runner.temp }}/RecordSift-EXP-016/baseline-evidence/first/assembly-identities.json
+            ${{ runner.temp }}/RecordSift-EXP-016/candidate-evidence/first/assembly-identities.json
+            ${{ runner.temp }}/RecordSift-EXP-016/baseline-evidence/first/resources.json
+            ${{ runner.temp }}/RecordSift-EXP-016/candidate-evidence/first/resources.json
+            ${{ runner.temp }}/RecordSift-EXP-016/baseline-evidence/nunit-*.xml
+            ${{ runner.temp }}/RecordSift-EXP-016/candidate-evidence/nunit-*.xml

@@ -1,0 +1,12 @@
+{
+  "schema_version": 1,
+  "assemblies": [
+    {
+      "name": "Example.Library",
+      "resources": [
+        "Example.Library.Messages.resources",
+        "Example.Library.Validation.resources"
+      ]
+    }
+  ]
+}

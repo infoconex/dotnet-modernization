@@ -46,21 +46,35 @@ Document relevant solution-level build inclusion/exclusions, nested solution fol
 
 ### Project inventory
 
-**Every in-scope project gets its own row**, including projects outside solutions. Do not infer uniform settings from the solution name or the first project. Each row reports that project's actual declared values; if two projects happen to share a setting, both rows still show its value.
+**One row for each project** in scope, including standalone projects not included in any solution. Record that project's own values; do not assume all projects share the same settings.
 
-| Project path/name | Role | Format | Target framework(s) | Language version | Output type | ToolsVersion / SDK | Direct project references |
-|---|---|---|---|---|---|---|---|
-| <source or test project path> | <production/test/tool> | <traditional/SDK-style> | <TFM(s)> | <language/version> | <Library/Exe/WinExe/etc.> | <value> | <direct references or —> |
+| Project path/name | Role | Format | Target framework(s) | Language version | Output type | Platform | ToolsVersion / SDK | Direct project references |
+|---|---|---|---|---|---|---|---|---|
+| <project file> | <production/test/tool> | <traditional/SDK-style> | <TFM(s)> | <language/version> | <Library/Exe/etc.> | <AnyCPU/x64/etc.> | <value> | <declared direct refs or —> |
 
-### Project configuration
+### Project-specific configuration
 
-Keep one row **per project** for build settings relevant to the evaluation. Add separate project-specific tables only when needed to avoid an excessively wide table. Use `—` for **not explicitly declared**, not for an assumed default.
+**Use one row per project, with Debug and Release side-by-side as columns**, not separate rows. For projects with additional named configurations, add the relevant configuration columns. Keep related settings in focused tables rather than creating an excessively wide matrix. Only include properties relevant to the application and its modernization evaluation.
 
-| Project | WarningLevel | WarningsAsErrors | XML documentation | IsTestProject | Notable settings / resources |
+**Compiler settings**
+
+| Project | DebugType (Debug) | DebugType (Release) | Optimize (Debug) | Optimize (Release) | DefineConstants (Debug) | DefineConstants (Release) |
+|---|---|---|---|---|---|---|
+| <project> | <value> | <value> | <value> | <value> | <value> | <value> |
+
+**Output and validation settings**
+
+| Project | OutputPath (Debug) | OutputPath (Release) | WarningLevel (Debug) | WarningLevel (Release) | WarningsAsErrors (Debug) | WarningsAsErrors (Release) | DocumentationFile (Debug) | DocumentationFile (Release) |
+|---|---|---|---|---|---|---|---|---|
+| <project> | <value> | <value> | <value> | <value> | <value> | <value> | <value> | <value> |
+
+**Project-wide metadata**
+
+| Project | Default Configuration | IsTestProject | FileAlignment | AppDesignerFolder | Custom imports |
 |---|---|---|---|---|---|
-| <project> | <declared value or —> | <value or —> | <path, yes/no or —> | <value or —> | <only relevant additional differences> |
+| <project> | <value> | <value or —> | <value or —> | <value or —> | <import(s)> |
 
-When an actual source audit confirms that a setting is identical across all projects, a **single compact shared-settings table with explicit coverage** is sufficient for those settings. Don't use a shared-settings claim before checking every project. Distinguish source-declared values from evaluated MSBuild properties.
+Record additional settings (e.g., DebugSymbols, signing, resources, platform targets, generated code) in the relevant focused table when applicable. `—` means **not declared**, not an evaluated default. The baseline captures **source declarations** separately from values evaluated by MSBuild; don't present source-only inspection as an executed property comparison.
 
 ## 3. Repository structure and configuration
 

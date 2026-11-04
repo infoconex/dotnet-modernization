@@ -69,7 +69,7 @@ Absence is an **observation**, not a recommendation to introduce a file. See [EX
 | Declared Visual Studio version | **16**; `VisualStudioVersion=16.0.28701.123` |
 | Declared minimum Visual Studio version | `10.0.40219.1` |
 | Project entries | Ten traditional C# projects, type GUID `{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}` |
-| Solution configurations | `Debug|Any CPU`, `Release|Any CPU`; all ten projects included in both builds |
+| Solution configurations | `Debug\|Any CPU`, `Release\|Any CPU`; all ten projects included in both builds |
 | Project format / tool declaration | Traditional MSBuild XML, `ToolsVersion=15.0`, `DefaultTargets=Build`, `Microsoft.CSharp.targets` import |
 
 These are **source declarations**. The actual CI MSBuild compiler/version is recorded in Section 4. Solution `Any CPU` maps to project `AnyCPU`.

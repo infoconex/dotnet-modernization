@@ -1,11 +1,11 @@
-# <Application> — <Evaluation title>
+# `<Application>` — `<Evaluation title>`
 
-**Application repository:** <owner/repository>  
-**Baseline branch:** <branch>  
-**Baseline commit:** <full SHA>  
-**Date opened:** <YYYY-MM-DD>  
-**Phase:** <intake/discovery/decision/implementation/closed>  
-**Owner:** <owner>  
+**Application repository:** `<owner/repository>`  
+**Baseline branch:** `<branch>`  
+**Baseline commit:** `<full SHA>`  
+**Date opened:** `<YYYY-MM-DD>`  
+**Phase:** `<intake/discovery/decision/implementation/closed>`  
+**Owner:** `<owner>`  
 
 ## Objective
 
@@ -31,9 +31,9 @@ List the few prioritized investigation objectives, rationale, expected evidence/
 
 ## Verified application baseline
 
-**Source revision:** <repository and immutable SHA>  
-**Baseline record:** <link to baseline.md, or concise inventory and verification below>  
-**Inventory and compatibility status:** <verified / partial / blocked; named gaps>
+**Source revision:** `<repository and immutable SHA>`  
+**Baseline record:** `<link to baseline.md, or concise inventory and verification below>`  
+**Inventory and compatibility status:** `<verified / partial / blocked; named gaps>`
 
 A baseline has **one source inventory** and **one executed verification record**. For substantial applications, complete the [application baseline template](application-baseline.md), then **link it here** rather than repeating its tables. For a small application, summarize only its applicable identity, configuration, build, tests and evidence here.
 
@@ -45,7 +45,7 @@ Use the [investigation catalog](../methodology/investigation-catalog.md) to iden
 
 | Area | Applicability | Assessment state | Reason / current evidence / follow-up |
 |---|---|---|---|
-| <relevant area> | Applicable / Not applicable / Undetermined | Evaluated / Deferred / Not yet assessed | <why; link to evidence or next investigation> |
+| `<relevant area>` | Applicable / Not applicable / Undetermined | Evaluated / Deferred / Not yet assessed | `<why; link to evidence or next investigation>` |
 
 ## Repository configuration and tooling
 
@@ -53,7 +53,7 @@ Use the [repository configuration assessment](../methodology/repository-configur
 
 | File or mechanism | Applicability | Assessment state | Observation or open question | Evidence / proposed action |
 |---|---|---|---|---|
-| <relevant mechanism> | Applicable / Not applicable / Undetermined | Evaluated / Deferred / Not yet assessed | <observed behavior or question> | <finding, evidence link, or no change> |
+| `<relevant mechanism>` | Applicable / Not applicable / Undetermined | Evaluated / Deferred / Not yet assessed | `<observed behavior or question>` | `<finding, evidence link, or no change>` |
 
 ## Opportunities
 
@@ -63,7 +63,7 @@ Summarize candidate improvements, benefit, effort, risk and migration relevance.
 
 | ID | Hypothesis | Evidence outcome | Run/artifact |
 |---|---|---|---|
-| EXP-001 | <hypothesis> | Not executed | <reference> |
+| EXP-001 | `<hypothesis>` | Not executed | `<reference>` |
 
 ## Findings and decisions
 

@@ -1,4 +1,5 @@
 using System.Text.Json;
+using System.Text.Json.Serialization;
 
 namespace AssemblyMetadata;
 
@@ -36,7 +37,7 @@ internal static class Program
             if (names.Distinct(StringComparer.Ordinal).Count() != names.Length)
                 throw new ArgumentException("Duplicate assembly names across inputs");
             var sorted = extracted.OrderBy(x => x.Identity.name, StringComparer.Ordinal).ToArray();
-            var options = new JsonSerializerOptions { WriteIndented = true };
+            var options = new JsonSerializerOptions { WriteIndented = true, DefaultIgnoreCondition = JsonIgnoreCondition.WhenWritingNull };
             string identityJson = JsonSerializer.Serialize(new { schema_version = 1, assemblies = sorted.Select(x => x.Identity) }, options) + "\n";
             string resourcesJson = JsonSerializer.Serialize(new { schema_version = 1, assemblies = sorted.Select(x => x.Resources) }, options) + "\n";
             string apiText = string.Join("\n", sorted.SelectMany(x => x.Api.Select(line => "assembly " + x.Identity.name + " :: " + line))

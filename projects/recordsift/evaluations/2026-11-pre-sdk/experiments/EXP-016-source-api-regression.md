@@ -52,6 +52,12 @@ This does not measure all runtime contracts, direct binary linking, native/COM, 
 
 **Durable evidence locator:** [CI artifact 13351465669](https://github.com/infoconex/dotnet-modernization/actions/runs/41884441296/artifacts/13351465669), name recordsift-exp016-source-api-regression-evidence, reported SHA-256 **6912916d2cf4ee66803884b26a32f4636a94c8724e9a6e3e0f9f561a837f1872**, 30-day retention. Includes experiment report, source patch, source SHA/tree evidence, comparison and missing-evidence JSON, NUnit, metadata manifests and per-side release-pilot reports; excludes DLL and nupkg bytes.
 
+### Latest successful draft-head replay
+
+[Windows run 41885174518](https://github.com/infoconex/dotnet-modernization/actions/runs/41885174518) also **passed** at research SHA `c9baa53f848e4670846740183c920af3c7053637` (before the workflow trigger-maintenance amendment). Job `126767591429` completed all steps successfully. The log independently confirms both 419/418/0/1 suites, separate net48 installed package consumers, five compiled assemblies and 443 API records per side, the original checker rejecting `Canceled` 3 → 42, the extracted-API `changes_detected` outcome, four other matched categories, and deliberate missing-API `incomplete`. The **candidate local commit** for this replay was `ae20f2c81742d8dccf2037affac6b58539351dee`, distinct from the previous run due to ephemeral Git metadata. [Artifact 13351422180](https://github.com/infoconex/dotnet-modernization/actions/runs/41885174518/artifacts/13351422180) has 30-day retention and SHA-256 digest `b25ec000c1bf8321b8286cefd1521f135f07a191af0e068f696be8b86e56fa79`. This demonstrates replay, not hermetic/bitwise reproducibility.
+
+EXP-015 [run 41885174489](https://github.com/infoconex/dotnet-modernization/actions/runs/41885174489) and EXP-014 [run 41885174568](https://github.com/infoconex/dotnet-modernization/actions/runs/41885174568) passed at the same research SHA. Any subsequent changes to the workflow or validators require new final-head CI validation before the PR is treated as review-ready.
+
 ### Failed orchestration runs (preserved)
 
 The following attempts **failed the workflow**; they do not count as complete experiment success and are not relabeled:

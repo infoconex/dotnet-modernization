@@ -2,6 +2,7 @@
 """Capture and compare scoped .NET compatibility evidence, without building an application."""
 import argparse
 from collections import Counter
+import hashlib
 import datetime as dt
 import json
 from pathlib import Path
@@ -53,6 +54,14 @@ def named_paths(root, items, kind):
         names.add(ident)
         values.append((ident, relative_file(root, item['path'])))
     return values
+
+
+def input_fingerprint(root, path):
+    digest = hashlib.sha256()
+    with path.open('rb') as stream:
+        for block in iter(lambda: stream.read(1024 * 1024), b''):
+            digest.update(block)
+    return {'path': path.relative_to(root).as_posix(), 'sha256': digest.hexdigest()}
 
 
 def api_lines(path):
@@ -220,13 +229,16 @@ def capture(source, specification, expected_commit=None):
             if component in ('api', 'assemblies', 'resources'):
                 path = relative_file(source, inputs)
                 data = (api_lines(path) if component == 'api' else assembly_contract(path, component))
-            elif component == 'packages':
-                data = {k: package_contract(v) for k, v in named_paths(source, inputs, component)}
+                artifacts = [input_fingerprint(source, path)]
             else:
-                data = {k: tests_contract(v) for k, v in named_paths(source, inputs, component)}
+                paths = named_paths(source, inputs, component)
+                data = {k: (package_contract(v) if component == 'packages' else tests_contract(v))
+                        for k, v in paths}
+                artifacts = [dict(id=k, **input_fingerprint(source, v)) for k, v in paths]
             if not data:
                 raise ValueError('requested evidence is empty')
-            report['components'][component] = {'status': 'captured', 'data': data}
+            report['components'][component] = {'status': 'captured', 'data': data,
+                                               'input_artifacts': artifacts}
         except (OSError, ValueError, KeyError, TypeError, ET.ParseError, UnicodeError,
                 json.JSONDecodeError, zipfile.LargeZipFile) as exc:
             report['components'][component] = {'status': 'error'}
@@ -295,7 +307,9 @@ def compare(baseline, candidate):
         diff = differences(left, right) if changed else []
         report['components'][name] = {'status': 'changed' if changed else 'matched',
                                        'differences': diff[:MAX_DIFF],
-                                       'diff_truncated': len(diff) > MAX_DIFF}
+                                       'diff_truncated': len(diff) > MAX_DIFF,
+                                       'baseline_input_artifacts': a[name].get('input_artifacts'),
+                                       'candidate_input_artifacts': b[name].get('input_artifacts')}
     statuses = [v['status'] for v in report['components'].values()]
     sources = [baseline.get('source') or {}, candidate.get('source') or {}]
     if not all(isinstance(x, dict) for x in sources):
@@ -348,6 +362,8 @@ def main(argv=None):
             print('Snapshot: ' + ', '.join(f'{k}={v["status"]}' for k, v in report['components'].items()))
             return 1 if report['capture_errors'] else 0
         baseline, candidate = load_json(args.baseline), load_json(args.candidate)
+        if args.output.resolve() in (args.baseline.resolve(), args.candidate.resolve()):
+            raise ValueError('comparison output cannot overwrite a source snapshot')
         report = compare(baseline, candidate)
         write_report(args.output, report)
         print('Compatibility comparison: ' + report['overall'])

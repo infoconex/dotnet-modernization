@@ -1,6 +1,6 @@
 # EXP-015 — real baseline-versus-candidate LangVersion centralization
 
-**Date:** November 4, 2026. **Status:** Proposed experiment: not yet CI verified.
+**Date:** November 4, 2026. **Status:** **Verified for the selected contracts**, Windows Actions [run #41867710477](https://github.com/infoconex/dotnet-modernization/actions/runs/41867710477). No RecordSift implementation approved.
 **Application:** infoconex/RecordSift at immutable source commit 8358780829458854a4b0356df5ac5e685f0a34c8.
 **Predecessors:** [EXP-002](EXP-002-shared-properties.md) established feasibility; [EXP-005](EXP-005-sdk-selection-and-overrides.md) established override behavior; [EXP-014](EXP-014-real-binary-metadata-pilot.md) extracted real assembly metadata but compared two captures of the same binaries.
 **Authorization:** Isolated research only; no RecordSift push, merge, publication, production pipeline change or framework conversion.
@@ -52,4 +52,32 @@ A passed workflow is not, by itself, proof of compatibility. An unexplained diff
 | Security/supply chain | Unauthorized publishing and CI write access | Read-only GitHub credentials, disposable local commit, metadata-only uploads |
 | Developer experience | Confusing planned work with verified evidence | Explicit pending state and replayable patch, command and CI evidence |
 
-These are review perspectives to test, **not a claim that independent reviewers have signed off**. Record actual CI results and reviewer concerns once available.
+These are review perspectives applied to the observed evidence, **not a claim that six independent human reviewers have signed off**. Remaining limitations are tracked below; production implementation still requires separate approval.
+
+
+## Executed result (November 4, 2026)
+
+**Successful Windows 2022 Actions run:** [41867710477](https://github.com/infoconex/dotnet-modernization/actions/runs/41867710477) at modernization PR head 5b65563c9c5321d14aa8782bda05e5c9bae90a04 (the later documentation-only PR commits do not alter the tested script or workflow). Job 126706175711 completed successfully. RecordSift frozen source was 8358780829458854a4b0356df5ac5e685f0a34c8 and the **ephemeral CI-local candidate commit** was f43fb2c30ba40f237b80e31ddd667e5f935a1c4d. This candidate commit was NOT pushed to GitHub.
+
+| Executed check | Baseline | Candidate |
+|---|---|---|
+| Separate worktree and full Release restore/rebuild of ten projects | Pass | Pass |
+| Evaluated LangVersion for ten Debug and ten Release projects | 20/20 equals 7.3 | 20/20 equals 7.3 |
+| Existing combined API/package-metadata guard | 425/425 | 425/425 |
+| Five production XML checks | Pass | Pass |
+| NUnit (five separate test assemblies) | 419 total / 418 passed / 0 failed / 1 skipped | 419 / 418 / 0 / 1 |
+| NuGet package build, metadata, five DLLs and XML assets | Pass | Pass |
+| Independent installed net48 consumer and four Getting Started examples | Pass | Pass |
+| Metadata-only extractor from actual compiled Release DLLs | 5 assemblies, 443 API records | 5 assemblies, 443 API records |
+| Repeated internal source-scoped metadata snapshot | matched | matched |
+| Deliberately altered external evidence control | changes_detected | changes_detected |
+
+**Outer comparison:** baseline-versus-candidate compatibility.py reported **matched**: public API metadata, assembly identity, embedded-resource logical names, package logical contract and NUnit case outcomes matched with separate clean Git source provenance. This demonstrates one controlled pre-SDK candidate and is not broad runtime/binary or build reproducibility certification.
+
+**Distinct NuGet archive bytes:** baseline SHA-256 C4433F7087261305CBC388A010724855ED74CBCCB436C7487A6A3D2C8277868E; candidate SHA-256 37CEBC416D15AD8356480BF8BBFC0C3649261A2C0C86B48A0F9456DEA1B97543. The logical package contract matched, but archive contents were **not byte-identical**. The packager embeds the respective source revision, so differences must not be misrepresented as behavioral regressions or proof of reproducibility.
+
+**Research evidence:** [artifact 13343291183](https://github.com/infoconex/dotnet-modernization/actions/runs/41867710477/artifacts/13343291183), name recordsift-exp015-candidate-evidence, reported ZIP SHA-256 15f11869b56bb3ef07e651e67eaf790783bc46bde2ee799df42a51c1663c9f6a, 30-day retention. Contains source patch, property matrix, machine-readable comparison and per-side manifests/reports/NUnit; intentionally excludes DLLs and .nupkg bytes.
+
+**Toolchain observations:** windows-2022; Visual Studio 2022 MSBuild 17.14.60 on hosted runner, original application remains C# 7.3 / .NET Framework 4.8, metadata reader .NET SDK pinned 10.0.403. No publish, release, or application source-branch modifications. The Actions upload step emitted a Node.js runtime deprecation warning for a pinned upload-artifact action; this was **not** a build/verification failure but warrants normal CI-dependency monitoring.
+
+**Review disposition:** The evidence supports recommending conditional shared LangVersion as a low-risk configuration option for a future separately approved implementation. The proof is configuration-specific: 40 evaluated properties, not every custom configuration; Release and consumers were executed, Debug build behavior beyond property evaluation was not. Missing assembly-binding, external consumer, native/COM, complete package bytes and secure supply-chain guarantees remain explicit boundaries. Do not generalize a single application's successful candidate to other projects without their own baseline and gates.

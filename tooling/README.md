@@ -10,6 +10,10 @@ The [original RecordSift source validation scripts](https://github.com/infoconex
 
 For the evidence behind each workflow, see the [dated RecordSift experiment index](../projects/recordsift/evaluations/2026-11-pre-sdk/experiments/README.md) and [run manifest](../projects/recordsift/evaluations/2026-11-pre-sdk/evidence/manifest.md).
 
+## Reusable validators
+
+The [reusable validation toolkit](validators/README.md) now includes source-only inventory, a configurable gate runner, host toolchain observations, evaluated MSBuild properties and available NuGet restore-graph analysis. This is an **incremental toolkit**, not an automated modernization certificate. The historical experiment workflows below remain separately archived and unchanged.
+
 ## What to extract into reusable tools
 
 Develop reusable **functions and thin workflow callers** only after a separate design, test and review. In priority order:

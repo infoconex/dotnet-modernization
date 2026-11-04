@@ -58,6 +58,7 @@ def execute(evidence):
         raise ValueError('EXP-015 evidence root does not exist')
     baseline = evidence / 'baseline-evidence' / 'local-package' / 'RecordSift.0.1.0.nupkg'
     candidate = evidence / 'candidate-evidence' / 'local-package' / 'RecordSift.0.1.0.nupkg'
+    repeated_frozen = evidence / 'repeat-evidence' / 'local-package' / 'RecordSift.0.1.0.nupkg'
     candidate_report = json.loads((evidence / 'candidate-report.json').read_text(encoding='utf-8-sig'))
     if candidate_report['baseline_source_sha'] != SOURCE_SHA or candidate_report['comparison_result'] != 'matched':
         raise ValueError('EXP-015 real candidate compatibility gates not accepted')
@@ -70,8 +71,14 @@ def execute(evidence):
     real = package_payload.compare_packages(baseline, candidate)
     if real['overall'] in ('error', 'incomplete'):
         raise ValueError('Actual package comparison failed: ' + real['overall'])
+    same_source = package_payload.compare_packages(baseline, repeated_frozen)
+    if same_source['overall'] in ('error', 'incomplete'):
+        raise ValueError('Second independently built frozen-source package is missing or invalid')
     original = repository_metadata(baseline)
     changed = repository_metadata(candidate)
+    repeated = repository_metadata(repeated_frozen)
+    if repeated['commit'] != SOURCE_SHA or repeated['branch'] != original['branch']:
+        raise ValueError('Repeat package has incorrect frozen-source provenance')
     if original['commit'] != SOURCE_SHA or changed['commit'] != candidate_sha:
         raise ValueError('Repository provenance commit does not match actual source revisions')
     if original['url'] != changed['url']:
@@ -110,7 +117,8 @@ def execute(evidence):
         'candidate_tree_sha': candidate_report['candidate_tree_sha'],
         'source_edit': 'conditional LangVersion migration in disposable checkout, unchanged EXP-015',
         'real_package_comparison': real,
-        'repository_metadata': {'baseline': original, 'candidate': changed},
+        'same_frozen_source_separate_build_comparison': same_source,
+        'repository_metadata': {'baseline': original, 'candidate': changed, 'repeat_frozen': repeated},
         'positive_same_archive': identical['overall'],
         'negative_one_Dll_member_byte': {
             'expected_path': TARGET,
@@ -124,6 +132,7 @@ def execute(evidence):
             'Exact SHA-256 of package and named uncompressed members; not a proof of IL or runtime semantic equivalence.',
             'Different ZIP container bytes alone may be caused by entry timestamp/compression/layout differences.',
             'A package member may differ due to deterministic-build inputs, compiler paths, version stamping or source code.',
+            'Repeated frozen-source comparison varies checkout/build location; this is not a hermetic identical-environment rebuild.',
             'Diffing packages does not identify malicious content and is not a security scan.',
             'Repository branch metadata is captured as observed, without assuming correct semantics.',
         ],
@@ -133,6 +142,10 @@ def execute(evidence):
     print('EXP-017 source contract comparison:', candidate_report['comparison_result'])
     print('EXP-017 real package member-byte result:', real['overall'])
     print('EXP-017 real package changed members:', real['changed_member_count'])
+    print('EXP-017 two independent builds of same frozen commit:', same_source['overall'])
+    print('EXP-017 repeat-frozen changed members:', same_source['changed_member_count'])
+    for entry in same_source['entry_differences']:
+        print('  repeat-frozen ' + entry['kind'] + ' ' + entry['path'])
     for entry in real['entry_differences']:
         print('  ' + entry['kind'] + ' ' + entry['path'])
     print('EXP-017 same-package positive:', identical['overall'])
@@ -140,6 +153,7 @@ def execute(evidence):
     print('EXP-017 missing package evidence:', missing['overall'])
     print('EXP-017 baseline repository metadata:', original)
     print('EXP-017 candidate repository metadata:', changed)
+    print('EXP-017 repeat-frozen repository metadata:', repeated)
     print('PASS: EXP-017 exact-byte observation + valid positive/negative/fail-closed controls')
 
 

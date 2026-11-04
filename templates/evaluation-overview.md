@@ -29,29 +29,15 @@ Record concise decisions and rationale or link to a dedicated decision record *o
 
 List the few prioritized investigation objectives, rationale, expected evidence/verification, dependencies, exclusions and conditions requiring scope amendment. Distinguish **already verified** from proposed experiments. Do not create empty issue or experiment files.
 
-## Verified, reproducible application baseline
+## Verified application baseline
 
-**Baseline source:** <repository owner/name + immutable full commit SHA>  
-**Inventory checked:** <date and source references>  
-**Compatibility evidence:** <run URLs/commit/artifact identifiers or explicitly not executed>  
-**Inventory status:** <complete/partial; named gaps>  
-**Verification status:** <verified/partial/blocked/not executed>  
-**Detailed record:** <link to baseline.md, or state that concise inventory is inline>
+**Source revision:** <repository and immutable SHA>  
+**Baseline record:** <link to baseline.md, or concise inventory and verification below>  
+**Inventory and compatibility status:** <verified / partial / blocked; named gaps>
 
-Follow [establish the baseline](../methodology/evaluation-process.md#2-establish-the-baseline) and use the [application baseline template](application-baseline.md) for substantial or multi-project evaluations. That template covers repository hosting/clone URLs and layout, application and package version identities, `.sln`/`.slnx` and project inventories, direct/effective dependencies, existing `Directory.Build.*`/`global.json` and other configuration, build/CI/toolchain, and compatibility verification. **Both source-backed discovery and executed checks are required**, although previously verified evidence at the exact same source SHA may be reused.
+A baseline has **one source inventory** and **one executed verification record**. For substantial applications, complete the [application baseline template](application-baseline.md), then **link it here** rather than repeating its tables. For a small application, summarize only its applicable identity, configuration, build, tests and evidence here.
 
-For a small application, summarize the same applicable information here rather than creating a standalone file:
-
-| Inventory / verification topic | Observed value and immutable source/evidence | Gaps |
-|---|---|---|
-| Repository, application identity, versions and layout | <repo, clone URL, app type, package/assembly versions, directory tree> | <none or named gap> |
-| Solution(s), projects, frameworks, outputs and dependency graph | <solution/project paths, declared versions, configurations/build mappings, external dependencies> | <none or named gap> |
-| Pre-existing configuration and tooling | <present/absent relevant MSBuild/NuGet/SDK/analyzer files, commands, actual tool versions> | <none or named gap> |
-| Test, API/resource, packaging, deployment/consumer gates | <commands, real results including passed/failed/skipped, run and artifact links> | <unexecuted checks> |
-
-**Provenance rule:** Keep declared versions, evaluated MSBuild settings, actual installed tools, and executed CI results separate. Do not mistake absence of an optional configuration file for a defect. Do not require an external reviewer or duplicate verification that already applies to the same immutable source/environment.
-
-**Baseline disposition:** <accepted verified reference / accepted with named gaps / additional evidence needed>.
+Do not equate source-declared settings with evaluated MSBuild or executed behavior. Refer to the [baseline methodology](../methodology/evaluation-process.md#2-establish-the-baseline) for procedure. Keep proposals, findings and modernization recommendations in their own sections.
 
 ## Modernization area screening
 

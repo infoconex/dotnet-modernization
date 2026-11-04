@@ -23,7 +23,7 @@ class InventoryTests(unittest.TestCase):
     def test_traditional_and_sdk_style_scoped_source_inventory(self):
         self.write('Legacy/Legacy.csproj', '''<Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
           <PropertyGroup><TargetFrameworkVersion>v4.8</TargetFrameworkVersion><LangVersion>7.3</LangVersion></PropertyGroup>
-          <PropertyGroup Condition="'$(Configuration)' == 'Release'"><Optimize>true</Optimize></PropertyGroup>
+          <Choose><When Condition="'$(Platform)' == 'AnyCPU'"><PropertyGroup Condition="'$(Configuration)' == 'Release'"><Optimize>true</Optimize></PropertyGroup></When></Choose>
           <ItemGroup><ProjectReference Include="../Core/Core.csproj" />
             <Reference Include="Vendor.Lib"><HintPath>../lib/Vendor.Lib.dll</HintPath></Reference>
             <COMReference Include="LegacyCom"><Guid>{123}</Guid></COMReference></ItemGroup></Project>''')
@@ -40,6 +40,7 @@ class InventoryTests(unittest.TestCase):
         self.assertEqual(len(obj['solutions']), 1)
         self.assertEqual(len(obj['packages_config']), 1)
         self.assertEqual(len(obj['nuspec'][0]['dependencies']), 1)
+        self.assertEqual(obj['nuspec'][0]['dependencies'][0]['target_framework_group'], 'net48')
         self.assertEqual(obj['central_package_versions'][0]['Include'], 'Centrally.Managed')
         legacy = next(p for p in obj['projects'] if p['path'].startswith('Legacy/'))
         core = next(p for p in obj['projects'] if p['path'].startswith('Core/'))
@@ -48,6 +49,7 @@ class InventoryTests(unittest.TestCase):
         self.assertEqual(len(legacy['project_references']), 1)
         self.assertEqual(legacy['assembly_references'][0]['metadata']['HintPath']['value'], '../lib/Vendor.Lib.dll')
         self.assertEqual([p['group_condition'] for p in legacy['properties'] if p['name'] == 'Optimize'], ["'$(Configuration)' == 'Release'"])
+        self.assertEqual(len(next(p for p in legacy['properties'] if p['name'] == 'Optimize')['conditions_in_scope']), 2)
         self.assertEqual(core['sdk_declarations'][0]['value'], 'Microsoft.NET.Sdk')
         self.assertEqual(core['package_references'][0]['Version'], '1.2.3')
         self.assertFalse(any('Skip' in p['path'] for p in obj['projects']))

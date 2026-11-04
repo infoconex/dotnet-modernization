@@ -1,0 +1,12 @@
+{
+  "schema_version": 1,
+  "assemblies": [
+    {
+      "name": "Example.Library",
+      "version": "1.0.0.0",
+      "culture": "neutral",
+      "public_key_token": "null",
+      "file_version": "1.0.0.0"
+    }
+  ]
+}

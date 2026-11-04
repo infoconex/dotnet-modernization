@@ -198,6 +198,7 @@ EXP-001 established the historical **Release** baseline against the pinned uncha
 | NUnit tests | Passed; see assembly-level counts above | [Windows CI #41392848910](https://github.com/infoconex/RecordSift/actions/runs/41392848910) |
 | Public API compatibility | Passed; included in the **425-entry combined API/metadata snapshot** | [Windows CI #41392848910](https://github.com/infoconex/RecordSift/actions/runs/41392848910) |
 | Assembly identity | Passed as part of the API/metadata snapshot; no standalone count | [Windows CI #41392848910](https://github.com/infoconex/RecordSift/actions/runs/41392848910) |
+| Embedded resource identity | Separate comparison not recorded in EXP-001 | [Pinned project files](https://github.com/infoconex/RecordSift/tree/8358780829458854a4b0356df5ac5e685f0a34c8/src) |
 | Package metadata | Passed as part of the API/metadata snapshot; no standalone count | [Windows CI #41392848910](https://github.com/infoconex/RecordSift/actions/runs/41392848910) |
 | XML documentation | Passed; five production XML documents | [Windows CI #41392848910](https://github.com/infoconex/RecordSift/actions/runs/41392848910) |
 | NuGet package contents | Passed; unpublished release-candidate package | [Windows CI #41392848910](https://github.com/infoconex/RecordSift/actions/runs/41392848910) |
@@ -219,5 +220,5 @@ The skipped CSV test is deliberate. The CI baseline included Visual Studio; it d
 | Project properties were inventoried from source XML | Not a complete evaluated-property inventory for every Configuration/Platform combination |
 | Existing CI proves Release compatibility in a tool-rich environment | Not proof of arbitrary custom/Debug gates, SDK-only negative cases, or cross-platform runtime support |
 
-**Comparison contract for future changes:** Restore → complete Release build → five NUnit suites → 425-entry API/metadata check → assembly/resource identities → XML documentation → NuGet layout/dependencies → clean consumer verification, with every executed, failed and omitted gate recorded. Do not require byte-identical hashes unless deterministic identity is an explicit contract.
+**Future comparisons:** Reuse the applicable gates above, record any check not executed, and compare observable contracts rather than raw binary hashes unless deterministic byte identity is explicitly required.
 

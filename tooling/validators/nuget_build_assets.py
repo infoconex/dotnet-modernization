@@ -29,15 +29,39 @@ def _single_child(node, name):
     return matches[0]
 
 
+def _reject_raw_central_directory_backslashes(archive_bytes, start, count):
+    """Inspect raw ZIP central-directory filename bytes before platform path normalization.
+
+    Python's zipfile.ZipInfo normalizes backslash separators on Windows. Relying
+    only on decoded ZipInfo.filename would make our safety check OS-dependent.
+    """
+    pos = start
+    for _ in range(count):
+        if pos < 0 or pos + 46 > len(archive_bytes) or archive_bytes[pos:pos + 4] != b'PK\x01\x02':
+            raise ValueError('Invalid raw ZIP central directory')
+        n = int.from_bytes(archive_bytes[pos + 28:pos + 30], 'little')
+        extra = int.from_bytes(archive_bytes[pos + 30:pos + 32], 'little')
+        comment = int.from_bytes(archive_bytes[pos + 32:pos + 34], 'little')
+        end = pos + 46 + n + extra + comment
+        if end > len(archive_bytes):
+            raise ValueError('Truncated raw ZIP central directory member')
+        raw_name = archive_bytes[pos + 46:pos + 46 + n]
+        if b'\\' in raw_name:
+            raise ValueError('Unsafe raw ZIP path separator')
+        pos = end
+
+
 def inspect(archive, expected_id, expected_version):
     if not PACKAGE_NAME.fullmatch(expected_id) or not PACKAGE_VERSION.fullmatch(expected_version):
         raise ValueError('Invalid package ID or version')
     archive = pathlib.Path(archive)
     if not archive.is_file() or archive.stat().st_size > MAX_ARCHIVE_BYTES:
         raise ValueError('Missing or oversized pinned NuGet archive')
-    archive_hash = hashlib.sha256(archive.read_bytes()).hexdigest()
+    archive_bytes = archive.read_bytes()
+    archive_hash = hashlib.sha256(archive_bytes).hexdigest()
     with zipfile.ZipFile(archive, 'r') as nuget:
         members = nuget.infolist()
+        _reject_raw_central_directory_backslashes(archive_bytes, nuget.start_dir, len(members))
         if len(members) > MAX_MEMBERS:
             raise ValueError('NuGet archive has too many members')
         seen = set()

@@ -1,6 +1,6 @@
 # Experiment index
 
-All RecordSift experiments use **application production baseline** `main` at `8358780829458854a4b0356df5ac5e685f0a34c8`. Research workflow changes exist only on disposable `discovery/*` or `research/*` application branches based on that frozen commit. Project-file/package/script transformations were made only in isolated runner workspaces, **not** committed to application main or `release/0.2`.
+All RecordSift experiments anchor to the **application production baseline** `main` at `8358780829458854a4b0356df5ac5e685f0a34c8`. Research workflow changes exist only on disposable `discovery/*` or `research/*` application branches based on that frozen commit. Project-file/package/script transformations were made only in isolated runner workspaces, **not** committed to application main or `release/0.2`. EXP-015 additionally creates a disposable **CI-local candidate commit** for truthful provenance; this commit is never pushed.
 
 | ID | Experiment | Observed outcome | Run |
 |---|---|---|---|
@@ -18,6 +18,9 @@ All RecordSift experiments use **application production baseline** `main` at `83
 | [EXP-011](EXP-011-nuget-dependency-inventory.md) | Inspect full legacy NuGet package inventory, restored nuspec graph/assets and migration risks without application changes | **Verified:** 7 config files, 17 entries, 13 pinned IDs/restored packages, 11 production nuspec dependencies, 13 existing HintPath DLLs; future PackageReference graph not executed | [41728933974](https://github.com/infoconex/RecordSift/actions/runs/41728933974) |
 | [EXP-012](EXP-012-packagereference-isolation.md) | Disposable traditional net48 PackageReference migration with full-exact-pins and direct-only control | **Exact pins verified:** build, 419 NUnit, 414 compiled API/identity, XML, package/consumer, CS1591; unchanged 425 gate fails on 11 legacy metadata lines. **Direct-only:** build/tests/API pass but four versions downgrade: Memory, Unsafe, Buffers, Vectors. | [41735278846](https://github.com/infoconex/RecordSift/actions/runs/41735278846) |
 | [EXP-013](EXP-013-migration-tooling-ci-readiness.md) | Visual Studio GUI migrator research and existing Windows CI under disposable traditional net48 PackageReference | **Verified:** unchanged NuGet CLI restore, seven assets, formatter IDE1006, 17/17 candidate pin audit. Original packages.config audit fails; format-aware XLSX architecture guard **passes positive and rejects negative**. Original-format post-build obj scanning issue isolated; actual GUI wizard not run. | [41737816926](https://github.com/infoconex/RecordSift/actions/runs/41737816926) |
+
+| [EXP-014](EXP-014-real-binary-metadata-pilot.md) | Actual frozen net48 binary metadata extraction and unchanged-binary repeat | **Verified**: 443 metadata records, five assemblies, full original gates, repeat/negative controls; no candidate | [Run 41860556296](https://github.com/infoconex/dotnet-modernization/actions/runs/41860556296) |
+| [EXP-015](EXP-015-actual-langversion-candidate.md) | Separate baseline/conditional LangVersion candidate rebuilds and compiled contract comparison | **Verified, draft PR #27 unmerged:** 40 evaluated properties; both 419 NUnit/425 API/443 metadata/clean consumer, five component match, external evidence negative controls; not full binary/runtime equivalence | [Run 41867710477](https://github.com/infoconex/dotnet-modernization/actions/runs/41867710477) |
 
 See [evidence manifest](../evidence/manifest.md) for immutable container digests, artifact IDs and corrected/failed runs.
 

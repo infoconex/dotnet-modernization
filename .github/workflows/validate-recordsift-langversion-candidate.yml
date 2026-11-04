@@ -1,0 +1,74 @@
+name: EXP-015 independent RecordSift LangVersion candidate comparison
+
+on:
+  pull_request:
+    paths:
+      - ".github/workflows/validate-recordsift-langversion-candidate.yml"
+      - "tooling/pilots/recordsift/EXP-014/run.ps1"
+      - "tooling/pilots/recordsift/EXP-015/**"
+      - "projects/recordsift/evaluations/2026-11-pre-sdk/experiments/EXP-015-actual-langversion-candidate.md"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  separate-candidate-revisions:
+    runs-on: windows-2022
+    timeout-minutes: 75
+    steps:
+      - name: Checkout modernization research (PR branch)
+        uses: actions/checkout@08c6903cd8c0fde910a37f88322edcfb5dd907a8 # v5.0.0
+        with:
+          persist-credentials: false
+      - name: Checkout frozen RecordSift at immutable commit
+        uses: actions/checkout@08c6903cd8c0fde910a37f88322edcfb5dd907a8 # v5.0.0
+        with:
+          repository: infoconex/RecordSift
+          ref: 8358780829458854a4b0356df5ac5e685f0a34c8
+          path: recordsift
+          fetch-depth: 0
+          persist-credentials: false
+      - name: Provision pinned .NET 10 metadata-extractor SDK
+        uses: actions/setup-dotnet@a98b56852c35b8e3190ac28c8c2271da59106c68 # v6.0.0
+        with:
+          dotnet-version: "10.0.403"
+      - name: Build .NET metadata-only extractor
+        shell: pwsh
+        run: |
+          $sdk = (& dotnet --version).Trim()
+          if ($LASTEXITCODE -ne 0 -or $sdk -cne '10.0.403') { throw "Unexpected .NET SDK $sdk" }
+          dotnet build tooling/assembly-metadata/src/AssemblyMetadata.csproj -c Release -nologo -v minimal
+          if ($LASTEXITCODE -ne 0) { throw "Metadata extractor build failed." }
+      - name: Independently build/validate frozen baseline and disposable candidate
+        shell: pwsh
+        run: |
+          & ./tooling/pilots/recordsift/EXP-015/run.ps1 -ApplicationRoot (Join-Path $env:GITHUB_WORKSPACE 'recordsift') -EvidenceRoot (Join-Path $env:RUNNER_TEMP 'RecordSift-EXP-015')
+          if ($LASTEXITCODE -ne 0) { throw "EXP-015 comparison failed." }
+      - name: Retain audit evidence without app binaries or NuGet packages
+        if: always()
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4.6.2
+        with:
+          name: recordsift-exp015-candidate-evidence
+          if-no-files-found: warn
+          retention-days: 30
+          path: |
+            ${{ runner.temp }}/RecordSift-EXP-015/candidate.patch
+            ${{ runner.temp }}/RecordSift-EXP-015/toolchain.json
+            ${{ runner.temp }}/RecordSift-EXP-015/property-matrix.json
+            ${{ runner.temp }}/RecordSift-EXP-015/candidate-report.json
+            ${{ runner.temp }}/RecordSift-EXP-015/baseline-versus-candidate.json
+            ${{ runner.temp }}/RecordSift-EXP-015/baseline-evidence/pilot-report.json
+            ${{ runner.temp }}/RecordSift-EXP-015/candidate-evidence/pilot-report.json
+            ${{ runner.temp }}/RecordSift-EXP-015/baseline-evidence/baseline.json
+            ${{ runner.temp }}/RecordSift-EXP-015/candidate-evidence/baseline.json
+            ${{ runner.temp }}/RecordSift-EXP-015/baseline-evidence/negative-comparison.json
+            ${{ runner.temp }}/RecordSift-EXP-015/candidate-evidence/negative-comparison.json
+            ${{ runner.temp }}/RecordSift-EXP-015/baseline-evidence/first/public-api.txt
+            ${{ runner.temp }}/RecordSift-EXP-015/candidate-evidence/first/public-api.txt
+            ${{ runner.temp }}/RecordSift-EXP-015/baseline-evidence/first/assembly-identities.json
+            ${{ runner.temp }}/RecordSift-EXP-015/candidate-evidence/first/assembly-identities.json
+            ${{ runner.temp }}/RecordSift-EXP-015/baseline-evidence/first/resources.json
+            ${{ runner.temp }}/RecordSift-EXP-015/candidate-evidence/first/resources.json
+            ${{ runner.temp }}/RecordSift-EXP-015/baseline-evidence/nunit-*.xml
+            ${{ runner.temp }}/RecordSift-EXP-015/candidate-evidence/nunit-*.xml

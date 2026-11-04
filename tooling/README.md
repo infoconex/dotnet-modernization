@@ -14,6 +14,12 @@ For the evidence behind each workflow, see the [dated RecordSift experiment inde
 
 The [metadata-only assembly extractor](assembly-metadata/README.md) provides compiled public API/assembly identity/resource-name manifests for the compatibility comparator. It reads ECMA-335 PE metadata without loading application dependencies and requires separate runtime and clean-consumer verification.
 
+## Application-specific proof-of-method pilots
+
+The [RecordSift EXP-014 pilot](pilots/recordsift/EXP-014/run.ps1) exercises the reusable metadata extractor and compatibility comparator against **unchanged** .NET Framework 4.8 release binaries. The [EXP-015 pilot](pilots/recordsift/EXP-015/run.ps1) takes the next step: independently builds the frozen baseline and a **disposable CI-local committed** conditional LangVersion candidate, executes the application's existing release/consumer gates on both, and compares their actual compiled contract evidence. Both are Windows-hosted research workflows under [the dated evaluation](../projects/recordsift/evaluations/2026-11-pre-sdk/experiments/README.md).
+
+**Reuse boundary:** Do not copy the RecordSift-specific project names, expected 419 tests, pinned SHA, DLL layout or packaging scripts into the generic validators. For another application, supply its own fixture/adapter and compatibility specification while reusing the shared inventory, property, evidence, metadata and comparison tools. Capture baseline/candidate revisions separately; the EXP-014 same-binary repeat is not an application migration gate. Neither pilot publishes packages or changes application main.
+
 ## Reusable validators
 
 The [reusable validation toolkit](validators/README.md) now includes source-only inventory, a configurable gate runner, host toolchain observations, evaluated MSBuild properties and available NuGet restore-graph analysis. This is an **incremental toolkit**, not an automated modernization certificate. The historical experiment workflows below remain separately archived and unchanged.

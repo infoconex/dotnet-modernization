@@ -113,13 +113,13 @@ internal static class MetadataExtractor
                     .ToDictionary(p => (int)p.SequenceNumber);
                 var argTypes = parsed.ParameterTypes.Select((p, i) =>
                 {
-                    parameters.TryGetValue(i + 1, out Parameter? metadata);
-                    var attr = metadata?.Attributes ?? 0;
+                    bool hasParameter = parameters.TryGetValue(i + 1, out Parameter metadata);
+                    ParameterAttributes attr = hasParameter ? metadata.Attributes : 0;
                     string flag = (attr & ParameterAttributes.Out) != 0 ? "out " :
                         (attr & ParameterAttributes.In) != 0 ? "in " : "";
                     if ((attr & ParameterAttributes.Optional) != 0) flag += "optional ";
-                    string constant = metadata is not null && !metadata.Value.GetDefaultValue().IsNil ?
-                        " default=" + ReadConstant(reader, metadata.Value.GetDefaultValue()) : "";
+                    string constant = hasParameter && !metadata.GetDefaultValue().IsNil ?
+                        " default=" + ReadConstant(reader, metadata.GetDefaultValue()) : "";
                     return flag + p + constant;
                 });
                 Add(api, $"method {fullName}.{methodName} {visibility}{modifiers} " +

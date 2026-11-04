@@ -47,46 +47,69 @@ RecordSift is a Windows-only .NET Framework 4.8 class library for importing CSV/
 
 Each project appears separately; settings are taken from its own `.csproj` at the baseline commit. Direct references are shown by project suffix (for example, `Domain` means `RecordSift.Domain`).
 
-| Project | Role | Format | Framework | C# | Output | ToolsVersion | Direct project references |
-|---|---|---|---|---|---|---|---|
-| [`RecordSift.Domain`](https://github.com/infoconex/RecordSift/blob/8358780829458854a4b0356df5ac5e685f0a34c8/src/RecordSift.Domain/RecordSift.Domain.csproj) | Production | Traditional | `v4.8` | `7.3` | `Library` | `15.0` | — |
-| [`RecordSift.Application`](https://github.com/infoconex/RecordSift/blob/8358780829458854a4b0356df5ac5e685f0a34c8/src/RecordSift.Application/RecordSift.Application.csproj) | Production | Traditional | `v4.8` | `7.3` | `Library` | `15.0` | `Domain` |
-| [`RecordSift.Infrastructure.Csv`](https://github.com/infoconex/RecordSift/blob/8358780829458854a4b0356df5ac5e685f0a34c8/src/RecordSift.Infrastructure.Csv/RecordSift.Infrastructure.Csv.csproj) | Production | Traditional | `v4.8` | `7.3` | `Library` | `15.0` | `Application`, `Domain` |
-| [`RecordSift.Infrastructure.Xlsx`](https://github.com/infoconex/RecordSift/blob/8358780829458854a4b0356df5ac5e685f0a34c8/src/RecordSift.Infrastructure.Xlsx/RecordSift.Infrastructure.Xlsx.csproj) | Production | Traditional | `v4.8` | `7.3` | `Library` | `15.0` | `Application`, `Domain` |
-| [`RecordSift.Infrastructure.Reporting`](https://github.com/infoconex/RecordSift/blob/8358780829458854a4b0356df5ac5e685f0a34c8/src/RecordSift.Infrastructure.Reporting/RecordSift.Infrastructure.Reporting.csproj) | Production | Traditional | `v4.8` | `7.3` | `Library` | `15.0` | `Application`, `Domain` |
-| [`RecordSift.Domain.Tests`](https://github.com/infoconex/RecordSift/blob/8358780829458854a4b0356df5ac5e685f0a34c8/tests/RecordSift.Domain.Tests/RecordSift.Domain.Tests.csproj) | Test | Traditional | `v4.8` | `7.3` | `Library` | `15.0` | `Domain` |
-| [`RecordSift.Application.Tests`](https://github.com/infoconex/RecordSift/blob/8358780829458854a4b0356df5ac5e685f0a34c8/tests/RecordSift.Application.Tests/RecordSift.Application.Tests.csproj) | Test | Traditional | `v4.8` | `7.3` | `Library` | `15.0` | `Application`, `Domain` |
-| [`RecordSift.Infrastructure.Csv.Tests`](https://github.com/infoconex/RecordSift/blob/8358780829458854a4b0356df5ac5e685f0a34c8/tests/RecordSift.Infrastructure.Csv.Tests/RecordSift.Infrastructure.Csv.Tests.csproj) | Test | Traditional | `v4.8` | `7.3` | `Library` | `15.0` | `Application.Tests`, `Infrastructure.Csv`, `Application`, `Domain` |
-| [`RecordSift.Infrastructure.Xlsx.Tests`](https://github.com/infoconex/RecordSift/blob/8358780829458854a4b0356df5ac5e685f0a34c8/tests/RecordSift.Infrastructure.Xlsx.Tests/RecordSift.Infrastructure.Xlsx.Tests.csproj) | Test | Traditional | `v4.8` | `7.3` | `Library` | `15.0` | `Infrastructure.Xlsx`, `Application`, `Domain` |
-| [`RecordSift.Infrastructure.Reporting.Tests`](https://github.com/infoconex/RecordSift/blob/8358780829458854a4b0356df5ac5e685f0a34c8/tests/RecordSift.Infrastructure.Reporting.Tests/RecordSift.Infrastructure.Reporting.Tests.csproj) | Test | Traditional | `v4.8` | `7.3` | `Library` | `15.0` | `Infrastructure.Csv`, `Infrastructure.Reporting`, `Application`, `Domain` |
+| Project | Role | Format | Framework | C# | Output | Platform | ToolsVersion | Direct project references |
+|---|---|---|---|---|---|---|---|---|
+| [`RecordSift.Domain`](https://github.com/infoconex/RecordSift/blob/8358780829458854a4b0356df5ac5e685f0a34c8/src/RecordSift.Domain/RecordSift.Domain.csproj) | Production | Traditional | `v4.8` | `7.3` | `Library` | `AnyCPU` | `15.0` | — |
+| [`RecordSift.Application`](https://github.com/infoconex/RecordSift/blob/8358780829458854a4b0356df5ac5e685f0a34c8/src/RecordSift.Application/RecordSift.Application.csproj) | Production | Traditional | `v4.8` | `7.3` | `Library` | `AnyCPU` | `15.0` | `Domain` |
+| [`RecordSift.Infrastructure.Csv`](https://github.com/infoconex/RecordSift/blob/8358780829458854a4b0356df5ac5e685f0a34c8/src/RecordSift.Infrastructure.Csv/RecordSift.Infrastructure.Csv.csproj) | Production | Traditional | `v4.8` | `7.3` | `Library` | `AnyCPU` | `15.0` | `Application`, `Domain` |
+| [`RecordSift.Infrastructure.Xlsx`](https://github.com/infoconex/RecordSift/blob/8358780829458854a4b0356df5ac5e685f0a34c8/src/RecordSift.Infrastructure.Xlsx/RecordSift.Infrastructure.Xlsx.csproj) | Production | Traditional | `v4.8` | `7.3` | `Library` | `AnyCPU` | `15.0` | `Application`, `Domain` |
+| [`RecordSift.Infrastructure.Reporting`](https://github.com/infoconex/RecordSift/blob/8358780829458854a4b0356df5ac5e685f0a34c8/src/RecordSift.Infrastructure.Reporting/RecordSift.Infrastructure.Reporting.csproj) | Production | Traditional | `v4.8` | `7.3` | `Library` | `AnyCPU` | `15.0` | `Application`, `Domain` |
+| [`RecordSift.Domain.Tests`](https://github.com/infoconex/RecordSift/blob/8358780829458854a4b0356df5ac5e685f0a34c8/tests/RecordSift.Domain.Tests/RecordSift.Domain.Tests.csproj) | Test | Traditional | `v4.8` | `7.3` | `Library` | `AnyCPU` | `15.0` | `Domain` |
+| [`RecordSift.Application.Tests`](https://github.com/infoconex/RecordSift/blob/8358780829458854a4b0356df5ac5e685f0a34c8/tests/RecordSift.Application.Tests/RecordSift.Application.Tests.csproj) | Test | Traditional | `v4.8` | `7.3` | `Library` | `AnyCPU` | `15.0` | `Application`, `Domain` |
+| [`RecordSift.Infrastructure.Csv.Tests`](https://github.com/infoconex/RecordSift/blob/8358780829458854a4b0356df5ac5e685f0a34c8/tests/RecordSift.Infrastructure.Csv.Tests/RecordSift.Infrastructure.Csv.Tests.csproj) | Test | Traditional | `v4.8` | `7.3` | `Library` | `AnyCPU` | `15.0` | `Application.Tests`, `Infrastructure.Csv`, `Application`, `Domain` |
+| [`RecordSift.Infrastructure.Xlsx.Tests`](https://github.com/infoconex/RecordSift/blob/8358780829458854a4b0356df5ac5e685f0a34c8/tests/RecordSift.Infrastructure.Xlsx.Tests/RecordSift.Infrastructure.Xlsx.Tests.csproj) | Test | Traditional | `v4.8` | `7.3` | `Library` | `AnyCPU` | `15.0` | `Infrastructure.Xlsx`, `Application`, `Domain` |
+| [`RecordSift.Infrastructure.Reporting.Tests`](https://github.com/infoconex/RecordSift/blob/8358780829458854a4b0356df5ac5e685f0a34c8/tests/RecordSift.Infrastructure.Reporting.Tests/RecordSift.Infrastructure.Reporting.Tests.csproj) | Test | Traditional | `v4.8` | `7.3` | `Library` | `AnyCPU` | `15.0` | `Infrastructure.Csv`, `Infrastructure.Reporting`, `Application`, `Domain` |
 
 ### Project-specific configuration
 
-A dash means **not declared in that project**, not necessarily an evaluated default. `WarningLevel`, `WarningsAsErrors` and XML documentation settings shown are declared in Debug/Release configurations.
+One row per project; Debug and Release are side-by-side **columns**. `—` means a value is **not declared** in that project/configuration, not that the evaluated value is empty.
 
-| Project | WarningLevel | WarningsAsErrors | XML docs | IsTestProject | FileAlignment | AppDesignerFolder |
-|---|---|---|---|---|---|---|
-| `Domain` | `4` | `1591`, `1591` | Yes | — | `512` | `Properties` |
-| `Application` | `4` | `1591`, `1591` | Yes | — | `512` | `Properties` |
-| `Infrastructure.Csv` | `4` | `1591`, `1591` | Yes | — | `512` | `Properties` |
-| `Infrastructure.Xlsx` | `4` | `1591`, `1591` | Yes | — | — | — |
-| `Infrastructure.Reporting` | `4` | `1591`, `1591` | Yes | — | `512` | — |
-| `Domain.Tests` | `4` | — | No | `true` | `512` | `Properties` |
-| `Application.Tests` | `4` | — | No | `true` | `512` | `Properties` |
-| `Infrastructure.Csv.Tests` | `4` | — | No | `true` | `512` | `Properties` |
-| `Infrastructure.Xlsx.Tests` | `4` | — | No | `true` | — | — |
-| `Infrastructure.Reporting.Tests` | `4` | — | No | `true` | `512` | — |
+**Compiler settings**
 
-### Settings declared consistently across all ten projects
+| Project | DebugType (Debug) | DebugType (Release) | Optimize (Debug) | Optimize (Release) | DefineConstants (Debug) | DefineConstants (Release) | DebugSymbols (Debug) | DebugSymbols (Release) |
+|---|---|---|---|---|---|---|---|---|
+| `Domain` | `full` | `pdbonly` | `false` | `true` | `DEBUG;TRACE` | `TRACE` | `true` | — |
+| `Application` | `full` | `pdbonly` | `false` | `true` | `DEBUG;TRACE` | `TRACE` | `true` | — |
+| `Infrastructure.Csv` | `full` | `pdbonly` | `false` | `true` | `DEBUG;TRACE` | `TRACE` | `true` | — |
+| `Infrastructure.Xlsx` | `full` | `pdbonly` | `false` | `true` | `DEBUG;TRACE` | `TRACE` | `true` | — |
+| `Infrastructure.Reporting` | `full` | `pdbonly` | `false` | `true` | `DEBUG;TRACE` | `TRACE` | `true` | — |
+| `Domain.Tests` | `full` | `pdbonly` | `false` | `true` | `DEBUG;TRACE` | `TRACE` | `true` | — |
+| `Application.Tests` | `full` | `pdbonly` | `false` | `true` | `DEBUG;TRACE` | `TRACE` | `true` | — |
+| `Infrastructure.Csv.Tests` | `full` | `pdbonly` | `false` | `true` | `DEBUG;TRACE` | `TRACE` | `true` | — |
+| `Infrastructure.Xlsx.Tests` | `full` | `pdbonly` | `false` | `true` | `DEBUG;TRACE` | `TRACE` | `true` | — |
+| `Infrastructure.Reporting.Tests` | `full` | `pdbonly` | `false` | `true` | `DEBUG;TRACE` | `TRACE` | `true` | — |
 
-| Setting | Debug | Release |
-|---|---|---|
-| `DebugType` | `full` | `pdbonly` |
-| `Optimize` | `false` | `true` |
-| `DefineConstants` | `DEBUG;TRACE` | `TRACE` |
-| `OutputPath` | `bin\\Debug\\` | `bin\\Release\\` |
+**Output and validation settings**
 
-All ten projects declare default `Configuration=Debug` and `Platform=AnyCPU`. They explicitly import `$(MSBuildToolsPath)\\Microsoft.CSharp.targets`. Production projects declare per-project XML documentation paths; the test projects do not. The tables describe **source declarations**, not independently evaluated MSBuild values.
+| Project | OutputPath (Debug) | OutputPath (Release) | WarningLevel (Debug) | WarningLevel (Release) | WarningsAsErrors (Debug) | WarningsAsErrors (Release) | DocumentationFile (Debug) | DocumentationFile (Release) |
+|---|---|---|---|---|---|---|---|---|
+| `Domain` | `bin\Debug\` | `bin\Release\` | `4` | `4` | `1591` | `1591` | `bin\Debug\RecordSift.Domain.xml` | `bin\Release\RecordSift.Domain.xml` |
+| `Application` | `bin\Debug\` | `bin\Release\` | `4` | `4` | `1591` | `1591` | `bin\Debug\RecordSift.Application.xml` | `bin\Release\RecordSift.Application.xml` |
+| `Infrastructure.Csv` | `bin\Debug\` | `bin\Release\` | `4` | `4` | `1591` | `1591` | `bin\Debug\RecordSift.Infrastructure.Csv.xml` | `bin\Release\RecordSift.Infrastructure.Csv.xml` |
+| `Infrastructure.Xlsx` | `bin\Debug\` | `bin\Release\` | `4` | `4` | `1591` | `1591` | `bin\Debug\RecordSift.Infrastructure.Xlsx.xml` | `bin\Release\RecordSift.Infrastructure.Xlsx.xml` |
+| `Infrastructure.Reporting` | `bin\Debug\` | `bin\Release\` | `4` | `4` | `1591` | `1591` | `bin\Debug\RecordSift.Infrastructure.Reporting.xml` | `bin\Release\RecordSift.Infrastructure.Reporting.xml` |
+| `Domain.Tests` | `bin\Debug\` | `bin\Release\` | `4` | `4` | — | — | — | — |
+| `Application.Tests` | `bin\Debug\` | `bin\Release\` | `4` | `4` | — | — | — | — |
+| `Infrastructure.Csv.Tests` | `bin\Debug\` | `bin\Release\` | `4` | `4` | — | — | — | — |
+| `Infrastructure.Xlsx.Tests` | `bin\Debug\` | `bin\Release\` | `4` | `4` | — | — | — | — |
+| `Infrastructure.Reporting.Tests` | `bin\Debug\` | `bin\Release\` | `4` | `4` | — | — | — | — |
+
+**Project-wide metadata**
+
+| Project | Default Configuration | IsTestProject | FileAlignment | AppDesignerFolder | C# targets import |
+|---|---|---|---|---|---|
+| `Domain` | `Debug` | — | `512` | `Properties` | `Microsoft.CSharp.targets` |
+| `Application` | `Debug` | — | `512` | `Properties` | `Microsoft.CSharp.targets` |
+| `Infrastructure.Csv` | `Debug` | — | `512` | `Properties` | `Microsoft.CSharp.targets` |
+| `Infrastructure.Xlsx` | `Debug` | — | — | — | `Microsoft.CSharp.targets` |
+| `Infrastructure.Reporting` | `Debug` | — | `512` | — | `Microsoft.CSharp.targets` |
+| `Domain.Tests` | `Debug` | `true` | `512` | `Properties` | `Microsoft.CSharp.targets` |
+| `Application.Tests` | `Debug` | `true` | `512` | `Properties` | `Microsoft.CSharp.targets` |
+| `Infrastructure.Csv.Tests` | `Debug` | `true` | `512` | `Properties` | `Microsoft.CSharp.targets` |
+| `Infrastructure.Xlsx.Tests` | `Debug` | `true` | — | — | `Microsoft.CSharp.targets` |
+| `Infrastructure.Reporting.Tests` | `Debug` | `true` | `512` | — | `Microsoft.CSharp.targets` |
+
+The values above are declared in the frozen source, not measured by an independent MSBuild property-evaluation run.
 
 ## 3. Repository structure and configuration
 

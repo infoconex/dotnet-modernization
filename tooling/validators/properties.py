@@ -9,6 +9,8 @@ import shutil
 import subprocess
 import sys
 
+from provenance import snapshot, require_commit
+
 SCHEMA_VERSION = 1
 MAX_OUTPUT = 4096
 PROPERTY_NAME = re.compile(r'^[A-Za-z_][A-Za-z0-9_]*$')
@@ -66,7 +68,7 @@ def evaluate(source, projects, matrix, engine, timeout=30):
     paths = [within(source, path) for path in projects]
     report = {'schema_version': SCHEMA_VERSION, 'kind': 'evaluated-msbuild-properties',
               'generated_utc': dt.datetime.now(dt.timezone.utc).isoformat(),
-              'source_root': str(source), 'engine_argv': engine, 'projects': [],
+              'source_root': str(source), 'source': snapshot(source), 'engine_argv': engine, 'projects': [],
               'limitations': [
                   'Property values come from MSBuild project evaluation with the supplied context; no build target is invoked.',
                   'MSBuild imports, SDK resolvers and project evaluation can execute host-specific code; use trusted disposable checkouts.',
@@ -108,12 +110,14 @@ def main(argv=None):
     parser.add_argument('--output', required=True, type=Path)
     parser.add_argument('--engine', choices=('dotnet', 'msbuild'), default='dotnet')
     parser.add_argument('--timeout', type=int, default=30)
+    parser.add_argument('--expect-commit', help='Require an exact 40-character Git SHA')
     args = parser.parse_args(argv)
     try:
         src = args.source.resolve(strict=True)
         out = args.output.resolve()
         if out == src or out.is_relative_to(src):
             raise ValueError('output must be outside application checkout')
+        require_commit(snapshot(src)['commit'], args.expect_commit)
         executable = shutil.which(args.engine)
         if executable is None:
             raise ValueError(f'{args.engine} unavailable on PATH')

@@ -144,6 +144,25 @@ class ExtractorTests(unittest.TestCase):
         self.assertEqual(compatibility.compare(baseline, candidate)['overall'], 'matched')
         self.assertEqual(baseline['source']['dirty_paths'], [])
 
+    def test_missing_optional_assembly_attributes_are_omitted(self):
+        fixture = self.scratch / 'fixture-no-assembly-attributes'
+        shutil.copytree(FIXTURE, fixture)
+        project = fixture / 'Fixture.csproj'
+        project.write_text(project.read_text().replace(
+            '<GenerateAssemblyInfo>true</GenerateAssemblyInfo>',
+            '<GenerateAssemblyInfo>false</GenerateAssemblyInfo>'))
+        self.build(project)
+        binary = fixture / 'bin' / 'Release' / 'net10.0' / 'Fixture.Library.dll'
+        out = self.scratch / 'evidence-no-attributes'
+        result = self.extract(binary, out)
+        self.assertEqual(result.returncode, 0, result.stderr)
+        assembly = json.loads((out / 'assembly-identities.json').read_text())['assemblies'][0]
+        self.assertNotIn('file_version', assembly)
+        self.assertNotIn('informational_version', assembly)
+        sys.path.insert(0, str(SOURCE.parent / 'validators'))
+        import compatibility
+        self.assertTrue(compatibility.assembly_contract(out / 'assembly-identities.json', 'assemblies'))
+
     def test_invalid_binary_and_in_place_output_are_rejected(self):
         wrong = self.scratch / 'not-a-pe.dll'
         wrong.write_bytes(b'not managed assembly')

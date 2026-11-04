@@ -60,8 +60,21 @@ def attributes(element):
     return {local(k): redact(local(k), v) for k, v in sorted(element.attrib.items())}
 
 
+def scoped_conditions(element, parents):
+    conditions = []
+    current = element
+    while current in parents:
+        if current.get('Condition'):
+            conditions.append({'element': local(current.tag), 'expression': current.get('Condition')})
+        current = parents[current]
+    if current.get('Condition'):
+        conditions.append({'element': local(current.tag), 'expression': current.get('Condition')})
+    return list(reversed(conditions))
+
+
 def inventory_project(path, rel):
     root = parse_xml(path)
+    parents = {child: node for node in root.iter() for child in node}
     result = {'path': rel, 'type': path.suffix.lower().lstrip('.'),
               'sdk_declarations': [], 'properties': [], 'imports': [],
               'project_references': [], 'package_references': [],
@@ -79,15 +92,17 @@ def inventory_project(path, rel):
             for child in element:
                 if len(child):
                     # Nested XML properties are retained as XML, not interpreted as simple values.
-                    value = ET.tostring(child, encoding='unicode')
+                    value = '<nested XML value omitted; inspect source>'
                 else:
                     value = (child.text or '').strip()
                 result['properties'].append({'name': local(child.tag), 'declared_value': redact(local(child.tag), value),
-                    'group_condition': group_cond, 'condition': child.get('Condition')})
+                    'group_condition': group_cond, 'condition': child.get('Condition'),
+                    'conditions_in_scope': scoped_conditions(child, parents)})
         elif kind == 'ItemGroup':
             group_cond = element.get('Condition')
             for child in element:
-                entry = {'item': local(child.tag), **attributes(child), 'group_condition': group_cond}
+                entry = {'item': local(child.tag), **attributes(child), 'group_condition': group_cond,
+                         'conditions_in_scope': scoped_conditions(child, parents)}
                 meta = {local(c.tag): {'value': redact(local(c.tag), (c.text or '').strip()),
                                       'condition': c.get('Condition')}
                         for c in child if len(c) == 0}
@@ -116,10 +131,13 @@ def inventory_packages_config(path, rel):
 
 def inventory_nuspec(path, rel):
     root = parse_xml(path)
+    parents = {child: node for node in root.iter() for child in node}
     deps = []
     for el in root.iter():
         if local(el.tag) == 'dependency':
-            deps.append(attributes(el))
+            group = parents.get(el)
+            tfm = group.get('targetFramework') if group is not None and local(group.tag) == 'group' else None
+            deps.append({**attributes(el), 'target_framework_group': tfm})
     return {'path': rel, 'dependencies': deps}
 
 
@@ -141,6 +159,7 @@ def generate(source):
                         'PackageReference and packages.config do not by themselves establish historical direct/transitive origin.',
                         'Configured NuGet feeds do not establish the source of actual downloaded packages.',
                         'Runtime service dependencies, dynamic assembly/native loading and COM activation are not assessed.',
+                        'Imported files and MSBuild property expressions are not evaluated; nested XML values are omitted.',
                         'Generated/imported/machine-wide files are not completely inventoried.']}
     for full, rel in tree:
         lname = full.name.lower()
@@ -160,7 +179,9 @@ def generate(source):
                     for item in xml_root.iter():
                         if local(item.tag) in {'PackageVersion', 'GlobalPackageReference'}:
                             result['central_package_versions'].append(
-                                {'path': rel, 'item': local(item.tag), **attributes(item)})
+                                {'path': rel, 'item': local(item.tag), **attributes(item),
+                                 'conditions_in_scope': scoped_conditions(item,
+                                    {child: node for node in xml_root.iter() for child in node})})
         except (OSError, ET.ParseError, ValueError) as ex:
             result['errors'].append({'path': rel, 'problem': type(ex).__name__, 'detail': str(ex)[:240]})
     return result

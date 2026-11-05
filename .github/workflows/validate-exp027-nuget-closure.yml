@@ -31,19 +31,24 @@ jobs:
           $root=Join-Path $env:RUNNER_TEMP 'exp027-packages'
           New-Item -ItemType Directory -Path $root -Force | Out-Null
           $source='https://api.nuget.org/v3/index.json'
-          & nuget install Microsoft.SourceLink.GitHub -Version 10.0.403 -OutputDirectory $root -DependencyVersion Lowest -Source $source -NonInteractive -Verbosity quiet
+          & nuget install Microsoft.SourceLink.GitHub -Version 10.0.403 -OutputDirectory $root -DependencyVersion Lowest -Framework net48 -Source $source -NonInteractive -Verbosity quiet
           if ($LASTEXITCODE -ne 0) { throw 'NuGet dependency acquisition resolution failed.' }
           $folders=@(Get-ChildItem -LiteralPath $root -Directory)
           $packages=@()
           foreach($d in $folders){
-            $man=@(Get-ChildItem -LiteralPath $d.FullName -Filter '*.nuspec' -File)
-            if($man.Count -ne 1){throw "Unknown NuGet package directory structure: $($d.Name)"}
-            [xml]$nuspec=Get-Content -LiteralPath $man[0].FullName -Raw
+            $archive=@(Get-ChildItem -LiteralPath $d.FullName -Filter '*.nupkg' -File)
+            if($archive.Count -ne 1){throw "NuGet archive bytes unavailable: $($d.Name)"}
+            Add-Type -AssemblyName System.IO.Compression.FileSystem
+            $zip=[IO.Compression.ZipFile]::OpenRead($archive[0].FullName)
+            try {
+              $man=@($zip.Entries | Where-Object { $_.FullName -like '*.nuspec' })
+              if($man.Count -ne 1){throw "Expected one *embedded* NuGet manifest: $($d.Name)"}
+              $reader=[IO.StreamReader]::new($man[0].Open())
+              try { [xml]$nuspec=$reader.ReadToEnd() } finally { $reader.Dispose() }
+            } finally { $zip.Dispose() }
             $id=[string]$nuspec.package.metadata.id
             $version=[string]$nuspec.package.metadata.version
             if(-not $id -or -not $version -or $d.Name -cne "$id.$version"){throw "Invalid acquisition package identity: $($d.Name)"}
-            $archive=@(Get-ChildItem -LiteralPath $d.FullName -Filter '*.nupkg' -File)
-            if($archive.Count -ne 1){throw "NuGet archive bytes unavailable: $($d.Name)"}
             $packages+=@([ordered]@{
               id=$id;version=$version;
               archive_sha256=(Get-FileHash -LiteralPath $archive[0].FullName -Algorithm SHA256).Hash.ToLowerInvariant()

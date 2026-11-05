@@ -38,3 +38,28 @@ Source Link 10.0.403 has packaged `tools/netframework` binaries. Those files are
 - [EXP-023A original evidence](EXP-023-source-link-asset-audit.md).
 - https://www.nuget.org/packages/Microsoft.SourceLink.GitHub/10.0.403
 - https://www.nuget.org/packages/System.IO.Hashing/10.0.14
+
+## Actual GitHub Actions verification — pinned official archive preflight
+
+**CI outcome:** VERIFIED **metadata-only preflight**, not Source Link installation. Exact research commit `fc76bc62ef994bdb53102ec605951ac90fcbf592` passed [Windows 2022 and Ubuntu 24.04 workflow 41964624233](https://github.com/infoconex/dotnet-modernization/actions/runs/41964624233). The [full reusable-tooling workflow 41964624171](https://github.com/infoconex/dotnet-modernization/actions/runs/41964624171) also passed both platforms at the same commit.
+
+| Evidence | Windows 2022 | Ubuntu 24.04 |
+| --- | --- | --- |
+| Read-only archive integrity and hashes | PASS | PASS |
+| 14 synthetic metadata fixtures | PASS | PASS |
+| RecordSift immutable SHA and 9 package pins | PASS | PASS |
+| Real nuget.org selected net48 graph: 4 package nodes, 6 edges | PASS | PASS |
+| Exactly 2 expected `BLOCKED` edges, no unresolved/overlap | PASS | PASS |
+| Metadata artifact | [13386099464](https://github.com/infoconex/dotnet-modernization/actions/runs/41964624233/artifacts/13386099464) | [13386976834](https://github.com/infoconex/dotnet-modernization/actions/runs/41964624233/artifacts/13386976834) |
+| Artifact ZIP SHA-256 | `66624e9a9d8b3cacc57b6b8297ae9bec842c37c3e1ef24fab5ff52c925bca8dd` | `4d77a0d7d11a3cc9b1e6df27c03f78472e5e8dadd43ebed43ebb33d56168e87b` |
+
+The retained `exp023b-dependency-preflight.json` and `exp023b-package-assets.json` files were downloaded and independently compared: each report is **structurally identical across Windows/Ubuntu**. The real selected dependency edges were:
+
+- GitHub 10.0.403 → Build.Tasks.Git 10.0.403, Common 10.0.403, System.IO.Hashing 10.0.14 (all satisfied).
+- Build.Tasks.Git 10.0.403 → System.IO.Hashing 10.0.14 (satisfied).
+- System.IO.Hashing 10.0.14 → System.Buffers >=4.6.1 (**RecordSift 4.5.1: conflict**).
+- System.IO.Hashing 10.0.14 → System.Memory >=4.6.3 (**RecordSift 4.5.5: conflict**).
+
+There were no unresolved dependency edges, no baseline tool-package overlaps, and no change to the frozen RecordSift source. Archive inputs were verified against the fingerprints retained from EXP-023A. Artifacts are retained for 30 days. No executable package DLL was loaded, no Source Link targets imported, no PDB generated or inspected, no project files changed, no package published, and no full application release/consumer gates executed as part of EXP-023B.
+
+**Next scope (separate research gate):** Determine actual MSBuild task load and isolation using a disposable single-project Windows build (including compared application dependency references, bin outputs, and final .nuspec), then inspect native Windows PDB Source Link JSON, source checksums and exact Git provenance; only afterward perform full historical compatibility gates. The two metadata conflicts do **not** prove that a separately hosted task assembly can never run; bundled tool DLL presence alone does **not** prove safe isolation.

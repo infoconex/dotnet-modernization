@@ -1,7 +1,7 @@
 # EXP-036 — managed Windows-PDB checksum feasibility (nonexecuting preflight)
 
 **Status:** Research-only package preflight. **Not a checksum experiment or acceptance gate pass.**
-**Issue:** [#54](https://github.com/infoconex/dotnet-modernization/issues/54), follow-up to [#37](https://github.com/infoconex/dotnet-modernization/issues/37) and [EXP-035](../../../..//../projects/recordsift/evaluations/2026-11-pre-sdk/experiments/EXP-035-dia-sdk-checksum-feasibility.md).
+**Issue:** [#54](https://github.com/infoconex/dotnet-modernization/issues/54), follow-up to [#37](https://github.com/infoconex/dotnet-modernization/issues/37) and [EXP-035](../../../../projects/recordsift/evaluations/2026-11-pre-sdk/experiments/EXP-035-dia-sdk-checksum-feasibility.md).
 **Unchanged application baseline:** `infoconex/RecordSift@8358780829458854a4b0356df5ac5e685f0a34c8` (.NET Framework 4.8, C# 7.3, Windows `pdbonly`).
 **Preflight input:** Official NuGet `dnlib` **4.5.0** and `Mono.Cecil` **0.11.6** archives, downloaded directly from the pinned version endpoints at `api.nuget.org`.
 

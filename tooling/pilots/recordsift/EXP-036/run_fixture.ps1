@@ -179,3 +179,7 @@ $summary=@{experiment='EXP-036';evidence='trusted locally generated managed Wind
     negative_wrong_pdb='rejected';cases=$result;scope='NO RECORDSIFT PDB INSPECTED; NO SOURCE LINK ACCEPTANCE'}
 $summary | ConvertTo-Json -Depth 8 | Set-Content (Join-Path $temp 'fixture-result.json') -Encoding utf8
 Write-Host 'EXP036 fixture validation passed, with separate PDB and application gates still open.'
+
+# An intentionally failing wrong-PDB native check leaves LASTEXITCODE nonzero.
+# Reset it only after all assertions and the summary succeeded.
+$global:LASTEXITCODE=0

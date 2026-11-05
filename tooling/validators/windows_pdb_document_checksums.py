@@ -11,7 +11,7 @@ import pathlib
 import struct
 import sys
 
-from native_windows_pdb_sourcelink import EXPECTED_SHA, read_msf
+from native_windows_pdb_sourcelink import EXPECTED_SHA, read_msf, parse_named_streams
 
 K_STRING_TABLE = 0xF3
 K_FILE_CHECKSUMS = 0xF4
@@ -109,8 +109,28 @@ def parse_file_checksums(strings, content):
     return out
 
 
+def pdb_global_string_table(streams):
+    if not streams[1]:
+        raise ValueError('Missing PDB info stream for global source string table')
+    _, _, named=parse_named_streams(streams[1], len(streams))
+    idx=named.get('/names')
+    if idx is None or idx >= len(streams) or streams[idx] is None:
+        raise ValueError('No native PDB /names global source string stream')
+    raw=streams[idx]
+    if len(raw)<13 or u32(raw,0)!=0xEFFEEFFE or u32(raw,4) not in (1,2):
+        raise ValueError('Invalid native PDB /names header')
+    n=u32(raw,8)
+    if n<1 or n>1024*1024 or 12+n>len(raw):
+        raise ValueError('Invalid native PDB /names buffer bounds')
+    buf=raw[12:12+n]
+    if buf[0]!=0:
+        raise ValueError('Global PDB /names table missing zero-offset empty string')
+    return buf
+
+
 def pdb_checksums(pdb):
     streams=read_msf(pathlib.Path(pdb).read_bytes())
+    global_strings=pdb_global_string_table(streams)
     if len(streams) <= 3:
         raise ValueError('Missing DBI stream index 3')
     modules=modules_from_dbi(streams[3])
@@ -130,11 +150,11 @@ def pdb_checksums(pdb):
         chunks=parse_c13_chunks(data[start:start+size])
         strings=[payload for kind,payload in chunks if kind==K_STRING_TABLE]
         hashed=[payload for kind,payload in chunks if kind==K_FILE_CHECKSUMS]
-        if len(strings)!=1 and hashed:
-            raise ValueError('No unambiguous local C13 source string table for checksums')
-        if len(strings)==1:
-            for blob in hashed:
-                checks.extend(parse_file_checksums(strings[0],blob))
+        if len(strings)>1:
+            raise ValueError('Ambiguous multiple module-local source string tables')
+        table=strings[0] if len(strings)==1 else global_strings
+        for blob in hashed:
+            checks.extend(parse_file_checksums(table,blob))
         processed+=1
     if not checks:
         raise ValueError('No supported C13 document checksum records found')

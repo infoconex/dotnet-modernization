@@ -3,6 +3,7 @@
 param([Parameter(Mandatory=$true)][string]$ArchiveRoot)
 $ErrorActionPreference='Stop'
 Set-StrictMode -Version Latest
+$global:LASTEXITCODE=0 # strict-mode compatible initial state before the first native subprocess
 $root=(Resolve-Path (Join-Path $PSScriptRoot '../../../..')).Path
 $temp=Join-Path $env:RUNNER_TEMP 'exp036-fixture'
 New-Item -Path $temp -ItemType Directory -Force | Out-Null

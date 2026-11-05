@@ -30,3 +30,8 @@ All RecordSift experiments anchor to the **application production baseline** `ma
 See [evidence manifest](../evidence/manifest.md) for immutable container digests, artifact IDs and corrected/failed runs.
 
 **Interpretation:** A workflow can pass while an intentionally unsuccessful negative control demonstrates a missing dependency. State the result of each command, not merely its enclosing workflow.
+
+
+## EXP-036 — Classic Windows PDB managed document checksum feasibility (November 5, 2026)
+
+[Permanent experiment report](EXP-036-managed-pdb-source-checksums.md) and [issue #54](https://github.com/infoconex/dotnet-modernization/issues/54). **Verified controlled fixture:** dnlib managed and Cecil/CCI managed each recovered 2/2 SHA1 and 2/2 SHA256 documents and matched compiler-input physical bytes; [successful run 42085539647](https://github.com/infoconex/dotnet-modernization/actions/runs/42085539647). **Actual frozen RecordSift Source Link CSV candidate: 0/4 digest-bearing documents in each independent reader**, despite discovering all four source documents, passing PE/PDB identity and all original API/NUnit/XML/package/consumer compatibility checks; [deliberately failed checksum acceptance run 42087528244](https://github.com/infoconex/dotnet-modernization/actions/runs/42087528244). No raw PDBs uploaded. **Do not treat the fixture success as a RecordSift checksum pass, or treat managed-reader absence as physical proof that the PDB contains no checksum bytes anywhere.** Gate C remains fail-closed/inconclusive; Source Link HOLD; all PRs draft.

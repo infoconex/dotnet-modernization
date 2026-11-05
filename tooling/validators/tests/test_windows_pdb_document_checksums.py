@@ -4,10 +4,11 @@ import pathlib
 import struct
 import sys
 import unittest
+from unittest.mock import patch
 
 sys.path.insert(0,str(pathlib.Path(__file__).resolve().parents[1]))
 from windows_pdb_document_checksums import (
-    parse_file_checksums, parse_c13_chunks, modules_from_dbi, K_STRING_TABLE, K_FILE_CHECKSUMS
+    parse_file_checksums, parse_c13_chunks, modules_from_dbi, pdb_global_string_table, K_STRING_TABLE, K_FILE_CHECKSUMS
 )
 
 NAME=b'/_/src/RecordSift.Infrastructure.Csv/CsvStreamImporterAdapter.cs'
@@ -63,6 +64,18 @@ class C13Safety(unittest.TestCase):
 
     def test_reject_missing_dbi(self):
         with self.assertRaises(ValueError):modules_from_dbi(b'')
+
+    def test_parses_global_pdb_names_string_table(self):
+        strings=b'\0'+NAME+b'\0'
+        blob=struct.pack('<III',0xEFFEEFFE,1,len(strings))+strings
+        streams=[None,b'PDBINFO',None,None,blob]
+        with patch('windows_pdb_document_checksums.parse_named_streams',return_value=(None,1,{'/names':4})):
+            self.assertEqual(pdb_global_string_table(streams),strings)
+
+    def test_reject_bad_global_pdb_names_signature(self):
+        blob=struct.pack('<III',0,1,3)+b'\0x\0'
+        with patch('windows_pdb_document_checksums.parse_named_streams',return_value=(None,1,{'/names':4})):
+            with self.assertRaises(ValueError):pdb_global_string_table([None,b'PDBINFO',None,None,blob])
 
     def test_parses_dbi_module_info(self):
         record=bytearray(64)

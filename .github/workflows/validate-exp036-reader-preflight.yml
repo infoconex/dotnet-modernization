@@ -33,7 +33,7 @@ jobs:
           python tooling/pilots/recordsift/EXP-036/nuget_reader_preflight.py --dnlib "$RUNNER_TEMP/exp036/dnlib.4.5.0.nupkg" --cecil "$RUNNER_TEMP/exp036/mono.cecil.0.11.6.nupkg" --output "$RUNNER_TEMP/exp036/research-metadata-only.json"
       - name: Preserve JSON package metadata only; no archives, source, PDB or DLL
         if: success()
-        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f # v4.6.2
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4.6.2
         with:
           name: exp036-nonexecuting-package-preflight
           path: ${{ runner.temp }}/exp036/research-metadata-only.json

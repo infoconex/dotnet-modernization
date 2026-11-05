@@ -55,10 +55,18 @@ $selected=@('CharacterLimitedTextReader.cs','CsvRecordReaderAdapter.cs',
 $algorithms=@{'ff1816ec-aa5e-4d10-87f7-6f4963833460'='SHA1';
  '8829d00f-11b8-4213-878b-770e8597ac16'='SHA256'}
 $observations=@{}
+$missingByReader=@{}
+$issues=@()
 foreach($reader in @('DNLIB','CECIL')){
     $out=Run-Reader (Join-Path $bin "ReaderProbe-$reader.exe")
     $records=@{}
+    $missing=@()
     foreach($line in ($out -split '\r?\n')){
+        if($line.StartsWith('MISSING'+[char]9)){
+            $parts=$line.Split([char]9)
+            if($parts.Count -ne 2){throw 'Malformed missing-digest inventory row'}
+            $missing+=@($parts[1]); continue
+        }
         if(-not $line.StartsWith('DOC'+[char]9)){continue}
         $fields=$line.Split([char]9)
         if($fields.Count -ne 4){throw 'Invalid document row'}
@@ -68,14 +76,17 @@ foreach($reader in @('DNLIB','CECIL')){
         $records[$name]=@{alg=$algorithms[$fields[2]];sha=$fields[3]}
     }
     foreach($name in $selected){
-        if(-not $records.ContainsKey($name)){throw "Missing selected document: $name/$reader"}
+        if($name -cin $missing){$issues+=@("DISCOVERED_WITHOUT_HASH:$reader/$name"); continue}
+        if(-not $records.ContainsKey($name)){$issues+=@("NOT_DISCOVERED:$reader/$name"); continue}
         $source=Join-Path $csv $name
         $actual=(Get-FileHash -LiteralPath $source -Algorithm $records[$name].alg).Hash.ToLowerInvariant()
-        if($actual -cne $records[$name].sha){throw "Physical source checksum mismatch: $name/$reader"}
+        if($actual -cne $records[$name].sha){$issues+=@("PHYSICAL_HASH_MISMATCH:$reader/$name")}
     }
     $observations[$reader]=$records
-    Write-Host "VERIFIED: $reader managed selected CSV checksum bytes $($selected.Count)/$($selected.Count); total docs $($records.Count)"
+    $missingByReader[$reader]=$missing
+    Write-Host "OBSERVED: $reader checksum-bearing doc count=$($records.Count); discovered-without-hash count=$($missing.Count)."
 }
+if($issues.Count -gt 0){throw 'Explicit managed document validation gaps: '+($issues -join ', ')}
 foreach($name in $selected){
     if($observations.DNLIB[$name].alg -cne $observations.CECIL[$name].alg -or
        $observations.DNLIB[$name].sha -cne $observations.CECIL[$name].sha){

@@ -185,26 +185,33 @@ Write-Host 'EXP036 fixture validation passed, with separate PDB and application 
 # Uses exact same pinned managed readers, compiler, isolated process and controls.
 if ($Experiment37Variants) {
     $extra = @()
+    # Exact same physical compiler-input source path/bytes across all five variants.
+    $sourceRoot37 = Join-Path $temp 'EXP037-source'
+    New-Item -ItemType Directory -Force -Path $sourceRoot37 | Out-Null
+    $source37 = Join-Path $sourceRoot37 'DifferentialSource.cs'
+    [IO.File]::WriteAllText($source37,
+        "public static class DifferentialSource {`r`n public static int Identity(int value) { return value; }`r`n}`r`n",
+        [Text.UTF8Encoding]::new($false))
     $cases37 = @(
+        @{ Name='explicit-sha256'; Deterministic=$false; Map=$false; SourceLink=$false; ExplicitAlgorithm='SHA256' },
         @{ Name='implicit-checksum'; Deterministic=$false; Map=$false; SourceLink=$false; ExplicitAlgorithm=$null },
-        @{ Name='mapped-deterministic'; Deterministic=$true; Map=$true; SourceLink=$false; ExplicitAlgorithm='SHA256' },
-        @{ Name='mapped-source-link'; Deterministic=$true; Map=$true; SourceLink=$true; ExplicitAlgorithm='SHA256' }
+        @{ Name='deterministic-only'; Deterministic=$true; Map=$false; SourceLink=$false; ExplicitAlgorithm='SHA256' },
+        @{ Name='deterministic-pathmap'; Deterministic=$true; Map=$true; SourceLink=$false; ExplicitAlgorithm='SHA256' },
+        @{ Name='deterministic-pathmap-sourcelink'; Deterministic=$true; Map=$true; SourceLink=$true; ExplicitAlgorithm='SHA256' }
     )
     foreach ($case37 in $cases37) {
         $caseRoot = Join-Path $temp ('EXP037-' + $case37.Name)
         New-Item -ItemType Directory -Force -Path $caseRoot | Out-Null
-        $source = Join-Path $caseRoot 'DifferentialSource.cs'
-        [IO.File]::WriteAllText($source,
-            "public static class DifferentialSource {`r`n public static int Identity(int value) { return value; }`r`n}`r`n",
-            [Text.UTF8Encoding]::new($false))
+        $source = $source37
         $dll = Join-Path $caseRoot 'Differential.dll'
         $pdb = Join-Path $caseRoot 'Differential.pdb'
         $args37 = @('/nologo','/noconfig','/langversion:7.3','/target:library',
             '/debug:pdbonly',"/out:$dll","/pdb:$pdb",
             "/reference:$(Join-Path $refs 'mscorlib.dll')")
-        $args37 += if ($case37.Deterministic) { '/deterministic+' } else { '/deterministic-' }
-        $args37 += if ($case37.Deterministic) { '/optimize+' } else { '/optimize-' }
-        if ($case37.Map) { $args37 += "/pathmap:$caseRoot=/_/" }
+        if ($case37.Deterministic) { $args37 += '/deterministic+' }
+        else { $args37 += '/deterministic-' }
+        $args37 += '/optimize-'
+        if ($case37.Map) { $args37 += "/pathmap:$sourceRoot37=/_/" }
         if ($case37.ExplicitAlgorithm) { $args37 += "/checksumalgorithm:$($case37.ExplicitAlgorithm)" }
         if ($case37.SourceLink) {
             $mapping = Join-Path $caseRoot 'sourcelink.json'
@@ -247,7 +254,7 @@ if ($Experiment37Variants) {
             throw 'EXP037 independent managed readers disagree'
         }
         $extra += [ordered]@{
-            name=$case37.Name; checksum_switch=if($case37.ExplicitAlgorithm){$case37.ExplicitAlgorithm}else{'OMITTED'}
+            name=$case37.Name; checksum_switch=($case37.ExplicitAlgorithm ?? 'OMITTED')
             deterministic=$case37.Deterministic; pathmap=$case37.Map; sourcelink=$case37.SourceLink
             two_independent_readers='MATCHED_PHYSICAL_SOURCE_BYTES'
             checksum_algorithm=$views['DNLIB'].Algorithm; source_documents=1
@@ -255,7 +262,7 @@ if ($Experiment37Variants) {
         }
     }
     [ordered]@{
-        experiment='EXP-037'; phase='direct_compiler_differential'; result='PASS_FOR_THREE_CONTROLLED_FIXTURES'
+        experiment='EXP-037'; phase='direct_compiler_differential'; result='PASS_FOR_FIVE_SINGLE_VARIABLE_CONTROLLED_FIXTURES'
         compiler_executable_sha256=(Get-FileHash $csc -Algorithm SHA256).Hash.ToLowerInvariant()
         variants=$extra
         limitation='Synthetic direct-csc fixtures only. Cannot assert RecordSift compiler inputs or candidate checksum gate.'

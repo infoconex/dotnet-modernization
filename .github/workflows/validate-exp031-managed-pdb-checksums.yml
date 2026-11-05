@@ -1,0 +1,77 @@
+name: EXP-031 patched DiaSymReader native Windows PDB source checksum proof
+
+on:
+  pull_request:
+    paths:
+      - '.github/workflows/validate-exp031-managed-pdb-checksums.yml'
+      - 'tooling/validators/pdb-document-hashes/**'
+      - 'projects/recordsift/evaluations/2026-11-pre-sdk/experiments/EXP-031-managed-pdb-checksums.md'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  managed-native-windows-pdb:
+    runs-on: windows-2022
+    timeout-minutes: 95
+    steps:
+      - uses: actions/checkout@08c6903cd8c0fde910a37f88322edcfb5dd907a8 # v5.0.0
+        with:
+          persist-credentials: false
+      - uses: actions/checkout@08c6903cd8c0fde910a37f88322edcfb5dd907a8 # v5.0.0
+        with:
+          repository: infoconex/RecordSift
+          ref: 8358780829458854a4b0356df5ac5e685f0a34c8
+          fetch-depth: 0
+          path: recordsift
+          persist-credentials: false
+      - uses: actions/setup-dotnet@a98b56852c35b8e3190ac28c8c2271da59106c68 # v6.0.0
+        with:
+          dotnet-version: '10.0.403'
+      - name: Build isolated patched Microsoft DiaSymReader inspection tool
+        shell: pwsh
+        run: |
+          $project='tooling/validators/pdb-document-hashes/PdbDocumentHashes.csproj'
+          dotnet restore $project -p:NuGetAudit=true -p:NuGetAuditMode=all -p:NuGetAuditLevel=low -nologo
+          if ($LASTEXITCODE -ne 0) { throw 'Patched reader tooling restore or NuGet audit failed.' }
+          dotnet build $project -c Release --no-restore -nologo -v minimal
+          if ($LASTEXITCODE -ne 0) { throw 'Patched native Windows PDB inspector failed compilation.' }
+          dotnet run --project $project --no-build -c Release -- --self-test
+          if ($LASTEXITCODE -ne 0) { throw 'Source checksum independent negative controls failed.' }
+          dotnet build tooling/assembly-metadata/src/AssemblyMetadata.csproj -c Release -nologo -v minimal
+          if ($LASTEXITCODE -ne 0) { throw 'Historical metadata probe unavailable.' }
+      - name: Compile actual native Windows Source Link PDB and verify release compatibility
+        shell: pwsh
+        run: |
+          & ./tooling/pilots/recordsift/EXP-024/run.ps1 -ApplicationRoot (Join-Path $env:GITHUB_WORKSPACE 'recordsift') -EvidenceRoot (Join-Path $env:RUNNER_TEMP 'RecordSift-EXP-024-for-031')
+          if ($LASTEXITCODE -ne 0) { throw 'Frozen Source Link candidate or compatibility gates failed.' }
+      - name: Compare actual PDB managed-document checksums against Windows compiler source bytes
+        shell: pwsh
+        run: |
+          $root=Join-Path $env:GITHUB_WORKSPACE 'recordsift'
+          $csv=Join-Path $root 'src/RecordSift.Infrastructure.Csv/bin/Release'
+          $pdb=Join-Path $csv 'RecordSift.Infrastructure.Csv.pdb'
+          $dll=Join-Path $csv 'RecordSift.Infrastructure.Csv.dll'
+          $output=Join-Path $env:RUNNER_TEMP 'exp031-managed-checksum-records.json'
+          python tooling/validators/native_windows_pdb_sourcelink.py --pdb $pdb --dll $dll --output (Join-Path $env:RUNNER_TEMP 'exp031-native-identity.json')
+          if ($LASTEXITCODE -ne 0) { throw 'Native PDB/Source Link identity prerequisite failed.' }
+          dotnet run --project tooling/validators/pdb-document-hashes/PdbDocumentHashes.csproj --no-build -c Release -- $pdb $root $output
+          if ($LASTEXITCODE -ne 0) { throw 'Native managed-document PDB checksums not verified.' }
+          $json=Get-Content $output -Raw|ConvertFrom-Json
+          if (-not $json.all_physical_compiler_source_bytes_match_pdb_checksums -or $json.document_count -lt 1) {
+            throw 'Source document checksums missing or inconsistent.'
+          }
+          Write-Host "EXP-031 verified $($json.document_count) native Windows PDB source document records and compiler-input digest bytes."
+      - name: Upload source-free checksums and historical compatibility summaries only
+        if: always()
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4.6.2
+        with:
+          name: exp031-native-managed-pdb-checksum-evidence
+          retention-days: 30
+          if-no-files-found: warn
+          path: |
+            ${{ runner.temp }}/exp031-managed-checksum-records.json
+            ${{ runner.temp }}/exp031-native-identity.json
+            ${{ runner.temp }}/RecordSift-EXP-024-for-031/experiment-report.json
+            ${{ runner.temp }}/RecordSift-EXP-024-for-031/candidate-versus-original-compatibility.json

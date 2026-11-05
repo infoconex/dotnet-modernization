@@ -11,7 +11,8 @@ $app=(Resolve-Path -LiteralPath $ApplicationRoot).Path
 $evidence=[IO.Path]::GetFullPath($EvidenceRoot)
 $expected='8358780829458854a4b0356df5ac5e685f0a34c8'
 if((git -C $app rev-parse HEAD).Trim() -cne $expected){ throw 'Not frozen RecordSift HEAD.' }
-if((git -C $app diff --name-only HEAD).Count -ne 0){ throw 'Tracked source modifications found.' }
+$gitDifferences=@(& git -C $app diff --name-only HEAD)
+if($LASTEXITCODE -ne 0 -or $gitDifferences.Count -ne 0){ throw 'Tracked source modifications found or git diff failed.' }
 if(Test-Path -LiteralPath $evidence){throw 'Evidence destination exists, refuse overwrite.'}
 New-Item -ItemType Directory -Path $evidence -Force | Out-Null
 $root=Join-Path $app 'src/RecordSift.Infrastructure.Csv/bin/Release'

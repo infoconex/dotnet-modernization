@@ -69,6 +69,11 @@ jobs:
           $csv=Join-Path $env:GITHUB_WORKSPACE 'recordsift/src/RecordSift.Infrastructure.Csv/bin/Release'
           python tooling/pilots/recordsift/EXP-036/named_stream_gap.py --fixture-sha1-dll (Join-Path $fixtures 'SHA1/Fixture-SHA1.dll') --fixture-sha1-pdb (Join-Path $fixtures 'SHA1/Fixture-SHA1.pdb') --fixture-sha256-dll (Join-Path $fixtures 'SHA256/Fixture-SHA256.dll') --fixture-sha256-pdb (Join-Path $fixtures 'SHA256/Fixture-SHA256.pdb') --csv-dll (Join-Path $csv 'RecordSift.Infrastructure.Csv.dll') --csv-pdb (Join-Path $csv 'RecordSift.Infrastructure.Csv.pdb') --output (Join-Path $env:RUNNER_TEMP 'exp037-pdb-structure.json')
           if ($LASTEXITCODE -ne 0) { throw 'Independent native PDB structure probe failed' }
+      - name: Read-only physical digest byte scan across validated native PDB streams
+        shell: pwsh
+        run: |
+          python tooling/pilots/recordsift/EXP-037/pdb_digest_scan.py --fixture-root (Join-Path $env:RUNNER_TEMP 'exp036-fixture') --application-root (Join-Path $env:GITHUB_WORKSPACE 'recordsift') --output (Join-Path $env:RUNNER_TEMP 'exp037-raw-digests.json')
+          if ($LASTEXITCODE -ne 0) { throw 'Independent physical native PDB digest search failed' }
       - name: Upload ONLY sanitized experimental metadata, never private logs, sources, symbols, binaries, or archives
         uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4.6.2
         with:
@@ -77,5 +82,6 @@ jobs:
             ${{ runner.temp }}/exp037-compiler-capture.json
             ${{ runner.temp }}/exp036-fixture/exp037-variants.json
             ${{ runner.temp }}/exp037-pdb-structure.json
+            ${{ runner.temp }}/exp037-raw-digests.json
           if-no-files-found: error
           retention-days: 30

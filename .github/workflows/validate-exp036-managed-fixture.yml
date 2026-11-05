@@ -1,0 +1,52 @@
+name: EXP-036 trusted fixture managed PDB comparison (research only)
+
+on:
+  pull_request:
+    paths:
+      - '.github/workflows/validate-exp036-managed-fixture.yml'
+      - 'tooling/pilots/recordsift/EXP-036/**'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  managed-fixture:
+    runs-on: windows-2022
+    timeout-minutes: 25
+    steps:
+      - uses: actions/checkout@08c6903cd8c0fde910a37f88322edcfb5dd907a8 # v5.0.0
+        with:
+          persist-credentials: false
+      - name: Execute nine synthetic static archive preflight controls
+        shell: pwsh
+        run: |
+          python -m unittest discover -s tooling/pilots/recordsift/EXP-036 -p 'test_nuget_reader_preflight.py' -v
+          if ($LASTEXITCODE -ne 0) { throw 'Static archive controls failed' }
+      - name: Download exact official archives, statically verify identities and SHA-256
+        shell: pwsh
+        run: |
+          $archiveRoot=Join-Path $env:RUNNER_TEMP 'exp036-archives'
+          New-Item -ItemType Directory -Force -Path $archiveRoot | Out-Null
+          curl.exe --fail --location --retry 3 --silent --show-error --proto '=https' --proto-redir '=https' --max-filesize 31457280 'https://api.nuget.org/v3-flatcontainer/dnlib/4.5.0/dnlib.4.5.0.nupkg' --output (Join-Path $archiveRoot 'dnlib.4.5.0.nupkg')
+          if ($LASTEXITCODE -ne 0) { throw 'dnlib archive acquisition failed' }
+          curl.exe --fail --location --retry 3 --silent --show-error --proto '=https' --proto-redir '=https' --max-filesize 31457280 'https://api.nuget.org/v3-flatcontainer/mono.cecil/0.11.6/mono.cecil.0.11.6.nupkg' --output (Join-Path $archiveRoot 'mono.cecil.0.11.6.nupkg')
+          if ($LASTEXITCODE -ne 0) { throw 'Cecil archive acquisition failed' }
+          python tooling/pilots/recordsift/EXP-036/nuget_reader_preflight.py --dnlib (Join-Path $archiveRoot 'dnlib.4.5.0.nupkg') --cecil (Join-Path $archiveRoot 'mono.cecil.0.11.6.nupkg') --output (Join-Path $archiveRoot 'metadata.json')
+          if ($LASTEXITCODE -ne 0) { throw 'Archive preflight failed' }
+          $metadata=Get-Content (Join-Path $archiveRoot 'metadata.json') -Raw | ConvertFrom-Json
+          if ($metadata.packages[0].archive_sha256 -cne '63bc2f9579568204cc8b30fa9f6700a231bcf868a8032e09118887af3eafee58') { throw 'Wrong dnlib archive checksum' }
+          if ($metadata.packages[1].archive_sha256 -cne 'd2a23832aaa948ba9a01acc42b5726e34c5f995958f1b30d45c0e7c70b3a72d5') { throw 'Wrong Cecil archive checksum' }
+      - name: Trusted locally generated SHA1/SHA256 classic PDB and two isolated readers
+        shell: pwsh
+        run: |
+          & ./tooling/pilots/recordsift/EXP-036/run_fixture.ps1 -ArchiveRoot (Join-Path $env:RUNNER_TEMP 'exp036-archives')
+          if ($LASTEXITCODE -ne 0) { throw 'Managed fixture failed' }
+      - name: Retain sanitized fixture summary ONLY, never source, DLL, PDB or packages
+        if: success()
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4.6.2
+        with:
+          name: exp036-fixture-metadata-only
+          path: ${{ runner.temp }}/exp036-fixture/fixture-result.json
+          retention-days: 30
+          if-no-files-found: error

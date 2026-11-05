@@ -66,3 +66,44 @@ Roslyn's [EditAndContinue managed PDB logic](https://sourceroslyn.io/Microsoft.C
 ### Synthesis after round two
 
 **Do not implement Gemini's C# snippet. Do not treat a portable-PDB parser or PerfView's DIA-backed reader as a solution to Windows managed document checksum verification. No new checksum result.** The constructive next step is to request **proof of an existing source-backed and secure classic Windows managed document reader**, with exact CLSID vs IID and ABI/vtable definitions, or a concrete verified managed parser with a demonstrated classic-PDB decoding path. In parallel, keep security and host patch verification **read-only**. If Gemini cannot provide a specific verified new approach (not revised speculative interop code), stop the model dialogue and preserve EXP-035 as INCONCLUSIVE. **No EXP-036 / 035B executed, no application or production change, no changed acceptance gates.**
+
+
+---
+
+## Third Gemini exchange — categorical STOP recommendation and newly identified managed parsers (November 5, 2026)
+
+**Dialogue received:** Following the round-two corrections, Gemini retracted earlier incorrect GUIDs, SHA256 default and unsupported patch threshold, then asserted that **no pure-managed Windows PDB reader exists**, every classic Windows PDB parser relies on native DIA or DiaSymReader, and a migration to SDK-style/.NET would automatically enable portable PDBs. It advised immediate closure of EXP-035B and Source Link checksum evaluation. Gemini offered no specific implementation/source-level evidence for the claimed absence of managed readers. **This is model feedback, not proof.**
+
+### Independent counterexamples located in actual publicly available source
+
+**1. dnlib: demonstrably managed classic Windows PDB document checksum parser.**
+
+- Project [0xd4d/dnlib README — Windows PDBs](https://github.com/0xd4d/dnlib/blob/master/README.md) explicitly states that **dnlib has a managed Windows PDB reader supporting all OSes**, and that the separately selectable Microsoft COM reader is optional.
+- [SymbolReaderFactory.cs](https://github.com/0xd4d/dnlib/blob/master/src/DotNet/Pdb/SymbolReaderFactory.cs) chooses the managed path unless the `MicrosoftComReader` flag is requested; [PdbReaderOptions.cs](https://github.com/0xd4d/dnlib/blob/master/src/DotNet/Pdb/PdbReaderOptions.cs) documents this distinction directly.
+- [Managed/PdbReader.cs](https://github.com/0xd4d/dnlib/blob/master/src/DotNet/Pdb/Managed/PdbReader.cs) reads the MSF 7.00 header, PDB streams, CodeView GUID/age identity and `/src/files/{name}` named streams, and exposes document records.
+- [Managed/DbiDocument.cs](https://github.com/0xd4d/dnlib/blob/master/src/DotNet/Pdb/Managed/DbiDocument.cs) reads document language/vendor/type GUIDs, **checksum algorithm GUID and checksum byte length/raw bytes**; exposes `CheckSumAlgorithmId` and `CheckSum` to callers.
+- This is a concrete **counterexample to the categorical “no managed-only parser exists” assertion**. It does **not** establish whether its document discovery logic enumerates the actual EXP-024 Roslyn native PDB documents, whether the original files have checksums, whether a precise filename identity is available, or whether dnlib is secure against malicious binary input.
+
+**2. Microsoft CCI: another C# classic PDB document-checksum decoder.**
+
+- [microsoft/cci/PDBReaderAndWriter/PdbReader/PdbFile.cs](https://github.com/microsoft/cci/blob/master/PDBReaderAndWriter/PdbReader/PdbFile.cs), MIT-licensed C#, declares `LoadInjectedSourceInformation` near lines 22–36 that reads language, vendor, document type, checksum algorithm GUID, checksum length and checksum bytes from a named source stream.
+- Around lines 537–566 the reader associates native `DEBUG_S_SUBSECTION.FILECHKSMS` records to source filenames and attempts `/SRC/FILES/<UPPERCASE NAME>` lookups to retrieve those extended managed document fields.
+- **Limitation:** Because CCI's association depends on a FILECHKSMS subsection, absence of observed C13 file checksum records in earlier LLVM inspection might affect its ability to enumerate the frozen Roslyn PDB. **Do not assume it will succeed** without actual execution and structured fixtures.
+
+**3. Separate portable-PDB preparation possibility independent of SDK-style migration.**
+
+- Microsoft's [Symbols in .NET](https://learn.microsoft.com/en-us/dotnet/core/diagnostics/symbols) explicitly says: “If you are developing an application using .NET Framework, you can enable portable PDB symbols by specifying `<DebugType>portable</DebugType>` in your project file.” It does **not** require conversion of project files to SDK-style or changing the application target framework. [C# compiler DebugType documentation](https://learn.microsoft.com/en-us/dotnet/csharp/language-reference/compiler-options/code-generation) distinguishes portable vs pdbonly formats.
+- This is a **possible separate research hypothesis**, not evidence that RecordSift's unchanged legacy package/debugger consumers can use portable symbols, nor proof that its current native PDB checksum requirement has passed. Changing `DebugType` would violate the narrow **unchanged classic Windows PDB** scope of EXP-035 and requires separate stakeholder authorization and backward-compatibility tests.
+- Converting to SDK-style alone does **not** guarantee portable PDBs where `DebugType=pdbonly` is explicitly retained.
+
+### Risk and scope
+
+- **Do not label managed code 100% safe.** Binary parsers can hang, exhaust memory or mishandle malformed inputs. An [October 2026 independent technical report](https://ivankozlovsky.com/blog/dnlib-hostile-input-robustness-2026-10-15) alleges specific dnlib 4.5.0 malformed input issues including its managed PDB parser; treat as **unverified external security report** until upstream/maintainer corroboration. Pin/audit provenance, use trusted frozen inputs, an isolated low-privilege process, memory/time limits and fail-closed behavior before any authorized execution. No application dependency may be added to RecordSift itself.
+- dnlib is third-party open-source, which warrants its own dependency provenance and advisories review. Microsoft CCI is Microsoft-authored but not necessarily maintained as a supported secure production parser. Neither library has been executed here, so **actual checksum existence and RecordSift compatibility remain INCONCLUSIVE**.
+- Source Link and authentic Visual Studio Package Manager install/debugger acceptance remain **HOLD/NOT TESTED** regardless of document parsing. There is no requirement to relax the frozen original net48/C#7.3/Windows PDB constraints.
+
+### Corrected recommendation after round three
+
+**REJECT closing as “technically impossible”; RETAIN EXP-035 INCONCLUSIVE; DEFER execution pending dependency/security review.** At least two managed source implementations provide technically plausible ways to inspect the requested Windows PDB data. The next valuable dialogue with Gemini is to scrutinize these exact source files, especially whether their discovery logic can enumerate Roslyn managed documents given EXP-029/033's empty native checksum observations, and to request a real security/provenance assessment. Stop exchanging generic “no parser” / sample COM code claims. Separate alternative hypothesis `DebugType=portable` may be evaluated as a **future, separately approved** isolated compatibility study, not a silent substitution for the original classic-PDB experiment.
+
+**Evidence provenance:** inspected GitHub source repositories and official Microsoft docs; **no new build, PDB parser, checksum measurement, CI result, app edit, package installation or branch merge.**

@@ -13,7 +13,7 @@ def fixture():
     guid=bytes(range(16))
     url='https://raw.githubusercontent.com/infoconex/RecordSift/'+EXPECTED_SHA+'/*'
     payload=json.dumps({'documents':{'/_/*':url}}).encode()
-    name=b'sourcelink$1\0'
+    name=b'sourcelink\0'
     info=(struct.pack('<III',20000404,0,1)+guid+
           struct.pack('<I',len(name))+name+
           struct.pack('<II',1,2)+struct.pack('<II',1,1)+struct.pack('<II',1,0)+

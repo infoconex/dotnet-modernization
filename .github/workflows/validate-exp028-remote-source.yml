@@ -1,0 +1,100 @@
+name: EXP-028 exact frozen Source Link raw source URL and byte parity
+
+on:
+  pull_request:
+    paths:
+      - '.github/workflows/validate-exp028-remote-source.yml'
+      - 'tooling/validators/sourcelink_remote_source.py'
+      - 'tooling/validators/tests/test_sourcelink_remote_source.py'
+      - 'tooling/validators/native_windows_pdb_sourcelink.py'
+      - 'tooling/validators/tests/test_native_windows_pdb_sourcelink.py'
+      - 'projects/recordsift/evaluations/2026-11-pre-sdk/experiments/EXP-028-remote-source-proof.md'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  structural-url-regressions:
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [windows-2022, ubuntu-24.04]
+    runs-on: ${{ matrix.os }}
+    timeout-minutes: 12
+    steps:
+      - uses: actions/checkout@08c6903cd8c0fde910a37f88322edcfb5dd907a8 # v5.0.0
+        with:
+          persist-credentials: false
+      - name: Verify safe GitHub raw URL mapping controls
+        shell: pwsh
+        run: |
+          python -m unittest discover -s tooling/validators/tests -p test_sourcelink_remote_source.py -v
+          if ($LASTEXITCODE -ne 0) { throw 'Unsafe Source Link URL handling detected.' }
+          python -m unittest discover -s tooling/validators/tests -p test_native_windows_pdb_sourcelink.py -v
+          if ($LASTEXITCODE -ne 0) { throw 'Native Source Link parser regression detected.' }
+
+  actual-frozen-source:
+    runs-on: windows-2022
+    timeout-minutes: 100
+    steps:
+      - uses: actions/checkout@08c6903cd8c0fde910a37f88322edcfb5dd907a8 # v5.0.0
+        with:
+          persist-credentials: false
+      - uses: actions/checkout@08c6903cd8c0fde910a37f88322edcfb5dd907a8 # v5.0.0
+        with:
+          repository: infoconex/RecordSift
+          ref: 8358780829458854a4b0356df5ac5e685f0a34c8
+          path: recordsift
+          fetch-depth: 0
+          persist-credentials: false
+      - uses: actions/setup-dotnet@a98b56852c35b8e3190ac28c8c2271da59106c68 # v6.0.0
+        with:
+          dotnet-version: '10.0.403'
+      - name: Prepare historical read-only metadata extractor
+        shell: pwsh
+        run: |
+          dotnet build tooling/assembly-metadata/src/AssemblyMetadata.csproj -c Release -nologo -v minimal
+          if ($LASTEXITCODE -ne 0) { throw 'Read-only extractor build failed.' }
+      - name: Build disposable Source Link CSV and verify full candidate acceptance
+        shell: pwsh
+        run: |
+          & ./tooling/pilots/recordsift/EXP-024/run.ps1 -ApplicationRoot (Join-Path $env:GITHUB_WORKSPACE 'recordsift') -EvidenceRoot (Join-Path $env:RUNNER_TEMP 'RecordSift-EXP-024-for-028')
+          if ($LASTEXITCODE -ne 0) { throw 'Verified Source Link candidate baseline did not pass.' }
+      - name: Parse actual PDB and fetch allowlisted frozen raw Git source
+        shell: pwsh
+        run: |
+          $folder=Join-Path $env:GITHUB_WORKSPACE 'recordsift/src/RecordSift.Infrastructure.Csv/bin/Release'
+          $pdb=Join-Path $folder 'RecordSift.Infrastructure.Csv.pdb'
+          $dll=Join-Path $folder 'RecordSift.Infrastructure.Csv.dll'
+          $proof=Join-Path $env:RUNNER_TEMP 'exp028-frozen-raw-source.json'
+          $identity=Join-Path $env:RUNNER_TEMP 'exp028-native-pdb-identity.json'
+          python tooling/validators/native_windows_pdb_sourcelink.py --pdb $pdb --dll $dll --output $identity
+          if ($LASTEXITCODE -ne 0) { throw 'PDB identity prerequisite failed.' }
+          python tooling/validators/sourcelink_remote_source.py --pdb $pdb --source-root (Join-Path $env:GITHUB_WORKSPACE 'recordsift') --relative-file 'src/RecordSift.Infrastructure.Csv/CsvStreamImporterAdapter.cs' --output $proof
+          if ($LASTEXITCODE -ne 0) { throw 'Exact URL mapped remote Git source-byte verification failed.' }
+          $result=Get-Content -LiteralPath $proof -Raw | ConvertFrom-Json
+          if ($result.schema_version -ne 2 -or
+              $result.source_link_mapping_to_raw_url -cne 'verified' -or
+              $result.exact_frozen_sha -cne '8358780829458854a4b0356df5ac5e685f0a34c8' -or
+              $result.source_bytes -lt 1 -or
+              $result.sha256_frozen_git_blob_and_remote -notmatch '^[0-9a-f]{64}$') {
+            throw 'Missing exact immutable Git blob / remote source parity.'
+          }
+          if (-not $result.working_tree_byte_equal_git_blob -and
+              -not $result.worktree_difference_consistent_with_crlf_conversion) {
+            throw 'Working-tree source differs from Git blob for reason other than observed CRLF conversion.'
+          }
+          Write-Host "PASS: remote raw Source Link bytes match Git blob; checkout byte-identical=$($result.working_tree_byte_equal_git_blob); CRLF-only conversion=$($result.worktree_difference_consistent_with_crlf_conversion)"
+      - name: Retain metadata only, never file/PDB/package bytes
+        if: always()
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4.6.2
+        with:
+          name: exp028-frozen-source-remote-parity
+          retention-days: 30
+          if-no-files-found: warn
+          path: |
+            ${{ runner.temp }}/exp028-frozen-raw-source.json
+            ${{ runner.temp }}/exp028-native-pdb-identity.json
+            ${{ runner.temp }}/RecordSift-EXP-024-for-028/experiment-report.json
+            ${{ runner.temp }}/RecordSift-EXP-024-for-028/candidate-versus-original-compatibility.json

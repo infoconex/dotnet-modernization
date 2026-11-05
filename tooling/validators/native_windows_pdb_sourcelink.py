@@ -171,7 +171,7 @@ def inspect(pdb, dll, sha=EXPECTED_SHA):
     guid,age,named=parse_named_streams(streams[1],len(streams))
     if read_pe_codeview(pathlib.Path(dll).read_bytes())!=(guid,age):
         raise ValueError('PE CodeView RSDS GUID/age does not match native PDB')
-    entries=[(n,i) for n,i in named.items() if re.fullmatch(r'sourcelink\$\d+',n,re.I)]
+    entries=[(n,i) for n,i in named.items() if re.fullmatch(r'sourcelink(?:\$\d+)?',n,re.I)]
     if not entries:
         # Expose only restricted named-stream identifiers, never arbitrary paths or raw source.
         safe_names = sorted(n for n in named if re.fullmatch(r'[A-Za-z/_$][A-Za-z0-9/_$.-]{0,63}', n))

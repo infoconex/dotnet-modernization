@@ -74,9 +74,31 @@ jobs:
           python tooling/validators/sourcelink_remote_source.py --pdb $pdb --source-root (Join-Path $env:GITHUB_WORKSPACE 'recordsift') --relative-file 'src/RecordSift.Infrastructure.Csv/CsvStreamImporterAdapter.cs' --output $proof
           if ($LASTEXITCODE -ne 0) { throw 'Exact URL mapped remote Git source-byte verification failed.' }
           $result=Get-Content -LiteralPath $proof -Raw | ConvertFrom-Json
-          if ($result.source_link_mapping_to_raw_url -cne 'verified' -or
+          if ($result.schema_version -ne 2 -or
+              $result.source_link_mapping_to_raw_url -cne 'verified' -or
               $result.exact_frozen_sha -cne '8358780829458854a4b0356df5ac5e685f0a34c8' -or
-              $result.source_bytes -lt 1) { throw 'Missing exact tracked remote source parity.' }
+              $result.source_bytes -lt 1 -or
+              $result.sha256_frozen_git_blob_and_remote -notmatch '^[0-9a-f]{64}
+      - name: Retain metadata only, never file/PDB/package bytes
+        if: always()
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4.6.2
+        with:
+          name: exp028-frozen-source-remote-parity
+          retention-days: 30
+          if-no-files-found: warn
+          path: |
+            ${{ runner.temp }}/exp028-frozen-raw-source.json
+            ${{ runner.temp }}/exp028-native-pdb-identity.json
+            ${{ runner.temp }}/RecordSift-EXP-024-for-028/experiment-report.json
+            ${{ runner.temp }}/RecordSift-EXP-024-for-028/candidate-versus-original-compatibility.json
+) {
+            throw 'Missing exact immutable Git blob / remote source parity.'
+          }
+          if (-not $result.working_tree_byte_equal_git_blob -and
+              -not $result.worktree_difference_consistent_with_crlf_conversion) {
+            throw 'Working-tree source differs from Git blob for reason other than observed CRLF conversion.'
+          }
+          Write-Host "PASS: remote raw Source Link bytes match Git blob; checkout byte-identical=$($result.working_tree_byte_equal_git_blob); CRLF-only conversion=$($result.worktree_difference_consistent_with_crlf_conversion)"
       - name: Retain metadata only, never file/PDB/package bytes
         if: always()
         uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4.6.2

@@ -1,0 +1,93 @@
+name: EXP-027 real NuGet acquisition graph and application-pin conflict
+
+on:
+  pull_request:
+    paths:
+      - '.github/workflows/validate-exp027-nuget-closure.yml'
+      - 'projects/recordsift/evaluations/2026-11-pre-sdk/experiments/EXP-027-real-nuget-closure.md'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  windows-nuget-resolver:
+    runs-on: windows-2022
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@08c6903cd8c0fde910a37f88322edcfb5dd907a8 # v5.0.0
+        with:
+          persist-credentials: false
+      - uses: actions/checkout@08c6903cd8c0fde910a37f88322edcfb5dd907a8 # v5.0.0
+        with:
+          repository: infoconex/RecordSift
+          ref: 8358780829458854a4b0356df5ac5e685f0a34c8
+          path: recordsift
+          persist-credentials: false
+      - name: Resolve official Source Link NuGet dependency closure in ephemeral directory
+        shell: pwsh
+        run: |
+          $ErrorActionPreference='Stop'
+          $root=Join-Path $env:RUNNER_TEMP 'exp027-packages'
+          New-Item -ItemType Directory -Path $root -Force | Out-Null
+          $source='https://api.nuget.org/v3/index.json'
+          & nuget install Microsoft.SourceLink.GitHub -Version 10.0.403 -OutputDirectory $root -DependencyVersion Lowest -Source $source -NonInteractive -Verbosity quiet
+          if ($LASTEXITCODE -ne 0) { throw 'NuGet dependency acquisition resolution failed.' }
+          $folders=@(Get-ChildItem -LiteralPath $root -Directory)
+          $packages=@()
+          foreach($d in $folders){
+            $man=@(Get-ChildItem -LiteralPath $d.FullName -Filter '*.nuspec' -File)
+            if($man.Count -ne 1){throw "Unknown NuGet package directory structure: $($d.Name)"}
+            [xml]$nuspec=Get-Content -LiteralPath $man[0].FullName -Raw
+            $id=[string]$nuspec.package.metadata.id
+            $version=[string]$nuspec.package.metadata.version
+            if(-not $id -or -not $version -or $d.Name -cne "$id.$version"){throw "Invalid acquisition package identity: $($d.Name)"}
+            $archive=@(Get-ChildItem -LiteralPath $d.FullName -Filter '*.nupkg' -File)
+            if($archive.Count -ne 1){throw "NuGet archive bytes unavailable: $($d.Name)"}
+            $packages+=@([ordered]@{
+              id=$id;version=$version;
+              archive_sha256=(Get-FileHash -LiteralPath $archive[0].FullName -Algorithm SHA256).Hash.ToLowerInvariant()
+            })
+          }
+          $baselinePath=Join-Path $env:GITHUB_WORKSPACE 'recordsift/src/RecordSift.Infrastructure.Csv/packages.config'
+          [xml]$base=Get-Content -LiteralPath $baselinePath -Raw
+          $original=@{}
+          foreach($p in $base.packages.package){
+             if($original.ContainsKey([string]$p.id)){throw 'Duplicate frozen baseline package'}
+             $original[[string]$p.id]=[string]$p.version
+          }
+          if($original.Count -ne 9){throw 'Wrong frozen package list'}
+          $overlaps=@()
+          foreach($p in $packages){
+            if($original.ContainsKey($p.id)){
+              $overlaps+=@([ordered]@{id=$p.id;baseline=$original[$p.id];resolved=$p.version;different=($original[$p.id] -cne $p.version)})
+            }
+          }
+          $selected=@($packages|Where-Object {$_.id -eq 'System.Buffers' -or $_.id -eq 'System.Memory'})
+          if($selected.Count -ne 2){ throw 'NuGet did not resolve both known versioned closure packages.' }
+          foreach($p in $selected){
+            $old=$original[$p.id]
+            if([version]$p.version -le [version]$old){throw "Expected new build-tool dependency incompatible with baseline for $($p.id)"}
+          }
+          $sourceStatus=@(& git -C (Join-Path $env:GITHUB_WORKSPACE 'recordsift') diff --name-only HEAD --)
+          if($LASTEXITCODE -ne 0 -or $sourceStatus.Count -gt 0){throw 'Unexpected tracked application modifications'}
+          $report=[ordered]@{
+             experiment='EXP-027';frozen_commit='8358780829458854a4b0356df5ac5e685f0a34c8';
+             action='nuget_install_to_ephemeral_directory_NOT_VS_project_install';
+             selection='NuGet.DependencyVersion.Lowest';package_count=$packages.Count;
+             archive_packages=@($packages|Sort-Object id);
+             baseline_version_overlaps=$overlaps;
+             existing_packages_config_unchanged=$true;
+             verdict='CONVENTIONAL_NUGET_CLOSURE_CONFLICTS_WITH_APPLICATION_PINS';
+             not_proven='MSBuild runtime dependency isolation, NuGet Package Manager .csproj changes, actual compiler/runtime behavior'
+          }
+          $report|ConvertTo-Json -Depth 12 |Set-Content (Join-Path $env:RUNNER_TEMP 'exp027-nuget-acquisition.json') -Encoding utf8
+          Write-Host "PASS: NuGet resolved $($packages.Count) actual package identities, two pinned application conflicts; project untouched."
+      - name: Retain metadata only (no package archives)
+        if: always()
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4.6.2
+        with:
+          name: exp027-nuget-closure-metadata
+          retention-days: 30
+          if-no-files-found: warn
+          path: ${{ runner.temp }}/exp027-nuget-acquisition.json

@@ -81,8 +81,8 @@ foreach($alg in @('SHA1','SHA256')){
     $beta=Join-Path $directory 'FixtureBeta.cs'
     $bom=[Text.UTF8Encoding]::new($true)
     $nobom=[Text.UTF8Encoding]::new($false)
-    [IO.File]::WriteAllText($alpha, "public static class FixtureAlpha {\`r\`n    public static int Add(int left, int right) {\`r\`n        return left + right;\`r\`n    }\`r\`n}\`r\`n", $bom)
-    [IO.File]::WriteAllText($beta, "public static class FixtureBeta {\`r\`n    public static int Multiply(int left, int right) {\`r\`n        return left * right;\`r\`n    }\`r\`n}\`r\`n", $nobom)
+    [IO.File]::WriteAllText($alpha, "public static class FixtureAlpha {`r`n    public static int Add(int left, int right) {`r`n        return left + right;`r`n    }`r`n}`r`n", $bom)
+    [IO.File]::WriteAllText($beta, "public static class FixtureBeta {`r`n    public static int Multiply(int left, int right) {`r`n        return left * right;`r`n    }`r`n}`r`n", $nobom)
     $dll=Join-Path $directory "Fixture-$alg.dll"
     $pdb=Join-Path $directory "Fixture-$alg.pdb"
     $cscArgs=@('/nologo','/noconfig','/langversion:7.3','/target:library','/debug:pdbonly',
@@ -143,7 +143,7 @@ foreach($case in $cases){
         $docs=@{}
         $rows=@($out -split "\r?\n" | Where-Object {$_ -like 'DOC*'})
         foreach($line in $rows){
-            $fields=$line -split "\`t"
+            $fields=$line -split "`t"
             if($fields.Count -ne 4 -or $fields[0] -cne 'DOC'){throw "Invalid reader record"}
             $name=$fields[1]
             if($docs.ContainsKey($name)){throw 'Duplicate source basename in reader'}
@@ -160,7 +160,7 @@ foreach($case in $cases){
         if($all.DNLIB[$name] -cne $all.CECIL[$name]){throw 'Independent managed reader disagreement'}
     }
     $before=$case.Expected['FixtureAlpha.cs']
-    [IO.File]::AppendAllText($case.Alpha,"// MUTATED AFTER COMPILATION\`r\`n")
+    [IO.File]::AppendAllText($case.Alpha,"// MUTATED AFTER COMPILATION`r`n")
     $after=(Get-FileHash $case.Alpha -Algorithm $case.Alg).Hash.ToLowerInvariant()
     if($before -ceq $after){throw 'Mutation negative control did not change physical byte digest'}
     if($all.DNLIB['FixtureAlpha.cs'] -ceq $after){throw 'Mutation negative control should mismatch'}

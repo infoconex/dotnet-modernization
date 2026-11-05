@@ -54,7 +54,7 @@ def inspect(dll, pdb, sources):
         named_by_index = {}
         for name, index in names.items():
             named_by_index.setdefault(index, []).append(name)
-        physical_source = str(source.resolve()).replace("\\\\", "/").upper()
+        physical_source = str(source.resolve()).replace("\\", "/").upper()
         mapped_source = "/_/" + source.name.upper()
         digest_locations = []
         for index, stream in enumerate(streams):
@@ -71,11 +71,11 @@ def inspect(dll, pdb, sources):
                 "occurrences": count,
                 "named_src_files_stream": bool(source_stream_names),
                 "src_stream_key_ends_in_physical_source_path": any(
-                    name.replace("\\\\", "/").upper().endswith(physical_source)
+                    name.replace("\\", "/").upper().endswith(physical_source)
                     for name in source_stream_names
                 ),
                 "src_stream_key_ends_in_mapped_source_path": any(
-                    name.replace("\\\\", "/").upper().endswith(mapped_source)
+                    name.replace("\\", "/").upper().endswith(mapped_source)
                     for name in source_stream_names
                 ),
                 "named_other_stream": bool(named_by_index.get(index, [])) and not source_stream_names,

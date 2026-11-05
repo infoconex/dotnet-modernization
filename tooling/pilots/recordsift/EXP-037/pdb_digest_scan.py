@@ -31,7 +31,7 @@ CSV_SOURCES = (
 
 def inspect(dll, pdb, sources):
     streams = read_msf(pdb.read_bytes())
-    guid, age, _ = parse_named_streams(streams[1], len(streams))
+    guid, age, names = parse_named_streams(streams[1], len(streams))
     if read_pe_codeview(dll.read_bytes()) != (guid, age):
         raise ValueError("PE/PDB CodeView identity mismatch")
     if not sources:
@@ -50,6 +50,36 @@ def inspect(dll, pdb, sources):
             name: sum(value.count(digest) for value in streams if value is not None)
             for name, digest in digests.items()
         }
+        # Classify the exact matched native stream, without outputting sensitive named keys.
+        named_by_index = {}
+        for name, index in names.items():
+            named_by_index.setdefault(index, []).append(name)
+        physical_source = str(source.resolve()).replace("\\\\", "/").upper()
+        mapped_source = "/_/" + source.name.upper()
+        digest_locations = []
+        for index, stream in enumerate(streams):
+            if stream is None:
+                continue
+            count = stream.count(digests["sha256"])
+            if not count:
+                continue
+            source_stream_names = [
+                name for name in named_by_index.get(index, [])
+                if name.upper().startswith("/SRC/FILES/")
+            ]
+            digest_locations.append({
+                "occurrences": count,
+                "named_src_files_stream": bool(source_stream_names),
+                "src_stream_key_ends_in_physical_source_path": any(
+                    name.replace("\\\\", "/").upper().endswith(physical_source)
+                    for name in source_stream_names
+                ),
+                "src_stream_key_ends_in_mapped_source_path": any(
+                    name.replace("\\\\", "/").upper().endswith(mapped_source)
+                    for name in source_stream_names
+                ),
+                "named_other_stream": bool(named_by_index.get(index, [])) and not source_stream_names,
+            })
         mutation_hits = sum(value.count(mutated) for value in streams if value is not None)
         if mutation_hits:
             raise ValueError("Mutated-source negative digest unexpectedly present")
@@ -57,6 +87,7 @@ def inspect(dll, pdb, sources):
             "source_name": source.name,
             "sha1_digest_raw_occurrences": observed["sha1"],
             "sha256_digest_raw_occurrences": observed["sha256"],
+            "sha256_digest_stream_classifications": digest_locations,
             "post_compile_mutation_negative": "NO_RAW_DIGEST_OCCURRENCE",
         })
     return {
@@ -107,8 +138,10 @@ def main():
     print("EXP-037 read-only native MSF7 digest byte inventory; calibrated:",
           result["raw_sha256_positive_control"])
     for label, evidence in reports.items():
-        print(label, "sha256 raw digest occurrence counts:",
-              [entry["sha256_digest_raw_occurrences"] for entry in evidence["source_digests"]])
+        print(label, "sha256 native stream classifications:",
+              [{"count": entry["sha256_digest_raw_occurrences"],
+                "locations": entry["sha256_digest_stream_classifications"]}
+               for entry in evidence["source_digests"]])
 
 if __name__ == "__main__":
     main()

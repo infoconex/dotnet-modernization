@@ -41,7 +41,7 @@ jobs:
           $a=Join-Path $env:GITHUB_WORKSPACE 'recordsift-a'
           $b=Join-Path $env:RUNNER_TEMP 'RecordSift-independent-worktree-b'
           $evidence=Join-Path $env:RUNNER_TEMP 'RecordSift-EXP-026'
-          if(Test-Path $b -or (Test-Path $evidence)) { throw 'Worktree or evidence already exists.' }
+          if((Test-Path $b) -or (Test-Path $evidence)) { throw 'Worktree or evidence already exists.' }
           & git -C $a worktree add --detach $b $sha
           if($LASTEXITCODE -ne 0) {throw 'Independent real Git worktree could not be created.'}
           if(-not (Test-Path (Join-Path $b '.git') -PathType Leaf)){

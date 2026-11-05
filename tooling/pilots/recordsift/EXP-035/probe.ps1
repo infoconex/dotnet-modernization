@@ -23,11 +23,9 @@ if($signature.Status -ne 'Valid' -or $signature.SignerCertificate.Subject -notma
 $src = Join-Path $PSScriptRoot 'dia_source_files.cpp'
 $exe = Join-Path $EvidenceRoot 'dia_source_files.exe'
 $buildCmd = Join-Path $EvidenceRoot 'compile.cmd'
-$cmdText = @(
-    'call "' + $vsDevCmd + '" -no_logo -arch=x64 -host_arch=x64',
-    'cl.exe /nologo /EHsc /std:c++17 /W4 /I"' + $include + '" "' + $src + '" /link /LIBPATH:"' + $lib + '" /OUT:"' + $exe + '"'
-) -join "`r`n"
-[System.IO.File]::WriteAllText($buildCmd,$cmdText + "`r`n",[System.Text.Encoding]::ASCII)
+$line1 = 'call "' + $vsDevCmd + '" -no_logo -arch=x64 -host_arch=x64'
+$line2 = 'cl.exe /nologo /EHsc /std:c++17 /W4 /I"' + $include + '" "' + $src + '" /link /LIBPATH:"' + $lib + '" /OUT:"' + $exe + '"'
+[System.IO.File]::WriteAllLines($buildCmd, [string[]]@($line1, $line2), [System.Text.Encoding]::ASCII)
 & cmd.exe /d /c $buildCmd
 if ($LASTEXITCODE -ne 0 -or -not (Test-Path $exe)) { throw 'Independent DIA reader compilation failed' }
 $pdb = Join-Path $ApplicationRoot 'src/RecordSift.Infrastructure.Csv/bin/Release/RecordSift.Infrastructure.Csv.pdb'

@@ -6,6 +6,8 @@ on:
       - '.github/workflows/validate-exp028-remote-source.yml'
       - 'tooling/validators/sourcelink_remote_source.py'
       - 'tooling/validators/tests/test_sourcelink_remote_source.py'
+      - 'tooling/validators/native_windows_pdb_sourcelink.py'
+      - 'tooling/validators/tests/test_native_windows_pdb_sourcelink.py'
       - 'projects/recordsift/evaluations/2026-11-pre-sdk/experiments/EXP-028-remote-source-proof.md'
   workflow_dispatch:
 
@@ -29,6 +31,8 @@ jobs:
         run: |
           python -m unittest discover -s tooling/validators/tests -p test_sourcelink_remote_source.py -v
           if ($LASTEXITCODE -ne 0) { throw 'Unsafe Source Link URL handling detected.' }
+          python -m unittest discover -s tooling/validators/tests -p test_native_windows_pdb_sourcelink.py -v
+          if ($LASTEXITCODE -ne 0) { throw 'Native Source Link parser regression detected.' }
 
   actual-frozen-source:
     runs-on: windows-2022

@@ -176,7 +176,45 @@ try {
     } | Select-Object -ExpandProperty Name)
     $forbidden=@($report.csv_bin_added_files | Where-Object { $_ -match '^(Microsoft\.SourceLink\.|Microsoft\.Build\.Tasks\.Git|System\.IO\.Hashing|System\.Memory|System\.Buffers)' })
     if ($forbidden.Count -gt 0) { throw "New build-task/runtime DLL copied into output: $($forbidden -join ',')" }
-    $report.application_release_gates='original_baseline_passed; candidate_original_full_gates_not_yet_executed'
+    # Keep the exact candidate binaries for the original test and consumer gates.
+    # NUnit test projects have copy-local infrastructure dependencies; replace
+    # their original CSV copy with the candidate, or they would exercise OLD code.
+    $candidateDll=Join-Path $csvBin 'RecordSift.Infrastructure.Csv.dll'
+    $candidateDllHash=(Get-FileHash -LiteralPath $candidateDll -Algorithm SHA256).Hash.ToLowerInvariant()
+    $injectedCopies=0
+    foreach ($suite in @('Domain','Application','Infrastructure.Csv','Infrastructure.Reporting','Infrastructure.Xlsx')) {
+        $bin=Join-Path $app ("tests/RecordSift.$suite.Tests/bin/Release")
+        $local=Join-Path $bin 'RecordSift.Infrastructure.Csv.dll'
+        if (Test-Path -LiteralPath $local) {
+            Copy-Item -LiteralPath $candidateDll -Destination $local -Force
+            if ((Get-FileHash -LiteralPath $local -Algorithm SHA256).Hash.ToLowerInvariant() -cne $candidateDllHash) {
+                throw "Candidate assembly did not reach test execution directory for $suite."
+            }
+            $injectedCopies++
+        }
+    }
+    if ($injectedCopies -lt 1) { throw 'No candidate CSV binary present in test execution directories.' }
+    $report.candidate_test_bin_copies=$injectedCopies
+    # Restore tracked csproj BEFORE existing original release gate scripts
+    # (their checks must observe a clean source commit), without recompiling CSV.
+    [IO.File]::WriteAllBytes($project,$originalProject)
+    Check-Frozen $false
+    $report.application_release_gates='candidate_started'
+    Write-Report
+    $candidateEvidence=Join-Path $evidence 'candidate-acceptance'
+    & (Join-Path $research 'tooling/pilots/recordsift/EXP-014/run.ps1') -ApplicationRoot $app -EvidenceRoot $candidateEvidence -ExpectedCommit $frozen -ExperimentId 'EXP-024-candidate' | Out-Host
+    Assert-Exit 'Original source API/NUnit/XML/package/consumer gate failed with candidate CSV'
+    if ((Get-FileHash -LiteralPath $candidateDll -Algorithm SHA256).Hash.ToLowerInvariant() -cne $candidateDllHash) {
+        throw 'Candidate CSV bytes changed during original release gates.'
+    }
+    $comparison=Join-Path $evidence 'candidate-versus-original-compatibility.json'
+    & python (Join-Path $research 'tooling/validators/compatibility.py') compare --baseline (Join-Path $evidence 'baseline-acceptance/baseline.json') --candidate (Join-Path $candidateEvidence 'baseline.json') --output $comparison
+    Assert-Exit 'Candidate vs original compatibility comparison failed'
+    $match=Get-Content -LiteralPath $comparison -Raw | ConvertFrom-Json
+    if ($match.overall -cne 'matched') { throw "Candidate contracts changed: $($match.overall)" }
+    $report.application_release_gates='candidate_425_api_419_nunit_5_xml_local_package_clean_consumer_passed'
+    $report.logical_compatibility='five_categories_matched_original'
+    $report.candidate_csv_sha256=$candidateDllHash
     Write-Report
     Write-Host ('EXP-024 scoped result: '+($report | ConvertTo-Json -Depth 6 -Compress))
 } catch {

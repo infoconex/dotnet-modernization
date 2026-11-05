@@ -128,7 +128,11 @@ try {
         if (-not (Test-Path -LiteralPath $probeFile)) { throw 'Missing independent module capture import.' }
         $escaped=[Security.SecurityElement]::Escape($probeFile)
         $probeImport='  <Import Project="' + $escaped + '" />'
-        $modified=$modified.Replace('</Project>',$probeImport + [Environment]::NewLine + '</Project>')
+        $rootEnd=$modified.LastIndexOf('</Project>',[StringComparison]::Ordinal)
+        if ($rootEnd -lt 0 -or $modified.IndexOf('</Project>',$rootEnd + 1,[StringComparison]::Ordinal) -ge 0) {
+            throw 'Cannot safely locate root project closing element.'
+        }
+        $modified=$modified.Substring(0,$rootEnd) + $probeImport + [Environment]::NewLine + $modified.Substring($rootEnd)
     }
     [IO.File]::WriteAllText($project,$modified,[Text.UTF8Encoding]::new($false))
     Check-Frozen $true

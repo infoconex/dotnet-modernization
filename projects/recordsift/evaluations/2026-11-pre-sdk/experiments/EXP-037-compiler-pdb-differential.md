@@ -79,14 +79,16 @@ Independently fetched exact published-tag source:
 
 **Disposition:** EXP-037 controlled pathmap/raw-stream distinction **VERIFIED**; actual managed Gate C **UNSATISFIED / FAIL-CLOSED**; compiler host/writer identity **PARTIAL**, authentic VS project-install/debugger gates **NOT TESTED**, Source Link adoption **HOLD**.
 
-## Independent review rubric
+## Independent technical assessment — five perspectives
 
-**Build engineering:** distinguish Csc task property values from emitted arguments; distinguish `csc.exe` and `VBCSCompiler.exe` invocation/assembly hashes from simply discovering an installed executable.
+This is a source- and execution-evidence-based adversarial assessment from distinct engineering perspectives, **not** an assertion that additional independent human reviewers signed off.
 
-**Architecture:** do not modify source code or dependency contracts to make checksum verification easier; reuse existing project-specific acceptance procedures.
+| Perspective | Findings and challenges | Assessment |
+|---|---|---|
+| **Build engineering** | The candidate Csc command-line switch categories and pathmap/deterministic options are captured from a real diagnostic task, not inferred from MSBuild properties. Direct fixture compiler executable/version/hash is independently captured. The real compiler task executable, compiler-server loaded assembly and native writer module identities are still unverified; fixture `/optimize-` and real candidate `/optimize+` differ, although optimize is not needed to reproduce the pathmap-associated negative. | **Verified bounded compiler-option difference; exact host identity PARTIAL**. No host-equality claim. |
+| **Architecture/compatibility** | Frozen source SHA and traditional C#7.3/net48/project/package contracts remain untouched. The existing EXP-024 425 API, 419 NUnit/418 pass/1 skip, five XML, unpublished nupkg, clean consumer and five logical-compatibility checks ran again against the actual candidate. EXP-037 tooling extends an opt-in research harness, not production dependencies. | **Original compatibility preserved in tested scenario**; not proof of adopting Source Link into all assemblies. |
+| **Security** | Managed parsers use exact verified archives under firewall/time/memory constraints and process only trusted generated or frozen binaries. Logs/artifacts reveal only bounded Boolean and count classifications, not physical paths, source files, PDBs, DLLs, diagnostic transcripts or packages. Managed parser hostile-input security and host-wide process isolation are not established; vulnerable native reader remains disallowed. | **Controlled trusted-input research acceptable, general parser safety UNVERIFIED**. |
+| **Quality/experimental design** | The five direct csc variants hold source bytes/path fixed, changing explicit checksum flag, deterministic mode, pathmap and synthetic Source Link in individually comparable steps. Two independent parser implementations agree. The independently written MSF7 byte scanner finds the exact source SHA256 in the corresponding named source stream, separating raw serialization from document association. Wrong PE/PDB, source mutation and sanitized capture controls passed. Named stream keys are only classified, not matched byte-for-byte against the reader's exact document lookup strings. | **Differential + physical digest presence VERIFIED; root named-key mismatch HYPOTHESIS, Gate C UNSATISFIED**. |
+| **Modernization decision / release governance** | The research did not perform Visual Studio Package Manager project installation, remote source stepping, all-production-assembly coverage, or application changes. The checksum gate is an explicit stakeholder acceptance requirement and cannot be silently waived. | **HOLD** until an authorized gate decision and executed missing controls. |
 
-**Security:** process only trusted fixtures/frozen PDBs, retain package hashes, isolate parsers, redact private log bytes, prevent artifact leakage.
-
-**Quality:** preserve explicit negative results, require hash bytes not only document count, account for native-stream limitations, and keep independently verified dimensions separate.
-
-**Decision:** Source Link adoption is **HOLD**; stakeholder approval remains required for any gate-policy changes or production modernization.
+**Smallest next technical action:** run a new bounded private in-memory exact comparison of document URL-derived `/SRC/FILES/` lookup keys and PDB named-stream keys, emitting only match status by selected owned document. Include a known-good nonpathmap positive and mapped negative control, direct physical digest proof, wrong-key negative, and reader-family consistency. This is a *new* concrete gap and does not justify repeating EXP-001–036.

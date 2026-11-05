@@ -1,0 +1,87 @@
+name: EXP-034 verify every PDB-listed owned CSV source against raw Git blobs
+
+on:
+  pull_request:
+    paths:
+      - '.github/workflows/validate-exp034-all-pdb-owned-sources.yml'
+      - 'tooling/validators/sourcelink_all_owned_sources.py'
+      - 'tooling/validators/tests/test_sourcelink_all_owned_sources.py'
+      - 'projects/recordsift/evaluations/2026-11-pre-sdk/experiments/EXP-034-all-owned-source-provenance.md'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  validator-regressions:
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [windows-2022, ubuntu-24.04]
+    runs-on: ${{ matrix.os }}
+    timeout-minutes: 12
+    steps:
+      - uses: actions/checkout@08c6903cd8c0fde910a37f88322edcfb5dd907a8 # v5.0.0
+        with:
+          persist-credentials: false
+      - name: Run inventory, native PDB and remote URL regression controls
+        shell: pwsh
+        run: |
+          foreach($pattern in @('test_sourcelink_all_owned_sources.py','test_sourcelink_remote_source.py','test_native_windows_pdb_sourcelink.py')){
+            python -m unittest discover -s tooling/validators/tests -p $pattern -v
+            if ($LASTEXITCODE -ne 0) { throw "Regression suite failed: $pattern" }
+          }
+  actual-pdb-owned-source-parity:
+    runs-on: windows-2022
+    timeout-minutes: 100
+    steps:
+      - uses: actions/checkout@08c6903cd8c0fde910a37f88322edcfb5dd907a8 # v5.0.0
+        with:
+          persist-credentials: false
+      - uses: actions/checkout@08c6903cd8c0fde910a37f88322edcfb5dd907a8 # v5.0.0
+        with:
+          repository: infoconex/RecordSift
+          ref: 8358780829458854a4b0356df5ac5e685f0a34c8
+          fetch-depth: 0
+          path: recordsift
+          persist-credentials: false
+      - uses: actions/setup-dotnet@a98b56852c35b8e3190ac28c8c2271da59106c68 # v6.0.0
+        with:
+          dotnet-version: '10.0.403'
+      - name: Build preexisting independent API metadata inspector
+        shell: pwsh
+        run: |
+          dotnet build tooling/assembly-metadata/src/AssemblyMetadata.csproj -c Release -nologo -v minimal
+          if($LASTEXITCODE -ne 0){throw 'Immutable metadata baseline unavailable'}
+      - name: Build Source Link CSV with original Windows release acceptance
+        shell: pwsh
+        run: |
+          & ./tooling/pilots/recordsift/EXP-024/run.ps1 -ApplicationRoot (Join-Path $env:GITHUB_WORKSPACE 'recordsift') -EvidenceRoot (Join-Path $env:RUNNER_TEMP 'RecordSift-EXP-024-for-034')
+          if($LASTEXITCODE -ne 0){throw 'Original release/consumer gates failed'}
+      - name: Verify independently listed native PDB owned source URLs and Git byte identity
+        shell: pwsh
+        run: |
+          $root=Join-Path $env:GITHUB_WORKSPACE 'recordsift'
+          $out=Join-Path $root 'src/RecordSift.Infrastructure.Csv/bin/Release'
+          $pdb=Join-Path $out 'RecordSift.Infrastructure.Csv.pdb'
+          $dll=Join-Path $out 'RecordSift.Infrastructure.Csv.dll'
+          python tooling/validators/native_windows_pdb_sourcelink.py --pdb $pdb --dll $dll --output (Join-Path $env:RUNNER_TEMP 'exp034-native-identity.json')
+          if($LASTEXITCODE -ne 0){throw 'Actual native Source Link/PDB identity absent'}
+          python tooling/validators/sourcelink_all_owned_sources.py --pdb $pdb --source-root $root --output (Join-Path $env:RUNNER_TEMP 'exp034-all-owned-sources.json')
+          if($LASTEXITCODE -ne 0){throw 'At least one independently PDB-listed owned source not matched to immutable Git bytes'}
+          $proof=Get-Content (Join-Path $env:RUNNER_TEMP 'exp034-all-owned-sources.json') -Raw|ConvertFrom-Json
+          if (-not $proof.all_selected_mappings_and_git_blobs_match -or $proof.documents_verified -lt 4 -or @($proof.documents).Count -ne $proof.documents_verified){
+            throw 'Incomplete full selected owned-source provenance'
+          }
+      - name: Retain metadata only (no raw Git source, PDB or binaries)
+        if: always()
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4.6.2
+        with:
+          name: exp034-full-owned-source-provenance-evidence
+          retention-days: 30
+          if-no-files-found: warn
+          path: |
+            ${{ runner.temp }}/exp034-native-identity.json
+            ${{ runner.temp }}/exp034-all-owned-sources.json
+            ${{ runner.temp }}/RecordSift-EXP-024-for-034/experiment-report.json
+            ${{ runner.temp }}/RecordSift-EXP-024-for-034/candidate-versus-original-compatibility.json

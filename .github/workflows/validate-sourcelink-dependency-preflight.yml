@@ -6,6 +6,8 @@ on:
       - '.github/workflows/validate-sourcelink-dependency-preflight.yml'
       - 'tooling/validators/nuget_dependency_preflight.py'
       - 'tooling/validators/tests/test_nuget_dependency_preflight.py'
+      - 'tooling/validators/sourcelink_tool_asset_preflight.py'
+      - 'tooling/validators/tests/test_sourcelink_tool_asset_preflight.py'
       - 'projects/recordsift/evaluations/2026-11-pre-sdk/experiments/EXP-023B-dependency-preflight.md'
   workflow_dispatch:
 
@@ -48,6 +50,8 @@ jobs:
         run: |
           python -m unittest discover -s tooling/validators/tests -p test_nuget_dependency_preflight.py -v
           if ($LASTEXITCODE -ne 0) { throw 'NuGet dependency preflight tests failed.' }
+          python -m unittest discover -s tooling/validators/tests -p test_sourcelink_tool_asset_preflight.py -v
+          if ($LASTEXITCODE -ne 0) { throw 'Source Link tool asset preflight tests failed.' }
 
       - name: Download and verify exact official NuGet packages
         shell: pwsh
@@ -86,6 +90,21 @@ jobs:
         run: |
           python tooling/validators/nuget_build_assets.py --manifest (Join-Path $env:RUNNER_TEMP 'exp023b-audit-manifest.json') --output (Join-Path $env:RUNNER_TEMP 'exp023b-package-assets.json')
           if ($LASTEXITCODE -ne 0) { throw 'EXP-023A archive safety audit rejected input.' }
+
+      - name: Verify bundled tool assets are present but not host isolation
+        shell: pwsh
+        run: |
+          $ErrorActionPreference = 'Stop'
+          $report = Join-Path $env:RUNNER_TEMP 'exp023b-package-assets.json'
+          $out = Join-Path $env:RUNNER_TEMP 'exp023b-task-asset-preflight.json'
+          python tooling/validators/sourcelink_tool_asset_preflight.py --audit $report --output $out
+          if ($LASTEXITCODE -ne 0) { throw 'Missing or unexpected Source Link tool binaries/target candidates.' }
+          $data = Get-Content $out -Raw | ConvertFrom-Json
+          if ($data.result -ne 'BUILD_TOOL_ASSET_PRESENCE_VERIFIED_NOT_RUNTIME_ISOLATION' -or
+              @($data.packages).Count -ne 4) {
+            throw 'Asset preflight accidentally asserted compatibility or missing archived assets.'
+          }
+          Write-Host 'PASS: pinned Source Link build-tool assets present. Runtime isolation NOT proven.'
 
       - name: Assert two expected net48 application-version conflicts
         shell: pwsh
@@ -128,4 +147,5 @@ jobs:
           if-no-files-found: warn
           path: |
             ${{ runner.temp }}/exp023b-package-assets.json
+            ${{ runner.temp }}/exp023b-task-asset-preflight.json
             ${{ runner.temp }}/exp023b-dependency-preflight.json

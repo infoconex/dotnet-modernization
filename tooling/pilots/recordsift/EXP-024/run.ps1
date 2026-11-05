@@ -166,9 +166,9 @@ try {
     $pdb=Join-Path $csvBin 'RecordSift.Infrastructure.Csv.pdb'
     if (-not (Test-Path -LiteralPath $pdb)) { throw 'Missing CSV Release PDB.' }
     $bytes=[IO.File]::ReadAllBytes($pdb)
-    $isWindows=([Text.Encoding]::ASCII.GetString($bytes,0,[Math]::Min(32,$bytes.Length)) -like 'Microsoft C/C++ MSF 7.00*')
-    $report.pdb_format=if($isWindows){'windows_pdb_msf_signature'}else{'not_classic_windows_pdb'}
-    if (-not $isWindows) {throw 'PDB format unexpectedly changed; do not claim Windows PDB success.'}
+    $isNativeWindowsPdb=([Text.Encoding]::ASCII.GetString($bytes,0,[Math]::Min(32,$bytes.Length)) -like 'Microsoft C/C++ MSF 7.00*')
+    $report.pdb_format=if($isNativeWindowsPdb){'windows_pdb_msf_signature'}else{'not_classic_windows_pdb'}
+    if (-not $isNativeWindowsPdb) {throw 'PDB format unexpectedly changed; do not claim Windows PDB success.'}
     # Source Link binary contents remain private for separate structural PDB gate.
     $report.csv_bin_added_files=@(Get-ChildItem -LiteralPath $csvBin -File | Where-Object {-not $baselineFiles.ContainsKey($_.Name)} | Select-Object -ExpandProperty Name)
     $report.csv_bin_changed_files=@(Get-ChildItem -LiteralPath $csvBin -File | Where-Object {

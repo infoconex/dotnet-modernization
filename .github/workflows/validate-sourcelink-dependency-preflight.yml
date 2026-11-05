@@ -1,0 +1,131 @@
+name: EXP-023B pinned Source Link dependency preflight (read-only)
+
+on:
+  pull_request:
+    paths:
+      - '.github/workflows/validate-sourcelink-dependency-preflight.yml'
+      - 'tooling/validators/nuget_dependency_preflight.py'
+      - 'tooling/validators/tests/test_nuget_dependency_preflight.py'
+      - 'projects/recordsift/evaluations/2026-11-pre-sdk/experiments/EXP-023B-dependency-preflight.md'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  inspect-only:
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [windows-2022, ubuntu-24.04]
+    runs-on: ${{ matrix.os }}
+    timeout-minutes: 20
+    steps:
+      - name: Checkout research tooling without saved credentials
+        uses: actions/checkout@08c6903cd8c0fde910a37f88322edcfb5dd907a8 # v5.0.0
+        with:
+          persist-credentials: false
+
+      - name: Checkout frozen RecordSift without saved credentials
+        uses: actions/checkout@08c6903cd8c0fde910a37f88322edcfb5dd907a8 # v5.0.0
+        with:
+          repository: infoconex/RecordSift
+          ref: 8358780829458854a4b0356df5ac5e685f0a34c8
+          path: _recordsift_frozen
+          persist-credentials: false
+
+      - name: Assert exact RecordSift source provenance
+        shell: pwsh
+        run: |
+          $ErrorActionPreference = 'Stop'
+          $sha = (git -C _recordsift_frozen rev-parse HEAD).Trim()
+          if ($LASTEXITCODE -ne 0 -or $sha -ne '8358780829458854a4b0356df5ac5e685f0a34c8') {
+            throw "Unexpected frozen RecordSift SHA: $sha"
+          }
+
+      - name: Run metadata-only preflight regression tests
+        shell: pwsh
+        run: |
+          python -m unittest discover -s tooling/validators/tests -p test_nuget_dependency_preflight.py -v
+          if ($LASTEXITCODE -ne 0) { throw 'NuGet dependency preflight tests failed.' }
+
+      - name: Download and verify exact official NuGet packages
+        shell: pwsh
+        run: |
+          $ErrorActionPreference = 'Stop'
+          $pinned = @(
+            @{id='Microsoft.SourceLink.GitHub'; version='10.0.403'; sha256='9c3252f8cbe1547bf8c12b7c65a7bc28985bab2d598ff97c13e0104c22d80cd5'},
+            @{id='Microsoft.SourceLink.Common'; version='10.0.403'; sha256='e99d7aea402042d04faa4971709718ebf256406b4c59f700cb1c8a739859c6a2'},
+            @{id='Microsoft.Build.Tasks.Git'; version='10.0.403'; sha256='9d21a711e9fce96b34e8c02f10069bc66a381d84a2912e65a14dc9c411135e29'},
+            @{id='System.IO.Hashing'; version='10.0.14'; sha256='86917bafb634c4d06dd7f07c5f745141fea220f64e13e7657680e81dac68f941'}
+          )
+          $directory = Join-Path $env:RUNNER_TEMP 'exp023b-archive-input'
+          New-Item -ItemType Directory -Force -Path $directory | Out-Null
+          $entries = @()
+          $audit = @()
+          foreach ($p in $pinned) {
+            $id = $p.id.ToLowerInvariant()
+            $version = $p.version.ToLowerInvariant()
+            $file = "$id.$version.nupkg"
+            $destination = Join-Path $directory $file
+            $uri = "https://api.nuget.org/v3-flatcontainer/$id/$version/$file"
+            Invoke-WebRequest -Uri $uri -OutFile $destination -TimeoutSec 60 -ErrorAction Stop
+            $size = (Get-Item -LiteralPath $destination).Length
+            if ($size -le 0 -or $size -gt 100663296) { throw "Missing or oversized package archive: $file" }
+            $sha = (Get-FileHash -Algorithm SHA256 -LiteralPath $destination).Hash.ToLowerInvariant()
+            if ($sha -ne $p.sha256) { throw "Package SHA-256 mismatch: $file" }
+            $entries += @{id=$p.id; version=$p.version; sha256=$p.sha256; path=$destination}
+            $audit += @{id=$p.id; version=$p.version; path=$destination}
+            Write-Host "READ ONLY: verified exact pinned archive $file SHA256 $sha"
+          }
+          @{packages=$entries} | ConvertTo-Json -Depth 8 | Set-Content (Join-Path $env:RUNNER_TEMP 'exp023b-manifest.json') -Encoding utf8
+          @{packages=$audit} | ConvertTo-Json -Depth 8 | Set-Content (Join-Path $env:RUNNER_TEMP 'exp023b-audit-manifest.json') -Encoding utf8
+
+      - name: Reuse EXP-023A archive safety audit
+        shell: pwsh
+        run: |
+          python tooling/validators/nuget_build_assets.py --manifest (Join-Path $env:RUNNER_TEMP 'exp023b-audit-manifest.json') --output (Join-Path $env:RUNNER_TEMP 'exp023b-package-assets.json')
+          if ($LASTEXITCODE -ne 0) { throw 'EXP-023A archive safety audit rejected input.' }
+
+      - name: Assert two expected net48 application-version conflicts
+        shell: pwsh
+        run: |
+          $ErrorActionPreference = 'Stop'
+          $config = '_recordsift_frozen/src/RecordSift.Infrastructure.Csv/packages.config'
+          $out = Join-Path $env:RUNNER_TEMP 'exp023b-dependency-preflight.json'
+          python tooling/validators/nuget_dependency_preflight.py --packages-config $config --manifest (Join-Path $env:RUNNER_TEMP 'exp023b-manifest.json') --target net48 --output $out
+          if ($LASTEXITCODE -ne 2) { throw "Expected BLOCKED metadata report (exit 2), got $LASTEXITCODE" }
+          $report = Get-Content $out -Raw | ConvertFrom-Json
+          if ($report.status -ne 'BLOCKED' -or @($report.original_application_packages).Count -ne 9 -or
+              @($report.tool_packages).Count -ne 4 -or @($report.conflicts).Count -ne 2 -or
+              @($report.unresolved_dependencies).Count -ne 0 -or @($report.baseline_version_overlaps).Count -ne 0) {
+            throw 'Unexpected dependency report shape; inspect evidence JSON.'
+          }
+          $expected = @{
+            'System.Buffers' = @{old='4.5.1'; minimum='4.6.1'}
+            'System.Memory'  = @{old='4.5.5'; minimum='4.6.3'}
+          }
+          foreach ($conflict in $report.conflicts) {
+            $id = $conflict.dependency
+            if (-not $expected.ContainsKey($id) -or $conflict.parent -ne 'System.IO.Hashing' -or
+                $conflict.selected -ne $expected[$id].old -or
+                $conflict.required -ne $expected[$id].minimum -or
+                $conflict.source -ne 'existing application package') {
+              throw "Unexpected conflict: $($conflict | ConvertTo-Json -Compress)"
+            }
+            Write-Host "EXPECTED METADATA CONFLICT: $id $($conflict.selected) < $($conflict.required)"
+          }
+          $status = git -C _recordsift_frozen status --porcelain
+          if ($LASTEXITCODE -ne 0 -or $status) { throw 'Frozen RecordSift checkout was modified.' }
+          Write-Host 'PASS: expected conflicts detected; Source Link was NOT installed, loaded, imported or executed.'
+
+      - name: Retain metadata-only evidence
+        if: always()
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4.6.2
+        with:
+          name: exp023b-readonly-net48-${{ matrix.os }}
+          retention-days: 30
+          if-no-files-found: warn
+          path: |
+            ${{ runner.temp }}/exp023b-package-assets.json
+            ${{ runner.temp }}/exp023b-dependency-preflight.json

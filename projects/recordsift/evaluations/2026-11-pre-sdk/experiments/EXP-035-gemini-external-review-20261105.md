@@ -107,3 +107,29 @@ Roslyn's [EditAndContinue managed PDB logic](https://sourceroslyn.io/Microsoft.C
 **REJECT closing as “technically impossible”; RETAIN EXP-035 INCONCLUSIVE; DEFER execution pending dependency/security review.** At least two managed source implementations provide technically plausible ways to inspect the requested Windows PDB data. The next valuable dialogue with Gemini is to scrutinize these exact source files, especially whether their discovery logic can enumerate Roslyn managed documents given EXP-029/033's empty native checksum observations, and to request a real security/provenance assessment. Stop exchanging generic “no parser” / sample COM code claims. Separate alternative hypothesis `DebugType=portable` may be evaluated as a **future, separately approved** isolated compatibility study, not a silent substitution for the original classic-PDB experiment.
 
 **Evidence provenance:** inspected GitHub source repositories and official Microsoft docs; **no new build, PDB parser, checksum measurement, CI result, app edit, package installation or branch merge.**
+
+---
+
+## Fourth Gemini exchange — dnlib pilot feasibility reassessment (November 5, 2026)
+
+**Source:** stakeholder-pasted Gemini round-four response. Gemini now recommends EXP-035-DN, claims guaranteed dnlib managed checksum extraction and robust zero-dependency security, and supplies PdbReaderOptions.NoNativeReader. This dialogue is not executed evidence.
+
+### Independently verified corrections and implementation trace
+
+1. **NoNativeReader is not an API.** [PdbReaderOptions.cs](https://github.com/0xd4d/dnlib/blob/master/src/DotNet/Pdb/PdbReaderOptions.cs) enumerates None=0, MicrosoftComReader=1, NoDiaSymReader=2 and NoOldDiaSymReader=4. [ModuleCreationOptions.cs](https://github.com/0xd4d/dnlib/blob/master/src/DotNet/ModuleCreationOptions.cs) defaults PdbOptions to None. [SymbolReaderFactory.cs](https://github.com/0xd4d/dnlib/blob/master/src/DotNet/Pdb/SymbolReaderFactory.cs) chooses native COM only upon explicit MicrosoftComReader opt-in, otherwise its managed decoder.
+2. **Checksum decoder exists.** [Managed/DbiDocument.cs](https://github.com/0xd4d/dnlib/blob/master/src/DotNet/Pdb/Managed/DbiDocument.cs) lines 48-58 read language/vendor/document-type GUIDs, algorithm GUID, checksum and source lengths, checksum and optional source bytes using dnlib.IO.DataReader (not Gemini's BinaryReader representation). This proves decoder capability but does not show the RecordSift PDB contains reachable documents.
+3. **Crucial document discovery gap.** [Managed/PdbReader.cs](https://github.com/0xd4d/dnlib/blob/master/src/DotNet/Pdb/Managed/PdbReader.cs) validates classic MSF and matching PDB GUID/age and reads named /src/files/ streams only when GetDocument is requested. [Managed/DbiModule.cs](https://github.com/0xd4d/dnlib/blob/master/src/DotNet/Pdb/Managed/DbiModule.cs) LoadFunctions calls ReadLines only if Functions.Count > 0; ReadLines calls ReadFiles only on ModuleStreamType.FileInfo (0xF4). That file-index path calls GetDocument. Having named source streams is not by itself sufficient for document enumeration. Roslyn's actual frozen module/function/FileInfo structure has NOT been read using dnlib. Earlier LLVM textual C13 gaps do not prove absence of all these records.
+4. **Assembly context and PDB selection supported.** [ModuleDefMD.cs](https://github.com/0xd4d/dnlib/blob/master/src/DotNet/ModuleDefMD.cs) and ModuleCreationOptions use assembly metadata plus configurable PdbFileOrData and PdbOptions; no run against RecordSift occurred.
+5. **Acceptance should select four owned documents, not demand exactly four total.** Other generated and source documents may legitimately be present. Compare each selected full document path and compiler-input physical byte digest (account for CRLF/encoding), approved algorithm GUID, exact byte length, and original DLL/PDB identity.
+
+### Dependency/security adjudication
+
+- NuGet [dnlib 4.5.0](https://www.nuget.org/packages/dnlib), last published May 15, 2025, reports no dependencies for net35/net45 assets, but System.Reflection.Emit and System.Reflection.Emit.Lightweight for netstandard2.0. Dependency-free is target-conditional; third-party source/package provenance and native-path exclusion must be demonstrated in a separate research-only tool.
+- A search-indexed [October 2026 independent report](https://ivankozlovsky.com/blog/dnlib-hostile-input-robustness-2026-10-15) alleges malformed-input hangs, oversized allocations and read exceptions in dnlib 4.5.0. In this review, the URL yielded 404 when opened, and alleged findings were NOT reproduced or maintainer-verified. Do not conclude the parser is robust, vulnerability-free or unsafe solely from this item. Independently audit bounded allocations and fail-closed behavior.
+- Microsoft [CCI](https://github.com/microsoft/cci/blob/master/PDBReaderAndWriter/PdbReader/PdbFile.cs) is indeed tied to DEBUG_S_SUBSECTION.FILECHKSMS source association, making it a weaker candidate given earlier observations, but the conclusion it definitively yields zero for the actual PDB is not an executed result.
+
+### Disposition
+
+**Credible new parser route, not checksum verification.** Preserve EXP-035 INCONCLUSIVE, EXP-031 SECURITY-BLOCKED and Source Link HOLD. Read-only next action: check exact package/version source, structural document-discovery prerequisites, third-party parser security and independent known-positive fixture. If these pass, seek distinct isolated experiment authorization with time/memory isolation and positive/negative controls before executing a read-only parser against disposable frozen artifacts. Do not write to RecordSift, add runtime dependencies to its app, publish packages, merge research PR or infer four matches before actual comparison.
+
+**No new program, checkout, CI execution, package acquisition, PDB read or application modification was performed by this review.**

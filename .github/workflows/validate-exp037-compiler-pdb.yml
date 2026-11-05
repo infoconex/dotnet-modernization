@@ -57,7 +57,7 @@ jobs:
           if ($LASTEXITCODE -ne 0) { throw 'Pinned Cecil archive unavailable' }
           python tooling/pilots/recordsift/EXP-036/nuget_reader_preflight.py --dnlib (Join-Path $root 'dnlib.4.5.0.nupkg') --cecil (Join-Path $root 'mono.cecil.0.11.6.nupkg') --output (Join-Path $root 'static-audit.json')
           if ($LASTEXITCODE -ne 0) { throw 'Official archive preflight failed' }
-      - name: Verify existing SHA1/SHA256 controls and EXP-037 three isolated direct compiler variants
+      - name: Verify existing SHA1/SHA256 controls and EXP-037 five isolated direct compiler variants
         shell: pwsh
         run: |
           & ./tooling/pilots/recordsift/EXP-036/run_fixture.ps1 -ArchiveRoot (Join-Path $env:RUNNER_TEMP 'exp037-archives') -Experiment37Variants

@@ -68,11 +68,22 @@ jobs:
               $overlaps+=@([ordered]@{id=$p.id;baseline=$original[$p.id];resolved=$p.version;different=($original[$p.id] -cne $p.version)})
             }
           }
-          $selected=@($packages|Where-Object {$_.id -eq 'System.Buffers' -or $_.id -eq 'System.Memory'})
-          if($selected.Count -ne 2){ throw 'NuGet did not resolve both known versioned closure packages.' }
-          foreach($p in $selected){
-            $old=$original[$p.id]
-            if([version]$p.version -le [version]$old){throw "Expected new build-tool dependency incompatible with baseline for $($p.id)"}
+          $expectedUpgrades=@{
+            'System.Buffers'='4.6.1';
+            'System.Memory'='4.6.3';
+            'System.Numerics.Vectors'='4.6.1';
+            'System.Runtime.CompilerServices.Unsafe'='6.1.2'
+          }
+          if($packages.Count -ne 8 -or $overlaps.Count -ne 4) {
+            throw "Unexpected net48 NuGet closure count: packages=$($packages.Count) overlaps=$($overlaps.Count)"
+          }
+          foreach($pair in $expectedUpgrades.GetEnumerator()){
+            $matches=@($overlaps | Where-Object { $_.id -ceq $pair.Key })
+            if($matches.Count -ne 1 -or $matches[0].resolved -cne $pair.Value -or
+                -not $matches[0].different -or
+                [version]$matches[0].resolved -le [version]$matches[0].baseline) {
+              throw "Unexpected resolved version or baseline overlap for $($pair.Key)"
+            }
           }
           $sourceStatus=@(& git -C (Join-Path $env:GITHUB_WORKSPACE 'recordsift') diff --name-only HEAD --)
           if($LASTEXITCODE -ne 0 -or $sourceStatus.Count -gt 0){throw 'Unexpected tracked application modifications'}
@@ -87,7 +98,7 @@ jobs:
              not_proven='MSBuild runtime dependency isolation, NuGet Package Manager .csproj changes, actual compiler/runtime behavior'
           }
           $report|ConvertTo-Json -Depth 12 |Set-Content (Join-Path $env:RUNNER_TEMP 'exp027-nuget-acquisition.json') -Encoding utf8
-          Write-Host "PASS: NuGet resolved $($packages.Count) actual package identities, two pinned application conflicts; project untouched."
+          Write-Host "PASS: NuGet resolved $($packages.Count) actual package identities, four pinned application version overlaps; project untouched."
       - name: Retain metadata only (no package archives)
         if: always()
         uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4.6.2

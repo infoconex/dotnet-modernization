@@ -68,10 +68,12 @@ class ActualFileParityControls(unittest.TestCase):
         self.source_bytes = b'// simulated frozen C# source\\npublic class A {}\\n'
         self.target.write_bytes(self.source_bytes)
 
-    def mock_git(self, sha=EXPECTED_SHA, tracked=True):
+    def mock_git(self, sha=EXPECTED_SHA, tracked=True, changed=False, blob=None):
         return [
             SimpleNamespace(stdout=sha, returncode=0),
             SimpleNamespace(stdout=FILE, returncode=0 if tracked else 1),
+            SimpleNamespace(stdout=b'', returncode=1 if changed else 0),
+            SimpleNamespace(stdout=self.source_bytes if blob is None else blob, returncode=0),
         ]
 
     def test_verified_remote_bytes_are_identical(self):
@@ -110,6 +112,34 @@ class ActualFileParityControls(unittest.TestCase):
             with self.assertRaisesRegex(ValueError, 'size budget'):
                 verify(self.root / 'fixture.pdb', self.root, FILE,
                        fetch=lambda url: b'')
+
+    def test_worktree_modified_against_frozen_head_is_rejected(self):
+        with patch('sourcelink_remote_source.subprocess.run',
+                   side_effect=self.mock_git(changed=True)):
+            with self.assertRaisesRegex(ValueError, 'differs from frozen'):
+                verify(self.root / 'fixture.pdb', self.root, FILE,
+                       fetch=lambda url: self.source_bytes)
+
+    def test_remote_matches_dirty_checkout_but_not_immutable_blob_rejected(self):
+        different_blob = b'file content in original Git object'
+        with patch('sourcelink_remote_source.mapping_from_pdb', return_value=SOURCE), patch(
+            'sourcelink_remote_source.subprocess.run',
+            side_effect=self.mock_git(blob=different_blob)):
+            with self.assertRaisesRegex(ValueError, 'exact frozen Git blob'):
+                verify(self.root / 'fixture.pdb', self.root, FILE,
+                       fetch=lambda url: self.source_bytes)
+
+    def test_worktree_crlf_differs_but_git_blob_and_remote_match(self):
+        git_blob = b'first\nsecond\n'
+        self.target.write_bytes(b'first\r\nsecond\r\n')
+        with patch('sourcelink_remote_source.mapping_from_pdb', return_value=SOURCE), patch(
+            'sourcelink_remote_source.subprocess.run',
+            side_effect=self.mock_git(blob=git_blob)):
+            result = verify(self.root / 'fixture.pdb', self.root, FILE,
+                            fetch=lambda url: git_blob)
+        self.assertFalse(result['working_tree_byte_equal_git_blob'])
+        self.assertTrue(result['worktree_difference_consistent_with_crlf_conversion'])
+        self.assertEqual(result['source_bytes'], len(git_blob))
 
 
 if __name__ == '__main__':

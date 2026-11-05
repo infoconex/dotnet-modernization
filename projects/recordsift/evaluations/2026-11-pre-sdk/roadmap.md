@@ -1,5 +1,7 @@
 # Recommended implementation roadmap
 
+**November 5, 2026 consolidated research review:** See [EXP-001–035 evidence crosswalk and modernization preparation decision matrix](modernization-preparation-decision-matrix.md) for current A/B/C/D classification, remaining Source Link approval gates, risk, required tests and future approval boundaries. This roadmap remains a recommendation, not implementation authorization.
+
 These are **discovery-supported recommendations**, not applied RecordSift changes.
 
 ## Priority matrix

@@ -1,0 +1,82 @@
+name: EXP-029 structural native Windows PDB C13 document checksum
+
+on:
+  pull_request:
+    paths:
+      - '.github/workflows/validate-exp029-pdb-checksum.yml'
+      - 'tooling/validators/windows_pdb_document_checksums.py'
+      - 'tooling/validators/tests/test_windows_pdb_document_checksums.py'
+      - 'projects/recordsift/evaluations/2026-11-pre-sdk/experiments/EXP-029-c13-document-checksum.md'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  checksum-format-regressions:
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [windows-2022, ubuntu-24.04]
+    runs-on: ${{ matrix.os }}
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@08c6903cd8c0fde910a37f88322edcfb5dd907a8 # v5.0.0
+        with:
+          persist-credentials: false
+      - name: Test bounded C13 module/checksum parser
+        shell: pwsh
+        run: |
+          python -m unittest discover -s tooling/validators/tests -p test_windows_pdb_document_checksums.py -v
+          if($LASTEXITCODE -ne 0){throw 'Checksum structural parser negative/positive tests failed.'}
+
+  real-document-checksum:
+    runs-on: windows-2022
+    timeout-minutes: 100
+    steps:
+      - uses: actions/checkout@08c6903cd8c0fde910a37f88322edcfb5dd907a8 # v5.0.0
+        with:
+          persist-credentials: false
+      - uses: actions/checkout@08c6903cd8c0fde910a37f88322edcfb5dd907a8 # v5.0.0
+        with:
+          repository: infoconex/RecordSift
+          ref: 8358780829458854a4b0356df5ac5e685f0a34c8
+          path: recordsift
+          fetch-depth: 0
+          persist-credentials: false
+      - uses: actions/setup-dotnet@a98b56852c35b8e3190ac28c8c2271da59106c68 # v6.0.0
+        with:
+          dotnet-version: '10.0.403'
+      - name: Compile original read-only metadata extractor
+        shell: pwsh
+        run: |
+          dotnet build tooling/assembly-metadata/src/AssemblyMetadata.csproj -c Release -nologo -v minimal
+          if($LASTEXITCODE -ne 0){throw 'Metadata extractor build failure.'}
+      - name: Build disposable Source Link CSV with historical acceptance gates
+        shell: pwsh
+        run: |
+          & ./tooling/pilots/recordsift/EXP-024/run.ps1 -ApplicationRoot (Join-Path $env:GITHUB_WORKSPACE 'recordsift') -EvidenceRoot (Join-Path $env:RUNNER_TEMP 'RecordSift-EXP-024-for-029')
+          if($LASTEXITCODE -ne 0){throw 'Candidate build/consumer prerequisite failed.'}
+      - name: Verify CodeView C13 real PDB source checksum equals frozen source
+        shell: pwsh
+        run: |
+          $folder=Join-Path $env:GITHUB_WORKSPACE 'recordsift/src/RecordSift.Infrastructure.Csv/bin/Release'
+          $out=Join-Path $env:RUNNER_TEMP 'exp029-source-checksum.json'
+          python tooling/validators/windows_pdb_document_checksums.py --pdb (Join-Path $folder 'RecordSift.Infrastructure.Csv.pdb') --source-root (Join-Path $env:GITHUB_WORKSPACE 'recordsift') --relative-source 'src/RecordSift.Infrastructure.Csv/CsvStreamImporterAdapter.cs' --output $out
+          if ($LASTEXITCODE -ne 0){throw 'Native PDB C13 document digest not independently proven.'}
+          $r=Get-Content -LiteralPath $out -Raw | ConvertFrom-Json
+          if (-not $r.checksum_record_matches_frozen_source -or
+              $r.frozen_git_revision -cne '8358780829458854a4b0356df5ac5e685f0a34c8') {
+            throw 'Source file checksum evidence not accepted.'
+          }
+      - name: Retain aggregate JSON only; no PDBs, source files or packages
+        if: always()
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4.6.2
+        with:
+          name: exp029-pdb-document-checksum
+          retention-days: 30
+          if-no-files-found: warn
+          path: |
+            ${{ runner.temp }}/exp029-source-checksum.json
+            ${{ runner.temp }}/RecordSift-EXP-024-for-029/experiment-report.json
+            ${{ runner.temp }}/RecordSift-EXP-024-for-029/candidate-versus-original-compatibility.json

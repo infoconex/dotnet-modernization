@@ -54,3 +54,10 @@ Record any check not run, including why. Do not require byte-identical DLL/packa
 ## Artifact retention
 
 Prefer small checked-in text summaries and exact commands. Reference GitHub Actions runs and artifact IDs, but artifacts can expire. Preserve indispensable diagnostics in a durable text record or repeatable script. Never commit secrets, credentials, or unnecessarily large binary artifacts.
+
+
+## Tool-specific acceptance semantics (November 2026 clarification)
+
+When a proposed modernization depends on an IDE, debugger, package extension, COM registration, GUI wizard, generator, native symbol reader or runtime host, **presence of the installed component is not proof of operation**. Record separately: (1) installed package/IDE version and cryptographic provenance, (2) active host/service and invoked API, (3) tool operation and actual changed project/package/assembly/PDB/runtime artifacts, (4) all release/consumer contracts, (5) explicit positive and negative controls. A NuGet CLI `install` or `restore` result does not establish Visual Studio Package Manager **project installation** semantics; a Csc `/sourcelink` argument or native PDB mapping does not establish actual Visual Studio debugger stepping or managed document checksum authenticity. Distinguish standalone PowerShell commands from Visual Studio-hosted Package Manager Console commands.
+
+For security-sensitive native readers, check the **specific binary actually loaded** (version, original source, signed publisher/hash, applicable advisories and update level), rather than assuming an OS/IDE signature certifies patched status. If reader safety or document coverage cannot be established, stop the affected gate as **BLOCKED** or **INCONCLUSIVE** and continue other independent work. A planned manual procedure is **NOT TESTED** until executed; a documentation-only review cannot invent a new workflow/artifact. This reusable standard applies to any legacy application with COM/native/external host dependencies, not only RecordSift. See [RecordSift acceptance gate protocol](../projects/recordsift/evaluations/2026-11-pre-sdk/experiments/remaining-source-link-approval-gates.md).

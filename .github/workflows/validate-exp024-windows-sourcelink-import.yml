@@ -1,0 +1,56 @@
+name: EXP-024 disposable traditional net48 Source Link import and build
+
+on:
+  pull_request:
+    paths:
+      - '.github/workflows/validate-exp024-windows-sourcelink-import.yml'
+      - 'tooling/pilots/recordsift/EXP-024/**'
+      - 'projects/recordsift/evaluations/2026-11-pre-sdk/experiments/EXP-024-sourcelink-windows-import.md'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  windows-isolated-integration:
+    runs-on: windows-2022
+    timeout-minutes: 95
+    steps:
+      - name: Checkout research without push credentials
+        uses: actions/checkout@08c6903cd8c0fde910a37f88322edcfb5dd907a8 # v5.0.0
+        with:
+          persist-credentials: false
+      - name: Checkout frozen RecordSift without push credentials
+        uses: actions/checkout@08c6903cd8c0fde910a37f88322edcfb5dd907a8 # v5.0.0
+        with:
+          repository: infoconex/RecordSift
+          ref: 8358780829458854a4b0356df5ac5e685f0a34c8
+          path: recordsift
+          fetch-depth: 0
+          persist-credentials: false
+      - name: Build read-only baseline metadata reader
+        uses: actions/setup-dotnet@a98b56852c35b8e3190ac28c8c2271da59106c68 # v6.0.0
+        with:
+          dotnet-version: '10.0.403'
+      - name: Prepare approved read-only extractor
+        shell: pwsh
+        run: |
+          dotnet build tooling/assembly-metadata/src/AssemblyMetadata.csproj -c Release -nologo -v minimal
+          if ($LASTEXITCODE -ne 0) { throw 'Baseline metadata extractor unavailable' }
+      - name: Execute disposable baseline and one-project Source Link integration
+        shell: pwsh
+        run: |
+          & ./tooling/pilots/recordsift/EXP-024/run.ps1 -ApplicationRoot (Join-Path $env:GITHUB_WORKSPACE 'recordsift') -EvidenceRoot (Join-Path $env:RUNNER_TEMP 'RecordSift-EXP-024')
+          if ($LASTEXITCODE -ne 0) { throw 'EXP-024 failed: see preserved metadata and step diagnostics.' }
+      - name: Retain diagnostic JSON and redacted text only (no binaries or PDBs)
+        if: always()
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4.6.2
+        with:
+          name: recordsift-exp024-import-control
+          retention-days: 30
+          if-no-files-found: warn
+          path: |
+            ${{ runner.temp }}/RecordSift-EXP-024/*.json
+            ${{ runner.temp }}/RecordSift-EXP-024/*.txt
+            ${{ runner.temp }}/RecordSift-EXP-024/baseline-acceptance/pilot-report.json
+            ${{ runner.temp }}/RecordSift-EXP-024/baseline-acceptance/nunit-*.xml

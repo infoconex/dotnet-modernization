@@ -5,6 +5,7 @@ on:
     paths:
       - '.github/workflows/validate-exp030-git-topology.yml'
       - 'projects/recordsift/evaluations/2026-11-pre-sdk/experiments/EXP-030-git-topology.md'
+      - 'tooling/validators/sourcelink_native_absence.py'
   workflow_dispatch:
 
 permissions:
@@ -17,7 +18,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        topology: [shallow-detached, no-remote-detached, authentic-submodule]
+        topology: [shallow-detached, no-remote-detached, authentic-submodule, authentic-submodule-github-origin]
     steps:
       - uses: actions/checkout@08c6903cd8c0fde910a37f88322edcfb5dd907a8 # v5.0.0
         with:
@@ -80,6 +81,12 @@ jobs:
               $fixture=Join-Path $parent 'vendor/RecordSift'
               & git -C $fixture checkout --detach $sha|Out-Null
               if ($LASTEXITCODE -ne 0){throw 'Nested submodule SHA pin failed'}
+              if ($env:TOPOLOGY -eq 'authentic-submodule-github-origin') {
+                & git -C $fixture remote set-url origin https://github.com/infoconex/RecordSift.git
+                if ($LASTEXITCODE -ne 0){throw 'Cannot set nested GitHub origin'}
+                & git -C $parent config -f .gitmodules submodule.vendor/RecordSift.url https://github.com/infoconex/RecordSift.git
+                if ($LASTEXITCODE -ne 0){throw 'Cannot set actual parent .gitmodules GitHub origin'}
+              }
               & git -C $parent add '.gitmodules' vendor/RecordSift
               & git -C $parent commit -m 'Pin disposable nested submodule'|Out-Null
               if ($LASTEXITCODE -ne 0){throw 'Parent submodule gitlink commit failed'}
@@ -97,6 +104,7 @@ jobs:
             $report.shallow=$isShallow
             $report.remote_count=$remotes.Count
             $report.git_file_pointer=(Test-Path (Join-Path $fixture '.git') -PathType Leaf)
+            $report.github_remote_configured=(@(& git -C $fixture remote -v | Where-Object {$_ -match 'github.com/infoconex/RecordSift'}).Count -gt 0)
             Save
             $candidateDir=Join-Path $evidence 'candidate'
             & ./tooling/pilots/recordsift/EXP-024/run.ps1 -ApplicationRoot $fixture -EvidenceRoot $candidateDir
@@ -105,9 +113,18 @@ jobs:
             if ($candidate.application_release_gates -cne 'candidate_425_api_419_nunit_5_xml_local_package_clean_consumer_passed'){throw 'Historical candidate gates incomplete'}
             $report.candidate_release_gate='passed'
             $output=Join-Path $fixture 'src/RecordSift.Infrastructure.Csv/bin/Release'
-            & python tooling/validators/native_windows_pdb_sourcelink.py --pdb (Join-Path $output 'RecordSift.Infrastructure.Csv.pdb') --dll (Join-Path $output 'RecordSift.Infrastructure.Csv.dll') --output (Join-Path $evidence 'native-pdb.json')
-            if ($LASTEXITCODE -ne 0){throw 'Actual Source Link native PDB failed'}
-            $report.native_pdb='exact_commit_and_codeview_verified'
+            if ($env:TOPOLOGY -eq 'no-remote-detached' -or $env:TOPOLOGY -eq 'authentic-submodule') {
+              # These two controls have deliberately invalid provenance for
+              # GitHub Source Link: no origin, or local file-path origin.
+              # Positive compatibility tests still ran before asserting absence.
+              & python tooling/validators/sourcelink_native_absence.py --pdb (Join-Path $output 'RecordSift.Infrastructure.Csv.pdb') --dll (Join-Path $output 'RecordSift.Infrastructure.Csv.dll') --output (Join-Path $evidence 'native-pdb.json')
+              if ($LASTEXITCODE -ne 0){throw 'Expected missing Source Link metadata negative control failed'}
+              $report.native_pdb='verified_missing_sourcelink_negative_control'
+            } else {
+              & python tooling/validators/native_windows_pdb_sourcelink.py --pdb (Join-Path $output 'RecordSift.Infrastructure.Csv.pdb') --dll (Join-Path $output 'RecordSift.Infrastructure.Csv.dll') --output (Join-Path $evidence 'native-pdb.json')
+              if ($LASTEXITCODE -ne 0){throw 'Actual Source Link native PDB failed'}
+              $report.native_pdb='exact_commit_and_codeview_verified'
+            }
             $diff=@(& git -C $fixture diff --name-only HEAD)
             if ($LASTEXITCODE -ne 0 -or $diff.Count -ne 0){throw 'Fixture source was modified'}
             Save

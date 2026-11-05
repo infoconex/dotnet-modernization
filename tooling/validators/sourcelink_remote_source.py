@@ -87,7 +87,18 @@ def verify(pdb, source_root, relative_file, sha=EXPECTED_SHA, fetch=None):
         raise ValueError('Source file not tracked in frozen Git index')
     local = full.read_bytes()
     if len(local) > MAX_SOURCE_BYTES or not local:
-        raise ValueError('Source exceeds byte-size budget')
+        raise ValueError('Working-tree source exceeds byte-size budget')
+    # A Windows checkout may have CRLF while raw.githubusercontent.com returns
+    # the immutable Git blob (normally LF). HEAD and "tracked" alone do NOT
+    # establish that a working-tree file is unmodified.
+    diff = subprocess.run(['git', '-C', str(source_root), 'diff', '--quiet', 'HEAD',
+                           '--', relative_file], check=False)
+    if diff.returncode != 0:
+        raise ValueError('Local worktree source differs from frozen Git revision or diff failed')
+    blob = subprocess.run(['git', '-C', str(source_root), 'show', sha + ':' + relative_file],
+                          check=True, capture_output=True).stdout
+    if not blob or len(blob) > MAX_SOURCE_BYTES:
+        raise ValueError('Frozen Git object exceeds source size budget')
     url = derive_raw_url(mapping_from_pdb(pdb), relative_file, sha)
     if fetch is None:
         req = urllib.request.Request(url, headers={'User-Agent': 'RecordSift-ReadOnly-SourceLink-Probe'})
@@ -97,11 +108,17 @@ def verify(pdb, source_root, relative_file, sha=EXPECTED_SHA, fetch=None):
             remote = response.read(MAX_SOURCE_BYTES + 1)
     else:
         remote = fetch(url)
-    if not isinstance(remote, bytes) or len(remote) > MAX_SOURCE_BYTES or remote != local:
-        raise ValueError('Remote Git source bytes do not match frozen tracked local file')
-    return {'schema_version': 1, 'source_link_mapping_to_raw_url': 'verified',
+    if not isinstance(remote, bytes) or len(remote) > MAX_SOURCE_BYTES or remote != blob:
+        raise ValueError('Remote Git source bytes do not match exact frozen Git blob')
+    checkout_equal = local == blob
+    return {'schema_version': 2, 'source_link_mapping_to_raw_url': 'verified',
             'exact_frozen_sha': sha, 'relative_tracked_source': relative_file,
-            'source_bytes': len(local), 'sha256_local_and_remote': hashlib.sha256(local).hexdigest(),
+            'source_bytes': len(blob), 'sha256_frozen_git_blob_and_remote': hashlib.sha256(blob).hexdigest(),
+            'working_tree_bytes': len(local),
+            'sha256_local_worktree': hashlib.sha256(local).hexdigest(),
+            'working_tree_byte_equal_git_blob': checkout_equal,
+            'worktree_difference_consistent_with_crlf_conversion':
+                (not checkout_equal and local.replace(b'\r\n', b'\n') == blob),
             'warning': 'PDB per-file checksum record and real debugger stepping not inspected.'}
 
 
@@ -118,8 +135,8 @@ def main():
         report = verify(a.pdb, a.source_root, a.relative_file)
         a.output.parent.mkdir(parents=True, exist_ok=True)
         a.output.write_text(json.dumps(report, indent=2, sort_keys=True) + '\n', encoding='utf-8')
-        print('PASS: mapped frozen raw Git source bytes match local tracked file SHA256',
-              report['sha256_local_and_remote'])
+        print('PASS: mapped frozen raw Git source bytes match immutable blob SHA256',
+              report['sha256_frozen_git_blob_and_remote'])
     except (ValueError, OSError, KeyError, TypeError, UnicodeError, subprocess.CalledProcessError,
             urllib.error.URLError, json.JSONDecodeError) as error:
         p.exit(2, 'Frozen Source Link URL verification failed closed: ' + str(error)[:300] + '\n')

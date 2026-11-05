@@ -27,3 +27,12 @@ The reader implementation follows LLVM's documented MSF superblock, PDB stream a
 - https://llvm.org/docs/PDB/HashTable.html
 - https://github.com/dotnet/symreader-converter
 - [issue #37](https://github.com/infoconex/dotnet-modernization/issues/37)
+
+## Verified native Windows PDB experiment
+
+[Run 41967860715](https://github.com/infoconex/dotnet-modernization/actions/runs/41967860715) **passed** real Windows PDB identity/mapping and ten binary-parser regression tests on Windows and Ubuntu at `ad73035d20f609f031ccee11e4879c9101a32611`. Retained ZIP [13388915075](https://github.com/infoconex/dotnet-modernization/actions/runs/41967860715/artifacts/13388915075) SHA-256 `25db7ee11b9a72e2296fc71745afccce3bee45279e780be12203c587248d22c1`; downloaded JSON independently inspected:
+`format=windows-msf7`, `pe_codeview_pdb_identity=matched`, `source_link_stream_count=1`, `document_mapping_count=1`, `native_source_link_json=structurally_parsed`, exact source SHA `8358780829458854a4b0356df5ac5e685f0a34c8`. Generated intermediate `RecordSift.Infrastructure.Csv.sourcelink.json` SHA-256 `2aef090374c88c11372b945ee11f0e672910394dd2bd7b612477b00296aa105e` also contained one mapping and the frozen SHA.
+
+**Important failed controls:** The original reader expected only `sourcelink$N`, yielding [run 41966879747 failure](https://github.com/infoconex/dotnet-modernization/actions/runs/41966879747) despite working compilation. A subsequent read of **actual PDB named streams** found exact `sourcelink` (without suffix); reader was corrected to accept both exact `sourcelink` and numbered variants, and the synthetic fixture updated. Earlier failure is a *reader assumption error*, not proof of absent Source Link. No native PDB or application binaries uploaded. Independent `llvm-pdbutil` was available on the Windows runner, but not used as a second structural assertion in this phase.
+
+**Verified narrow verdict:** Native Windows PDB contains correctly parsed Source Link JSON mapping with exact frozen revision and its GUID/age matches compiled DLL. Still missing: per-document PDB checksums, HTTP resolution of exact source bytes, actual debugger stepping and negative Git layout controls. Those must remain separate follow-ups.

@@ -1,0 +1,57 @@
+name: EXP-029 independent native Windows PDB document checksum audit
+
+on:
+  pull_request:
+    paths:
+      - '.github/workflows/validate-exp029-pdb-document-checksums.yml'
+      - 'tooling/pilots/recordsift/EXP-029/**'
+      - 'projects/recordsift/evaluations/2026-11-pre-sdk/experiments/EXP-029-pdb-document-checksums.md'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  windows-document-inventory:
+    runs-on: windows-2022
+    timeout-minutes: 95
+    steps:
+      - uses: actions/checkout@08c6903cd8c0fde910a37f88322edcfb5dd907a8 # v5.0.0
+        with:
+          persist-credentials: false
+      - uses: actions/checkout@08c6903cd8c0fde910a37f88322edcfb5dd907a8 # v5.0.0
+        with:
+          repository: infoconex/RecordSift
+          ref: 8358780829458854a4b0356df5ac5e685f0a34c8
+          fetch-depth: 0
+          path: recordsift
+          persist-credentials: false
+      - uses: actions/setup-dotnet@a98b56852c35b8e3190ac28c8c2271da59106c68 # v6.0.0
+        with:
+          dotnet-version: '10.0.403'
+      - name: Prepare preexisting read-only metadata inspector
+        shell: pwsh
+        run: |
+          dotnet build tooling/assembly-metadata/src/AssemblyMetadata.csproj -c Release -nologo -v minimal
+          if ($LASTEXITCODE -ne 0) { throw 'Metadata extractor failed.' }
+      - name: Compile frozen Source Link candidate and run release/consumer gates
+        shell: pwsh
+        run: |
+          & ./tooling/pilots/recordsift/EXP-024/run.ps1 -ApplicationRoot (Join-Path $env:GITHUB_WORKSPACE 'recordsift') -EvidenceRoot (Join-Path $env:RUNNER_TEMP 'RecordSift-EXP-024-for-029')
+          if ($LASTEXITCODE -ne 0) { throw 'Historical release-gated Source Link candidate failed.' }
+      - name: Independent LLVM PDB document and checksum inventory
+        shell: pwsh
+        run: |
+          & ./tooling/pilots/recordsift/EXP-029/probe.ps1 -ApplicationRoot (Join-Path $env:GITHUB_WORKSPACE 'recordsift') -EvidenceRoot (Join-Path $env:RUNNER_TEMP 'EXP-029-evidence')
+          if ($LASTEXITCODE -ne 0) { throw 'PDB document inventory probe failed closed.' }
+      - name: Retain small inventory evidence only (no PDB, source or raw paths)
+        if: always()
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4.6.2
+        with:
+          name: exp029-native-pdb-document-inventory
+          retention-days: 30
+          if-no-files-found: warn
+          path: |
+            ${{ runner.temp }}/EXP-029-evidence/*.json
+            ${{ runner.temp }}/RecordSift-EXP-024-for-029/experiment-report.json
+            ${{ runner.temp }}/RecordSift-EXP-024-for-029/candidate-versus-original-compatibility.json

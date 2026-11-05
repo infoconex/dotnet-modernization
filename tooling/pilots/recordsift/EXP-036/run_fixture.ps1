@@ -229,8 +229,17 @@ if ($Experiment37Variants) {
             $observed = RunBounded (Join-Path $bin "ReaderProbe-$reader37.exe") $dll $pdb
             $rows37 = @($observed -split '\r?\n' | Where-Object { $_.StartsWith('DOC' + [char]9) })
             $missing37 = @($observed -split '\r?\n' | Where-Object { $_.StartsWith('MISSING' + [char]9) })
+            if ($rows37.Count -eq 0 -and $missing37.Count -eq 1) {
+                $missingTokens37 = $missing37[0].Split([char]9)
+                if ($missingTokens37.Count -ne 2 -or $missingTokens37[1] -cne 'DifferentialSource.cs') {
+                    throw 'EXP037 unrecognized source document without checksum'
+                }
+                $views[$reader37] = @{ Status='DISCOVERED_WITHOUT_HASH'; Algorithm='NONE'; Digest='NONE' }
+                Write-Host "EXP037 $($case37.Name) $reader37 observed one document WITHOUT checksum bytes"
+                continue
+            }
             if ($rows37.Count -ne 1 -or $missing37.Count -ne 0) {
-                throw "EXP037 $($case37.Name) $reader37 document count or checksum absent"
+                throw "EXP037 $($case37.Name) $reader37 unexpected document inventory"
             }
             $tokens37 = $rows37[0].Split([char]9)
             if ($tokens37.Count -ne 4 -or $tokens37[1] -cne 'DifferentialSource.cs') {
@@ -246,23 +255,24 @@ if ($Experiment37Variants) {
             if ($tokens37[3] -cne $physical37) {
                 throw 'EXP037 physical compiler-input checksum mismatch'
             }
-            $views[$reader37] = @{ Algorithm=$algorithm37; Digest=$tokens37[3] }
+            $views[$reader37] = @{ Status='MATCHED_PHYSICAL_SOURCE_BYTES'; Algorithm=$algorithm37; Digest=$tokens37[3] }
             Write-Host "EXP037 $($case37.Name) $reader37 verified one physical source digest ($algorithm37)"
         }
-        if ($views['DNLIB'].Algorithm -cne $views['CECIL'].Algorithm -or
+        if ($views['DNLIB'].Status -cne $views['CECIL'].Status -or
+            $views['DNLIB'].Algorithm -cne $views['CECIL'].Algorithm -or
             $views['DNLIB'].Digest -cne $views['CECIL'].Digest) {
             throw 'EXP037 independent managed readers disagree'
         }
         $extra += [ordered]@{
             name=$case37.Name; checksum_switch=($case37.ExplicitAlgorithm ?? 'OMITTED')
             deterministic=$case37.Deterministic; pathmap=$case37.Map; sourcelink=$case37.SourceLink
-            two_independent_readers='MATCHED_PHYSICAL_SOURCE_BYTES'
+            two_independent_readers=$views['DNLIB'].Status
             checksum_algorithm=$views['DNLIB'].Algorithm; source_documents=1
             native_pdb_identity='MATCHED'
         }
     }
     [ordered]@{
-        experiment='EXP-037'; phase='direct_compiler_differential'; result='PASS_FOR_FIVE_SINGLE_VARIABLE_CONTROLLED_FIXTURES'
+        experiment='EXP-037'; phase='direct_compiler_differential'; result='FIVE_CONTROLLED_VARIANTS_CLASSIFIED_CHECKSUM_GATE_NOT_AUTOMATICALLY_PASSED'
         compiler_executable_sha256=(Get-FileHash $csc -Algorithm SHA256).Hash.ToLowerInvariant()
         variants=$extra
         limitation='Synthetic direct-csc fixtures only. Cannot assert RecordSift compiler inputs or candidate checksum gate.'

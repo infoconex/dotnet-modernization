@@ -173,7 +173,12 @@ def inspect(pdb, dll, sha=EXPECTED_SHA):
         raise ValueError('PE CodeView RSDS GUID/age does not match native PDB')
     entries=[(n,i) for n,i in named.items() if re.fullmatch(r'sourcelink\$\d+',n,re.I)]
     if not entries:
-        raise ValueError('No native PDB Source Link named streams (srcsrv is not sufficient)')
+        # Expose only restricted named-stream identifiers, never arbitrary paths or raw source.
+        safe_names = sorted(n for n in named if re.fullmatch(r'[A-Za-z/_$][A-Za-z0-9/_$.-]{0,63}', n))
+        raise ValueError('No native PDB Source Link named streams; '
+                         'named_stream_count=' + str(len(named)) +
+                         '; bounded_safe_names=' + repr(safe_names[:20]) +
+                         ' (srcsrv is not sufficient)')
     documents={}
     for name,i in entries:
         if streams[i] is None or len(streams[i])>MAX_STREAM:

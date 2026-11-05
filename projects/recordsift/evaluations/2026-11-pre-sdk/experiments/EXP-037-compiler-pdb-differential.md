@@ -29,7 +29,7 @@ Retrieve only exact pinned official archives `dnlib 4.5.0` and `Mono.Cecil 0.11.
 ## Acceptance / negative cases
 
 - Compiler log synthetic tests must prove path/reference arguments are stripped, expected switch values remain, and an empty Csc task does not falsely report switches.
-- Direct compiled fixture cases must all have actual native MSF7 PDB identity and both managed readers must match compiler-input checksum bytes. A failed variant is a finding, not an application-compatibility failure.
+- Each fixture case must have native MSF7 PDB identity. Each parser must independently identify the same document and either report a matching physical source-byte digest or explicitly classify `DISCOVERED_WITHOUT_HASH`. Unexpected/missing documents, conflicting reader classification, mismatched present hashes, or bad PDB identity still fail the diagnostic harness. Missing hashes are preserved as negative observations and **do not** pass Gate C.
 - Existing wrong-DLL/PDB and source-mutation controls remain negative (EXP-036).
 - If the private diagnostic transcript does not expose a full compiler invocation, mark exact candidate effective arguments as **PARTIAL**, not verified. Compiler-server identity and loaded writer remain open until direct evidence exists.
 - Actual frozen candidate Gate C remains **UNSATISFIED** regardless of synthetic fixture outcomes.

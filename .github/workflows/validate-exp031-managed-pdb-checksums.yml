@@ -29,6 +29,28 @@ jobs:
       - uses: actions/setup-dotnet@a98b56852c35b8e3190ac28c8c2271da59106c68 # v6.0.0
         with:
           dotnet-version: '10.0.403'
+      - name: Fail closed unless patched native DiaSymReader package is publicly available
+        shell: pwsh
+        run: |
+          $ErrorActionPreference='Stop'
+          $required='18.9.0-beta1.26405.2'
+          $url='https://api.nuget.org/v3-flatcontainer/microsoft.diasymreader.native/index.json'
+          $report=[ordered]@{experiment='EXP-031';native_package='Microsoft.DiaSymReader.Native';
+              required_patched_version=$required;feed=$url;available=$false;
+              status='BLOCKED_PENDING_PATCHED_PACKAGE_AVAILABILITY';
+              policy='Never install/execute a vulnerable fallback package for native PDB inspection.'}
+          try {
+            $v=Invoke-RestMethod -Uri $url -TimeoutSec 30
+            $report.available=@($v.versions|Where-Object{$_ -ceq $required}).Count -eq 1
+            $report.status=if($report.available){'PATCHED_VERSION_AVAILABLE'}else{'BLOCKED_PENDING_PATCHED_PACKAGE_AVAILABILITY'}
+            $report.latest_listed=@($v.versions)|Select-Object -Last 1
+          }catch{
+            $report.status='BLOCKED_NUGET_FEED_UNAVAILABLE'
+          }
+          $report|ConvertTo-Json -Depth 8|Set-Content (Join-Path $env:RUNNER_TEMP 'exp031-security-preflight.json') -Encoding utf8
+          if(-not $report.available) {
+            throw 'Security preflight: patched Microsoft.DiaSymReader.Native 18.9.0-beta1.26405.2 not available; refuse older vulnerable native PDB parser.'
+          }
       - name: Build isolated patched Microsoft DiaSymReader inspection tool
         shell: pwsh
         run: |
@@ -71,6 +93,7 @@ jobs:
           retention-days: 30
           if-no-files-found: warn
           path: |
+            ${{ runner.temp }}/exp031-security-preflight.json
             ${{ runner.temp }}/exp031-managed-checksum-records.json
             ${{ runner.temp }}/exp031-native-identity.json
             ${{ runner.temp }}/RecordSift-EXP-024-for-031/experiment-report.json

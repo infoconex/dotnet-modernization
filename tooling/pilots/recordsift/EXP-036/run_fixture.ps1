@@ -195,7 +195,7 @@ if ($Experiment37Variants) {
         New-Item -ItemType Directory -Force -Path $caseRoot | Out-Null
         $source = Join-Path $caseRoot 'DifferentialSource.cs'
         [IO.File]::WriteAllText($source,
-            "public static class DifferentialSource {\u0060r\u0060n public static int Identity(int value) { return value; }\u0060r\u0060n}\u0060r\u0060n",
+            "public static class DifferentialSource {`r`n public static int Identity(int value) { return value; }`r`n}`r`n",
             [Text.UTF8Encoding]::new($false))
         $dll = Join-Path $caseRoot 'Differential.dll'
         $pdb = Join-Path $caseRoot 'Differential.pdb'

@@ -109,3 +109,20 @@ See [outstanding approval protocol](experiments/remaining-source-link-approval-g
 ## November 5 EXP-036 addendum — independently measured managed Windows-PDB checksum distinction
 
 The consolidated matrix above covered EXP-001–035 and predates [EXP-036](experiments/EXP-036-managed-pdb-source-checksums.md). New evidence does **not** grant adoption authorization: in the controlled direct-Roslyn classic-PDB fixture [42085539647](https://github.com/infoconex/dotnet-modernization/actions/runs/42085539647), two independent managed readers passed SHA1/SHA256 document digest equality with physical compiler source bytes. In the actual frozen RecordSift CSV manual Source Link candidate [42087528244](https://github.com/infoconex/dotnet-modernization/actions/runs/42087528244), original full release/consumer gates passed but dnlib and Cecil each discovered four owned documents **without any exposed checksum digest bytes (0/4)**. The checksum gate therefore **fails closed**; physical alternate-stream absence remains unresolved. No source package/runtime modification or API drift was detected. The exact real compiler invocation/writer difference remains a future scoped investigation, and the VS install/debugger gates are still not tested. Preserve Source Link **HOLD** and prior stakeholder approval boundary.
+
+
+## November 5 EXP-037 addendum — managed checksum extraction versus physically present source digests
+
+**[Verified isolated research run 42115147369](https://github.com/infoconex/dotnet-modernization/actions/runs/42115147369)** (draft [PR #59](https://github.com/infoconex/dotnet-modernization/pull/59), research SHA `d2be221081444892d30a0deff0b56d91efefd0e8`; [experiment](experiments/EXP-037-compiler-pdb-differential.md)) advances the EXP-036 source-checksum negative without altering the application. All frozen original and manual Source Link candidate API/NUnit/XML/local package/clean consumer/five logical-compatibility controls still PASS. Actual Csc diagnostic invocation exposes `/pathmap` and `/deterministic+` but candidate compiler-server and writer identity remain PARTIAL.
+
+**Controlled differential VERIFIED:** direct Roslyn SHA256 checksum metadata is exposed through both dnlib and Cecil with/without explicit checksum flag and with deterministic-only compilation. Adding pathmap to deterministic direct compilation causes both to discover the same document **without exposing its checksum**, even without Source Link. **Independent MSF7 byte scan VERIFIED:** the original exact source SHA256 bytes are **still stored in named `/SRC/FILES/` streams** in every tested direct fixture and for all **four** actual frozen CSV sources (one matching digest per file), despite the actual two managed parsers returning 0/4. Pathmap controls retain digest bytes under mapped source stream names. Upstream pinned reader code constructs named source stream lookup from document name; exact document-to-named-key equality is the narrow next unverified diagnostic. A physical digest hit alone does not prove per-document record authenticity.
+
+| Approval dimension | EXP-037 result | Decision consequence |
+|---|---|---|
+| Controlled pathmap/managed-checksum interaction | **VERIFIED** (both readers, independent controls) | Target exact document-name to `/SRC/FILES/` key association |
+| Real CSV physical input digests in native named source streams | **VERIFIED**, four of four | Do **not** describe actual native PDB as checksum-byte-free |
+| Real CSV *managed document-associated* checksum authenticity | **UNSATISFIED** (dnlib 0/4, Cecil 0/4) | Gate C remains fail-closed; no adoption |
+| Actual Csc compiler host, native writer binary identities | **PARTIAL** | No version/writer equality claim |
+| Authentic VS Package Manager installation / debugger source stepping | **NOT TESTED** | Independent stakeholder approval gates remain open |
+
+**Disposition unchanged:** Source Link **HOLD**. No changes to the existing approval-gate policy, RecordSift, packages or default branches. Reported evidence only; not production modernization authorization.

@@ -1,6 +1,6 @@
 # EXP-036 isolated classic Windows-PDB fixture. No application checkout/build.
 # This run is restricted to compiler-produced, trusted local inputs; never fuzz a parser.
-param([Parameter(Mandatory=$true)][string]$ArchiveRoot)
+param([Parameter(Mandatory=$true)][string]$ArchiveRoot, [switch]$Experiment37Variants)
 $ErrorActionPreference='Stop'
 Set-StrictMode -Version Latest
 $global:LASTEXITCODE=0 # strict-mode compatible initial state before the first native subprocess
@@ -179,6 +179,105 @@ $summary=@{experiment='EXP-036';evidence='trusted locally generated managed Wind
     negative_wrong_pdb='rejected';cases=$result;scope='NO RECORDSIFT PDB INSPECTED; NO SOURCE LINK ACCEPTANCE'}
 $summary | ConvertTo-Json -Depth 8 | Set-Content (Join-Path $temp 'fixture-result.json') -Encoding utf8
 Write-Host 'EXP036 fixture validation passed, with separate PDB and application gates still open.'
+
+
+# EXP-037 opt-in: single-source classic PDB differential, no application changes.
+# Uses exact same pinned managed readers, compiler, isolated process and controls.
+if ($Experiment37Variants) {
+    $extra = @()
+    # Exact same physical compiler-input source path/bytes across all five variants.
+    $sourceRoot37 = Join-Path $temp 'EXP037-source'
+    New-Item -ItemType Directory -Force -Path $sourceRoot37 | Out-Null
+    $source37 = Join-Path $sourceRoot37 'DifferentialSource.cs'
+    [IO.File]::WriteAllText($source37,
+        "public static class DifferentialSource {`r`n public static int Identity(int value) { return value; }`r`n}`r`n",
+        [Text.UTF8Encoding]::new($false))
+    $cases37 = @(
+        @{ Name='explicit-sha256'; Deterministic=$false; Map=$false; SourceLink=$false; ExplicitAlgorithm='SHA256' },
+        @{ Name='implicit-checksum'; Deterministic=$false; Map=$false; SourceLink=$false; ExplicitAlgorithm=$null },
+        @{ Name='deterministic-only'; Deterministic=$true; Map=$false; SourceLink=$false; ExplicitAlgorithm='SHA256' },
+        @{ Name='deterministic-pathmap'; Deterministic=$true; Map=$true; SourceLink=$false; ExplicitAlgorithm='SHA256' },
+        @{ Name='deterministic-pathmap-sourcelink'; Deterministic=$true; Map=$true; SourceLink=$true; ExplicitAlgorithm='SHA256' }
+    )
+    foreach ($case37 in $cases37) {
+        $caseRoot = Join-Path $temp ('EXP037-' + $case37.Name)
+        New-Item -ItemType Directory -Force -Path $caseRoot | Out-Null
+        $source = $source37
+        $dll = Join-Path $caseRoot 'Differential.dll'
+        $pdb = Join-Path $caseRoot 'Differential.pdb'
+        $args37 = @('/nologo','/noconfig','/langversion:7.3','/target:library',
+            '/debug:pdbonly',"/out:$dll","/pdb:$pdb",
+            "/reference:$(Join-Path $refs 'mscorlib.dll')")
+        if ($case37.Deterministic) { $args37 += '/deterministic+' }
+        else { $args37 += '/deterministic-' }
+        $args37 += '/optimize-'
+        if ($case37.Map) { $args37 += "/pathmap:$sourceRoot37=/_/" }
+        if ($case37.ExplicitAlgorithm) { $args37 += "/checksumalgorithm:$($case37.ExplicitAlgorithm)" }
+        if ($case37.SourceLink) {
+            $mapping = Join-Path $caseRoot 'sourcelink.json'
+            # Synthetic, never fetched. Only the compiler's native symbol-writer behavior is under test.
+            [IO.File]::WriteAllText($mapping, '{"documents":{"*":"https://invalid.example.test/synthetic/*"}}',
+                [Text.UTF8Encoding]::new($false))
+            $args37 += "/sourcelink:$mapping"
+        }
+        $args37 += $source
+        Compile $args37
+        python (Join-Path $PSScriptRoot 'verify_identity.py') --dll $dll --pdb $pdb
+        if ($LASTEXITCODE -ne 0) { throw 'EXP037 differential PE/PDB identity failed' }
+        $views = @{}
+        foreach ($reader37 in @('DNLIB','CECIL')) {
+            $observed = RunBounded (Join-Path $bin "ReaderProbe-$reader37.exe") $dll $pdb
+            $rows37 = @($observed -split '\r?\n' | Where-Object { $_.StartsWith('DOC' + [char]9) })
+            $missing37 = @($observed -split '\r?\n' | Where-Object { $_.StartsWith('MISSING' + [char]9) })
+            if ($rows37.Count -eq 0 -and $missing37.Count -eq 1) {
+                $missingTokens37 = $missing37[0].Split([char]9)
+                if ($missingTokens37.Count -ne 2 -or $missingTokens37[1] -cne 'DifferentialSource.cs') {
+                    throw 'EXP037 unrecognized source document without checksum'
+                }
+                $views[$reader37] = @{ Status='DISCOVERED_WITHOUT_HASH'; Algorithm='NONE'; Digest='NONE' }
+                Write-Host "EXP037 $($case37.Name) $reader37 observed one document WITHOUT checksum bytes"
+                continue
+            }
+            if ($rows37.Count -ne 1 -or $missing37.Count -ne 0) {
+                throw "EXP037 $($case37.Name) $reader37 unexpected document inventory"
+            }
+            $tokens37 = $rows37[0].Split([char]9)
+            if ($tokens37.Count -ne 4 -or $tokens37[1] -cne 'DifferentialSource.cs') {
+                throw 'EXP037 unexpected managed document identity'
+            }
+            $algorithm37 = @{'ff1816ec-aa5e-4d10-87f7-6f4963833460'='SHA1';
+                '8829d00f-11b8-4213-878b-770e8597ac16'='SHA256'}[$tokens37[2]]
+            if (-not $algorithm37) { throw 'EXP037 unexpected algorithm GUID' }
+            if ($case37.ExplicitAlgorithm -and $algorithm37 -cne $case37.ExplicitAlgorithm) {
+                throw 'EXP037 explicit checksum algorithm ignored'
+            }
+            $physical37 = (Get-FileHash $source -Algorithm $algorithm37).Hash.ToLowerInvariant()
+            if ($tokens37[3] -cne $physical37) {
+                throw 'EXP037 physical compiler-input checksum mismatch'
+            }
+            $views[$reader37] = @{ Status='MATCHED_PHYSICAL_SOURCE_BYTES'; Algorithm=$algorithm37; Digest=$tokens37[3] }
+            Write-Host "EXP037 $($case37.Name) $reader37 verified one physical source digest ($algorithm37)"
+        }
+        if ($views['DNLIB'].Status -cne $views['CECIL'].Status -or
+            $views['DNLIB'].Algorithm -cne $views['CECIL'].Algorithm -or
+            $views['DNLIB'].Digest -cne $views['CECIL'].Digest) {
+            throw 'EXP037 independent managed readers disagree'
+        }
+        $extra += [ordered]@{
+            name=$case37.Name; checksum_switch=($case37.ExplicitAlgorithm ?? 'OMITTED')
+            deterministic=$case37.Deterministic; pathmap=$case37.Map; sourcelink=$case37.SourceLink
+            two_independent_readers=$views['DNLIB'].Status
+            checksum_algorithm=$views['DNLIB'].Algorithm; source_documents=1
+            native_pdb_identity='MATCHED'
+        }
+    }
+    [ordered]@{
+        experiment='EXP-037'; phase='direct_compiler_differential'; result='FIVE_CONTROLLED_VARIANTS_CLASSIFIED_CHECKSUM_GATE_NOT_AUTOMATICALLY_PASSED'
+        compiler_executable_sha256=(Get-FileHash $csc -Algorithm SHA256).Hash.ToLowerInvariant()
+        variants=$extra
+        limitation='Synthetic direct-csc fixtures only. Cannot assert RecordSift compiler inputs or candidate checksum gate.'
+    } | ConvertTo-Json -Depth 10 | Set-Content (Join-Path $temp 'exp037-variants.json') -Encoding utf8
+}
 
 # An intentionally failing wrong-PDB native check leaves LASTEXITCODE nonzero.
 # Reset it only after all assertions and the summary succeeded.

@@ -70,8 +70,8 @@ class ActualFileParityControls(unittest.TestCase):
 
     def mock_git(self, sha=EXPECTED_SHA, tracked=True):
         return [
-            SimpleNamespace(stdout=sha + '\\n', returncode=0),
-            SimpleNamespace(stdout=FILE + '\\n', returncode=0 if tracked else 1),
+            SimpleNamespace(stdout=sha, returncode=0),
+            SimpleNamespace(stdout=FILE, returncode=0 if tracked else 1),
         ]
 
     def test_verified_remote_bytes_are_identical(self):

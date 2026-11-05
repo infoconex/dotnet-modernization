@@ -1,0 +1,64 @@
+name: EXP-032 inspect actual MSBuild-host Source Link task assembly bindings
+
+on:
+  pull_request:
+    paths:
+      - '.github/workflows/validate-exp032-task-module-bindings.yml'
+      - 'tooling/pilots/recordsift/EXP-032/**'
+      - 'tooling/pilots/recordsift/EXP-024/run.ps1'
+      - 'projects/recordsift/evaluations/2026-11-pre-sdk/experiments/EXP-032-task-bindings.md'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  windows-source-link-load-probe:
+    runs-on: windows-2022
+    timeout-minutes: 95
+    steps:
+      - uses: actions/checkout@08c6903cd8c0fde910a37f88322edcfb5dd907a8 # v5.0.0
+        with:
+          persist-credentials: false
+      - uses: actions/checkout@08c6903cd8c0fde910a37f88322edcfb5dd907a8 # v5.0.0
+        with:
+          repository: infoconex/RecordSift
+          ref: 8358780829458854a4b0356df5ac5e685f0a34c8
+          fetch-depth: 0
+          path: recordsift
+          persist-credentials: false
+      - uses: actions/setup-dotnet@a98b56852c35b8e3190ac28c8c2271da59106c68 # v6.0.0
+        with:
+          dotnet-version: '10.0.403'
+      - name: Build existing assembly-contract metadata extractor
+        shell: pwsh
+        run: |
+          dotnet build tooling/assembly-metadata/src/AssemblyMetadata.csproj -c Release -nologo -v minimal
+          if ($LASTEXITCODE -ne 0) { throw 'Existing assembly metadata gate failed.' }
+      - name: Build disposable Source Link candidate with in-process MSBuild module probe
+        shell: pwsh
+        run: |
+          $folder=Join-Path $env:RUNNER_TEMP 'RecordSift-EXP-032'
+          & ./tooling/pilots/recordsift/EXP-024/run.ps1 -ApplicationRoot (Join-Path $env:GITHUB_WORKSPACE 'recordsift') -EvidenceRoot $folder -CaptureLoadedModules
+          if ($LASTEXITCODE -ne 0) { throw 'Module binding capture or original release gates failed.' }
+          $report=Get-Content (Join-Path $folder 'experiment-report.json') -Raw|ConvertFrom-Json
+          if ($report.application_release_gates -cne 'candidate_425_api_419_nunit_5_xml_local_package_clean_consumer_passed' -or
+              -not $report.task_probe_host_identity_observed -or @($report.loaded_module_categories).Count -lt 1) {
+             throw 'Missing actual MSBuild process/app-domain module evidence or release compatibility.'
+          }
+          $names=@($report.loaded_module_categories|ForEach-Object{$_.name})
+          if ($names -notcontains 'Microsoft.Build.Tasks.Git' -and
+              $names -notcontains 'Microsoft.SourceLink.Common') {
+            throw 'Actual capture did not observe any Source Link or Git task assemblies.'
+          }
+          Write-Host "PASS: observed $(@($report.loaded_module_categories).Count) selected loaded modules from compiler MSBuild host AppDomain."
+      - name: Retain redacted module categories and application contract checks only
+        if: always()
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4.6.2
+        with:
+          name: exp032-msbuild-module-category-evidence
+          retention-days: 30
+          if-no-files-found: warn
+          path: |
+            ${{ runner.temp }}/RecordSift-EXP-032/experiment-report.json
+            ${{ runner.temp }}/RecordSift-EXP-032/candidate-versus-original-compatibility.json

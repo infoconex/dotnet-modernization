@@ -1,0 +1,40 @@
+<Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <!-- Research-only import added to a disposable traditional csproj. -->
+  <UsingTask TaskName="RecordSiftResearchCaptureModules"
+             TaskFactory="RoslynCodeTaskFactory"
+             AssemblyFile="$(MSBuildToolsPath)\Microsoft.Build.Tasks.Core.dll">
+    <ParameterGroup>
+      <OutputFile ParameterType="System.String" Required="true" />
+    </ParameterGroup>
+    <Task>
+      <Using Namespace="System" />
+      <Using Namespace="System.IO" />
+      <Using Namespace="System.Linq" />
+      <Using Namespace="System.Diagnostics" />
+      <Code Type="Fragment" Language="cs"><![CDATA[
+        var names = new[] {
+          "Microsoft.Build.Tasks.Git",
+          "Microsoft.SourceLink.Common",
+          "Microsoft.SourceLink.GitHub",
+          "System.Buffers", "System.Memory", "System.IO.Hashing",
+          "System.Numerics.Vectors", "System.Runtime.CompilerServices.Unsafe"
+        };
+        var marker = "HOST|" + Process.GetCurrentProcess().Id.ToString() + "|" +
+                     AppDomain.CurrentDomain.Id.ToString();
+        var rows = new[] { marker }.Concat(
+            AppDomain.CurrentDomain.GetAssemblies()
+                .Where(a => names.Contains(a.GetName().Name, StringComparer.OrdinalIgnoreCase))
+                .Select(a => {
+                    string path;
+                    try { path = a.Location; } catch { path = "<UNKNOWN>"; }
+                    return a.GetName().Name + "|" + a.GetName().Version.ToString() + "|" + path;
+                })
+        );
+        File.WriteAllLines(OutputFile, rows);
+      ]]></Code>
+    </Task>
+  </UsingTask>
+  <Target Name="RecordSiftResearchCollectTaskBindings" AfterTargets="CoreCompile">
+    <RecordSiftResearchCaptureModules OutputFile="$(SourceLinkProbeOutput)" />
+  </Target>
+</Project>

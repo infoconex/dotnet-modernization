@@ -61,7 +61,7 @@ function Compile([string[]]$parts) {
 $readerSrc=Join-Path $PSScriptRoot 'ReaderProbe.cs'
 foreach($reader in @('DNLIB','CECIL')){
     $exe=Join-Path $bin ("ReaderProbe-{0}.exe" -f $reader)
-    $refsArg=@("/reference:$(Join-Path $refs 'mscorlib.dll')","/reference:$(Join-Path $refs 'System.dll'),"/reference:$(Join-Path $refs 'System.Core.dll')")
+    $refsArg=@("/reference:$(Join-Path $refs 'mscorlib.dll')","/reference:$(Join-Path $refs 'System.dll')","/reference:$(Join-Path $refs 'System.Core.dll')")
     if($reader -eq 'DNLIB'){
         $refsArg+=("/reference:$(Join-Path $bin 'dnlib.dll')")
     }else{

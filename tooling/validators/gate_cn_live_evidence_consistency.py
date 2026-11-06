@@ -55,13 +55,16 @@ def validate(scope, report):
     evidence = scope["source_evidence"]
     require(type(evidence) is dict and
             set(evidence) == {"run_id", "workflow_id", "executing_research_sha",
-                              "artifact_id", "artifact_zip_sha256"} and
+                              "artifact_id", "artifact_zip_sha256",
+                              "sanitized_json_sha256"} and
             all(integer(evidence.get(k)) and evidence[k] > 0
                 for k in ("run_id", "workflow_id", "artifact_id")) and
             type(evidence["executing_research_sha"]) is str and
             evidence["executing_research_sha"] == scope["application_commit"] and
             type(evidence["artifact_zip_sha256"]) is str and
-            bool(DIGEST.fullmatch(evidence["artifact_zip_sha256"])),
+            bool(DIGEST.fullmatch(evidence["artifact_zip_sha256"])) and
+            type(evidence["sanitized_json_sha256"]) is str and
+            bool(DIGEST.fullmatch(evidence["sanitized_json_sha256"])),
             "EXP044_HISTORICAL_ARTIFACT_SCOPE_INVALID")
     require(type(report) is dict and set(report) == ROOT and
             report["schema"] == "gate-cn-live-research-result-v1" and

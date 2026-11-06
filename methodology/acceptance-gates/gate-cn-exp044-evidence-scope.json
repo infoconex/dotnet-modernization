@@ -12,6 +12,7 @@
     "workflow_id": 409057169,
     "executing_research_sha": "3c06d003ac75cc8b649a244be8705e44efa2c4c7",
     "artifact_id": 13486535447,
-    "artifact_zip_sha256": "dcb76d42aeccfd2e9524ca347bf24e4678430ab4a52960331450e41f27aa2bf6"
+    "artifact_zip_sha256": "dcb76d42aeccfd2e9524ca347bf24e4678430ab4a52960331450e41f27aa2bf6",
+    "sanitized_json_sha256": "e54696eeb8a860d5142288f4c57e152d673201f979f8ee8d31ac9ecd03c14439"
   }
 }

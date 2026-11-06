@@ -101,6 +101,20 @@ jobs:
           PY
           python3 tooling/validators/gate_cn_live_evidence_consistency.py \
             --scope "$scope" --report "$root/exp044-sanitized.json"
+          # Separately retain ONLY exact sanitized public report bytes in Git.
+          # The archived text and the original expiring artifact must match
+          # the external pinned report SHA256 exactly, byte-for-byte.
+          python3 - "$root/exp044-sanitized.json" "$scope" \
+            "methodology/acceptance-gates/evidence/exp044-non-recordsift-sanitized.json" <<'PY'
+          import hashlib,json,sys
+          actual=open(sys.argv[1],"rb").read()
+          archived=open(sys.argv[3],"rb").read()
+          expected=json.load(open(sys.argv[2],encoding="utf-8"))["source_evidence"]["sanitized_json_sha256"]
+          assert actual == archived, "Durable sanitized report differs from original artifact"
+          assert hashlib.sha256(actual).hexdigest() == expected
+          assert hashlib.sha256(archived).hexdigest() == expected
+          print("EXP044 immutable public report bytes and retained Git copy agree")
+          PY
           # Only after allowlisted content, source-run identity, and ZIP
           # authentication pass, print public JSON bytes for durable archiving.
           python3 - "$root/exp044-sanitized.json" <<'PY'

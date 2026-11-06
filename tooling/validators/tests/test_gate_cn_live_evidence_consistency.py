@@ -83,6 +83,7 @@ class EXP044SanitizedEvidenceTests(unittest.TestCase):
         self.fail_mutation(lambda s,r: s["source_evidence"].update(artifact_id=0))
         self.fail_mutation(lambda s,r: s["source_evidence"].update(artifact_zip_sha256="X"*64))
         self.fail_mutation(lambda s,r: s["source_evidence"].update(workflow_id="not-an-id"))
+        self.fail_mutation(lambda s,r: s["source_evidence"].update(sanitized_json_sha256="bad"))
 
     def test_wrong_generator_or_missing_pe_pair(self):
         self.fail_mutation(lambda s,r: r["results"][0].update(generated_inputs_verified=0))

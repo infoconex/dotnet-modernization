@@ -160,3 +160,19 @@ The EXP-037 pathmap result is now explained at the precise source-name level: **
 | Source Link production approval | **HOLD** | Consolidated stakeholder approval still required |
 
 **Research boundary unchanged:** no RecordSift code/pin/target change, no merge or publication. The portable-PDB format option and native vulnerable reader are not used as shortcuts; exact compiler-server/writer identity remains partial.
+
+
+## November 5 EXP-040 decision update — native document inventory reconciled, physical bytes incomplete
+
+[Experiment](experiments/EXP-040-native-document-provenance.md), [draft research PR #65](https://github.com/infoconex/dotnet-modernization/pull/65), [successful Windows/Ubuntu run 42159594243](https://github.com/infoconex/dotnet-modernization/actions/runs/42159594243). Frozen RecordSift source unchanged; original/candidate API, NUnit, XML, unpublished NuGet/clean consumer and five logical compatibility categories passed.
+
+| Gate | Independent finding | Current decision |
+|---|---|---|
+| Native CSV document inventory | **Seven** native named streams = seven DBI source identities = seven C13 FILECHKSMS identities across eight records | Three extra streams are **native-referenced source documents**, not unreferenced metadata |
+| Extra records' structure | All **three** have supported native SHA256 records; DBI and C13 references; no C13 line references | Do not infer they are irrelevant, generated, repository-owned or physically verified |
+| Original compiler-input bytes | SHA256 validated **4/7**; three originals unproven | Require separately trusted source-input manifest and exact-byte comparison |
+| Managed-reader Gate C | Both current readers expose **0/4** digest bytes | **UNSATISFIED; no alternate policy authorized** |
+| Actual VS Package Manager project install / remote stepping | No authentic execution evidence | **NOT TESTED** as separate gates |
+| Source Link adoption | No consolidated release authorization | **HOLD** |
+
+**Five review perspectives:** Build: keep frozen compiler/host and original release acceptance distinct from direct Roslyn fixtures. Security: bounded trusted PDB parser, private manifests destroyed, no native untrusted code or raw PDB/path/hash artifact. Architecture: reusable full normalized source identity and independent DBI/C13/managed/named inventories. Quality: 21 previous and 22 new regression tests passed, preserve two initial parser-harness failures and correction of C13 line block header sizing; no false application fault. Release governance: incomplete 4/7 physical-byte coverage and no stakeholder Gate C approval. Recommended next targeted investigation: authenticate three additional physical compiler inputs; only then evaluate whether an **alternative** Gate C evidence path merits a formal approval request. No app change, merge, NuGet publication or waiver.

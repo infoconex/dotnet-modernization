@@ -179,3 +179,21 @@ The EXP-037 pathmap result is now explained at the precise source-name level: **
 
 
 **Final EXP-040 C13 finding:** [Successful workflow 42159910996](https://github.com/infoconex/dotnet-modernization/actions/runs/42159910996) adds a categorical algorithm audit: all eight C13 FILECHKSMS entries are **NONE**, while the seven native `/SRC/FILES/` entries contain supported SHA256 records. Thus C13 establishes seven native **document references**, **not** seven cryptographic checksums. 21 existing and 23 new synthetic controls and repeated original/candidate release gates passed. Three extra physical-source inputs remain unknown; do not upgrade the 4/7 compiler-input-byte proof to 7/7 or change Gate C. Source Link **HOLD**, separate real IDE gates **NOT TESTED**.
+
+
+## November 5 EXP-041 decision update — all seven CSV native source inputs independently authenticated; Gate C not waived
+
+[Verified execution 42162017966](https://github.com/infoconex/dotnet-modernization/actions/runs/42162017966), [report](experiments/EXP-041-original-compiler-inputs.md), [issue #66](https://github.com/infoconex/dotnet-modernization/issues/66), [stacked draft PR #67](https://github.com/infoconex/dotnet-modernization/pull/67). Frozen original and manual candidate compatibility gates fully passed (425 API, 419 NUnit / 418 pass and one skip, five XML, local unpublished package, clean net48 installed consumer, five categories); 13/13 new Ubuntu controls passed. Executing SHA `760fa7e87c23a17a79337ca112b3eff23b7167e4`. Sanitized artifact ID `13477690414`, ZIP digest `sha256:60ca39e2f5696be5e509edceb0917d663d91002e487c0fe7453a39422e537823`.
+
+| Approval/verification area | New independent EXP-041 evidence | Disposition |
+|---|---|---|
+| Frozen CSV native source-document universe | 7 named SHA256 streams = 7 DBI and 7 C13 identity records (8 C13 occurrences, all NONE); 4 line docs + 3 non-line docs | **STRUCTURALLY RECONCILED** for CSV |
+| Physical compiler input authenticity | Snapshot seven actual temporary project `@(Compile)` physical inputs before CoreCompile; post-Csc bytes stable; PDB native digests match all **7/7**, zero missing | **VERIFIED for captured CSV native document universe** |
+| Three previously unexplained document origins | Two Git-tracked identities and one intermediate-directory identity, each byte-authenticated | **ONE PRODUCER UNVERIFIED**; do not infer generator solely from location |
+| Complete effective Csc argv provenance | Full Csc `Sources` task parameter vs capture not separately attested | **PARTIALLY VERIFIED**; do not overclaim invocation completeness |
+| Managed-reader Gate C | Unmodified managed reader checksum exposure still 0/4; no approved alternate evidence path | **UNSATISFIED — stakeholder decision needed to change approach** |
+| Full five-production-assembly native audit | Only frozen CSV independently byte-audited in EXP-041 | **NOT TESTED** in new procedure |
+| Authentic VS Package Manager project install / debugger source stepping | Not executed | **NOT TESTED** |
+| Source Link production adoption | No consolidated release authorization or policy waiver | **HOLD** |
+
+No RecordSift or research main branch changes, merges, dependency upgrades or NuGet publication. Continue with isolated compiler-input origin and invocation corroboration only; any revised Gate C evidence route must be explicitly approved, not silently inferred from a 7/7 native audit.

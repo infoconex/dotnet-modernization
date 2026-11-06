@@ -200,6 +200,21 @@ try {
         if (Test-Path -LiteralPath $privateCapture) { throw 'EXP041 private capture must be new' }
         $compileArgs+=("/p:SourceInputCaptureRoot=$privateCapture")
     }
+    if ($CaptureProducerProvenance) {
+        # Independent MSBuild *structured* TaskInput logger. The compiler and
+        # application are unchanged; only a private observation channel is added.
+        $cscTool=Join-Path (Split-Path -Parent $msbuild) 'Roslyn/csc.exe'
+        $frameworkAssembly=Join-Path (Split-Path -Parent $msbuild) 'Microsoft.Build.Framework.dll'
+        $loggerSource=Join-Path $research 'tooling/pilots/recordsift/EXP-042/CscParameterLogger.cs'
+        $loggerDll=Join-Path $evidence 'EXP042.CscParameterLogger.dll'
+        $structuredPrivate=Join-Path $evidence 'exp042-csc-parameters-private.tsv'
+        if (-not (Test-Path -LiteralPath $cscTool) -or -not (Test-Path -LiteralPath $frameworkAssembly)) {
+            throw 'EXP042 pinned host MSBuild compiler/framework unavailable'
+        }
+        & $cscTool /nologo /target:library /langversion:7.3 "/reference:$frameworkAssembly" '/reference:System.Core.dll' "/out:$loggerDll" $loggerSource *> (Join-Path $evidence 'exp042-logger-compile-private.log')
+        Assert-Exit 'EXP042 research-only structured logger compilation failed'
+        $compileArgs+=("/logger:RecordSiftResearchCscParameterLogger,$loggerDll;$structuredPrivate")
+    }
     & $msbuild @compileArgs '/t:Rebuild' '/verbosity:diagnostic' *> $log
     $exit=$LASTEXITCODE
     if ($exit -ne 0) {
@@ -219,7 +234,11 @@ try {
         if (-not (Test-Path -LiteralPath (Join-Path $producerPrivate 'producer-after.tsv'))) {
             throw 'EXP042 actual moniker generator output was not captured'
         }
+        if (-not (Test-Path -LiteralPath $structuredPrivate)) {
+            throw 'EXP042 MSBuild structured task event missing'
+        }
         $report.producer_provenance_probe='generated_target_private_output_observed; independent task log validation still required'
+        $report.structured_csc_probe='private_event_file_captured_not_yet_independently_authenticated'
         Write-Report
     }
     if ($CaptureCompilerSources) {

@@ -140,7 +140,7 @@ class NativeInventoryTests(unittest.TestCase):
         c13 = bytes(module[4:])
         first = struct.pack("<II", 0xF4, 8) + struct.pack("<IBB", 0, 0, 0) + bytes(2)
         second = c13[48:]  # Existing C13 lines subsection.
-        module = bytearray(b"\\x04\\x00\\x00\\x00" + first + second)
+        module = bytearray(struct.pack("<I", 4) + first + second)
         streams[5] = bytes(module)
         dbi = bytearray(streams[3])
         struct.pack_into("<I", dbi, 64 + 44, len(module) - 4)

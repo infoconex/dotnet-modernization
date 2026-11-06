@@ -11,7 +11,7 @@ import unittest
 
 sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
 from gate_cn_d1_synthetic import (
-    Approval, Candidate, CompilerEvent, CompiledOutput, Rejected,
+    Approval, Candidate, PackageSelection, CompilerEvent, CompiledOutput, Rejected,
     authorize_scope, verify_candidate_bindings, verify_compiler_output,
     canonical_sha256,
 )
@@ -84,7 +84,9 @@ def candidate_inputs():
         name: {assembly: candidates[assembly] for assembly in names}
         for name, names in required.items()
     }
-    selected = Candidate("1.0.0", digest(b"approved synthetic nupkg"))
+    selected = PackageSelection("Example.Package", "1.0.0",
+                                digest(b"approved synthetic nupkg"),
+                                "approved-local-feed")
     return candidates, required, suites, selected, selected
 
 
@@ -217,10 +219,24 @@ class D1SyntheticContractTests(unittest.TestCase):
         candidates, required, suites, approved, selected = candidate_inputs()
         self.assertTrue(self.candidate_bound(candidates, required, suites,
                                             approved, selected))
-        changed = Candidate("1.0.0", digest(b"alternate feed same package id/version"))
+        changed = PackageSelection(
+            "Example.Package", "1.0.0",
+            digest(b"alternate feed same package id/version"),
+            "unapproved-secondary-feed",
+        )
         self.blocked("D1_PACKAGE_ARCHIVE_IDENTITY_MISMATCH",
                      lambda: self.candidate_bound(candidates, required,
                                                   suites, approved, changed))
+        wrong_id = PackageSelection("Unexpected.Package", approved.version,
+                                    approved.sha256, approved.feed_identity)
+        self.blocked("D1_PACKAGE_ARCHIVE_IDENTITY_MISMATCH",
+                     lambda: self.candidate_bound(candidates, required,
+                                                  suites, approved, wrong_id))
+        wrong_feed = PackageSelection(approved.package_id, approved.version,
+                                      approved.sha256, "unapproved-feed")
+        self.blocked("D1_PACKAGE_ARCHIVE_IDENTITY_MISMATCH",
+                     lambda: self.candidate_bound(candidates, required,
+                                                  suites, approved, wrong_feed))
 
     def test_i_n01_old_paired_output_without_current_csc(self):
         event, output, sealed = compiler_inputs()

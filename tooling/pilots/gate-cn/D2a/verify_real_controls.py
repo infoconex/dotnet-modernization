@@ -92,7 +92,21 @@ def run_loaded(assembly, loader):
          "-AssemblyPath", str(assembly)],
         capture_output=True, text=True, timeout=30, check=False
     )
-    require(p.returncode == 0, "REAL_CLR_LOAD_INCONCLUSIVE")
+    if p.returncode != 0:
+        # Child catches exceptions and emits ONLY a bounded stage label.
+        # Do not forward raw PowerShell stderr, stdout or command arguments.
+        allowed = {
+            "D2A_CLR_STAGE_ASSEMBLY_LOAD_FAILED",
+            "D2A_CLR_STAGE_TYPE_LOOKUP_FAILED",
+            "D2A_CLR_STAGE_METHOD_INVOKE_FAILED",
+            "D2A_CLR_STAGE_ASSEMBLY_LOCATION_FAILED",
+            "D2A_CLR_STAGE_SHA256_READ_FAILED",
+            "D2A_CLR_STAGE_REPORT_JSON_FAILED",
+        }
+        labels = set(p.stderr.strip().splitlines())
+        stage = next((label for label in sorted(allowed) if label in labels),
+                     "REAL_CLR_LOAD_INCONCLUSIVE")
+        raise Failure(stage)
     try:
         value = json.loads(p.stdout.strip())
         require(value["loaded_location"].casefold() ==

@@ -29,10 +29,11 @@
             return false;
           }
           if (Mode == "prepare") {
-            if (!Directory.Exists(CaptureRoot)) {
-              Log.LogError("EXP042_PRIVATE_CAPTURE_ROOT_MISSING");
+            if (Directory.Exists(CaptureRoot)) {
+              Log.LogError("EXP042_PRIVATE_PRODUCER_ROOT_PREEXISTS");
               return false;
             }
+            Directory.CreateDirectory(CaptureRoot);
             string before = Path.Combine(CaptureRoot, "producer-before.flag");
             if (File.Exists(before) || File.Exists(Path.Combine(CaptureRoot, "producer-after.tsv"))) {
               Log.LogError("EXP042_GENERATOR_PROBE_ALREADY_RAN");
@@ -78,17 +79,18 @@
     </Task>
   </UsingTask>
   <Target Name="RecordSiftResearchPrepareMonikerInput"
-          BeforeTargets="GenerateTargetFrameworkMonikerAttribute">
+          BeforeTargets="GenerateTargetFrameworkMonikerAttribute"
+          DependsOnTargets="_SetTargetFrameworkMonikerAttribute">
     <RecordSiftResearchMonikerProducerProbe Mode="prepare"
         OutputPath="$(TargetFrameworkMonikerAssemblyAttributesPath)"
         ProjectDir="$(MSBuildProjectDirectory)"
-        CaptureRoot="$(SourceInputCaptureRoot)" />
+        CaptureRoot="$(SourceInputCaptureRoot)-producer" />
   </Target>
   <Target Name="RecordSiftResearchRecordMonikerInput"
           AfterTargets="GenerateTargetFrameworkMonikerAttribute">
     <RecordSiftResearchMonikerProducerProbe Mode="record"
         OutputPath="$(TargetFrameworkMonikerAssemblyAttributesPath)"
         ProjectDir="$(MSBuildProjectDirectory)"
-        CaptureRoot="$(SourceInputCaptureRoot)" />
+        CaptureRoot="$(SourceInputCaptureRoot)-producer" />
   </Target>
 </Project>

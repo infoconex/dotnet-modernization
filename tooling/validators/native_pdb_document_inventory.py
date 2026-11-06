@@ -68,7 +68,8 @@ def dbi_source_inventory(streams, named):
     if len(streams) <= 3 or streams[3] is None:
         return {"status": "DBI_UNAVAILABLE", "dbi": set(), "c13": set(),
                 "lines": set(), "modules": 0, "c13_records": 0,
-                "line_references": 0, "c13_checksums": {}}
+                "line_references": 0, "c13_checksums": {},
+                "c13_algorithm_counts": {}}
     dbi = streams[3]
     require(len(dbi) >= 64 and u32(dbi, 0) == 0xFFFFFFFF,
             "INVALID_DBI_HEADER")
@@ -123,6 +124,7 @@ def dbi_source_inventory(streams, named):
     c13_count = 0
     line_count = 0
     checksum_records = {}
+    c13_algorithm_counts = {}
     need_names = any(c13 for _, _, _, c13, _ in modules)
     name_data = None
     if need_names:
@@ -174,6 +176,8 @@ def dbi_source_inventory(streams, named):
                         require(checksum_records[full_key] == candidate,
                                 "CONFLICTING_C13_DOCUMENT_CHECKSUM_RECORDS")
                     checksum_records[full_key] = candidate
+                    algorithm_name = {0: "NONE", 1: "MD5", 2: "SHA1", 3: "SHA256"}[algorithm]
+                    c13_algorithm_counts[algorithm_name] = c13_algorithm_counts.get(algorithm_name, 0) + 1
                     c13_count += 1
                     require(c13_count <= MAX_REFERENCES, "TOO_MANY_C13_REFERENCES")
                     offset = (offset + 6 + size + 3) & ~3
@@ -203,7 +207,8 @@ def dbi_source_inventory(streams, named):
     return {"status": "DBI_PARSED", "dbi": dbi_keys, "c13": c13_keys,
             "lines": line_keys, "modules": len(modules),
             "c13_records": c13_count, "line_references": line_count,
-            "c13_checksums": checksum_records}
+            "c13_checksums": checksum_records,
+            "c13_algorithm_counts": c13_algorithm_counts}
 
 
 def audit(streams, named, readers):
@@ -274,6 +279,7 @@ def audit(streams, named, readers):
         "native_dbi_module_count": native["modules"],
         "native_dbi_file_info_documents": len(dbi_keys),
         "native_c13_checksum_records": native["c13_records"],
+        "native_c13_checksum_algorithm_counts": native["c13_algorithm_counts"],
         "native_c13_repeated_document_records": (
             native["c13_records"] - len(native["c13_checksums"])),
         "native_c13_checksum_matches_named_source": compared_c13,
@@ -317,6 +323,7 @@ def main():
             "c13_documents": report["native_c13_checksum_documents"],
             "line_documents": report["native_c13_line_documents"],
             "c13_records": report["native_c13_checksum_records"],
+            "c13_algorithms": report["native_c13_checksum_algorithm_counts"],
             "c13_repeated": report["native_c13_repeated_document_records"],
             "c13_named_checksum_matches": report["native_c13_checksum_matches_named_source"],
             "c13_not_comparable": report["native_c13_checksum_not_directly_comparable"],

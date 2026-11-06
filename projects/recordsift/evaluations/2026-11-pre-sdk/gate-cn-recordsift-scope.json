@@ -65,7 +65,11 @@
     "workflow_id": 408976399,
     "executing_research_sha": "9fb67deeb2aa4c98587727abc01e8a11f01070b4",
     "artifact_id": 13482117590,
-    "artifact_zip_sha256": "5efcc9b1c872f85c926eeef4819135a2325d97668b2abdcdde4e21f4b7e14443"
+    "artifact_zip_sha256": "5efcc9b1c872f85c926eeef4819135a2325d97668b2abdcdde4e21f4b7e14443",
+    "sanitized_report_sha256": {
+      "exp043-five-pdb-source-audit.json": "b251b9f3b32cbf2d662b71c7bf212ec9ad9fde71203db45767b11b4aafb848ec",
+      "exp043-managed-reader-exposure.json": "3b8326c77a99a5897833ca3089ab5bb54159d52c25c28bf0505f23e574137bbf"
+    }
   },
   "limitations": [
     "Sanitized reports cannot independently prove compiler-time physical source bytes or full key identity.",

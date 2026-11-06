@@ -62,7 +62,7 @@ jobs:
             $csv=Join-Path $app 'src/RecordSift.Infrastructure.Csv'
             python tooling/validators/exp041_compiler_input_audit.py --dll (Join-Path $csv 'bin/Release/RecordSift.Infrastructure.Csv.dll') --pdb (Join-Path $csv 'bin/Release/RecordSift.Infrastructure.Csv.pdb') --capture-dir $capture --app-root $app --output (Join-Path $env:RUNNER_TEMP 'exp042-native-audit.json')
             if ($LASTEXITCODE -ne 0) { throw 'EXP041 native PDB source-byte acceptance regressed' }
-            python tooling/validators/exp042_source_provenance.py --capture-dir $capture --producer-dir $producer --preprocessed (Join-Path $evidence 'msbuild-preprocessed.xml') --private-log (Join-Path $evidence 'msbuild-diagnostic-private.log') --project-dir $csv --output (Join-Path $env:RUNNER_TEMP 'exp042-provenance.json')
+            python tooling/validators/exp042_source_provenance.py --capture-dir $capture --producer-dir $producer --preprocessed (Join-Path $evidence 'msbuild-preprocessed.xml') --private-log (Join-Path $evidence 'msbuild-diagnostic-private.log') --project-dir $csv --structured-events (Join-Path $evidence 'exp042-csc-parameters-private.tsv') --output (Join-Path $env:RUNNER_TEMP 'exp042-provenance.json')
             if ($LASTEXITCODE -ne 0) { throw 'EXP042 private provenance evidence failed closed' }
             $report=Get-Content (Join-Path $env:RUNNER_TEMP 'exp042-provenance.json') -Raw | ConvertFrom-Json
             if ($report.gate_c -cne 'UNSATISFIED' -or $report.source_link_adoption -cne 'HOLD') { throw 'Approval gate incorrectly changed' }

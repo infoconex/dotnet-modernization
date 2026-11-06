@@ -121,6 +121,7 @@ class NativeInventoryTests(unittest.TestCase):
         streams, named, readers = fixture()
         result = audit(streams, named, readers)
         self.assertEqual(result["native_c13_checksum_matches_named_source"], 1)
+        self.assertEqual(result["native_c13_checksum_algorithm_counts"], {"SHA256": 1})
         self.assertEqual(result["native_c13_repeated_document_records"], 0)
 
     def test_c13_checksum_mismatch_rejected(self):
@@ -130,6 +131,24 @@ class NativeInventoryTests(unittest.TestCase):
         streams[5] = bytes(corrupted)
         with self.assertRaisesRegex(VerificationError, "C13_CHECKSUM_VS_NAMED"):
             audit(streams, named, readers)
+
+    def test_c13_no_checksum_kind_is_reported_not_as_digest_verification(self):
+        streams, named, readers = fixture()
+        module = bytearray(streams[5])
+        # Change C13 FILECHKSMS from SHA256(32) to NONE(0), keeping
+        # record alignment and updating subsection/module lengths.
+        c13 = bytes(module[4:])
+        first = struct.pack("<II", 0xF4, 8) + struct.pack("<IBB", 0, 0, 0) + bytes(2)
+        second = c13[48:]  # Existing C13 lines subsection.
+        module = bytearray(b"\\x04\\x00\\x00\\x00" + first + second)
+        streams[5] = bytes(module)
+        dbi = bytearray(streams[3])
+        struct.pack_into("<I", dbi, 64 + 44, len(module) - 4)
+        streams[3] = bytes(dbi)
+        r = audit(streams, named, readers)
+        self.assertEqual(r["native_c13_checksum_algorithm_counts"], {"NONE": 1})
+        self.assertEqual(r["native_c13_checksum_matches_named_source"], 0)
+        self.assertEqual(r["native_c13_checksum_not_directly_comparable"], 1)
 
     def test_duplicate_c13_document_record_same_digest_is_consistent(self):
         streams, named, readers = fixture()

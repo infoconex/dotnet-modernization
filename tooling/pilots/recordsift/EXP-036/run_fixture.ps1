@@ -1,6 +1,7 @@
 # EXP-036 isolated classic Windows-PDB fixture. No application checkout/build.
 # This run is restricted to compiler-produced, trusted local inputs; never fuzz a parser.
-param([Parameter(Mandatory=$true)][string]$ArchiveRoot, [switch]$Experiment37Variants)
+param([Parameter(Mandatory=$true)][string]$ArchiveRoot, [switch]$Experiment37Variants,
+      [switch]$Experiment38Keys, [string]$ApplicationRoot)
 $ErrorActionPreference='Stop'
 Set-StrictMode -Version Latest
 $global:LASTEXITCODE=0 # strict-mode compatible initial state before the first native subprocess
@@ -100,7 +101,7 @@ foreach($alg in @('SHA1','SHA256')){
     $cases+=@{Alg=$alg;Dir=$directory;Dll=$dll;Pdb=$pdb;Expected=$expected;Alpha=$alpha}
 }
 
-function RunBounded([string]$program,[string]$dll,[string]$pdb) {
+function RunBounded([string]$program,[string]$dll,[string]$pdb,[string]$privateOutput='') {
     $rule="EXP036-BLOCK-NET-" + [guid]::NewGuid().ToString('N')
     $ruleApplied=$false
     try{
@@ -109,6 +110,9 @@ function RunBounded([string]$program,[string]$dll,[string]$pdb) {
         $start=New-Object System.Diagnostics.ProcessStartInfo
         $start.FileName=$program
         $start.Arguments=('"'+$dll+'" "'+$pdb+'"')
+        if (-not [string]::IsNullOrWhiteSpace($privateOutput)) {
+            $start.Arguments += ' "' + $privateOutput + '"'
+        }
         $start.UseShellExecute=$false
         $start.RedirectStandardOutput=$true
         $start.RedirectStandardError=$true
@@ -277,6 +281,54 @@ if ($Experiment37Variants) {
         variants=$extra
         limitation='Synthetic direct-csc fixtures only. Cannot assert RecordSift compiler inputs or candidate checksum gate.'
     } | ConvertTo-Json -Depth 10 | Set-Content (Join-Path $temp 'exp037-variants.json') -Encoding utf8
+}
+
+
+# EXP-038: optional bounded private URL-key audit, after the five EXP-037
+# compiler options have generated trusted physical native-PDB controls.
+# Managed readers never print full URLs/paths; all private manifest bytes stay
+# under RUNNER_TEMP and are deleted even on validation failure.
+if ($Experiment38Keys) {
+    if (-not $Experiment37Variants -or -not $ApplicationRoot) {
+        throw 'EXP038 requires EXP037 fixture variants and frozen application checkout'
+    }
+    $privateDir=Join-Path $temp 'EXP038-private-urls'
+    if (Test-Path -LiteralPath $privateDir) {
+        throw 'EXP038 private output directory must not preexist'
+    }
+    New-Item -ItemType Directory -Path $privateDir -Force | Out-Null
+    try {
+        $jobs38=@('explicit-sha256','implicit-checksum','deterministic-only',
+            'deterministic-pathmap','deterministic-pathmap-sourcelink','frozen_csv_candidate')
+        foreach ($caseName in $jobs38) {
+            $d=if($caseName -ceq 'frozen_csv_candidate') {
+                Join-Path $ApplicationRoot 'src/RecordSift.Infrastructure.Csv/bin/Release'
+            } else {
+                Join-Path $temp ('EXP037-' + $caseName)
+            }
+            $assembly=if($caseName -ceq 'frozen_csv_candidate'){
+                'RecordSift.Infrastructure.Csv'
+            }else{'Differential'}
+            foreach($reader38 in @('DNLIB','CECIL')) {
+                $out=Join-Path $privateDir ($caseName+'-'+$reader38+'.private')
+                # RunBounded enforces outbound firewall, 20s, 256MiB and COM guard.
+                # Never output the private manifest path or full document URLs.
+                $stdout=RunBounded (Join-Path $bin "ReaderProbe-$reader38.exe") (
+                    Join-Path $d ($assembly+'.dll')) (
+                    Join-Path $d ($assembly+'.pdb')) $out
+                if(-not $stdout.Contains('END'+[char]9) -or -not (Test-Path -LiteralPath $out)) {
+                    throw 'EXP038 private document capture absent or malformed'
+                }
+            }
+        }
+        python (Join-Path $PSScriptRoot '../EXP-038/document_key_association.py') --self-test
+        if($LASTEXITCODE -ne 0){throw 'EXP038 key comparison synthetic tests failed'}
+        python (Join-Path $PSScriptRoot '../EXP-038/document_key_association.py') --fixture-root $temp --application-root $ApplicationRoot --private-url-dir $privateDir --output (Join-Path $temp 'exp038-keys.json')
+        if($LASTEXITCODE -ne 0){throw 'EXP038 exact named-stream lookup diagnostic failed'}
+    } finally {
+        Remove-Item -LiteralPath $privateDir -Recurse -Force -ErrorAction Stop
+    }
+    Write-Host 'EXP038 private original document URL manifests erased after Boolean/key diagnostic.'
 }
 
 # An intentionally failing wrong-PDB native check leaves LASTEXITCODE nonzero.

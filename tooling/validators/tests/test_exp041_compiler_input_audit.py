@@ -7,10 +7,12 @@ from pathlib import Path
 import sys
 import tempfile
 import unittest
+from unittest import mock
+from types import SimpleNamespace
 
 sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
 from exp041_compiler_input_audit import (
-    VerificationError, parse_pathmap, apply_pathmap, read_capture, verify,
+    VerificationError, parse_pathmap, apply_pathmap, read_capture, verify, run,
 )
 
 
@@ -127,6 +129,42 @@ class CompilerInputsTests(unittest.TestCase):
             with self.assertRaises(VerificationError):
                 verify({key:record(b"x")},dbi,
                        [(p,b"x",str(p)),(q,b"x",str(p))],Path(d))
+
+
+    def test_wrong_pdb_pair_rejected_before_source_join(self):
+        with tempfile.TemporaryDirectory() as d:
+            root = Path(d)
+            dll = root / "assembly.dll"
+            pdb = root / "assembly.pdb"
+            dll.write_bytes(b"not-real")
+            pdb.write_bytes(b"not-real")
+            opts = SimpleNamespace(capture_dir=root, dll=dll, pdb=pdb, app_root=root)
+            with mock.patch("exp041_compiler_input_audit.read_capture", return_value=([], [])), \
+                 mock.patch("exp041_compiler_input_audit.read_msf",
+                            return_value=[b"", b"pdb-info"]), \
+                 mock.patch("exp041_compiler_input_audit.parse_named_streams",
+                            return_value=("expected-guid", 1, {})), \
+                 mock.patch("exp041_compiler_input_audit.read_pe_codeview",
+                            return_value=("wrong-guid", 1)):
+                with self.assertRaises(VerificationError):
+                    run(opts)
+
+    def test_missing_generated_input_remains_unverified(self):
+        with tempfile.TemporaryDirectory() as d:
+            repo = Path(d)
+            checked_in = repo / "normal.cs"
+            generated = repo / "obj" / "Release" / "generated.cs"
+            generated.parent.mkdir(parents=True)
+            checked_in.write_bytes(b"ordinary")
+            generated.write_bytes(b"generated")
+            a = "/src/files/" + str(checked_in).casefold()
+            b = "/src/files/" + str(generated).casefold()
+            dbi = {"status":"DBI_PARSED", "dbi":{a,b}, "c13":{a,b},
+                   "lines":{a}, "c13_algorithm_counts":{"NONE":2}}
+            result=verify({a:record(b"ordinary"),b:record(b"generated")},
+                          dbi,[(checked_in,b"ordinary",str(checked_in))],repo)
+            self.assertEqual(result["native_documents_without_captured_input"],1)
+            self.assertEqual(result["native_inventory"],"INCOMPLETE")
 
 
 if __name__ == "__main__":

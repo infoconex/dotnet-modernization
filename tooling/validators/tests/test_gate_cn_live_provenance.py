@@ -143,6 +143,27 @@ class GateCNLiveResearchAdapterTests(unittest.TestCase):
         self.assertNotIn(self.temp.name, str(result))
         self.assertNotIn("Tracked.cs", str(result))
 
+    def test_individual_real_provenance_primitives_cross_platform(self):
+        # Synthetic-only diagnostics: identify precise host-sensitive primitive
+        # without exposing real source paths or weakening production fail-closed.
+        from exp041_compiler_input_audit import read_capture, verify as verify_native
+        from exp042_source_provenance import verify_provenance
+        fx = self.fixture
+        with mock.patch("exp041_compiler_input_audit.classify_origin",
+                        side_effect=fx.classify), redirect_stdout(io.StringIO()):
+            records, _ = read_capture(fx.capture)
+            verified = verify_native(fx.native, fx.dbi, records, fx.app)
+            self.assertEqual(verified["native_inventory"], "COVERED_BY_CAPTURE")
+            evidence = verify_provenance(
+                records, fx.private / "msbuild-preprocessed.xml",
+                (fx.private / "msbuild-diagnostic-private.log").read_text(encoding="utf-8-sig"),
+                fx.producer, fx.project,
+                fx.private / "exp042-csc-parameters-private.tsv")
+        self.assertEqual(evidence["effective_csc_sources_verification"],
+                         "MATCHED_INDEPENDENT_TASK_PARAMETER")
+        self.assertEqual(evidence["intermediate_producer"]["producer_status"],
+                         "VERIFIED_TARGET_EXECUTION_AND_BYTES")
+
     def test_actual_post_csc_physical_byte_mutation_fails(self):
         self.fixture.tracked.write_bytes(b"MODIFIED AFTER CAPTURE")
         result = self.fixture.execute()

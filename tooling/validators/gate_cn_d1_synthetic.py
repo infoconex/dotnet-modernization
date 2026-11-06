@@ -53,6 +53,16 @@ class Candidate:
 
 
 @dataclass(frozen=True)
+class PackageSelection:
+    """Synthetic NuGet package ID/version/archive-digest/feed selection."""
+
+    package_id: str
+    version: str
+    sha256: str
+    feed_identity: str
+
+
+@dataclass(frozen=True)
 class CompilerEvent:
     """Synthetic witness of structured Csc input and completion."""
 
@@ -182,8 +192,8 @@ def authorize_scope(manifest, observed_components, approved_record,
 
 def verify_candidate_bindings(candidates: Mapping, required_by_suite: Mapping,
                               actual_suite_files: Mapping,
-                              approved_package: Candidate,
-                              installed_package: Candidate):
+                              approved_package: PackageSelection,
+                              installed_package: PackageSelection):
     """Synthetic mandatory copy-local and installed archive hash comparisons."""
     require(bool(candidates) and bool(required_by_suite)
             and set(required_by_suite) == set(actual_suite_files),
@@ -206,8 +216,12 @@ def verify_candidate_bindings(candidates: Mapping, required_by_suite: Mapping,
                     "D1_CANDIDATE_COPY_LOCAL_HASH_MISMATCH")
         require(set(local) == set(required_assemblies),
                 "D1_UNEXPECTED_SUITE_COPY_LOCAL")
-    require(isinstance(approved_package, Candidate)
-            and isinstance(installed_package, Candidate),
+    require(isinstance(approved_package, PackageSelection)
+            and isinstance(installed_package, PackageSelection)
+            and bool(approved_package.package_id)
+            and bool(approved_package.version)
+            and bool(approved_package.feed_identity)
+            and _HEX_SHA256.fullmatch(approved_package.sha256),
             "D1_PACKAGE_IDENTITY_INVALID")
     require(approved_package == installed_package,
             "D1_PACKAGE_ARCHIVE_IDENTITY_MISMATCH")

@@ -27,14 +27,27 @@ def fixture():
         "scope": "all five frozen trusted Windows net48 candidate production PDBs",
         "required_components": len(scope["required_components"]),
         "all_five_verified": True, "results": [], "gate_c": "UNSATISFIED",
-        "source_link_adoption": "HOLD", "not_proven": [], "privacy": "synthetic",
+        "source_link_adoption": "HOLD",
+        "not_proven": [
+            "existing managed-reader checksum Gate C",
+            "authentic Visual Studio Package Manager project installation",
+            "live debugger source stepping",
+            "hostile or arbitrary PDB parsing safety",
+        ],
+        "privacy": ("fixed public component labels and aggregate numbers only; "
+                    "no original paths, source bytes, PDB contents, private "
+                    "command lines, or digests"),
     }
     managed = {
         "experiment": "EXP-043", "phase": "two_pinned_managed_reader_exposure",
         "all_five_readers_audited": True, "results": [],
         "managed_checksum_gate_c": "UNSATISFIED",
-        "source_link_adoption": "HOLD", "privacy": "synthetic",
-        "limitation": "synthetic",
+        "source_link_adoption": "HOLD",
+        "privacy": ("only native/managed counts, checksum exposure counts and "
+                    "fixed categories; source names, URLs, hashes, PDBs and "
+                    "private stdout never uploaded"),
+        "limitation": ("dnlib and Cecil managed reader API exposure is not a "
+                       "complete native document inventory or authentic debugger operation"),
     }
     for s in scope["required_components"]:
         count = s["expected_native_documents"]
@@ -63,8 +76,8 @@ def fixture():
         })
         probe = {
             "managed_document_count": lines,
-            "managed_document_checksum_exposed": 0,
-            "managed_document_checksum_missing": lines,
+            "managed_document_checksum_exposed": s["expected_managed_checksum_exposed"],
+            "managed_document_checksum_missing": lines - s["expected_managed_checksum_exposed"],
         }
         managed["results"].append({
             "component": s["component"], "status": "VERIFIED_READER_LIMITATION",
@@ -86,6 +99,9 @@ class GateCNResearchConsistencyTests(unittest.TestCase):
                                          "Infrastructure.Reporting", "Infrastructure.Xlsx"))
         self.assertEqual(scope["application_commit"],
                          "8358780829458854a4b0356df5ac5e685f0a34c8")
+        self.assertEqual(scope["source_evidence"]["workflow_id"], 408976399)
+        self.assertTrue(all(x["expected_managed_checksum_exposed"] == 0
+                            for x in scope["required_components"]))
 
     def test_consistent_synthetic_aggregates_are_never_a_release_pass(self):
         scope, n, m = fixture()
@@ -120,14 +136,14 @@ class GateCNResearchConsistencyTests(unittest.TestCase):
         self.assert_invalid(lambda s, n, m:
                             m["results"][0].update(reader_documents_match_native_line_references=False))
 
-    def test_managed_count_correct_but_different_native_line_set_is_rejected(self):
+    def test_native_line_count_change_conflicting_with_external_scope_rejected(self):
         def mutate(s, n, m):
-            # Preserve the total 24 and managed count 23, alter native line/nonline set counts.
+            # This mutates counts; it does NOT verify same-count source identities.
             n["results"][0]["line_referenced_documents"] -= 1
             n["results"][0]["no_line_native_documents"] += 1
         self.assert_invalid(mutate)
 
-    def test_equal_arithmetic_but_mutated_native_line_universe_rejected(self):
+    def test_coordinated_line_count_change_conflicting_with_scope_rejected(self):
         def mutate(s, n, m):
             original = n["results"][0]["line_referenced_documents"]
             n["results"][0]["line_referenced_documents"] = original - 1
@@ -184,6 +200,26 @@ class GateCNResearchConsistencyTests(unittest.TestCase):
         self.assert_invalid(lambda s, n, m:
                             m["results"][0]["cecil"].update(managed_document_checksum_exposed=1,
                                                                managed_document_checksum_missing=22))
+
+    def test_both_reader_checksum_exposure_counts_cannot_be_coordinately_forged(self):
+        def mutate(s, n, m):
+            for reader in ("dnlib", "cecil"):
+                m["results"][0][reader]["managed_document_checksum_exposed"] = 1
+                m["results"][0][reader]["managed_document_checksum_missing"] -= 1
+        self.assert_invalid(mutate)
+
+    def test_original_scope_rejects_missing_checksum_expectation(self):
+        self.assert_invalid(lambda s, n, m:
+                            s["required_components"][0].pop("expected_managed_checksum_exposed"))
+
+    def test_free_text_privacy_disclosure_rejected(self):
+        self.assert_invalid(lambda s, n, m: n.update(privacy="C:/private/source.cs"))
+        self.assert_invalid(lambda s, n, m: m.update(limitation="C:/private/source.cs"))
+        self.assert_invalid(lambda s, n, m:
+                            n["results"][0].update(diagnostic_text_source_observation="C:/private"))
+
+    def test_stated_unproven_gates_cannot_be_removed(self):
+        self.assert_invalid(lambda s, n, m: n.update(not_proven=[]))
 
     def test_gate_c_policy_cannot_be_silently_promoted(self):
         self.assert_invalid(lambda s, n, m: n.update(gate_c="SATISFIED"))

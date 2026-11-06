@@ -50,6 +50,26 @@ READER_COUNTS = {
     "managed_document_checksum_missing",
 }
 ORIGIN_KEYS = {"checked_in", "intermediate_location_producer_unverified"}
+# Only fixed public literals are accepted from historical EXP-043 sanitized reports.
+NATIVE_NOT_PROVEN = [
+    "existing managed-reader checksum Gate C",
+    "authentic Visual Studio Package Manager project installation",
+    "live debugger source stepping",
+    "hostile or arbitrary PDB parsing safety",
+]
+NATIVE_PRIVACY = (
+    "fixed public component labels and aggregate numbers only; no original "
+    "paths, source bytes, PDB contents, private command lines, or digests"
+)
+MANAGED_PRIVACY = (
+    "only native/managed counts, checksum exposure counts and fixed "
+    "categories; source names, URLs, hashes, PDBs and private stdout never uploaded"
+)
+MANAGED_LIMITATION = (
+    "dnlib and Cecil managed reader API exposure is not a complete native "
+    "document inventory or authentic debugger operation"
+)
+STATUS_TOKEN = re.compile(r"^[A-Z][A-Z0-9_]{0,79}$")
 C13_ALGORITHMS = {"NONE", "MD5", "SHA1", "SHA256"}
 
 
@@ -100,6 +120,7 @@ def scope_components(scope):
     require(type(evidence) is dict and
             integer(evidence.get("run_id")) and evidence["run_id"] > 0 and
             integer(evidence.get("artifact_id")) and evidence["artifact_id"] > 0 and
+            integer(evidence.get("workflow_id")) and evidence["workflow_id"] > 0 and
             type(evidence.get("artifact_zip_sha256")) is str and
             bool(DIGEST.fullmatch(evidence["artifact_zip_sha256"])) and
             type(evidence.get("executing_research_sha")) is str and
@@ -113,6 +134,7 @@ def scope_components(scope):
         require(type(item) is dict and
                 set(item) == {"component", "expected_native_documents",
                               "expected_generated_inputs", "expected_line_documents",
+                              "expected_managed_checksum_exposed",
                               "expected_c13_records", "expected_c13_algorithms"},
                 "SCOPE_COMPONENT_INVALID")
         name = item["component"]
@@ -124,6 +146,8 @@ def scope_components(scope):
                 item["expected_generated_inputs"] <= item["expected_native_documents"] and
                 integer(item["expected_line_documents"]) and
                 item["expected_line_documents"] <= item["expected_native_documents"] and
+                integer(item["expected_managed_checksum_exposed"]) and
+                item["expected_managed_checksum_exposed"] <= item["expected_line_documents"] and
                 integer(item["expected_c13_records"]) and
                 item["expected_c13_records"] >= item["expected_native_documents"] and
                 type(item["expected_c13_algorithms"]) is dict and
@@ -159,6 +183,8 @@ def validate(scope, native, managed):
             "all five frozen trusted Windows net48 candidate production PDBs" and
             native.get("gate_c") == "UNSATISFIED" and
             native.get("source_link_adoption") == "HOLD" and
+            native.get("not_proven") == NATIVE_NOT_PROVEN and
+            native.get("privacy") == NATIVE_PRIVACY and
             native.get("all_five_verified") is True and
             integer(native.get("required_components")) and
             native["required_components"] == len(expected),
@@ -167,7 +193,9 @@ def validate(scope, native, managed):
             managed.get("phase") == "two_pinned_managed_reader_exposure" and
             managed.get("all_five_readers_audited") is True and
             managed.get("managed_checksum_gate_c") == "UNSATISFIED" and
-            managed.get("source_link_adoption") == "HOLD",
+            managed.get("source_link_adoption") == "HOLD" and
+            managed.get("privacy") == MANAGED_PRIVACY and
+            managed.get("limitation") == MANAGED_LIMITATION,
             "MANAGED_REPORT_POLICY_OR_PHASE_INVALID")
     nr = component_map(native, expected, NATIVE_ROOT, NATIVE_ITEM,
                        "NATIVE_COMPONENT_UNIVERSE_INVALID")
@@ -189,7 +217,9 @@ def validate(scope, native, managed):
                 n.get("structured_event") == "STRUCTURED_CSC_TASK_INPUT_EVENT" and
                 n.get("generated_source_producer") ==
                     "VERIFIED_TARGET_EXECUTION_AND_BYTES" and
-                n.get("native_missing_original_bytes") == 0,
+                n.get("native_missing_original_bytes") == 0 and
+                type(n.get("diagnostic_text_source_observation")) is str and
+                bool(STATUS_TOKEN.fullmatch(n["diagnostic_text_source_observation"])),
                 "NATIVE_COMPONENT_PROVENANCE_INCONSISTENT")
         require(integer(n.get("line_referenced_documents")) and
                 integer(n.get("no_line_native_documents")) and
@@ -229,6 +259,8 @@ def validate(scope, native, managed):
                     all(integer(v) for v in vals.values()) and
                     vals["managed_document_count"] ==
                         n["line_referenced_documents"] and
+                    vals["managed_document_checksum_exposed"] ==
+                        rule["expected_managed_checksum_exposed"] and
                     vals["managed_document_checksum_exposed"] +
                         vals["managed_document_checksum_missing"] ==
                         vals["managed_document_count"],

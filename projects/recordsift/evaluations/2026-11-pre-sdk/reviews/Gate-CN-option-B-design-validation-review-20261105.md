@@ -18,6 +18,22 @@ New C-N work includes an externally reviewed fixed five-component scope, propose
 | **Quality** | Twenty-five synthetic positive/negative controls including missing/duplicate components, changed original/Csc counts, wrong generated attribution, false full-key match, impossible C13 counts, tampered line counts, policy promotion, unexpected private metadata and duplicate JSON properties. They validate aggregate consistency, **not independent original-file provenance**. |
 | **Release governance** | C-N proposal/secondary checks may advance to *research reviewed*, but cannot pass existing managed checksum Gate C, authorize NuGet VS project install, remote retrieval, debugger stepping, package publication, merge or production adoption. **No automatic acceptance gate substitution**. |
 
+## Fresh-context independent review and corrective controls (2026-11-05 PT)
+
+Actual GitHub Actions job steps and logs at `da35a4a125042623a0de95701facd84a23bbebde` confirm all **25/25** initial synthetic tests executed and the archived EXP-043 metadata check yielded `AGGREGATES_CONSISTENT_RESEARCH_ONLY`. This is not live PDB/source revalidation.
+
+**Finding CN-R01 — medium, report false-positive:** original secondary checker accepted a coordinated tamper changing *both* readers from 0 exposed managed-document checksums to 1 exposed (and decrementing missing by 1) for a component. Counts still agreed, despite contradiction with the frozen original 0/46 observation. Corrective change: the external scope now pins `expected_managed_checksum_exposed: 0` for each of five components, the checker enforces it, and a coordinated-tamper negative test is added. This does **not** prove a checksum API works and does **not** satisfy legacy Gate C.
+
+**Finding CN-R02 — medium, report privacy:** schema key allowlists alone allowed arbitrary strings in privacy/limitation/nonclaim fields and diagnostic status; a future faulty sanitizer could silently include path or source metadata in those fields. Corrective change: enforce actual original fixed public text and fixed-category diagnostic token patterns; add negative controls. These checks do not create a hostile-input security sandbox or replace auditing output bytes before upload.
+
+**Finding CN-R03 — low/medium, external evidence identity:** previous workflow checked the archived artifact's embedded workflow-run metadata, but not a separately retrieved historical workflow run record. Corrective change: independently query GitHub's run endpoint and assert run ID, workflow ID, successful conclusion, actual SHA, event and repository; the artifact's recorded run and ZIP remain separately checked. GitHub and its trusted runner remain inside the trust boundary; run metadata alone does not prove every gate executed.
+
+**Finding CN-R04 — low, test nomenclature:** prior aggregate tests labeled line-*count* changes as different source-*identity* cases. Names and comments now distinguish those; same-count/different-native-key integrity is independently tested only in the live EXP-043 implementation.
+
+**Release-readiness blockers unchanged:** no independently signed immutable external manifest, no portable cross-application live verifier, no plan for 30-day-artifact expiration, no external reviewer signoff and no Visual Studio package/debugger tests. Future live C-N enforcement would require these review decisions and actual compiler/PDB verification, not just amended metadata.
+
+**Evidence for fixes:** the new SHA and CI outcome must be appended after the changed branch is successfully executed. Neither the historical successful run nor this review alone proves the new controls passed.
+
 ## Remaining evidence limitations
 
 1. A generally reusable **live** C-N verifier requires validated adaptation beyond RecordSift, including generated/external source origins, pathmaps, nonclassic PDB or unsupported readers, Csc task variants and third-party/COM compilation inputs; fail closed on unknowns rather than generalize the frozen result.

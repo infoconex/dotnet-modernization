@@ -42,10 +42,24 @@ jobs:
           curl --fail --silent --show-error --proto '=https' --max-time 30 \
             -H "Authorization: Bearer $GH_TOKEN" -H 'Accept: application/vnd.github+json' \
             "$api" -o "$root/metadata.json"
-          python3 - "$root/metadata.json" "$scope" <<'PY'
+          # Verify the original successful workflow independently of the
+          # artifact object's embedded workflow_run metadata.
+          run_id="$(python3 -c 'import json,sys; print(json.load(open(sys.argv[1],encoding="utf-8"))["source_evidence"]["run_id"])' "$scope")"
+          curl --fail --silent --show-error --proto '=https' --max-time 30 \
+            -H "Authorization: Bearer $GH_TOKEN" -H 'Accept: application/vnd.github+json' \
+            "https://api.github.com/repos/infoconex/dotnet-modernization/actions/runs/$run_id" \
+            -o "$root/original-run-metadata.json"
+          python3 - "$root/metadata.json" "$scope" "$root/original-run-metadata.json" <<'PY'
           import json, sys
           a=json.load(open(sys.argv[1],encoding="utf-8"))
           s=json.load(open(sys.argv[2],encoding="utf-8"))["source_evidence"]
+          r=json.load(open(sys.argv[3],encoding="utf-8"))
+          assert r["id"] == s["run_id"]
+          assert r["head_sha"] == s["executing_research_sha"]
+          assert r["workflow_id"] == s["workflow_id"]
+          assert r["status"] == "completed" and r["conclusion"] == "success"
+          assert r["event"] == "pull_request" and r["run_attempt"] >= 1
+          assert r["repository"]["full_name"] == "infoconex/dotnet-modernization"
           assert a["id"] == s["artifact_id"]
           assert a["workflow_run"]["id"] == s["run_id"]
           assert a["workflow_run"]["head_sha"] == s["executing_research_sha"]

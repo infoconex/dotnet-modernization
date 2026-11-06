@@ -1,0 +1,68 @@
+name: EXP-044 live non-RecordSift classic PDB provenance (research only)
+
+# A stacked PR is considered changed against its parent until merged, so
+# pull_request paths would re-run this real 20+ second compile on every docs
+# or unrelated evidence commit. Original live execution is frozen/verified.
+# Trigger further real PDB builds only by an explicit workflow dispatch.
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  isolated-real-windows-pdb:
+    runs-on: windows-2022
+    timeout-minutes: 35
+    steps:
+      - uses: actions/checkout@08c6903cd8c0fde910a37f88322edcfb5dd907a8 # v5.0.0
+        with:
+          ref: ${{ github.event.pull_request.head.sha || github.sha }}
+          persist-credentials: false
+
+      - uses: actions/setup-dotnet@a98b56852c35b8e3190ac28c8c2271da59106c68 # v6.0.0
+        with:
+          dotnet-version: '10.0.403'
+
+      - name: Independently confirm executing research commit
+        shell: pwsh
+        env:
+          EXPECTED_SHA: ${{ github.event.pull_request.head.sha || github.sha }}
+        run: |
+          $actual=(& git rev-parse HEAD).Trim()
+          if ($LASTEXITCODE -ne 0 -or $actual -cne $env:EXPECTED_SHA) {
+            throw 'EXP044 GitHub executing source commit did not match'
+          }
+
+      - name: Build isolated traditional net48 fixture and run actual live native provenance
+        shell: pwsh
+        env:
+          EXPECTED_SHA: ${{ github.event.pull_request.head.sha || github.sha }}
+        run: |
+          & ./tooling/pilots/gate-cn/EXP-044/run.ps1 -ExpectedCommit $env:EXPECTED_SHA
+          if ($LASTEXITCODE -ne 0) { throw 'EXP044 real non-RecordSift native PDB provenance incomplete' }
+
+      - name: Unconditionally remove all private build/source/PDB/task evidence and disposable fixture outputs
+        if: always()
+        shell: pwsh
+        run: |
+          $privateRoot=Join-Path $env:RUNNER_TEMP 'exp044-private'
+          $project=Join-Path $env:GITHUB_WORKSPACE 'tooling/fixtures/gate-cn/AnotherLibrary.Core'
+          foreach ($path in @($privateRoot,(Join-Path $project 'bin'),(Join-Path $project 'obj'))) {
+            if (Test-Path -LiteralPath $path) {
+              Remove-Item -LiteralPath $path -Recurse -Force -ErrorAction Stop
+            }
+          }
+
+      - name: Retain only the allowlisted sanitized real fixture research summary
+        if: success()
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4.6.2
+        with:
+          name: exp044-non-recordsift-trusted-live-sanitized
+          path: ${{ runner.temp }}/exp044-sanitized.json
+          if-no-files-found: error
+          retention-days: 30
+
+      - name: Preserve separate release and IDE gate disposition
+        if: always()
+        run: echo 'EXP-044 RESEARCH ONLY; Gate C UNSATISFIED; Gate C-N release NOT AUTHORIZED; Source Link production HOLD'

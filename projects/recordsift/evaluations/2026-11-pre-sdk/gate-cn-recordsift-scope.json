@@ -1,0 +1,80 @@
+{
+  "schema": "gate-cn-research-scope-v1",
+  "application_repository": "infoconex/RecordSift",
+  "application_commit": "8358780829458854a4b0356df5ac5e685f0a34c8",
+  "authorization": "DESIGN_VALIDATION_ONLY",
+  "required_components": [
+    {
+      "component": "Domain",
+      "expected_native_documents": 24,
+      "expected_generated_inputs": 1,
+      "expected_line_documents": 20,
+      "expected_managed_checksum_exposed": 0,
+      "expected_c13_records": 28,
+      "expected_c13_algorithms": {
+        "NONE": 28
+      }
+    },
+    {
+      "component": "Application",
+      "expected_native_documents": 23,
+      "expected_generated_inputs": 1,
+      "expected_line_documents": 16,
+      "expected_managed_checksum_exposed": 0,
+      "expected_c13_records": 23,
+      "expected_c13_algorithms": {
+        "NONE": 23
+      }
+    },
+    {
+      "component": "Infrastructure.Csv",
+      "expected_native_documents": 7,
+      "expected_generated_inputs": 1,
+      "expected_line_documents": 4,
+      "expected_managed_checksum_exposed": 0,
+      "expected_c13_records": 8,
+      "expected_c13_algorithms": {
+        "NONE": 8
+      }
+    },
+    {
+      "component": "Infrastructure.Reporting",
+      "expected_native_documents": 7,
+      "expected_generated_inputs": 1,
+      "expected_line_documents": 5,
+      "expected_managed_checksum_exposed": 0,
+      "expected_c13_records": 10,
+      "expected_c13_algorithms": {
+        "NONE": 10
+      }
+    },
+    {
+      "component": "Infrastructure.Xlsx",
+      "expected_native_documents": 3,
+      "expected_generated_inputs": 1,
+      "expected_line_documents": 1,
+      "expected_managed_checksum_exposed": 0,
+      "expected_c13_records": 3,
+      "expected_c13_algorithms": {
+        "NONE": 3
+      }
+    }
+  ],
+  "source_evidence": {
+    "run_id": 42173080423,
+    "workflow_id": 408976399,
+    "executing_research_sha": "9fb67deeb2aa4c98587727abc01e8a11f01070b4",
+    "artifact_id": 13482117590,
+    "artifact_zip_sha256": "5efcc9b1c872f85c926eeef4819135a2325d97668b2abdcdde4e21f4b7e14443",
+    "sanitized_report_sha256": {
+      "exp043-five-pdb-source-audit.json": "b251b9f3b32cbf2d662b71c7bf212ec9ad9fde71203db45767b11b4aafb848ec",
+      "exp043-managed-reader-exposure.json": "3b8326c77a99a5897833ca3089ab5bb54159d52c25c28bf0505f23e574137bbf"
+    }
+  },
+  "limitations": [
+    "Sanitized reports cannot independently prove compiler-time physical source bytes or full key identity.",
+    "Genuine Visual Studio NuGet project installation and debugger stepping remain separate and untested.",
+    "Managed-reader checksum Gate C remains UNSATISFIED; Source Link production HOLD."
+  ],
+  "description": "Externally reviewed frozen RecordSift pilot counts; derived from prior independently executed EXP-043 artifact, not from currently submitted reports."
+}

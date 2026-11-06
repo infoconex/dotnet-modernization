@@ -12,6 +12,7 @@ sys.path.insert(0,str(Path(__file__).resolve().parents[1]))
 from exp042_source_provenance import (
     VerificationError, windows_identity, csc_source_parameter,
     compare_task_sources, producer_record, declared_source_binding,
+    read_structured_csc_events,
 )
 
 
@@ -91,6 +92,33 @@ class ProvenanceControls(unittest.TestCase):
             with self.assertRaises(VerificationError):
                 producer_record(p,[(generated,data,str(generated))],project,log)
 
+
+    def test_structured_event_exact_input_and_fail_closed_format(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            root = Path(tmp)
+            private = root / "csc-structured-private.tsv"
+            value = r"C:\project\src\A.cs"
+            private.write_text("STATUS\tCSC_TASK_PARAMETER_EVENT\n"
+                               "COUNT\t1\n" +
+                               base64.b64encode(value.encode()).decode() + "\n",
+                               encoding="ascii")
+            found, category = read_structured_csc_events(private)
+            self.assertEqual(found, [value])
+            self.assertEqual(category, "STRUCTURED_CSC_TASK_INPUT_EVENT")
+            status, count = compare_task_sources(
+                found, [(Path(value), b"a", value)], Path(r"C:\project"))
+            self.assertEqual((status, count),
+                             ("MATCHED_INDEPENDENT_TASK_PARAMETER", 1))
+            private.write_text("STATUS\tCSC_TASK_PARAMETER_EVENT\nCOUNT\t2\n"
+                               + base64.b64encode(value.encode()).decode()+"\n",
+                               encoding="ascii")
+            with self.assertRaises(VerificationError):
+                read_structured_csc_events(private)
+            private.write_text("STATUS\tNO_UNIQUE_CSC_SOURCE_EVENT\n",
+                               encoding="ascii")
+            found, state = read_structured_csc_events(private)
+            self.assertIsNone(found)
+            self.assertEqual(state, "INCONCLUSIVE_NO_UNIQUE_CSC_EVENT")
 
 if __name__=="__main__":
     unittest.main()

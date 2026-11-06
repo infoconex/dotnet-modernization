@@ -17,13 +17,13 @@ try {
     $value = [int]$method.Invoke($null, [object[]]@())
     $stage = 'ASSEMBLY_LOCATION'
     $location = [IO.Path]::GetFullPath($loaded.Location)
-    $stage = 'SHA256_READ'
-    $hash = (Get-FileHash -LiteralPath $location -Algorithm SHA256).Hash.ToLowerInvariant()
+    $stage = 'MODULE_IDENTITY'
+    $mvid = $loaded.ManifestModule.ModuleVersionId.ToString('D')
 
     $stage = 'REPORT_JSON'
     [pscustomobject]@{
         loaded_location = $location
-        loaded_sha256 = $hash
+        module_mvid = $mvid
         method_value = $value
     } | ConvertTo-Json -Compress
 }

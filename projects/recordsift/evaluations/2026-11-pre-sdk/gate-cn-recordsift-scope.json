@@ -7,27 +7,52 @@
     {
       "component": "Domain",
       "expected_native_documents": 24,
-      "expected_generated_inputs": 1
+      "expected_generated_inputs": 1,
+      "expected_line_documents": 20,
+      "expected_c13_records": 28,
+      "expected_c13_algorithms": {
+        "NONE": 28
+      }
     },
     {
       "component": "Application",
       "expected_native_documents": 23,
-      "expected_generated_inputs": 1
+      "expected_generated_inputs": 1,
+      "expected_line_documents": 16,
+      "expected_c13_records": 23,
+      "expected_c13_algorithms": {
+        "NONE": 23
+      }
     },
     {
       "component": "Infrastructure.Csv",
       "expected_native_documents": 7,
-      "expected_generated_inputs": 1
+      "expected_generated_inputs": 1,
+      "expected_line_documents": 4,
+      "expected_c13_records": 8,
+      "expected_c13_algorithms": {
+        "NONE": 8
+      }
     },
     {
       "component": "Infrastructure.Reporting",
       "expected_native_documents": 7,
-      "expected_generated_inputs": 1
+      "expected_generated_inputs": 1,
+      "expected_line_documents": 5,
+      "expected_c13_records": 10,
+      "expected_c13_algorithms": {
+        "NONE": 10
+      }
     },
     {
       "component": "Infrastructure.Xlsx",
       "expected_native_documents": 3,
-      "expected_generated_inputs": 1
+      "expected_generated_inputs": 1,
+      "expected_line_documents": 1,
+      "expected_c13_records": 3,
+      "expected_c13_algorithms": {
+        "NONE": 3
+      }
     }
   ],
   "source_evidence": {
@@ -40,5 +65,6 @@
     "Sanitized reports cannot independently prove compiler-time physical source bytes or full key identity.",
     "Genuine Visual Studio NuGet project installation and debugger stepping remain separate and untested.",
     "Managed-reader checksum Gate C remains UNSATISFIED; Source Link production HOLD."
-  ]
+  ],
+  "description": "Externally reviewed frozen RecordSift pilot counts; derived from prior independently executed EXP-043 artifact, not from currently submitted reports."
 }

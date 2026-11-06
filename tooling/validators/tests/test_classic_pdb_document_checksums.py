@@ -87,7 +87,7 @@ class NativeWindowsPdbChecksumTests(unittest.TestCase):
             self.validate(readers=r)
 
     def test_missing_physical_source_is_incomplete(self):
-        r = self.validate(sources={})
+        r = self.validate(sources={}, required=[])
         self.assertEqual(r["reader_documents_without_supplied_physical_source"], 1)
         self.assertEqual(r["inventory_completeness"],
                          "INCOMPLETE_OR_UNCLASSIFIED_NATIVE_STREAMS")

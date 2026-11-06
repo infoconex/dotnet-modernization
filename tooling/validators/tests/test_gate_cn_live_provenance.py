@@ -165,6 +165,30 @@ class GateCNLiveResearchAdapterTests(unittest.TestCase):
         self.assertEqual(evidence["intermediate_producer"]["producer_status"],
                          "VERIFIED_TARGET_EXECUTION_AND_BYTES")
 
+    def test_canonical_roots_preserve_structured_compiler_input_keys(self):
+        # Controlled synthetic paths only. This isolates an actual Windows
+        # identity discrepancy between caller Paths and trusted resolved roots.
+        from exp041_compiler_input_audit import read_capture
+        from exp042_source_provenance import verify_provenance
+        fx = self.fixture
+        project = inside(fx.app.resolve(strict=True),
+                         "src/AnotherLibrary.Core")
+        private = inside(fx.evidence.resolve(strict=True),
+                         "capture/independent-core")
+        capture = inside(private, "source-inputs-private")
+        records, _ = read_capture(capture)
+        with redirect_stdout(io.StringIO()):
+            result = verify_provenance(
+                records, inside(private, "msbuild-preprocessed.xml"),
+                inside(private, "msbuild-diagnostic-private.log").read_text(
+                    encoding="utf-8-sig", errors="replace"),
+                Path(str(capture) + "-producer"), project,
+                inside(private, "exp042-csc-parameters-private.tsv"))
+        self.assertEqual(result["effective_csc_sources_verification"],
+                         "MATCHED_INDEPENDENT_TASK_PARAMETER")
+        self.assertEqual(result["intermediate_producer"]["producer_status"],
+                         "VERIFIED_TARGET_EXECUTION_AND_BYTES")
+
     def test_actual_post_csc_physical_byte_mutation_fails(self):
         self.fixture.tracked.write_bytes(b"MODIFIED AFTER CAPTURE")
         result = self.fixture.execute()

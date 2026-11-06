@@ -161,19 +161,64 @@ def producer_record(producer_root, records, project, log):
     }
 
 
-def verify_provenance(records, preprocessed, log, producer_root, project):
+def read_structured_csc_events(path):
+    if not path.is_file() or path.stat().st_size > 128 * 1024:
+        raise VerificationError("STRUCTURED_CSC_EVENT_FILE_MISSING_OR_OVERSIZED")
+    try:
+        rows = path.read_text(encoding="ascii").splitlines()
+    except (UnicodeError, OSError):
+        raise VerificationError("STRUCTURED_CSC_EVENT_FILE_INVALID") from None
+    if len(rows) == 1 and rows[0] == "STATUS\\tNO_UNIQUE_CSC_SOURCE_EVENT":
+        return None, "INCONCLUSIVE_NO_UNIQUE_CSC_EVENT"
+    if len(rows) < 3 or rows[0] != "STATUS\\tCSC_TASK_PARAMETER_EVENT" or not rows[1].startswith("COUNT\\t"):
+        raise VerificationError("STRUCTURED_CSC_EVENT_HEADER_INVALID")
+    try:
+        count = int(rows[1].split("\\t")[1])
+    except (ValueError, IndexError):
+        raise VerificationError("STRUCTURED_CSC_EVENT_COUNT_INVALID") from None
+    if not 0 < count <= 1024 or len(rows) != count + 2:
+        raise VerificationError("STRUCTURED_CSC_EVENT_COUNT_MISMATCH")
+    items = []
+    for row in rows[2:]:
+        try:
+            item = base64.b64decode(row, validate=True).decode("utf-8", "strict")
+        except (UnicodeError, ValueError):
+            raise VerificationError("STRUCTURED_CSC_EVENT_SOURCE_INVALID") from None
+        if not item or len(item) > 8192:
+            raise VerificationError("STRUCTURED_CSC_EVENT_SOURCE_INVALID")
+        items.append(item)
+    return items, "STRUCTURED_CSC_TASK_INPUT_EVENT"
+
+
+def verify_provenance(records, preprocessed, log, producer_root, project,
+                      structured_events=None):
     binding = declared_source_binding(preprocessed)
-    # Establish the producer result independently before testing the Csc
-    # transcript, so a source-parameter parser failure cannot mask it.
     producer = producer_record(producer_root, records, project, log)
     print("EXP042 producer corroboration:", producer["producer_status"])
     sources, category = csc_source_parameter(log)
-    status, count = compare_task_sources(sources, records, project, log)
+    text_status = "INCONCLUSIVE"
+    text_count = 0
+    try:
+        text_status, text_count = compare_task_sources(sources, records, project, log)
+    except VerificationError as ex:
+        if not str(ex).startswith("EFFECTIVE_CSC_SOURCES_VS_CAPTURE_MISMATCH"):
+            raise
+        text_status = "DIAGNOSTIC_TEXT_INCOMPLETE_OR_DISAGREES"
+        text_count = len(sources) if sources else 0
+    if structured_events is not None:
+        event_sources, event_category = read_structured_csc_events(structured_events)
+        status, count = compare_task_sources(event_sources, records, project)
+    else:
+        event_category = "NOT_CAPTURED"
+        status, count = text_status, text_count
     return {
         "experiment": "EXP-042",
         "scope": "frozen CSV candidate only, private MSBuild diagnostic evidence",
         "evaluated_csc_source_binding": binding,
-        "actual_csc_task_parameter_observation": category,
+        "diagnostic_csc_parameter_observation": category,
+        "diagnostic_text_evidence_status": text_status,
+        "diagnostic_text_source_count": text_count,
+        "structured_csc_task_parameter_evidence": event_category,
         "effective_csc_sources_verification": status,
         "effective_csc_source_count": count,
         "captured_compiler_source_count": len(records),
@@ -188,7 +233,7 @@ def verify_provenance(records, preprocessed, log, producer_root, project):
 def main():
     p = argparse.ArgumentParser(description=__doc__)
     for name in ("capture-dir", "producer-dir", "preprocessed", "private-log",
-                 "project-dir", "output"):
+                 "project-dir", "output", "structured-events"):
         p.add_argument("--"+name, type=Path, required=True)
     args = p.parse_args()
     try:
@@ -199,7 +244,8 @@ def main():
         records, _ = read_capture(args.capture_dir)
         log = args.private_log.read_text(encoding="utf-8-sig", errors="replace")
         result = verify_provenance(records, args.preprocessed, log,
-                                   args.producer_dir, args.project_dir)
+                                   args.producer_dir, args.project_dir,
+                                   args.structured_events)
         args.output.write_text(json.dumps(result, sort_keys=True, indent=2)+"\n",
                                encoding="utf-8")
         print("EXP042 Csc parameter:", result["effective_csc_sources_verification"],

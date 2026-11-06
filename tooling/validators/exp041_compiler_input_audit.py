@@ -122,7 +122,7 @@ def classify_origin(path, repo):
         return "unknown"
     parts = [s.casefold() for s in relative.parts]
     if "obj" in parts:
-        return "generated_or_intermediate"
+        return "intermediate_location_producer_unverified"
     proc = subprocess.run(["git", "-C", str(repo), "ls-files", "--error-unmatch",
                            "--", relative.as_posix()], capture_output=True,
                           timeout=15, check=False)
@@ -164,12 +164,24 @@ def verify(native, dbi, records, repo):
     require(not unassociated, "COMPILER_INPUT_WITHOUT_NATIVE_RECORD")
     # The current managed-reader limit is four, not a policy redefinition.
     complete = missing == 0 and matches == len(native_keys)
+    # C13 non-line-referenced identities are an independent family. EXP-040
+    # established these three are also absent from both managed reader lists;
+    # this standalone verifier does NOT rediscover the reader universe.
+    no_line = sorted(native_keys - dbi["lines"])
+    no_line_evidence = [
+        {"id": "native-no-line-" + str(i + 1),
+         "physical_bytes_authenticated": key in origins,
+         "origin_evidence": origins.get(key, "original_compiler_input_unavailable")}
+        for i, key in enumerate(no_line)
+    ]
     return {
         "experiment": "EXP-041", "native_source_documents": len(native_keys),
         "captured_compiler_inputs": len(records),
         "original_input_sha256_or_sha1_matches": matches,
         "native_documents_without_captured_input": missing,
         "origin_categories": origin_counts,
+        "native_line_referenced_documents": len(dbi["lines"]),
+        "native_documents_without_line_references": no_line_evidence,
         "c13_checksum_algorithms": dbi["c13_algorithm_counts"],
         "native_inventory": "COVERED_BY_CAPTURE" if complete else "INCOMPLETE",
         "original_compiler_input_bytes": "MATCHED_ALL_NATIVE_DOCUMENTS" if complete else "INCOMPLETE",

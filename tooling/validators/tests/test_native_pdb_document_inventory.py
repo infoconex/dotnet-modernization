@@ -33,7 +33,9 @@ def fixture(file_names=(NAME,), with_c13=True):
     positions = []
     for name in file_names:
         positions.append(len(entries))
-        entry = struct.pack("<IBB", name_offset[name], 32, 3) + bytes(32)
+        original = b"owned" if name == NAME else name.encode("utf-8")
+        entry = (struct.pack("<IBB", name_offset[name], 32, 3) +
+                 hashlib.sha256(original).digest())
         entries += entry + bytes((-len(entry)) % 4)
     c13 = b""
     if with_c13:
@@ -76,6 +78,33 @@ def fixture(file_names=(NAME,), with_c13=True):
     return streams, named, readers
 
 
+def with_duplicate_module(streams, conflicting=False):
+    # Two independent DBI module references share one C13 source identity.
+    # This is a valid duplicate DOCUMENT, not a duplicate stream/key.
+    original = streams[3]
+    length = struct.unpack_from("<I", original, 24)[0]
+    module = original[64:64 + length]
+    second = bytearray(module)
+    struct.pack_into("<H", second, 34, 6)
+    streams[6] = streams[5]
+    if conflicting:
+        other = bytearray(streams[6])
+        other[4 + 8 + 6] ^= 1
+        streams[6] = bytes(other)
+    filenames = NAME.encode("utf-8") + b"\0"
+    file_info = (struct.pack("<HH", 2, 2) +
+                 struct.pack("<HH", 0, 1) +
+                 struct.pack("<HH", 1, 1) +
+                 struct.pack("<II", 0, 0) +
+                 filenames)
+    file_info += bytes((-len(file_info)) % 4)
+    dbi = bytearray(64)
+    struct.pack_into("<I", dbi, 0, 0xFFFFFFFF)
+    struct.pack_into("<I", dbi, 24, len(module) * 2)
+    struct.pack_into("<I", dbi, 36, len(file_info))
+    streams[3] = bytes(dbi) + module + second + file_info
+
+
 class NativeInventoryTests(unittest.TestCase):
     def test_structured_dbi_c13_and_lines_agree(self):
         streams, named, readers = fixture()
@@ -87,6 +116,34 @@ class NativeInventoryTests(unittest.TestCase):
         self.assertEqual(r["native_c13_line_documents"], 1)
         self.assertEqual(r["unmatched"], [])
         self.assertEqual(r["gate_c"], "UNSATISFIED")
+
+    def test_c13_checksum_matches_native_stream_digest(self):
+        streams, named, readers = fixture()
+        result = audit(streams, named, readers)
+        self.assertEqual(result["native_c13_checksum_matches_named_source"], 1)
+        self.assertEqual(result["native_c13_repeated_document_records"], 0)
+
+    def test_c13_checksum_mismatch_rejected(self):
+        streams, named, readers = fixture()
+        corrupted = bytearray(streams[5])
+        corrupted[4 + 8 + 6] ^= 1
+        streams[5] = bytes(corrupted)
+        with self.assertRaisesRegex(VerificationError, "C13_CHECKSUM_VS_NAMED"):
+            audit(streams, named, readers)
+
+    def test_duplicate_c13_document_record_same_digest_is_consistent(self):
+        streams, named, readers = fixture()
+        with_duplicate_module(streams)
+        result = audit(streams, named, readers)
+        self.assertEqual(result["native_c13_checksum_documents"], 1)
+        self.assertEqual(result["native_c13_checksum_records"], 2)
+        self.assertEqual(result["native_c13_repeated_document_records"], 1)
+
+    def test_duplicate_c13_document_record_different_digest_fails(self):
+        streams, named, readers = fixture()
+        with_duplicate_module(streams, conflicting=True)
+        with self.assertRaisesRegex(VerificationError, "CONFLICTING_C13"):
+            audit(streams, named, readers)
 
     def test_unmatched_native_document_referenced_by_dbi_and_c13(self):
         streams, named, readers = fixture((NAME, EXTRA))

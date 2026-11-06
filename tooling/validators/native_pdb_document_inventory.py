@@ -68,7 +68,7 @@ def dbi_source_inventory(streams, named):
     if len(streams) <= 3 or streams[3] is None:
         return {"status": "DBI_UNAVAILABLE", "dbi": set(), "c13": set(),
                 "lines": set(), "modules": 0, "c13_records": 0,
-                "line_references": 0}
+                "line_references": 0, "c13_checksums": {}}
     dbi = streams[3]
     require(len(dbi) >= 64 and u32(dbi, 0) == 0xFFFFFFFF,
             "INVALID_DBI_HEADER")
@@ -122,6 +122,7 @@ def dbi_source_inventory(streams, named):
     line_keys = set()
     c13_count = 0
     line_count = 0
+    checksum_records = {}
     need_names = any(c13 for _, _, _, c13, _ in modules)
     name_data = None
     if need_names:
@@ -165,7 +166,14 @@ def dbi_source_inventory(streams, named):
                     name, _ = nul_string(name_data, u32(data, offset))
                     require(offset not in checksum_offsets,
                             "DUPLICATE_C13_CHECKSUM_OFFSET")
-                    checksum_offsets[offset] = to_source_key(name)
+                    full_key = to_source_key(name)
+                    checksum_offsets[offset] = full_key
+                    digest = bytes(data[offset + 6:offset + 6 + size])
+                    candidate = (algorithm, digest)
+                    if full_key in checksum_records:
+                        require(checksum_records[full_key] == candidate,
+                                "CONFLICTING_C13_DOCUMENT_CHECKSUM_RECORDS")
+                    checksum_records[full_key] = candidate
                     c13_count += 1
                     require(c13_count <= MAX_REFERENCES, "TOO_MANY_C13_REFERENCES")
                     offset = (offset + 6 + size + 3) & ~3
@@ -194,7 +202,8 @@ def dbi_source_inventory(streams, named):
 
     return {"status": "DBI_PARSED", "dbi": dbi_keys, "c13": c13_keys,
             "lines": line_keys, "modules": len(modules),
-            "c13_records": c13_count, "line_references": line_count}
+            "c13_records": c13_count, "line_references": line_count,
+            "c13_checksums": checksum_records}
 
 
 def audit(streams, named, readers):
@@ -226,6 +235,19 @@ def audit(streams, named, readers):
     dbi_keys = native["dbi"]
     c13_keys = native["c13"]
     lines = native["lines"]
+    compared_c13 = 0
+    unsupported_or_divergent_c13 = 0
+    for key, (algorithm, digest) in native["c13_checksums"].items():
+        if key not in keys or keys[key] is None:
+            continue
+        stream_record = keys[key]
+        native_algorithm = {2: "sha1", 3: "sha256"}.get(algorithm)
+        if native_algorithm != stream_record["algorithm"]:
+            unsupported_or_divergent_c13 += 1
+            continue
+        require(digest == stream_record["digest"],
+                "C13_CHECKSUM_VS_NAMED_SOURCE_STREAM_MISMATCH")
+        compared_c13 += 1
     orphans = []
     for key in sorted(keys.keys() - managed):
         record = keys[key]
@@ -252,6 +274,10 @@ def audit(streams, named, readers):
         "native_dbi_module_count": native["modules"],
         "native_dbi_file_info_documents": len(dbi_keys),
         "native_c13_checksum_records": native["c13_records"],
+        "native_c13_repeated_document_records": (
+            native["c13_records"] - len(native["c13_checksums"])),
+        "native_c13_checksum_matches_named_source": compared_c13,
+        "native_c13_checksum_not_directly_comparable": unsupported_or_divergent_c13,
         "native_c13_checksum_documents": len(c13_keys),
         "native_c13_line_blocks": native["line_references"],
         "native_c13_line_documents": len(lines),
@@ -291,6 +317,9 @@ def main():
             "c13_documents": report["native_c13_checksum_documents"],
             "line_documents": report["native_c13_line_documents"],
             "c13_records": report["native_c13_checksum_records"],
+            "c13_repeated": report["native_c13_repeated_document_records"],
+            "c13_named_checksum_matches": report["native_c13_checksum_matches_named_source"],
+            "c13_not_comparable": report["native_c13_checksum_not_directly_comparable"],
             "orphan_categories": report["unmatched"]}, sort_keys=True))
     except (VerificationError, OSError, ValueError, IndexError, KeyError,
             UnicodeError, struct.error) as exc:

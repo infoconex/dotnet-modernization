@@ -70,7 +70,7 @@ jobs:
           open(sys.argv[2],"w",encoding="utf-8").write(values[0])
           PY
           bloburl="$(cat "$root/bloburl.private")"
-          curl --fail --location --silent --show-error --proto '=https' \
+          curl --fail --location --silent --proto '=https' \
             --proto-redir '=https' --max-time 60 --max-filesize 65536 \
             "$bloburl" --output "$root/sanitized.zip"
           python3 - "$root/sanitized.zip" "$scope" "$root" <<'PY'
@@ -99,7 +99,12 @@ jobs:
             --scope "$scope" \
             --native-report "$root/exp043-five-pdb-source-audit.json" \
             --managed-report "$root/exp043-managed-reader-exposure.json"
-          rm -rf -- "$root"
+
+      - name: Unconditionally erase temporary sanitized artifact and private signed redirect URL
+        if: always()
+        shell: bash
+        run: |
+          rm -rf -- "$RUNNER_TEMP/gate-cn-evidence"
 
       - name: Preserve governance boundary
         run: |

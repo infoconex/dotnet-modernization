@@ -151,7 +151,7 @@ def verify_coverage(native, reader_urls, sources, expected_names):
         raise VerificationError("DUPLICATE_NORMALIZED_DOCUMENT_IDENTITY")
     if set(a_keys) != b_keys:
         raise VerificationError("INDEPENDENT_MANAGED_DOCUMENT_SET_DISAGREEMENT")
-    if not set(expected_names).issubset({n.casefold() for n in a}):
+    if not {n.casefold() for n in expected_names}.issubset({n.casefold() for n in a}):
         raise VerificationError("REQUIRED_SELECTED_DOCUMENT_NOT_DISCOVERED")
 
     matched_native = set()
@@ -179,7 +179,7 @@ def verify_coverage(native, reader_urls, sources, expected_names):
         matched_native.add(key)
         algorithms[record["algorithm"]] = algorithms.get(record["algorithm"], 0) + 1
 
-    if not set(expected_names).issubset(seen_source):
+    if not {n.casefold() for n in expected_names}.issubset(seen_source):
         raise VerificationError("REQUIRED_SOURCE_NOT_CRYPTOGRAPHICALLY_VERIFIED")
     orphan_keys = set(native) - set(a_keys)
     orphan_invalid = sum(native[k] is None for k in orphan_keys)

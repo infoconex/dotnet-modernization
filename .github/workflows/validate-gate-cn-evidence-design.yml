@@ -8,6 +8,8 @@ on:
       - 'tooling/validators/tests/test_gate_cn_evidence_consistency.py'
       - 'methodology/acceptance-gates/gate-cn-native-pdb-source-provenance.md'
       - 'projects/recordsift/evaluations/2026-11-pre-sdk/gate-cn-recordsift-scope.json'
+      - 'projects/recordsift/evaluations/2026-11-pre-sdk/modernization-preparation-decision-matrix.md'
+      - 'projects/recordsift/evaluations/2026-11-pre-sdk/reviews/Gate-CN-option-B-design-validation-review-20261105.md'
   workflow_dispatch:
 
 permissions:

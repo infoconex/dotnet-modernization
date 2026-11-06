@@ -6,6 +6,9 @@ on:
       - '.github/workflows/validate-gate-cn-evidence-design.yml'
       - 'tooling/validators/gate_cn_evidence_consistency.py'
       - 'tooling/validators/tests/test_gate_cn_evidence_consistency.py'
+      - 'tooling/validators/gate_cn_live_provenance.py'
+      - 'tooling/validators/tests/test_gate_cn_live_provenance.py'
+      - 'methodology/acceptance-gates/gate-cn-live-portability-research.md'
       - 'methodology/acceptance-gates/gate-cn-native-pdb-source-provenance.md'
       - 'projects/recordsift/evaluations/2026-11-pre-sdk/gate-cn-recordsift-scope.json'
       - 'projects/recordsift/evaluations/2026-11-pre-sdk/modernization-preparation-decision-matrix.md'
@@ -27,6 +30,9 @@ jobs:
 
       - name: Execute independent synthetic positive and fail-closed negative controls
         run: python3 -m unittest discover -s tooling/validators/tests -p 'test_gate_cn_evidence_consistency.py' -v
+
+      - name: Execute non-RecordSift synthetic live-adapter controls (no application build)
+        run: python3 -m unittest discover -s tooling/validators/tests -p 'test_gate_cn_live_provenance.py' -v
 
       - name: Verify immutable EXP-043 sanitized artifact metadata without reproducing PDB experiments
         shell: bash

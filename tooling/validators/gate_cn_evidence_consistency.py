@@ -112,7 +112,8 @@ def scope_components(scope):
     for item in items:
         require(type(item) is dict and
                 set(item) == {"component", "expected_native_documents",
-                              "expected_generated_inputs"},
+                              "expected_generated_inputs", "expected_line_documents",
+                              "expected_c13_records", "expected_c13_algorithms"},
                 "SCOPE_COMPONENT_INVALID")
         name = item["component"]
         require(type(name) is str and bool(COMPONENT_NAMES.fullmatch(name)) and
@@ -120,7 +121,15 @@ def scope_components(scope):
                 integer(item["expected_native_documents"]) and
                 item["expected_native_documents"] > 0 and
                 integer(item["expected_generated_inputs"]) and
-                item["expected_generated_inputs"] <= item["expected_native_documents"],
+                item["expected_generated_inputs"] <= item["expected_native_documents"] and
+                integer(item["expected_line_documents"]) and
+                item["expected_line_documents"] <= item["expected_native_documents"] and
+                integer(item["expected_c13_records"]) and
+                item["expected_c13_records"] >= item["expected_native_documents"] and
+                type(item["expected_c13_algorithms"]) is dict and
+                set(item["expected_c13_algorithms"]) <= C13_ALGORITHMS and
+                all(integer(v) for v in item["expected_c13_algorithms"].values()) and
+                sum(item["expected_c13_algorithms"].values()) == item["expected_c13_records"],
                 "SCOPE_COMPONENT_INVALID")
         expected[name] = item
     return expected
@@ -184,7 +193,8 @@ def validate(scope, native, managed):
                 "NATIVE_COMPONENT_PROVENANCE_INCONSISTENT")
         require(integer(n.get("line_referenced_documents")) and
                 integer(n.get("no_line_native_documents")) and
-                n["line_referenced_documents"] + n["no_line_native_documents"] == count,
+                n["line_referenced_documents"] + n["no_line_native_documents"] == count and
+                n["line_referenced_documents"] == rule["expected_line_documents"],
                 "NATIVE_LINE_DOCUMENT_COUNTS_INVALID")
         origins = n.get("native_origin_categories")
         require(type(origins) is dict and set(origins) <= ORIGIN_KEYS and
@@ -200,7 +210,8 @@ def validate(scope, native, managed):
                 all(integer(v) for v in algorithms.values()) and
                 integer(n.get("c13_checksum_records")) and
                 sum(algorithms.values()) == n["c13_checksum_records"] and
-                n["c13_checksum_records"] >= count,
+                n["c13_checksum_records"] == rule["expected_c13_records"] and
+                algorithms == rule["expected_c13_algorithms"],
                 "C13_RECORD_COUNTS_INVALID")
         require(m.get("status") == "VERIFIED_READER_LIMITATION" and
                 m.get("reader_document_agreement") == "MATCHED" and

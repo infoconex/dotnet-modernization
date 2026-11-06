@@ -93,7 +93,11 @@ def compare_task_sources(items, records, project):
     if len(set(captured)) != len(captured):
         raise VerificationError("DUPLICATE_CAPTURED_SOURCE_IDENTITY")
     if set(observed) != set(captured):
-        raise VerificationError("EFFECTIVE_CSC_SOURCES_VS_CAPTURE_MISMATCH")
+        overlap = len(set(observed) & set(captured))
+        # Sanitize counts only; never print raw source paths or source names.
+        raise VerificationError(
+            "EFFECTIVE_CSC_SOURCES_VS_CAPTURE_MISMATCH"
+            "_OBS%d_CAP%d_OVERLAP%d" % (len(observed), len(captured), overlap))
     return "MATCHED_INDEPENDENT_TASK_PARAMETER", len(observed)
 
 

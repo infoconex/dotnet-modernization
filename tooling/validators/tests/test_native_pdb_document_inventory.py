@@ -124,7 +124,7 @@ class NativeInventoryTests(unittest.TestCase):
 
     def test_duplicate_normalized_native_path_rejected(self):
         streams, named, readers = fixture()
-        named["/src/files/c:/SRC/owned.cs"] = 8
+        named["/src/files/c:/src/owned.cs"] = 8
         streams.append(source_record())
         with self.assertRaisesRegex(VerificationError, "DUPLICATE_NATIVE"):
             audit(streams, named, readers)

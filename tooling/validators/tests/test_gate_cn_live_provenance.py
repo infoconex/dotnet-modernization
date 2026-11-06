@@ -133,7 +133,8 @@ class GateCNLiveResearchAdapterTests(unittest.TestCase):
 
     def test_real_original_byte_hash_and_csc_producer_checks_for_non_recordsift_label(self):
         result = self.fixture.execute()
-        self.assertEqual(result["verdict"], "SCOPED_LIVE_PROVENANCE_RESEARCH_VERIFIED")
+        self.assertEqual(result["verdict"], "SCOPED_LIVE_PROVENANCE_RESEARCH_VERIFIED",
+                         result["results"][0].get("failure_category"))
         self.assertEqual(result["results"][0]["component"], "AnotherLibrary.Core")
         self.assertEqual(result["results"][0]["original_bytes_verified"], 2)
         self.assertEqual(result["results"][0]["generated_inputs_verified"], 1)

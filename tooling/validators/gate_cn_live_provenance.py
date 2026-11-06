@@ -167,6 +167,7 @@ def run_component(app, evidence, item):
     """
     name = item["component"]
     result = {"component": name, "status": "BLOCKED"}
+    stage = "INPUT_PATHS"
     try:
         project = inside(app, item["project_dir"])
         stem = item["assembly_name"]
@@ -183,14 +184,19 @@ def run_component(app, evidence, item):
         private_log = inside(private, "msbuild-diagnostic-private.log")
         require(private_log.is_file() and 0 < private_log.stat().st_size <= 40 * 1024 * 1024,
                 "PRIVATE_DIAGNOSTIC_MISSING_OR_OVERSIZED")
+        stage = "NATIVE_PDB"
         native, dbi = source_pdb_inventory(dll, pdb)
+        stage = "INPUT_CAPTURE"
         records, _ = read_capture(capture)
+        stage = "ORIGINAL_BYTE_PROVENANCE"
         actual = verify_native(native, dbi, records, app)
+        stage = "STRUCTURED_CSC_AND_PRODUCER"
         provenance = verify_provenance(
             records, inside(private, "msbuild-preprocessed.xml"),
             private_log.read_text(encoding="utf-8-sig", errors="replace"),
             producer, project,
             inside(private, "exp042-csc-parameters-private.tsv"))
+        stage = "EXPECTED_ORIGIN_AND_INPUT_SCOPE"
         count = item["expected_native_documents"]
         origins = actual["origin_categories"]
         produced = provenance["intermediate_producer"]
@@ -210,6 +216,7 @@ def run_component(app, evidence, item):
                 }
                 and unchanged,
                 "ORIGINAL_PHYSICAL_INPUT_ORIGIN_OR_BYTE_SCOPE_INCOMPLETE")
+        stage = "REQUIRED_CSC_AND_MONIKER_CONTRACT"
         require(provenance["evaluated_csc_source_binding"] ==
                 "CORECOMPILE_CSC_USES_COMPILE_ITEMS"
                 and provenance["structured_csc_task_parameter_evidence"] ==
@@ -226,6 +233,7 @@ def run_component(app, evidence, item):
                 and produced["generator_task_executed"] is True,
                 "CSC_OR_MONIKER_PROVENANCE_INCOMPLETE")
         # This result reports only counts and fixed categories, not identities.
+        stage = "COMPLETE_NATIVE_DOCUMENT_SET"
         result.update(summarize_native(native, dbi))
         require(result["native_named_vs_dbi_c13"] == "MATCHED",
                 "NATIVE_DOCUMENT_SET_INCOMPLETE")
@@ -236,7 +244,7 @@ def run_component(app, evidence, item):
     except Exception:
         # Never echo exception details: untrusted path/errors may contain bytes.
         result = {"component": name, "status": "BLOCKED",
-                  "failure_category": "LIVE_COMPONENT_FAILED_CLOSED"}
+                  "failure_category": "LIVE_" + stage + "_FAILED_CLOSED"}
     return result
 
 

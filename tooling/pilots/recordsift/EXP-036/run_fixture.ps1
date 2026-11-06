@@ -1,7 +1,7 @@
 # EXP-036 isolated classic Windows-PDB fixture. No application checkout/build.
 # This run is restricted to compiler-produced, trusted local inputs; never fuzz a parser.
 param([Parameter(Mandatory=$true)][string]$ArchiveRoot, [switch]$Experiment37Variants,
-      [switch]$Experiment38Keys, [switch]$Experiment39Audit, [string]$ApplicationRoot)
+      [switch]$Experiment38Keys, [switch]$Experiment39Audit, [switch]$Experiment40Audit, [string]$ApplicationRoot)
 $ErrorActionPreference='Stop'
 Set-StrictMode -Version Latest
 $global:LASTEXITCODE=0 # strict-mode compatible initial state before the first native subprocess
@@ -288,6 +288,9 @@ if ($Experiment37Variants) {
 # compiler options have generated trusted physical native-PDB controls.
 # Managed readers never print full URLs/paths; all private manifest bytes stay
 # under RUNNER_TEMP and are deleted even on validation failure.
+if ($Experiment40Audit -and -not $Experiment39Audit) {
+    throw 'EXP040 requires the completed EXP039 audited physical-source controls'
+}
 if ($Experiment38Keys) {
     if (-not $Experiment37Variants -or -not $ApplicationRoot) {
         throw 'EXP038 requires EXP037 fixture variants and frozen application checkout'
@@ -370,7 +373,29 @@ if ($Experiment38Keys) {
                     inventory=$e.result.inventory_completeness
                     gate_c=$e.result.gate_c
                 })
+                if ($Experiment40Audit) {
+                    $out40=Join-Path $temp ('exp040-'+$caseName+'.json')
+                    & python (Join-Path $root 'tooling/validators/native_pdb_document_inventory.py') --dll (Join-Path $bin39 ($assembly39+'.dll')) --pdb (Join-Path $bin39 ($assembly39+'.pdb')) --dnlib-urls (Join-Path $privateDir ($caseName+'-DNLIB.private')) --cecil-urls (Join-Path $privateDir ($caseName+'-CECIL.private')) --output $out40
+                    if ($LASTEXITCODE -ne 0) { throw 'EXP040 native document provenance failed closed' }
+                }
                 Remove-Item -LiteralPath $output39 -Force
+            }
+            if ($Experiment40Audit) {
+                $outcomes40=@()
+                foreach($caseName in $jobs38) {
+                    $output40=Join-Path $temp ('exp040-'+$caseName+'.json')
+                    $e40=Get-Content -Raw $output40 | ConvertFrom-Json
+                    $outcomes40+=@($e40)
+                    Remove-Item -LiteralPath $output40 -Force
+                }
+                [ordered]@{
+                    experiment='EXP-040'
+                    source_commit='8358780829458854a4b0356df5ac5e685f0a34c8'
+                    classification='native_DBI_C13_vs_reader_inventory'
+                    cases=$outcomes40
+                    gate_c='UNSATISFIED'
+                    privacy='only counts and categorical opaque orphan identifiers'
+                } | ConvertTo-Json -Depth 16 | Set-Content (Join-Path $temp 'exp040-summary.json') -Encoding utf8
             }
             [ordered]@{
                 experiment='EXP-039';phase='bounded_reusable_native_source_verifier'

@@ -59,7 +59,8 @@ def apply_pathmap(physical, mappings):
         if (value.casefold() == old.casefold() or
                 (value.casefold().startswith(old.casefold()) and
                  (old.endswith("/") or value[len(old):].startswith("/")))):
-            return new + value[len(old):]
+            suffix = value[len(old):].lstrip("/")
+            return new.rstrip("/") + ("/" + suffix if suffix else "")
     return value
 
 
@@ -121,6 +122,7 @@ def classify_origin(path, repo):
 def verify(native, dbi, records, repo):
     require(dbi["status"] == "DBI_PARSED", "DBI_NOT_PROVEN")
     native_keys = set(native)
+    require(bool(native_keys), "EMPTY_NATIVE_DOCUMENT_INVENTORY")
     require(native_keys == dbi["dbi"] == dbi["c13"],
             "NATIVE_DBI_C13_UNIVERSE_DISAGREES")
     require(dbi["lines"] <= native_keys, "UNREFERENCED_C13_LINE_DOCUMENT")
@@ -136,12 +138,12 @@ def verify(native, dbi, records, repo):
     missing = 0
     origin_counts = {}
     for key in sorted(native_keys):
+        algorithm = native[key]["algorithm"]
+        require(algorithm in ("sha1", "sha256"), "NATIVE_ALGORITHM_MISMATCH")
         if key not in seen:
             missing += 1
             continue
         data, physical = seen[key]
-        algorithm = native[key]["algorithm"]
-        require(algorithm in ("sha1", "sha256"), "NATIVE_ALGORITHM_MISMATCH")
         require(hashlib.new(algorithm, data).digest() == native[key]["digest"],
                 "ORIGINAL_COMPILER_INPUT_HASH_MISMATCH")
         matches += 1

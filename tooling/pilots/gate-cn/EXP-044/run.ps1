@@ -108,7 +108,10 @@ $external | ConvertTo-Json -Depth 12 | Set-Content -LiteralPath $manifest -Encod
 python (Join-Path $root 'tooling/validators/gate_cn_live_provenance.py') --manifest $manifest --app-root $root --evidence-root $private --output $sanitized
 if ($LASTEXITCODE -ne 0) { throw 'EXP044 original physical bytes or native PDB identity not authenticated' }
 $result=Get-Content -LiteralPath $sanitized -Raw -Encoding utf8 | ConvertFrom-Json
-if ($result.verdict -cne 'SCOPED_LIVE_PROVENANCE_RESEARCH_VERIFIED' -or
+if ($result.application_repository -cne 'infoconex/dotnet-modernization' -or
+    $result.application_commit -cne $ExpectedCommit -or
+    $result.results[0].native_pe_pdb_identity_matched -ne $true -or
+    $result.verdict -cne 'SCOPED_LIVE_PROVENANCE_RESEARCH_VERIFIED' -or
     $result.required_components -ne 1 -or
     $result.results[0].status -cne 'RESEARCH_VERIFIED' -or
     $result.results[0].original_bytes_verified -ne 2 -or

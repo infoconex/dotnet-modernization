@@ -136,6 +136,9 @@ class GateCNLiveResearchAdapterTests(unittest.TestCase):
         self.assertEqual(result["verdict"], "SCOPED_LIVE_PROVENANCE_RESEARCH_VERIFIED",
                          result["results"][0].get("failure_category"))
         self.assertEqual(result["results"][0]["component"], "AnotherLibrary.Core")
+        self.assertEqual(result["application_repository"], "example/NonRecordSift")
+        self.assertEqual(result["application_commit"], APPLICATION_SHA)
+        self.assertIs(result["results"][0]["native_pe_pdb_identity_matched"], True)
         self.assertEqual(result["results"][0]["original_bytes_verified"], 2)
         self.assertEqual(result["results"][0]["generated_inputs_verified"], 1)
         self.assertEqual(result["legacy_gate_c"], "UNSATISFIED")

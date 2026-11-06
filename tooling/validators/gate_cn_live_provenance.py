@@ -244,6 +244,7 @@ def run_component(app, evidence, item):
         result.update(summarize_native(native, dbi))
         require(result["native_named_vs_dbi_c13"] == "MATCHED",
                 "NATIVE_DOCUMENT_SET_INCOMPLETE")
+        result["native_pe_pdb_identity_matched"] = True
         result["original_bytes_verified"] = count
         result["actual_csc_sources_verified"] = count
         result["generated_inputs_verified"] = 1
@@ -263,6 +264,8 @@ def run(manifest, app, evidence):
     results = [run_component(app, evidence, c) for c in manifest["components"]]
     return {
         "schema": "gate-cn-live-research-result-v1",
+        "application_repository": manifest["application_repository"],
+        "application_commit": manifest["application_commit"],
         "verdict": ("SCOPED_LIVE_PROVENANCE_RESEARCH_VERIFIED"
                     if all(x["status"] == "RESEARCH_VERIFIED" for x in results)
                     else "INCOMPLETE_RESEARCH_ONLY"),

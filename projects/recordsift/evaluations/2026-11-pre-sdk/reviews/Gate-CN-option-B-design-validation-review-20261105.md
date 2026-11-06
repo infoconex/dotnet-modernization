@@ -32,7 +32,9 @@ Actual GitHub Actions job steps and logs at `da35a4a125042623a0de95701facd84a23b
 
 **Release-readiness blockers unchanged:** no independently signed immutable external manifest, no portable cross-application live verifier, no plan for 30-day-artifact expiration, no external reviewer signoff and no Visual Studio package/debugger tests. Future live C-N enforcement would require these review decisions and actual compiler/PDB verification, not just amended metadata.
 
-**Evidence for fixes:** the new SHA and CI outcome must be appended after the changed branch is successfully executed. Neither the historical successful run nor this review alone proves the new controls passed.
+**Evidence for fixes now verified:** [Gate C-N run 42177516467](https://github.com/infoconex/dotnet-modernization/actions/runs/42177516467) at executable commit `a61a9df1f02b9255aeb5149d8b293081c4733a85` succeeded. GitHub job logs prove **29/29** synthetic controls actually ran, original authenticated sanitized EXP-043 ZIP and three JSON reports were rechecked, and a separately retrieved GitHub run record matched the pinned historical SHA, successful conclusion, workflow ID and repository. [Reusable validator CI 42177516454](https://github.com/infoconex/dotnet-modernization/actions/runs/42177516454) succeeded on Ubuntu and Windows at the same SHA. No application/EXP-043 recompilation; the only outcome remains `AGGREGATES_CONSISTENT_RESEARCH_ONLY`, with C-N release acceptance `NOT_AUTHORIZED`.
+
+**Disposition:** scoped pilot design and the *secondary* checker are research-validated. **Formal reusable release-gate activation is NOT READY** until the trusted external execution manifest/approval boundary, live verifier portability/fail-closed control, durable revalidation/archive plan and independent reviewer signoffs are implemented and assessed. Genuinely interactive Visual Studio/debugger work remains a separate adoption question, not a defect in native original-source attestation. Historical initial schema-sync CI failures and latest corrective success remain recorded; no pre-existing original source experiment was rerun.
 
 ## Remaining evidence limitations
 

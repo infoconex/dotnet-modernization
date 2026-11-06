@@ -74,6 +74,25 @@ jobs:
               }
             }
           }
+      - name: Always erase additional private EXP-042 source/log/producer evidence
+        if: always()
+        shell: pwsh
+        run: |
+          $evidence=Join-Path $env:RUNNER_TEMP 'exp042-exp024'
+          $paths=@(
+            (Join-Path $evidence 'exp041-original-inputs-private'),
+            (Join-Path $evidence 'exp041-original-inputs-private-producer'),
+            (Join-Path $evidence 'exp042-csc-parameters-private.tsv'),
+            (Join-Path $evidence 'exp042-logger-compile-private.log'),
+            (Join-Path $evidence 'EXP042.CscParameterLogger.dll'),
+            (Join-Path $evidence 'msbuild-diagnostic-private.log'),
+            (Join-Path $evidence 'msbuild-preprocessed.xml')
+          )
+          foreach ($file in $paths) {
+            if (Test-Path -LiteralPath $file) {
+              Remove-Item -LiteralPath $file -Recurse -Force -ErrorAction Stop
+            }
+          }
       - name: Publish ONLY bounded sanitized evidence, never private compiler/PDB inputs
         uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4.6.2
         with:

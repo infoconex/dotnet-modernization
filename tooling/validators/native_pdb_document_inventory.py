@@ -287,10 +287,11 @@ def main():
               "DBI:", report["native_dbi_status"],
               "Gate C UNSATISFIED")
     except (VerificationError, OSError, ValueError, IndexError, KeyError,
-            UnicodeError, struct.error):
-        # Never display exception text arising from raw source strings or PDB data.
-        print("EXP040 FAIL CLOSED: native evidence invalid or unsupported",
-              file=sys.stderr)
+            UnicodeError, struct.error) as exc:
+        # VerificationError is deliberately constructed ONLY from fixed,
+        # reviewed enum-like categories. Never surface third-party exceptions.
+        category = str(exc) if isinstance(exc, VerificationError) else "UNCLASSIFIED_NATIVE_PARSER_FAILURE"
+        print("EXP040 FAIL CLOSED:", category, file=sys.stderr)
         sys.exit(2)
 
 

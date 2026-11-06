@@ -75,8 +75,8 @@ class ManagedReaderExposureTests(unittest.TestCase):
                 self.assertEqual(len(result["results"]),5)
                 self.assertTrue(all(x["native_documents_not_exposed_by_both_readers"]==1
                                     for x in result["results"]))
-                self.assertNotIn("private",str(result["results"]).lower().replace(
-                    "private", ""))  # No source/path payload permitted.
+                self.assertNotIn("C:/private/", str(result))
+                self.assertNotIn("A.cs", str(result))  # No private document identity.
                 bad={**dbi,"c13":set()}
                 with mock.patch("exp043_managed_reader_exposure.source_pdb_inventory",
                                 return_value=(native,bad)):

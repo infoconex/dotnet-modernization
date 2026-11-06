@@ -191,7 +191,11 @@ try {
     if ($exit -ne 0) {
         $report.compile="failed_exit_$exit"
         Write-Report
-        Get-Content -LiteralPath $log | Select-Object -Last 35 | Out-Host
+        if (-not $CaptureCompilerSources) {
+            Get-Content -LiteralPath $log | Select-Object -Last 35 | Out-Host
+        } else {
+            Write-Host 'EXP041 private compile failed; raw diagnostic log deliberately withheld'
+        }
         throw 'Provider-integrated CSV compile failed; preserve failure evidence.'
     }
 

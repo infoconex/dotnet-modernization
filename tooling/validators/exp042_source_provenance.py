@@ -83,7 +83,7 @@ def csc_source_parameter(log):
     return items, "CSC_TASK_SOURCES_OBSERVED"
 
 
-def compare_task_sources(items, records, project):
+def compare_task_sources(items, records, project, raw_log=None):
     if items is None:
         return "INCONCLUSIVE", 0
     observed = [windows_identity(s, project) for s in items]
@@ -94,10 +94,28 @@ def compare_task_sources(items, records, project):
         raise VerificationError("DUPLICATE_CAPTURED_SOURCE_IDENTITY")
     if set(observed) != set(captured):
         overlap = len(set(observed) & set(captured))
-        # Sanitize counts only; never print raw source paths or source names.
+        # Compare private raw task-section presence only as a diagnostic, never
+        # as evidence of a true Csc source parameter match.
+        in_task = 0
+        in_parameter = 0
+        if raw_log is not None:
+            spans = re.findall(r'Task "Csc"[^\\n]*\\n(.*?)Done executing task "Csc"',
+                               raw_log, flags=re.I | re.S)
+            if len(spans) == 1:
+                body = spans[0].replace("\\\\", "/").casefold()
+                marker = re.search(r'Task Parameter:\\s*Sources\\s*=', body, re.I)
+                param = body[marker.end():].split("task parameter:", 1)[0] if marker else ""
+                for p, _, _ in records:
+                    if normalized_key(ntpath.normpath(str(p))) in set(observed):
+                        continue
+                    relative = ntpath.relpath(str(p), str(project)).replace("\\\\", "/").casefold()
+                    in_task += int(relative in body)
+                    in_parameter += int(relative in param)
+        # Aggregate counters only. No private path, basename, hash, URL, or log.
         raise VerificationError(
             "EFFECTIVE_CSC_SOURCES_VS_CAPTURE_MISMATCH"
-            "_OBS%d_CAP%d_OVERLAP%d" % (len(observed), len(captured), overlap))
+            "_OBS%d_CAP%d_OVERLAP%d_TASKREL%d_PARAMREL%d" %
+            (len(observed), len(captured), overlap, in_task, in_parameter))
     return "MATCHED_INDEPENDENT_TASK_PARAMETER", len(observed)
 
 
@@ -145,9 +163,12 @@ def producer_record(producer_root, records, project, log):
 
 def verify_provenance(records, preprocessed, log, producer_root, project):
     binding = declared_source_binding(preprocessed)
-    sources, category = csc_source_parameter(log)
-    status, count = compare_task_sources(sources, records, project)
+    # Establish the producer result independently before testing the Csc
+    # transcript, so a source-parameter parser failure cannot mask it.
     producer = producer_record(producer_root, records, project, log)
+    print("EXP042 producer corroboration:", producer["producer_status"])
+    sources, category = csc_source_parameter(log)
+    status, count = compare_task_sources(sources, records, project, log)
     return {
         "experiment": "EXP-042",
         "scope": "frozen CSV candidate only, private MSBuild diagnostic evidence",

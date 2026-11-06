@@ -39,19 +39,21 @@ def fixture():
     for s in scope["required_components"]:
         count = s["expected_native_documents"]
         generated = s["expected_generated_inputs"]
-        lines = count - generated
+        lines = s["expected_line_documents"]
+        nonline = count - lines
+        c13_records = s["expected_c13_records"]
         native["results"].append({
             "component": s["component"], "status": "VERIFIED",
             "named_native_documents": count, "dbi_documents": count,
             "c13_documents": count, "line_referenced_documents": lines,
-            "c13_checksum_records": count + 1,
-            "c13_algorithm_counts": {"NONE": count + 1},
+            "c13_checksum_records": c13_records,
+            "c13_algorithm_counts": copy.deepcopy(s["expected_c13_algorithms"]),
             "native_named_vs_dbi_c13": "MATCHED",
             "captured_original_inputs": count, "original_bytes_verified": count,
             "native_missing_original_bytes": 0,
             "native_origin_categories": {"checked_in": count - generated,
                                          "intermediate_location_producer_unverified": generated},
-            "no_line_native_documents": generated,
+            "no_line_native_documents": nonline,
             "actual_csc_task_source_count": count,
             "actual_csc_task_source_binding": "MATCHED_INDEPENDENT_TASK_PARAMETER",
             "structured_event": "STRUCTURED_CSC_TASK_INPUT_EVENT",
@@ -71,7 +73,7 @@ def fixture():
             "reader_document_agreement": "MATCHED",
             "reader_documents_subset_of_native": True,
             "reader_documents_match_native_line_references": True,
-            "native_documents_not_exposed_by_both_readers": generated,
+            "native_documents_not_exposed_by_both_readers": nonline,
         })
     return scope, native, managed
 
@@ -91,6 +93,7 @@ class GateCNResearchConsistencyTests(unittest.TestCase):
         self.assertEqual(actual["verdict"], "AGGREGATES_CONSISTENT_RESEARCH_ONLY")
         self.assertEqual(actual["native_document_records"], 64)
         self.assertEqual(actual["generated_compiler_inputs"], 5)
+        self.assertEqual(actual["managed_line_documents"], 46)
         self.assertEqual(actual["legacy_gate_c"], "UNSATISFIED")
         self.assertEqual(actual["gate_cn_release_acceptance"], "NOT_AUTHORIZED")
         self.assertEqual(actual["source_link_adoption"], "HOLD")
@@ -124,6 +127,23 @@ class GateCNResearchConsistencyTests(unittest.TestCase):
             n["results"][0]["no_line_native_documents"] += 1
         self.assert_invalid(mutate)
 
+    def test_equal_arithmetic_but_mutated_native_line_universe_rejected(self):
+        def mutate(s, n, m):
+            original = n["results"][0]["line_referenced_documents"]
+            n["results"][0]["line_referenced_documents"] = original - 1
+            n["results"][0]["no_line_native_documents"] += 1
+            m["results"][0]["native_documents_not_exposed_by_both_readers"] += 1
+            for reader in ("dnlib", "cecil"):
+                m["results"][0][reader]["managed_document_count"] -= 1
+                m["results"][0][reader]["managed_document_checksum_missing"] -= 1
+        self.assert_invalid(mutate)
+
+    def test_equal_c13_algorithm_arithmetic_but_wrong_frozen_counts_rejected(self):
+        def mutate(s, n, m):
+            n["results"][0]["c13_checksum_records"] += 1
+            n["results"][0]["c13_algorithm_counts"]["NONE"] += 1
+        self.assert_invalid(mutate)
+
     def test_corrupted_csc_input_count_rejected(self):
         self.assert_invalid(lambda s, n, m:
                             n["results"][0].update(actual_csc_task_source_count=23))
@@ -152,7 +172,7 @@ class GateCNResearchConsistencyTests(unittest.TestCase):
         scope, n, m = fixture()
         self.assertEqual(validate(scope, n, m)["verdict"],
                          "AGGREGATES_CONSISTENT_RESEARCH_ONLY")
-        n["results"][0]["c13_algorithm_counts"] = {"SHA512": 25}
+        n["results"][0]["c13_algorithm_counts"] = {"SHA512": 28}
         with self.assertRaises(EvidenceError):
             validate(scope, n, m)
 

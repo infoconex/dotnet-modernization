@@ -262,3 +262,20 @@ The C-N [proposed normative standard](https://github.com/infoconex/dotnet-modern
 **Gate approval recommendation: NOT READY to activate a reusable release gate.** Before submitting a new stakeholder acceptance decision, demonstrate a non-RecordSift or independently reconfigured live-provenance execution with an explicit external component/build manifest, signed/reviewer-controlled evidence boundary, repeatable original source-byte checks, all original release contracts, and credible durable archive/replay after 30-day artifact expiration. Require separate named reviewers for build/security/quality/release, including implementation/runner trust and unresolved threat scenarios. Acceptance is limited to authenticated trusted locally produced classic Windows PDBs; unknown and hostile cases must fail closed. Do not demand unrelated Visual Studio/debugger tests to prove native provenance itself, but **do** require them independently before any Source Link production adoption.
 
 **Governance:** Gate C **UNSATISFIED**. C-N **DESIGN VALIDATED / RELEASE NOT AUTHORIZED**. Source Link **HOLD**. Authentic VS Package Manager project install and real source retrieval/stepping **NOT TESTED**. No PR merge or production authorization requested. More broad experiments are not justified without a concrete failure/portability requirement.
+
+## Latest Option B research conclusion — EXP-044 real live portability and durable reports
+
+The prior “non-RecordSift live execution unverified” prerequisite was **narrowly closed** by [EXP-044 #75](https://github.com/infoconex/dotnet-modernization/issues/75): real separate traditional net48 compiler/native PE-PDB/Csc/original source bytes/moniker generator **2/2** on Windows at [run 42182129657](https://github.com/infoconex/dotnet-modernization/actions/runs/42182129657), executing `3c06d003ac75cc8b649a244be8705e44efa2c4c7`. This remains one moniker-producing fixture; additional generators, third-party origins, hostile PDBs, application compatibility and all IDE operations are **not verified**. Frozen RecordSift EXP-043 full original release contracts remain unchanged.
+
+| Current evidence / decision | Disposition |
+| --- | --- |
+| Frozen RecordSift original compiler-source physical provenance | 64/64 trusted five-assembly original inputs VERIFIED, prior EXP-043 only |
+| Different real isolated net48 fixture native physical provenance | **2/2 VERIFIED research only** — one tracked + one generated; [42182129657](https://github.com/infoconex/dotnet-modernization/actions/runs/42182129657) |
+| Secondary independent controls | **29** prior native/managed report controls, **23** non-RecordSift synthetic adapter controls, **12** sanitized archive replay controls; distinct, not 64 live source verifications |
+| EXP-043 original public report archival | Native/managed reports retained, raw SHA256 pinned and exact original artifact ZIP/bytes checked; [42183624502](https://github.com/infoconex/dotnet-modernization/actions/runs/42183624502) SUCCESS at `d7f8af2610ec7f2f2ca325f3bdf36a3be5ee6844` |
+| EXP-044 original public report archival | Byte-identical durable report hash pinned and validated; [42183211855](https://github.com/infoconex/dotnet-modernization/actions/runs/42183211855) SUCCESS at `8a3d8394abb0cd67870c8942c9bbc89265fa4ea1` |
+| Institutional evidence custody/independent signoff | **NOT ESTABLISHED**; Git draft report retention not independently approved, after artifact expiry requires new live build |
+| Managed checksum Gate C / Source Link adoption | **UNSATISFIED / HOLD** |
+| Gate C-N release activation | **NOT AUTHORIZED** — needs named reviewers, externally approved immutable production manifest and new stakeholder approval; do not activate or merge |
+
+The [consolidated Gate C-N readiness memo](../../../../methodology/acceptance-gates/gate-cn-acceptance-readiness-review-20261105.md) documents review findings and next authorization boundary. This is an authorization request for **human governance review**, not a request to retire original Gate C or approve production Source Link.

@@ -6,6 +6,8 @@ on:
       - '.github/workflows/validate-exp043-five-pdbs.yml'
       - 'tooling/pilots/recordsift/EXP-043/**'
       - 'tooling/validators/exp043_five_pdb_audit.py'
+      - 'tooling/validators/exp043_managed_reader_exposure.py'
+      - 'tooling/validators/tests/test_exp043_managed_reader_exposure.py'
       - 'tooling/validators/tests/test_exp043_five_pdb_audit.py'
   workflow_dispatch:
 
@@ -22,7 +24,7 @@ jobs:
           persist-credentials: false
       - name: Run independent five-component and fail-closed audit controls
         run: |
-          python3 -m unittest discover -s tooling/validators/tests -p 'test_exp043_five_pdb_audit.py' -v
+          python3 -m unittest discover -s tooling/validators/tests -p 'test_exp043_*.py' -v
 
   all-five-frozen-native-pdbs:
     runs-on: windows-2022
@@ -80,6 +82,15 @@ jobs:
             throw 'EXP043 five assembly provenance or policy gate invalid'
           }
           Write-Host 'EXP043 complete five-assembly source audit verified; managed Gate C remains UNSATISFIED'
+      - name: Inspect two pinned managed readers on all five PDBs without native COM or document logging
+        shell: pwsh
+        run: |
+          $root=Join-Path $env:RUNNER_TEMP 'exp043-evidence'
+          $readers=Join-Path $root 'managed-readers-private'
+          & ./tooling/pilots/recordsift/EXP-043/inspect-managed-readers.ps1 -ApplicationRoot (Join-Path $env:GITHUB_WORKSPACE 'recordsift') -EvidenceRoot $readers
+          if ($LASTEXITCODE -ne 0) { throw 'EXP043 pinned managed reader execution blocked' }
+          python tooling/validators/exp043_managed_reader_exposure.py --app-root (Join-Path $env:GITHUB_WORKSPACE 'recordsift') --reader-root $readers --output (Join-Path $env:RUNNER_TEMP 'exp043-managed-reader-exposure.json')
+          if ($LASTEXITCODE -ne 0) { throw 'EXP043 managed reader document coverage unproven; preserve only sanitized status' }
       - name: Erase every private compiler input, generated producer, diagnostic, preprocessed source and research binary
         if: always()
         shell: pwsh
@@ -96,5 +107,6 @@ jobs:
           path: |
             ${{ runner.temp }}/exp043-initial-native-inventory.json
             ${{ runner.temp }}/exp043-five-pdb-source-audit.json
+            ${{ runner.temp }}/exp043-managed-reader-exposure.json
           if-no-files-found: warn
           retention-days: 30

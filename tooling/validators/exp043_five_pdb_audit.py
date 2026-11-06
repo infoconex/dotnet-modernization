@@ -91,7 +91,7 @@ def audit(app, evidence, phase):
                 provenance = verify_provenance(
                     records,
                     private / "msbuild-preprocessed.xml",
-                    (private / "msbuild-diagnostic-private.log"),
+                    (private / "msbuild-diagnostic-private.log").read_text(encoding="utf-8-sig", errors="replace"),
                     producer, project,
                     (private / "exp042-csc-parameters-private.tsv"),
                 )
@@ -99,6 +99,7 @@ def audit(app, evidence, phase):
                 item["original_bytes_verified"] = native_result["original_input_sha256_or_sha1_matches"]
                 item["native_missing_original_bytes"] = native_result["native_documents_without_captured_input"]
                 item["native_origin_categories"] = native_result["origin_categories"]
+                item["no_line_native_documents"] = len(native_result["native_documents_without_line_references"])
                 item["actual_csc_task_source_count"] = provenance["effective_csc_source_count"]
                 item["actual_csc_task_source_binding"] = provenance["effective_csc_sources_verification"]
                 item["structured_event"] = provenance["structured_csc_task_parameter_evidence"]
@@ -120,7 +121,7 @@ def audit(app, evidence, phase):
     return {
         "experiment": "EXP-043",
         "phase": phase,
-        "scope": "five frozen trusted Windows net48 production PDBs only",
+        "scope": ("EXP024 candidate CSV plus four original baseline PDBs, read-only" if phase == "inventory" else "all five frozen trusted Windows net48 candidate production PDBs"),
         "required_components": len(COMPONENTS),
         "all_five_verified": phase == "candidate" and all(
             x["status"] == "VERIFIED" for x in results),

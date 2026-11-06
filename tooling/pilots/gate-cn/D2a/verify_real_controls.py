@@ -113,7 +113,13 @@ def run_loaded(assembly, loader):
                 str(assembly.resolve()).casefold(), "REAL_CLR_LOCATION_MISMATCH")
         require(value["method_value"] in (101, 202),
                 "REAL_CLR_METHOD_RESULT_UNEXPECTED")
-        require(len(value["loaded_sha256"]) == 64, "REAL_CLR_IDENTITY_INVALID")
+        # The .NET Framework child confirms the actual Assembly.Location,
+        # executed method and MVID. The parent hashes this exact loaded path
+        # after the child exits, within the trusted hosted-runner window.
+        # This is not atomic/cryptographic in-process module attestation.
+        require(isinstance(value["module_mvid"], str) and
+                len(value["module_mvid"]) == 36, "REAL_CLR_IDENTITY_INVALID")
+        value["loaded_sha256"] = sha(Path(value["loaded_location"]))
         return value
     except (ValueError, KeyError, AttributeError, TypeError):
         raise Failure("REAL_CLR_WITNESS_INVALID") from None

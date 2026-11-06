@@ -45,8 +45,11 @@ def validate(scope, report):
             type(scope["application_commit"]) is str and
             bool(SHA.fullmatch(scope["application_commit"])) and
             scope["component"] == "AnotherLibrary.Core" and
+            integer(scope["expected_native_documents"]) and
             scope["expected_native_documents"] == 2 and
+            integer(scope["expected_tracked_inputs"]) and
             scope["expected_tracked_inputs"] == 1 and
+            integer(scope["expected_generated_inputs"]) and
             scope["expected_generated_inputs"] == 1,
             "EXP044_EXTERNAL_SCOPE_INVALID")
     evidence = scope["source_evidence"]
@@ -65,6 +68,7 @@ def validate(scope, report):
             report["application_repository"] == scope["application_repository"] and
             report["application_commit"] == scope["application_commit"] and
             report["verdict"] == "SCOPED_LIVE_PROVENANCE_RESEARCH_VERIFIED" and
+            integer(report["required_components"]) and
             report["required_components"] == 1 and
             report["legacy_gate_c"] == "UNSATISFIED" and
             report["gate_cn_release_acceptance"] == "NOT_AUTHORIZED" and
@@ -82,6 +86,7 @@ def validate(scope, report):
             all(integer(r.get(k)) and r[k] == expected for k in (
                 "named_native_documents", "dbi_documents", "c13_documents",
                 "original_bytes_verified", "actual_csc_sources_verified")) and
+            integer(r.get("generated_inputs_verified")) and
             r["generated_inputs_verified"] == scope["expected_generated_inputs"] and
             r["native_pe_pdb_identity_matched"] is True and
             r["native_named_vs_dbi_c13"] == "MATCHED" and

@@ -1,12 +1,10 @@
 name: EXP-044 live non-RecordSift classic PDB provenance (research only)
 
+# A stacked PR is considered changed against its parent until merged, so
+# pull_request paths would re-run this real 20+ second compile on every docs
+# or unrelated evidence commit. Original live execution is frozen/verified.
+# Trigger further real PDB builds only by an explicit workflow dispatch.
 on:
-  pull_request:
-    paths:
-      - '.github/workflows/validate-exp044-non-recordsift-live.yml'
-      - 'tooling/fixtures/gate-cn/**'
-      - 'tooling/validators/gate_cn_live_provenance.py'
-      - 'tooling/pilots/gate-cn/EXP-044/**'
   workflow_dispatch:
 
 permissions:

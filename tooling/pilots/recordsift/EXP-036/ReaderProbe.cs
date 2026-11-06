@@ -6,6 +6,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
+using System.Text;
 #if DNLIB
 using dnlib.DotNet;
 using dnlib.DotNet.Pdb;
@@ -19,6 +20,11 @@ internal static class ReaderProbe
     private static readonly Dictionary<string, string> Documents =
         new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase);
 
+    // EXP-038 opt-in: original document URL is written ONLY to a private ephemeral
+    // local file in the isolated runner. The ordinary stdout remains sanitized.
+    private static readonly Dictionary<string, string> PrivateUrls =
+        new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase);
+
     private static readonly HashSet<string> Missing = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
 
     private static void Add(string url, Guid algorithm, byte[] digest)
@@ -28,6 +34,10 @@ internal static class ReaderProbe
         var name = Path.GetFileName(url);
         if (string.IsNullOrEmpty(name) || name == url && (url.Contains("/") || url.Contains("\\")))
             throw new InvalidDataException("Unexpected document path");
+        if (PrivateUrls.TryGetValue(name, out var priorUrl) &&
+            !string.Equals(priorUrl, url, StringComparison.Ordinal))
+            throw new InvalidDataException("Duplicate basename with different original source URLs");
+        PrivateUrls[name] = url;
         if (digest == null || digest.Length == 0)
         {
             if (Documents.ContainsKey(name))
@@ -90,9 +100,9 @@ internal static class ReaderProbe
 
     private static int Main(string[] args)
     {
-        if (args.Length != 2 || !File.Exists(args[0]) || !File.Exists(args[1]))
+        if ((args.Length != 2 && args.Length != 3) || !File.Exists(args[0]) || !File.Exists(args[1]))
         {
-            Console.Error.WriteLine("USAGE: ReaderProbe <dll> <pdb>");
+            Console.Error.WriteLine("USAGE: ReaderProbe <dll> <pdb> [private-urls-file]");
             return 10;
         }
         try
@@ -106,6 +116,15 @@ internal static class ReaderProbe
                 throw new InvalidDataException("Native DiaSymReader module loaded unexpectedly");
             if (Documents.Count == 0 && Missing.Count == 0)
                 throw new InvalidDataException("Reader returned zero source documents");
+            if (args.Length == 3)
+            {
+                if (File.Exists(args[2]))
+                    throw new InvalidDataException("Private output file already exists");
+                var rows = PrivateUrls.OrderBy(x => x.Key, StringComparer.Ordinal)
+                    .Select(pair => pair.Key + "\t" +
+                        Convert.ToBase64String(Encoding.UTF8.GetBytes(pair.Value)));
+                File.WriteAllLines(args[2], rows, new UTF8Encoding(false));
+            }
             foreach (var pair in Documents.OrderBy(x => x.Key, StringComparer.Ordinal))
                 Console.WriteLine("DOC\t" + pair.Key + "\t" + pair.Value);
             foreach (var name in Missing.OrderBy(x => x, StringComparer.Ordinal))

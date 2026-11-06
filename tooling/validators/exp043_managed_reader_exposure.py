@@ -86,12 +86,18 @@ def audit(app, reader_dir):
                 "MATCHED" if dn_keys == ce_keys else "DISAGREES")
             item["reader_documents_subset_of_native"] = (
                 dn_keys <= set(native) and ce_keys <= set(native))
+            # Match actual full identities, not merely 46 vs 46 counts.
+            # This proves the missing native identities are precisely those
+            # without C13 line references for these frozen PDBs.
+            item["reader_documents_match_native_line_references"] = (
+                dn_keys == dbi["lines"] and ce_keys == dbi["lines"])
             item["native_documents_not_exposed_by_both_readers"] = len(
                 set(native) - (dn_keys & ce_keys))
             item["status"] = (
                 "VERIFIED_READER_LIMITATION"
                 if item["reader_document_agreement"] == "MATCHED"
                 and item["reader_documents_subset_of_native"]
+                and item["reader_documents_match_native_line_references"]
                 else "INCOMPLETE"
             )
         except Exception as ex:

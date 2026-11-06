@@ -1,0 +1,44 @@
+name: Gate C-N D1 approved synthetic negatives (NO RELEASE)
+
+on:
+  pull_request:
+    paths:
+      - '.github/workflows/validate-gate-cn-d1-synthetic.yml'
+      - 'tooling/validators/gate_cn_d1_synthetic.py'
+      - 'tooling/validators/tests/test_gate_cn_d1_synthetic.py'
+      - 'methodology/acceptance-gates/reviews/2026-11-06/gate-cn-d1-**'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  d1-synthetic-only:
+    name: D1 11 paired negative controls (research-only)
+    runs-on: ubuntu-24.04
+    timeout-minutes: 5
+    steps:
+      - name: Checkout immutable review source
+        uses: actions/checkout@08c6903cd8c0fde910a37f88322edcfb5dd907a8 # v5.0.0
+        with:
+          persist-credentials: false
+
+      - name: Execute 11 in-memory contract negatives and paired positives
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 -V
+          python3 -m unittest discover \
+            -s tooling/validators/tests \
+            -p 'test_gate_cn_d1_synthetic.py' \
+            -v
+
+      - name: Preserve release authorization boundary
+        if: always()
+        shell: bash
+        run: |
+          printf '%s\n' \
+            'D1 SYNTHETIC ONLY — no real compiler, PDB, package or RecordSift build' \
+            'Managed Gate C UNSATISFIED' \
+            'Native Gate C-N production NOT_AUTHORIZED' \
+            'Production Source Link HOLD'

@@ -1,7 +1,7 @@
 # EXP-036 isolated classic Windows-PDB fixture. No application checkout/build.
 # This run is restricted to compiler-produced, trusted local inputs; never fuzz a parser.
 param([Parameter(Mandatory=$true)][string]$ArchiveRoot, [switch]$Experiment37Variants,
-      [switch]$Experiment38Keys, [string]$ApplicationRoot)
+      [switch]$Experiment38Keys, [switch]$Experiment39Audit, [string]$ApplicationRoot)
 $ErrorActionPreference='Stop'
 Set-StrictMode -Version Latest
 $global:LASTEXITCODE=0 # strict-mode compatible initial state before the first native subprocess
@@ -325,6 +325,61 @@ if ($Experiment38Keys) {
         if($LASTEXITCODE -ne 0){throw 'EXP038 key comparison synthetic tests failed'}
         python (Join-Path $PSScriptRoot '../EXP-038/document_key_association.py') --fixture-root $temp --application-root $ApplicationRoot --private-url-dir $privateDir --output (Join-Path $temp 'exp038-keys.json')
         if($LASTEXITCODE -ne 0){throw 'EXP038 exact named-stream lookup diagnostic failed'}
+
+        if ($Experiment39Audit) {
+            $verifier=Join-Path $root 'tooling/validators/classic_pdb_document_checksums.py'
+            $outcomes39=@()
+            foreach($caseName in $jobs38){
+                $directory39=if($caseName -ceq 'frozen_csv_candidate') {
+                    Join-Path $ApplicationRoot 'src/RecordSift.Infrastructure.Csv'
+                }else{Join-Path $temp ('EXP037-' + $caseName)}
+                $bin39=if($caseName -ceq 'frozen_csv_candidate') {
+                    Join-Path $directory39 'bin/Release'
+                }else{$directory39}
+                $assembly39=if($caseName -ceq 'frozen_csv_candidate') {
+                    'RecordSift.Infrastructure.Csv'
+                }else{'Differential'}
+                $args39=@($verifier,'--dll',(Join-Path $bin39 ($assembly39+'.dll')),
+                    '--pdb',(Join-Path $bin39 ($assembly39+'.pdb')),
+                    '--dnlib-urls',(Join-Path $privateDir ($caseName+'-DNLIB.private')),
+                    '--cecil-urls',(Join-Path $privateDir ($caseName+'-CECIL.private')))
+                if($caseName -ceq 'frozen_csv_candidate'){
+                    $names39=@('CharacterLimitedTextReader.cs','CsvRecordReaderAdapter.cs',
+                        'CsvStreamImporterAdapter.cs','MalformedCsvException.cs')
+                    foreach($name39 in $names39){
+                        $args39+=@('--source-file',(Join-Path $directory39 $name39),
+                            '--require-source-name',$name39)
+                    }
+                }else{
+                    $args39+=@('--source-file',(Join-Path $temp 'EXP037-source/DifferentialSource.cs'),
+                        '--require-source-name','DifferentialSource.cs')
+                }
+                $output39=Join-Path $temp ('exp039-'+$caseName+'.json')
+                $args39+=@('--output',$output39)
+                & python @args39
+                if($LASTEXITCODE -ne 0){throw 'EXP039 reusable verifier fail-closed result'}
+                $e=Get-Content -Raw $output39 | ConvertFrom-Json
+                $outcomes39+=@([ordered]@{
+                    variant=$caseName
+                    matched=$e.result.source_hashes_matched
+                    managed_document_count=$e.result.managed_document_count
+                    native_source_stream_count=$e.result.native_named_source_stream_count
+                    unexplained_native_streams=$e.result.unmatched_native_source_streams
+                    orphan_record_parse_gaps=$e.result.unmatched_native_unrecognized_records
+                    missing_compiler_input_sources=$e.result.reader_documents_without_supplied_physical_source
+                    inventory=$e.result.inventory_completeness
+                    gate_c=$e.result.gate_c
+                })
+                Remove-Item -LiteralPath $output39 -Force
+            }
+            [ordered]@{
+                experiment='EXP-039';phase='bounded_reusable_native_source_verifier'
+                result='COMPLETED_WITH_EXPLICIT_INVENTORY_LIMITS'
+                source_commit='8358780829458854a4b0356df5ac5e685f0a34c8'
+                cases=$outcomes39
+                unproven='No complete independent native document inventory, all-app coverage, debugger or policy acceptance'
+            } | ConvertTo-Json -Depth 8 | Set-Content (Join-Path $temp 'exp039-summary.json') -Encoding utf8
+        }
     } finally {
         Remove-Item -LiteralPath $privateDir -Recurse -Force -ErrorAction Stop
     }

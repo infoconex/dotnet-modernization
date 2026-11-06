@@ -67,7 +67,8 @@ class ManagedReaderExposureTests(unittest.TestCase):
                                  [("A.cs","C:/private/A.cs",None)])
             native={"/src/files/c:/private/a.cs":{},
                     "/src/files/c:/private/generated.cs":{}}
-            dbi={"dbi":set(native),"c13":set(native)}
+            dbi={"dbi":set(native),"c13":set(native),
+                 "lines":{"/src/files/c:/private/a.cs"}}
             with mock.patch("exp043_managed_reader_exposure.source_pdb_inventory",
                             return_value=(native,dbi)):
                 result=audit(root/"app",input_root)
@@ -75,6 +76,17 @@ class ManagedReaderExposureTests(unittest.TestCase):
                 self.assertEqual(len(result["results"]),5)
                 self.assertTrue(all(x["native_documents_not_exposed_by_both_readers"]==1
                                     for x in result["results"]))
+                self.assertTrue(all(x["reader_documents_match_native_line_references"]
+                                    for x in result["results"]))
+                # A same-sized but different native line-identity set must fail closed.
+                mismatched_line_keys={**dbi, "lines":{"/src/files/c:/private/generated.cs"}}
+                with mock.patch("exp043_managed_reader_exposure.source_pdb_inventory",
+                                return_value=(native,mismatched_line_keys)):
+                    line_mismatch=audit(root/"app",input_root)
+                    self.assertFalse(line_mismatch["all_five_readers_audited"])
+                    self.assertTrue(all(x["status"]=="INCOMPLETE"
+                                        and not x["reader_documents_match_native_line_references"]
+                                        for x in line_mismatch["results"]))
                 self.assertNotIn("C:/private/", str(result))
                 self.assertNotIn("A.cs", str(result))  # No private document identity.
                 bad={**dbi,"c13":set()}

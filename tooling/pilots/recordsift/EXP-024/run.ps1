@@ -3,7 +3,7 @@
 [CmdletBinding()]
 param([Parameter(Mandatory=$true)][string]$ApplicationRoot,
       [Parameter(Mandatory=$true)][string]$EvidenceRoot,
-      [switch]$CaptureLoadedModules)
+      [switch]$CaptureLoadedModules, [switch]$CaptureCompilerSources)
 $ErrorActionPreference = 'Stop'
 Set-StrictMode -Version Latest
 $frozen = '8358780829458854a4b0356df5ac5e685f0a34c8'
@@ -134,6 +134,19 @@ try {
         }
         $modified=$modified.Substring(0,$rootEnd) + $probeImport + [Environment]::NewLine + $modified.Substring($rootEnd)
     }
+
+    if ($CaptureCompilerSources) {
+        # Imported ONLY into the disposable, temporary CSV project after source-link imports.
+        # Captures exact @(Compile) physical bytes immediately before CoreCompile; no PDB
+        # path strings are trusted as file paths. Before/after bytes must remain identical.
+        $captureTargets=Join-Path $research 'tooling/pilots/recordsift/EXP-041/CompilerInputSnapshot.targets'
+        if (-not (Test-Path -LiteralPath $captureTargets)) { throw 'EXP041 source snapshot task missing' }
+        $escapedTargets=[Security.SecurityElement]::Escape($captureTargets)
+        $captureImport='  <Import Project="' + $escapedTargets + '" />'
+        $rootEnd=$modified.LastIndexOf('</Project>',[StringComparison]::Ordinal)
+        if ($rootEnd -lt 0) { throw 'EXP041 invalid temporary project root' }
+        $modified=$modified.Substring(0,$rootEnd) + $captureImport + [Environment]::NewLine + $modified.Substring($rootEnd)
+    }
     [IO.File]::WriteAllText($project,$modified,[Text.UTF8Encoding]::new($false))
     Check-Frozen $true
     $baseArgs=@($project,'/p:Configuration=Release','/p:Platform=AnyCPU','/p:Deterministic=true','/p:ContinuousIntegrationBuild=true','/p:BuildProjectReferences=false','-nologo')
@@ -167,15 +180,34 @@ try {
        $modulePrivate=Join-Path $evidence 'msbuild-task-modules-private.txt'
        $compileArgs+=("/p:SourceLinkProbeOutput=$modulePrivate")
     }
+
+    if ($CaptureCompilerSources) {
+        $privateCapture=Join-Path $evidence 'exp041-original-inputs-private'
+        if (Test-Path -LiteralPath $privateCapture) { throw 'EXP041 private capture must be new' }
+        $compileArgs+=("/p:SourceInputCaptureRoot=$privateCapture")
+    }
     & $msbuild @compileArgs '/t:Rebuild' '/verbosity:diagnostic' *> $log
     $exit=$LASTEXITCODE
     if ($exit -ne 0) {
         $report.compile="failed_exit_$exit"
         Write-Report
-        Get-Content -LiteralPath $log | Select-Object -Last 35 | Out-Host
+        if (-not $CaptureCompilerSources) {
+            Get-Content -LiteralPath $log | Select-Object -Last 35 | Out-Host
+        } else {
+            Write-Host 'EXP041 private compile failed; raw diagnostic log deliberately withheld'
+        }
         throw 'Provider-integrated CSV compile failed; preserve failure evidence.'
     }
+
     $report.compile='csv_release_completed'
+    if ($CaptureCompilerSources) {
+        if (-not (Test-Path -LiteralPath (Join-Path $privateCapture 'input-manifest.tsv'))) {
+            throw 'EXP041 pre- and post-CoreCompile private source capture unavailable'
+        }
+        $report.original_csc_source_capture='physical_inputs_pre_and_post_corecompile_verified_privately'
+        $report.original_csc_source_capture_scope='Csc @(Compile) task inputs from disposable frozen CSV project only'
+        Write-Report
+    }
     if ($CaptureLoadedModules) {
        if (-not (Test-Path -LiteralPath $modulePrivate)) {
           throw 'MSBuild did not execute in-process assembly module capture after CoreCompile.'

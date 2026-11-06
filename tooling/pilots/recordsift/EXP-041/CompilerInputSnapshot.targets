@@ -1,0 +1,115 @@
+<Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <!-- Research-only import into a disposable frozen CSV project. No production edits. -->
+  <!-- The same @(Compile) item list is passed to the traditional Csc task in CoreCompile. -->
+  <UsingTask TaskName="RecordSiftResearchSnapshotCompilerInputs"
+             TaskFactory="RoslynCodeTaskFactory"
+             AssemblyFile="$(MSBuildToolsPath)\Microsoft.Build.Tasks.Core.dll">
+    <ParameterGroup>
+      <Mode ParameterType="System.String" Required="true" />
+      <CaptureRoot ParameterType="System.String" Required="true" />
+      <PathMap ParameterType="System.String" Required="false" />
+      <Sources ParameterType="Microsoft.Build.Framework.ITaskItem[]" Required="false" />
+    </ParameterGroup>
+    <Task>
+      <Using Namespace="System" />
+      <Using Namespace="System.IO" />
+      <Using Namespace="System.Linq" />
+      <Using Namespace="System.Text" />
+      <Using Namespace="System.Security.Cryptography" />
+      <Code Type="Fragment" Language="cs"><![CDATA[
+        try {
+          string manifest = System.IO.Path.Combine(CaptureRoot, "input-manifest.tsv");
+          if (Mode == "capture") {
+            if (File.Exists(manifest) || Directory.Exists(CaptureRoot)) {
+              Log.LogError("EXP041_PRIVATE_CAPTURE_MUST_BE_NEW");
+              return false;
+            }
+            Directory.CreateDirectory(CaptureRoot);
+            var rows = new System.Collections.Generic.List<string>();
+            string encodedMap = Convert.ToBase64String(Encoding.UTF8.GetBytes(PathMap ?? ""));
+            rows.Add("PATHMAP\t" + encodedMap);
+            if (Sources == null || Sources.Length == 0 || Sources.Length > 1024) {
+              Log.LogError("EXP041_INVALID_CSC_SOURCE_ITEM_COUNT");
+              return false;
+            }
+            using (var sha = SHA256.Create()) {
+              for (int index = 0; index < Sources.Length; index++) {
+                string full = Sources[index].GetMetadata("FullPath");
+                if (String.IsNullOrEmpty(full) || !System.IO.Path.IsPathRooted(full)) {
+                  Log.LogError("EXP041_SOURCE_ITEM_NOT_ABSOLUTE");
+                  return false;
+                }
+                byte[] physical = File.ReadAllBytes(full);
+                if (physical.Length > 16 * 1024 * 1024) {
+                  Log.LogError("EXP041_SOURCE_ITEM_EXCEEDS_LIMIT");
+                  return false;
+                }
+                var digest = BitConverter.ToString(sha.ComputeHash(physical)).Replace("-", "").ToLowerInvariant();
+                string snapshot = System.IO.Path.Combine(CaptureRoot, String.Format("input-{0:D4}.bin", index));
+                File.WriteAllBytes(snapshot, physical);
+                string name64 = Convert.ToBase64String(Encoding.UTF8.GetBytes(full));
+                rows.Add(index.ToString() + "\t" + name64 + "\t" + digest);
+              }
+            }
+            File.WriteAllLines(manifest, rows, Encoding.ASCII);
+          } else if (Mode == "verify") {
+            if (!File.Exists(manifest)) {
+              Log.LogError("EXP041_PRIVATE_CAPTURE_MISSING");
+              return false;
+            }
+            string[] rows = File.ReadAllLines(manifest, Encoding.ASCII);
+            if (rows.Length < 2 || rows.Length > 1025 || !rows[0].StartsWith("PATHMAP\t")) {
+              Log.LogError("EXP041_PRIVATE_CAPTURE_INVALID");
+              return false;
+            }
+            if (Sources == null || rows.Length != Sources.Length + 1) {
+              Log.LogError("EXP041_CSC_SOURCE_ITEM_COUNT_CHANGED");
+              return false;
+            }
+            using (var sha = SHA256.Create()) {
+              for (int i = 0; i < Sources.Length; i++) {
+                string[] cells = rows[i + 1].Split('\t');
+                if (cells.Length != 3 || cells[0] != i.ToString()) {
+                  Log.LogError("EXP041_CAPTURE_ROW_INVALID");
+                  return false;
+                }
+                string full = Encoding.UTF8.GetString(Convert.FromBase64String(cells[1]));
+                if (!String.Equals(full, Sources[i].GetMetadata("FullPath"), StringComparison.OrdinalIgnoreCase)) {
+                  Log.LogError("EXP041_CSC_SOURCE_IDENTITY_CHANGED");
+                  return false;
+                }
+                byte[] snapshot = File.ReadAllBytes(System.IO.Path.Combine(CaptureRoot,
+                    String.Format("input-{0:D4}.bin", i)));
+                byte[] after = File.ReadAllBytes(full);
+                string hash0 = BitConverter.ToString(sha.ComputeHash(snapshot)).Replace("-", "").ToLowerInvariant();
+                string hash1 = BitConverter.ToString(sha.ComputeHash(after)).Replace("-", "").ToLowerInvariant();
+                if (hash0 != cells[2] || hash1 != hash0) {
+                  Log.LogError("EXP041_SOURCE_BYTES_CHANGED_DURING_COMPILE");
+                  return false;
+                }
+              }
+            }
+          } else {
+            Log.LogError("EXP041_UNKNOWN_CAPTURE_MODE");
+            return false;
+          }
+          return true;
+        } catch (Exception) {
+          // No exception messages: filesystem exceptions contain private source paths.
+          Log.LogError("EXP041_SOURCE_SNAPSHOT_FAILED_CLOSED");
+          return false;
+        }
+      ]]></Code>
+    </Task>
+  </UsingTask>
+  <Target Name="RecordSiftResearchCaptureInputsBeforeCsc" BeforeTargets="CoreCompile">
+    <RecordSiftResearchSnapshotCompilerInputs Mode="capture"
+           Sources="@(Compile)" PathMap="$(PathMap)"
+           CaptureRoot="$(SourceInputCaptureRoot)" />
+  </Target>
+  <Target Name="RecordSiftResearchValidateInputsAfterCsc" AfterTargets="CoreCompile">
+    <RecordSiftResearchSnapshotCompilerInputs Mode="verify"
+           Sources="@(Compile)" PathMap="$(PathMap)"
+           CaptureRoot="$(SourceInputCaptureRoot)" />
+  </Target>
+</Project>

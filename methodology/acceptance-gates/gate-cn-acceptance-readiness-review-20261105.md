@@ -45,3 +45,10 @@ Historical Gate C-N report consistency checker initially accepted coordinated ma
 **Decision required from stakeholder before this research can proceed into organizational acceptance:** nominate independent reviewers/approval authority and choose/authorize durable evidence custody, then direct whether to prepare a consolidated **release-gate acceptance proposal** for a precisely scoped trusted-native-PDB alternative, **without yet accepting or replacing** legacy Gate C. The default is HOLD. This is distinct from any subsequent explicit request to accept Gate C-N or authorize production Source Link.
 
 **Prohibited in this phase:** merge research PRs, modify RecordSift or either main branch, publish packages, waive managed-reader checksum Gate C, infer VS IDE NuGet project installation/source stepping, run hostile native COM or claim production approval.
+
+
+## November 6, 2026 — preparation authorized; supersedes previous requested action only
+
+Stakeholder approved the **preparation of the formal independent review** in [issue #73](https://github.com/infoconex/dotnet-modernization/issues/73#issuecomment-6680589160). [Issue #77](https://github.com/infoconex/dotnet-modernization/issues/77) tracks a [formal reviewer packet](gate-cn-formal-acceptance-review-package-20261106.md), [proposed immutable scope/custody protocol](gate-cn-manifest-custody-review-protocol-20261106.md), and [explicitly unsigned human review and later decision record](gate-cn-independent-review-decision-record-20261106.md).
+
+This approval **fulfills only the request to prepare a review package** in the earlier paragraph above. It does not appoint, substitute for or sign any review; does not approve the actual immutable production scope, evidence custodian or reusable per-build release enforcement; does not resolve legacy managed checksum Gate C; and does not authorize activation, merge or Source Link adoption. Those human/technical policy decisions remain pending.

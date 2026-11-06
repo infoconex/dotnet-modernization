@@ -279,3 +279,12 @@ The prior “non-RecordSift live execution unverified” prerequisite was **narr
 | Gate C-N release activation | **NOT AUTHORIZED** — needs named reviewers, externally approved immutable production manifest and new stakeholder approval; do not activate or merge |
 
 The [consolidated Gate C-N readiness memo](../../../../methodology/acceptance-gates/gate-cn-acceptance-readiness-review-20261105.md) documents review findings and next authorization boundary. This is an authorization request for **human governance review**, not a request to retire original Gate C or approve production Source Link.
+
+
+## Formal acceptance *preparation* authority — November 6, 2026 (not production approval)
+
+The stakeholder explicitly **approved preparation** of a formal, independent Gate C-N acceptance review packet in [issue #73](https://github.com/infoconex/dotnet-modernization/issues/73#issuecomment-6680589160); separately tracked by [issue #77](https://github.com/infoconex/dotnet-modernization/issues/77). This **does not** authorize gate activation, waiver/substitution of original managed checksum Gate C, release packaging, PR merges, application/main edits, genuine IDE acceptance or Source Link production adoption.
+
+The review entry points are the [formal independent acceptance packet](../../../../methodology/acceptance-gates/gate-cn-formal-acceptance-review-package-20261106.md), [immutable manifest and custody proposal](../../../../methodology/acceptance-gates/gate-cn-manifest-custody-review-protocol-20261106.md), and [unsigned human reviewer/decision record](../../../../methodology/acceptance-gates/gate-cn-independent-review-decision-record-20261106.md). The package is **ready to present for human reviewer appointments, custody ownership and initial production scope selection**; it is **not yet accepted by those reviewers**. All reviewers are currently unassigned; no independent signatures, approved manifest, production custodian, or reusable approved production enforcement exists. Retained sanitized reports remain historical assertions, not original source-byte replay proof.
+
+**Readiness disposition:** `FORMAL_REVIEW_PACKAGE_PREPARED`; `HUMAN_REVIEW_PENDING`; original managed checksum Gate C `UNSATISFIED`; Gate C-N release `NOT_AUTHORIZED`; Source Link `HOLD`. A separate explicit stakeholder decision is required **later** for any alternative release acceptance.

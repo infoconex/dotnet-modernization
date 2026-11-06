@@ -168,12 +168,12 @@ def read_structured_csc_events(path):
         rows = path.read_text(encoding="ascii").splitlines()
     except (UnicodeError, OSError):
         raise VerificationError("STRUCTURED_CSC_EVENT_FILE_INVALID") from None
-    if len(rows) == 1 and rows[0] == "STATUS\\tNO_UNIQUE_CSC_SOURCE_EVENT":
+    if len(rows) == 1 and rows[0] == "STATUS\tNO_UNIQUE_CSC_SOURCE_EVENT":
         return None, "INCONCLUSIVE_NO_UNIQUE_CSC_EVENT"
-    if len(rows) < 3 or rows[0] != "STATUS\\tCSC_TASK_PARAMETER_EVENT" or not rows[1].startswith("COUNT\\t"):
+    if len(rows) < 3 or rows[0] != "STATUS\tCSC_TASK_PARAMETER_EVENT" or not rows[1].startswith("COUNT\t"):
         raise VerificationError("STRUCTURED_CSC_EVENT_HEADER_INVALID")
     try:
-        count = int(rows[1].split("\\t")[1])
+        count = int(rows[1].split("\t")[1])
     except (ValueError, IndexError):
         raise VerificationError("STRUCTURED_CSC_EVENT_COUNT_INVALID") from None
     if not 0 < count <= 1024 or len(rows) != count + 2:

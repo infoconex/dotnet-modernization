@@ -18,7 +18,12 @@ if ($evidence.StartsWith($app + [IO.Path]::DirectorySeparatorChar,[StringCompari
 if ((& git -C $app rev-parse HEAD).Trim() -cne $frozen -or $LASTEXITCODE -ne 0) {
   throw 'EXP043 wrong frozen commit'
 }
-if (@(& git -C $app status --porcelain).Count -ne 0) { throw 'EXP043 checkout must be initially clean' }
+# EXP-024 legitimately creates ignored packages, binaries and temporary files.
+# Only tracked frozen source mutations or staged changes violate the boundary.
+$trackedDiff=@(& git -C $app diff --name-only HEAD --)
+if ($LASTEXITCODE -ne 0 -or $trackedDiff.Count -ne 0) {
+  throw 'EXP043 tracked frozen source must be unchanged after EXP024'
+}
 $parent=Join-Path $evidence 'exp024'
 if (-not (Test-Path -LiteralPath (Join-Path $parent 'candidate-versus-original-compatibility.json'))) {
   throw 'EXP043 independently verified EXP024 baseline/candidate prerequisite missing'

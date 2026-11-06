@@ -3,7 +3,7 @@
 [CmdletBinding()]
 param([Parameter(Mandatory=$true)][string]$ApplicationRoot,
       [Parameter(Mandatory=$true)][string]$EvidenceRoot,
-      [switch]$CaptureLoadedModules, [switch]$CaptureCompilerSources)
+      [switch]$CaptureLoadedModules, [switch]$CaptureCompilerSources, [switch]$CaptureProducerProvenance)
 $ErrorActionPreference = 'Stop'
 Set-StrictMode -Version Latest
 $frozen = '8358780829458854a4b0356df5ac5e685f0a34c8'
@@ -135,6 +135,20 @@ try {
         $modified=$modified.Substring(0,$rootEnd) + $probeImport + [Environment]::NewLine + $modified.Substring($rootEnd)
     }
 
+
+    if ($CaptureProducerProvenance -and -not $CaptureCompilerSources) {
+        throw 'EXP042 producer investigation requires independently captured sources'
+    }
+    if ($CaptureProducerProvenance) {
+        # Probe the actual framework moniker generation target; never change real source.
+        $producerTargets=Join-Path $research 'tooling/pilots/recordsift/EXP-042/MonikerProducerProbe.targets'
+        if (-not (Test-Path -LiteralPath $producerTargets)) { throw 'EXP042 producer target unavailable' }
+        $escapedProducer=[Security.SecurityElement]::Escape($producerTargets)
+        $producerImport='  <Import Project="' + $escapedProducer + '" />'
+        $rootEnd=$modified.LastIndexOf('</Project>',[StringComparison]::Ordinal)
+        if ($rootEnd -lt 0) { throw 'EXP042 invalid isolated project structure' }
+        $modified=$modified.Substring(0,$rootEnd) + $producerImport + [Environment]::NewLine + $modified.Substring($rootEnd)
+    }
     if ($CaptureCompilerSources) {
         # Imported ONLY into the disposable, temporary CSV project after source-link imports.
         # Captures exact @(Compile) physical bytes immediately before CoreCompile; no PDB
@@ -200,6 +214,14 @@ try {
     }
 
     $report.compile='csv_release_completed'
+    if ($CaptureProducerProvenance) {
+        $producerPrivate=Join-Path $evidence 'exp041-original-inputs-private-producer'
+        if (-not (Test-Path -LiteralPath (Join-Path $producerPrivate 'producer-after.tsv'))) {
+            throw 'EXP042 actual moniker generator output was not captured'
+        }
+        $report.producer_provenance_probe='generated_target_private_output_observed; independent task log validation still required'
+        Write-Report
+    }
     if ($CaptureCompilerSources) {
         if (-not (Test-Path -LiteralPath (Join-Path $privateCapture 'input-manifest.tsv'))) {
             throw 'EXP041 pre- and post-CoreCompile private source capture unavailable'

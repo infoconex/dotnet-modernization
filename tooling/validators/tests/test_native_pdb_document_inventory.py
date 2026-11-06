@@ -39,7 +39,7 @@ def fixture(file_names=(NAME,), with_c13=True):
     if with_c13:
         c13 += subsection(0xF4, entries)
         line = struct.pack("<IHHI", 0, 1, 0, 8)
-        line += struct.pack("<III", positions[0], 1, 8)
+        line += struct.pack("<III", positions[0], 1, 20)
         line += struct.pack("<II", 0, 0)
         c13 += subsection(0xF2, line)
     mod = bytearray(64)
@@ -157,6 +157,17 @@ class NativeInventoryTests(unittest.TestCase):
         struct.pack_into("<I", mod, 4, 0xFA)
         streams[5] = bytes(mod)
         with self.assertRaisesRegex(VerificationError, "LINE_WITHOUT_FILECHKSMS"):
+            audit(streams, named, readers)
+
+    def test_c13_line_block_size_excluding_header_fails_closed(self):
+        streams, named, readers = fixture()
+        raw = bytearray(streams[5])
+        # Module signature 4, checksum subsection header 8 + 40 payload,
+        # line subsection header 8, line header 12, then fragment header.
+        line_fragment_block_size = 4 + 48 + 8 + 12 + 8
+        struct.pack_into("<I", raw, line_fragment_block_size, 8)
+        streams[5] = bytes(raw)
+        with self.assertRaisesRegex(VerificationError, "INVALID_C13_LINE_BLOCK"):
             audit(streams, named, readers)
 
     def test_unsupported_c13_checksum_algorithm_rejected(self):

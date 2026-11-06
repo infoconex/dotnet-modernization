@@ -216,3 +216,22 @@ No RecordSift or research main branch changes, merges, dependency upgrades or Nu
 | Source Link production use | No explicit stakeholder waiver or consolidated production authorization | HOLD |
 
 Retained sanitized artifact **13478167890**, ZIP digest sha256:6e392453adb9f8be0d61c2827217bcae632af8d421e01c31ff6fd6a9a13b1eed; added unconditional deletion of private task-event records, producer bytes and logs. No RecordSift/main or research/main branch edits, merge, dependency upgrades or publication. Do not upgrade a bounded native input result into a replacement Gate C. Research detail: experiments/EXP-042-source-provenance.md.
+
+
+## EXP-043 five-production native source completeness and managed reader decision (November 5, 2026)
+
+Executing CI [42170182029](https://github.com/infoconex/dotnet-modernization/actions/runs/42170182029) at `d261572a4f02e94f83897eb94d056681d5cf6d55` PASS on Windows and Ubuntu, exact frozen RecordSift source SHA and unchanged original/candidate 425 API, 419 NUnit/418 passed/one skipped, five XML, unpublished NuGet and clean net48 consumer.
+
+| Separate evidence gate | Verifiable result | Disposition |
+|---|---|---|
+| Actual Csc source inputs for all five production builds | Real structured Csc TaskInput Sources exactly match independently captured physical Compile input lists: 24+23+7+7+3 | VERIFIED 64/64 for frozen candidate |
+| Source-byte integrity in all five native PDBs | Paired PE/PDB CodeView GUID+age, named digest streams, DBI, C13 all agree; original physical source bytes match 64/64; zero missing | VERIFIED for trusted locally produced PDBs |
+| Source origin | 59 tracked inputs plus five generated intermediate moniker outputs with actual producer task execution, prior absence, exact emitted path/bytes match | VERIFIED for frozen candidates |
+| Native line/document divergence | Native distinct 64; line-referenced 46; non-line-referenced 18; C13 checksum entries 72, all NONE | VERIFIED structural, but C13 NONE contains no digests |
+| dnlib/Cecil managed PDB reader discovery | Both pinned readers independently agree on exactly 46 documents, exclude the same 18 native-only documents and expose 0/46 document checksum bytes | VERIFIED limitation, NOT checksum acceptance |
+| Frozen original/candidate behavior contracts | 425 API, 419 NUnit/418 pass+one skip, five XML, unpublished NuGet, clean net48 consumer, five compatibility categories | PASS |
+| Existing approved managed-reader checksum Gate C | Both independently pinned readers expose zero checksums despite 64/64 separately verified native originals | **UNSATISFIED**, no waiver approved |
+| Authentic Visual Studio Package Manager project installation / live debugger stepping | Not performed | NOT TESTED |
+| Source Link production adoption | No stakeholder approval for alternative gate | **HOLD** |
+
+Sanitized final artifact ID **13479814833**, ZIP sha256:b0b23a78e8b0e1227631a25e9a3f975dbca4dbb8ae97f8b52d6aea463405a7fc (30-day retention); only counts and fixed categories, private files and research DLLs removed. Draft PR #71 remains unmerged. The bounded native original-input verification **does not automatically redefine Gate C**; explicit stakeholder approval would be required to adopt any alternate acceptance route, and real IDE install and debugger behavior are still independent outstanding gates. Detail: experiments/EXP-043-five-assembly-pdb-provenance.md.

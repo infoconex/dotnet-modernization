@@ -120,19 +120,26 @@ def validate_manifest(manifest):
 
 
 def inside(root, relative):
-    root = root.resolve(strict=True)
+    # A source path is an observed compiler identity. Do not rewrite its
+    # original absolute spelling through Path.resolve(): on Windows an alias
+    # or junction can change the string even when the bytes are the same.
+    # Resolve *only* for confinement checks, preserving the supplied spelling.
+    require(root.is_absolute(), "TRUSTED_ROOT_MUST_BE_ABSOLUTE")
+    canonical = root.resolve(strict=True)
     path = root.joinpath(*relative_parts(relative).parts)
-    require(path.resolve(strict=False).is_relative_to(root),
+    require(path.resolve(strict=False).is_relative_to(canonical),
             "MANIFEST_PATH_ESCAPES_TRUSTED_ROOT")
     return path
 
 
 def verify_roots(app, evidence):
+    require(app.is_absolute() and evidence.is_absolute(),
+            "TRUSTED_ROOT_MUST_BE_ABSOLUTE")
     a, e = app.resolve(strict=True), evidence.resolve(strict=True)
     require(a.is_dir() and e.is_dir() and a != e
             and not a.is_relative_to(e) and not e.is_relative_to(a),
             "PRIVATE_EVIDENCE_ROOT_NOT_ISOLATED")
-    return a, e
+    return app, evidence
 
 
 def verify_checkout(app, expected, repository):

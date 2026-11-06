@@ -1,0 +1,104 @@
+name: EXP-042 actual Csc source parameters and intermediate producer research only
+
+on:
+  pull_request:
+    paths:
+      - '.github/workflows/validate-exp042-source-provenance.yml'
+      - 'tooling/pilots/recordsift/EXP-042/**'
+      - 'tooling/pilots/recordsift/EXP-024/run.ps1'
+      - 'tooling/validators/exp042_source_provenance.py'
+      - 'tooling/validators/tests/test_exp042_source_provenance.py'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  provenance-unit-controls:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 8
+    steps:
+      - uses: actions/checkout@08c6903cd8c0fde910a37f88322edcfb5dd907a8 # v5.0.0
+        with:
+          persist-credentials: false
+      - name: Validate strict independent Csc task and actual producer controls
+        run: |
+          python3 -m unittest discover -s tooling/validators/tests -p 'test_exp042_source_provenance.py' -v
+  frozen-windows-provenance:
+    runs-on: windows-2022
+    timeout-minutes: 110
+    steps:
+      - uses: actions/checkout@08c6903cd8c0fde910a37f88322edcfb5dd907a8 # v5.0.0
+        with:
+          persist-credentials: false
+      - uses: actions/checkout@08c6903cd8c0fde910a37f88322edcfb5dd907a8 # v5.0.0
+        with:
+          repository: infoconex/RecordSift
+          ref: 8358780829458854a4b0356df5ac5e685f0a34c8
+          fetch-depth: 0
+          path: recordsift
+          persist-credentials: false
+      - uses: actions/setup-dotnet@a98b56852c35b8e3190ac28c8c2271da59106c68 # v6.0.0
+        with:
+          dotnet-version: '10.0.403'
+      - name: Build existing independent API metadata validator
+        shell: pwsh
+        run: |
+          dotnet build tooling/assembly-metadata/src/AssemblyMetadata.csproj -c Release -nologo -v minimal
+          if ($LASTEXITCODE -ne 0) { throw 'Original metadata validator unavailable' }
+      - name: Rerun original and candidate release acceptance with private source and producer observation
+        shell: pwsh
+        run: |
+          & ./tooling/pilots/recordsift/EXP-024/run.ps1 -ApplicationRoot (Join-Path $env:GITHUB_WORKSPACE 'recordsift') -EvidenceRoot (Join-Path $env:RUNNER_TEMP 'exp042-exp024') -CaptureCompilerSources -CaptureProducerProvenance
+          if ($LASTEXITCODE -ne 0) { throw 'Original or candidate acceptance / producer observation failed' }
+      - name: Independent native seven-document physical digest and actual Csc task/producer provenance
+        shell: pwsh
+        run: |
+          $evidence=Join-Path $env:RUNNER_TEMP 'exp042-exp024'
+          $capture=Join-Path $evidence 'exp041-original-inputs-private'
+          $producer=$capture+'-producer'
+          try {
+            $app=Join-Path $env:GITHUB_WORKSPACE 'recordsift'
+            $csv=Join-Path $app 'src/RecordSift.Infrastructure.Csv'
+            python tooling/validators/exp041_compiler_input_audit.py --dll (Join-Path $csv 'bin/Release/RecordSift.Infrastructure.Csv.dll') --pdb (Join-Path $csv 'bin/Release/RecordSift.Infrastructure.Csv.pdb') --capture-dir $capture --app-root $app --output (Join-Path $env:RUNNER_TEMP 'exp042-native-audit.json')
+            if ($LASTEXITCODE -ne 0) { throw 'EXP041 native PDB source-byte acceptance regressed' }
+            python tooling/validators/exp042_source_provenance.py --capture-dir $capture --producer-dir $producer --preprocessed (Join-Path $evidence 'msbuild-preprocessed.xml') --private-log (Join-Path $evidence 'msbuild-diagnostic-private.log') --project-dir $csv --structured-events (Join-Path $evidence 'exp042-csc-parameters-private.tsv') --output (Join-Path $env:RUNNER_TEMP 'exp042-provenance.json')
+            if ($LASTEXITCODE -ne 0) { throw 'EXP042 private provenance evidence failed closed' }
+            $report=Get-Content (Join-Path $env:RUNNER_TEMP 'exp042-provenance.json') -Raw | ConvertFrom-Json
+            if ($report.gate_c -cne 'UNSATISFIED' -or $report.source_link_adoption -cne 'HOLD') { throw 'Approval gate incorrectly changed' }
+            Write-Host "EXP042 Csc=$($report.effective_csc_sources_verification) producer=$($report.intermediate_producer.producer_status)"
+          } finally {
+            foreach($private in @($capture,$producer)) {
+              if (Test-Path -LiteralPath $private) {
+                Remove-Item -LiteralPath $private -Recurse -Force -ErrorAction Stop
+              }
+            }
+          }
+      - name: Always erase additional private EXP-042 source/log/producer evidence
+        if: always()
+        shell: pwsh
+        run: |
+          $evidence=Join-Path $env:RUNNER_TEMP 'exp042-exp024'
+          $paths=@(
+            (Join-Path $evidence 'exp041-original-inputs-private'),
+            (Join-Path $evidence 'exp041-original-inputs-private-producer'),
+            (Join-Path $evidence 'exp042-csc-parameters-private.tsv'),
+            (Join-Path $evidence 'exp042-logger-compile-private.log'),
+            (Join-Path $evidence 'EXP042.CscParameterLogger.dll'),
+            (Join-Path $evidence 'msbuild-diagnostic-private.log'),
+            (Join-Path $evidence 'msbuild-preprocessed.xml')
+          )
+          foreach ($file in $paths) {
+            if (Test-Path -LiteralPath $file) {
+              Remove-Item -LiteralPath $file -Recurse -Force -ErrorAction Stop
+            }
+          }
+      - name: Publish ONLY bounded sanitized evidence, never private compiler/PDB inputs
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4.6.2
+        with:
+          name: exp042-source-provenance-sanitized
+          path: |
+            ${{ runner.temp }}/exp042-native-audit.json
+            ${{ runner.temp }}/exp042-provenance.json
+          if-no-files-found: error
+          retention-days: 30

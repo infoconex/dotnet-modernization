@@ -3,7 +3,7 @@
 [CmdletBinding()]
 param([Parameter(Mandatory=$true)][string]$ApplicationRoot,
       [Parameter(Mandatory=$true)][string]$EvidenceRoot,
-      [switch]$CaptureLoadedModules, [switch]$CaptureCompilerSources)
+      [switch]$CaptureLoadedModules, [switch]$CaptureCompilerSources, [switch]$CaptureProducerProvenance)
 $ErrorActionPreference = 'Stop'
 Set-StrictMode -Version Latest
 $frozen = '8358780829458854a4b0356df5ac5e685f0a34c8'
@@ -135,6 +135,20 @@ try {
         $modified=$modified.Substring(0,$rootEnd) + $probeImport + [Environment]::NewLine + $modified.Substring($rootEnd)
     }
 
+
+    if ($CaptureProducerProvenance -and -not $CaptureCompilerSources) {
+        throw 'EXP042 producer investigation requires independently captured sources'
+    }
+    if ($CaptureProducerProvenance) {
+        # Probe the actual framework moniker generation target; never change real source.
+        $producerTargets=Join-Path $research 'tooling/pilots/recordsift/EXP-042/MonikerProducerProbe.targets'
+        if (-not (Test-Path -LiteralPath $producerTargets)) { throw 'EXP042 producer target unavailable' }
+        $escapedProducer=[Security.SecurityElement]::Escape($producerTargets)
+        $producerImport='  <Import Project="' + $escapedProducer + '" />'
+        $rootEnd=$modified.LastIndexOf('</Project>',[StringComparison]::Ordinal)
+        if ($rootEnd -lt 0) { throw 'EXP042 invalid isolated project structure' }
+        $modified=$modified.Substring(0,$rootEnd) + $producerImport + [Environment]::NewLine + $modified.Substring($rootEnd)
+    }
     if ($CaptureCompilerSources) {
         # Imported ONLY into the disposable, temporary CSV project after source-link imports.
         # Captures exact @(Compile) physical bytes immediately before CoreCompile; no PDB
@@ -186,6 +200,21 @@ try {
         if (Test-Path -LiteralPath $privateCapture) { throw 'EXP041 private capture must be new' }
         $compileArgs+=("/p:SourceInputCaptureRoot=$privateCapture")
     }
+    if ($CaptureProducerProvenance) {
+        # Independent MSBuild *structured* TaskInput logger. The compiler and
+        # application are unchanged; only a private observation channel is added.
+        $cscTool=Join-Path (Split-Path -Parent $msbuild) 'Roslyn/csc.exe'
+        $frameworkAssembly=Join-Path (Split-Path -Parent $msbuild) 'Microsoft.Build.Framework.dll'
+        $loggerSource=Join-Path $research 'tooling/pilots/recordsift/EXP-042/CscParameterLogger.cs'
+        $loggerDll=Join-Path $evidence 'EXP042.CscParameterLogger.dll'
+        $structuredPrivate=Join-Path $evidence 'exp042-csc-parameters-private.tsv'
+        if (-not (Test-Path -LiteralPath $cscTool) -or -not (Test-Path -LiteralPath $frameworkAssembly)) {
+            throw 'EXP042 pinned host MSBuild compiler/framework unavailable'
+        }
+        & $cscTool /nologo /target:library /langversion:7.3 "/reference:$frameworkAssembly" '/reference:System.Core.dll' "/out:$loggerDll" $loggerSource *> (Join-Path $evidence 'exp042-logger-compile-private.log')
+        Assert-Exit 'EXP042 research-only structured logger compilation failed'
+        $compileArgs+=("/logger:RecordSiftResearchCscParameterLogger,$loggerDll;$structuredPrivate")
+    }
     & $msbuild @compileArgs '/t:Rebuild' '/verbosity:diagnostic' *> $log
     $exit=$LASTEXITCODE
     if ($exit -ne 0) {
@@ -200,6 +229,18 @@ try {
     }
 
     $report.compile='csv_release_completed'
+    if ($CaptureProducerProvenance) {
+        $producerPrivate=Join-Path $evidence 'exp041-original-inputs-private-producer'
+        if (-not (Test-Path -LiteralPath (Join-Path $producerPrivate 'producer-after.tsv'))) {
+            throw 'EXP042 actual moniker generator output was not captured'
+        }
+        if (-not (Test-Path -LiteralPath $structuredPrivate)) {
+            throw 'EXP042 MSBuild structured task event missing'
+        }
+        $report.producer_provenance_probe='generated_target_private_output_observed; independent task log validation still required'
+        $report.structured_csc_probe='private_event_file_captured_not_yet_independently_authenticated'
+        Write-Report
+    }
     if ($CaptureCompilerSources) {
         if (-not (Test-Path -LiteralPath (Join-Path $privateCapture 'input-manifest.tsv'))) {
             throw 'EXP041 pre- and post-CoreCompile private source capture unavailable'

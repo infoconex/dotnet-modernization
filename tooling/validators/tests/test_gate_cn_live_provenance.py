@@ -146,6 +146,8 @@ class GateCNLiveResearchAdapterTests(unittest.TestCase):
         self.assertEqual(result["source_link_adoption"], "HOLD")
         self.assertNotIn(self.temp.name, str(result))
         self.assertNotIn("Tracked.cs", str(result))
+        self.assertIn("other source generators", result["not_proven"].lower())
+        self.assertIn("release", result["not_proven"].lower())
 
     def test_individual_real_provenance_primitives_cross_platform(self):
         # Synthetic-only diagnostics: identify precise host-sensitive primitive

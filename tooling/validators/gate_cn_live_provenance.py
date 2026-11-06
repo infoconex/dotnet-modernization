@@ -274,7 +274,7 @@ def run(manifest, app, evidence):
         "legacy_gate_c": "UNSATISFIED",
         "gate_cn_release_acceptance": "NOT_AUTHORIZED",
         "source_link_adoption": "HOLD",
-        "not_proven": "Generated input contracts other than one EXP042 moniker per component; cross-app live execution, post-Csc runtime trust, original release/consumer acceptance, managed checksum APIs, Visual Studio/debugger operation or hostile PDB safety",
+        "not_proven": "Other source generators, arbitrary compiler layouts or input origins, application-specific release/consumer acceptance, managed checksum APIs, Visual Studio/debugger operation, hostile PDB safety, independent release approval or production adoption",
     }
 
 

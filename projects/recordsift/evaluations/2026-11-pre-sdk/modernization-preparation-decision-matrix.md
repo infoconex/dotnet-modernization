@@ -235,3 +235,22 @@ Executing CI [42170182029](https://github.com/infoconex/dotnet-modernization/act
 | Source Link production adoption | No stakeholder approval for alternative gate | **HOLD** |
 
 Sanitized final artifact ID **13479814833**, ZIP sha256:b0b23a78e8b0e1227631a25e9a3f975dbca4dbb8ae97f8b52d6aea463405a7fc (30-day retention); only counts and fixed categories, private files and research DLLs removed. Draft PR #71 remains unmerged. The bounded native original-input verification **does not automatically redefine Gate C**; explicit stakeholder approval would be required to adopt any alternate acceptance route, and real IDE install and debugger behavior are still independent outstanding gates. Detail: experiments/EXP-043-five-assembly-pdb-provenance.md.
+
+
+## Stakeholder Option B — Gate C-N design and research validation (November 5, 2026)
+
+[Stakeholder decision issue #72](https://github.com/infoconex/dotnet-modernization/issues/72) now records **Option B APPROVED FOR DESIGN/RESEARCH VALIDATION ONLY**. The following is the *authorization record*, **not** a replacement of the approved managed checksum acceptance gate or a Source Link adoption decision. Tracking [issue #73](https://github.com/infoconex/dotnet-modernization/issues/73), isolated stacked [draft PR #74](https://github.com/infoconex/dotnet-modernization/pull/74).
+
+| Evidence/policy dimension | Current disposition |
+| --- | --- |
+| Complete original compiler input / native Windows PDB identity and source bytes (frozen pilot) | Prior EXP-043 research VERIFIED 64/64; unchanged |
+| Exact native C13 line-reference versus dual managed-reader key sets | Prior EXP-043 verified 46 matching keys, 18 native records without lines, 0/46 managed exposed checksums; unchanged |
+| Proposed separate native provenance `Gate C-N` | **SPECIFIED / RESEARCH VALIDATION AUTHORIZED**, **NOT** yet an accepted release gate |
+| New independent sanitized aggregate checker | 25 synthetic positive/negative tests and authenticated original GitHub artifact ZIP/run metadata PASS on CI [42175004526](https://github.com/infoconex/dotnet-modernization/actions/runs/42175004526) at `3dad98297bfbebbd278eecbee8d839070066cce9`; tool CI [42175004405](https://github.com/infoconex/dotnet-modernization/actions/runs/42175004405) PASS. Only `AGGREGATES_CONSISTENT_RESEARCH_ONLY`, **not** a source-byte gate pass |
+| Existing approved managed-reader checksum Gate C | **UNSATISFIED; unchanged**, even after stakeholder's Option B authorization |
+| Authentic Visual Studio NuGet project installation / actual debugger retrieval and stepping | **NOT TESTED**; remain independent acceptance gates |
+| Source Link production adoption | **HOLD**, no merges/package publication/RecordSift or either main edit |
+| Further authorization | Explicit independent stakeholder approval is still required to *activate* a C-N alternate release gate and resolve original Gate C; separate production adoption approval after IDE evidence |
+
+The C-N [proposed normative standard](https://github.com/infoconex/dotnet-modernization/blob/research/gate-cn-design-validation-20261105/methodology/acceptance-gates/gate-cn-native-pdb-source-provenance.md), [frozen externally pinned scope](https://github.com/infoconex/dotnet-modernization/blob/research/gate-cn-design-validation-20261105/projects/recordsift/evaluations/2026-11-pre-sdk/gate-cn-recordsift-scope.json) and [independent multi-perspective review](https://github.com/infoconex/dotnet-modernization/blob/research/gate-cn-design-validation-20261105/projects/recordsift/evaluations/2026-11-pre-sdk/reviews/Gate-CN-option-B-design-validation-review-20261105.md) preserve all remaining risk and approval boundaries. A consistency checker of sanitized reports cannot substitute for live independent physical-byte source verification; limited 30-day artifact retention is an explicit replay limitation.
+

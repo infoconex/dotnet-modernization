@@ -179,12 +179,12 @@ def dbi_source_inventory(streams, named):
                     require(q + 12 <= len(data), "TRUNCATED_C13_LINE_BLOCK")
                     file_offset, nlines, size = (u32(data, q + x) for x in (0, 4, 8))
                     require(nlines <= MAX_REFERENCES and
-                            size == nlines * (12 if flags & 1 else 8) and
-                            q + 12 + size <= len(data), "INVALID_C13_LINE_BLOCK")
+                            size == 12 + nlines * (12 if flags & 1 else 8) and
+                            q + size <= len(data), "INVALID_C13_LINE_BLOCK")
                     line_offsets.append(file_offset)
                     line_count += 1
                     require(line_count <= MAX_REFERENCES, "TOO_MANY_C13_LINE_BLOCKS")
-                    q += 12 + size
+                    q += size
                 require(q == len(data), "INVALID_C13_LINE_TRAILING")
             # Unknown subsection kinds are not interpreted as document records.
         c13_keys.update(checksum_offsets.values())
@@ -286,6 +286,12 @@ def main():
         print("EXP040 classified", len(report["unmatched"]), "orphan streams;",
               "DBI:", report["native_dbi_status"],
               "Gate C UNSATISFIED")
+        print("EXP040 sanitized inventory:", json.dumps({
+            "dbi_documents": report["native_dbi_file_info_documents"],
+            "c13_documents": report["native_c13_checksum_documents"],
+            "line_documents": report["native_c13_line_documents"],
+            "c13_records": report["native_c13_checksum_records"],
+            "orphan_categories": report["unmatched"]}, sort_keys=True))
     except (VerificationError, OSError, ValueError, IndexError, KeyError,
             UnicodeError, struct.error) as exc:
         # VerificationError is deliberately constructed ONLY from fixed,

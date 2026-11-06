@@ -1,6 +1,6 @@
 # EXP-041 — Original physical compiler-input authentication (frozen CSV PDB)
 
-**Status:** PROPOSED / IMPLEMENTED ON ISOLATED RESEARCH BRANCH; NOT YET VERIFIED BY CI. Existing Gate C **UNSATISFIED**, Source Link production **HOLD**.
+**Status (November 5, 2026): VERIFIED 7/7 ORIGINAL PHYSICAL NATIVE-PDB SOURCE DOCUMENT BYTES FOR FROZEN CSV CANDIDATE; ONE INTERMEDIATE INPUT PRODUCER UNVERIFIED.** Existing Gate C **UNSATISFIED**, Source Link production **HOLD**.
 
 Tracking [#66](https://github.com/infoconex/dotnet-modernization/issues/66), parent [#37](https://github.com/infoconex/dotnet-modernization/issues/37), predecessor [EXP-040 draft PR #65](https://github.com/infoconex/dotnet-modernization/pull/65). Research branch stacks on #65, does not modify `main` or frozen RecordSift commit `8358780829458854a4b0356df5ac5e685f0a34c8`. No NuGet publishing, dependency upgrades or policy waiver.
 
@@ -25,6 +25,32 @@ The standalone Python verifier reads only separately captured paths and snapshot
 - Review the running workflow and its retained sanitized evidence. If seven original-source inputs and byte digests match, classify their origins only by independently established source identities. If not, preserve missing input and parser findings without relaxing the gate.
 - Do not independently declare Gate C satisfied on the basis of the standalone native audit, even if 7/7 bytes eventually match. Managed-reader checksum API exposure remains a separately unsatisfied contract; authentic Visual Studio project package installation and live debugger stepping remain NOT TESTED. Any alternative Gate C evidence pathway, full app scope, merge, or production adoption needs explicit stakeholder approval.
 
-### Execution record
+### Verified executing-code workflow and evidence
 
-Pending actual EXP-041 CI run. No implementation, test pass, or native 7/7 claim is established by this draft alone.
+**Final code execution:** [GitHub Actions 42162017966](https://github.com/infoconex/dotnet-modernization/actions/runs/42162017966), SHA `760fa7e87c23a17a79337ca112b3eff23b7167e4`. **Ubuntu and Windows PASS.** Ubuntu **13/13** new controls pass. Frozen Release original and manually isolated candidate **425 public API, 419 NUnit discovered / 418 passed / 0 failed / one expected skipped, five XML documents, unpublished local NuGet package, clean installed net48 consumer and five logical compatibility categories PASS**. The original packages.config and frozen application Git HEAD remain unchanged, and no research/application main merge or publication occurred.
+
+**Sanitized independent artifact:** `exp041-sanitized-original-input-audit`, ID `13477690414`, GitHub artifact ZIP digest `sha256:60ca39e2f5696be5e509edceb0917d663d91002e487c0fe7453a39422e537823` (30-day retention). Source paths, full original bytes, native checksum values, raw PDBs, application binaries, private source identity map, and diagnostic MSBuild logs were excluded. The private source snapshot was deleted in the Windows job's `finally`.
+
+**Authentic source bytes:** The isolated frozen CSV project's seven `@(Compile)` physical input files were captured immediately before `CoreCompile` and successfully byte-hash-compared after compile. The native Windows PDB PE CodeView signature, DBI and C13 named-document sets agreed for all seven. All **7/7** original captured physical compiler-input bytes matched the corresponding native named `/SRC/FILES/` checksums, with **0 missing**. All eight separate C13 checksum entries remain algorithm `NONE`, so only named streams supply digest values; the original snapshots authenticate them independently. The full compiler effective argv/task `Sources` parameter was not separately replayed; this proof is restricted to the seven native document identities matching the captured `@(Compile)` list and not an assertion that no other compiler virtual/document inputs could exist.
+
+**Source-origin evidence:** Six out of seven captured input identities independently matched Git-tracked files. One source appeared in an intermediate directory and is categorized `intermediate_location_producer_unverified`; this is **not yet independent proof of its generator or target execution**. Among the three formerly unmatched native documents independently identified in EXP-040 as lacking C13 line references and managed-reader exposure, the sanitized opaque identity classifications are:
+
+| Opaque EXP-041 identifier | Independently evidenced origin | Exact physical checksum |
+|---|---|---|
+| `native-no-line-1` | `checked_in` | MATCH |
+| `native-no-line-2` | `intermediate_location_producer_unverified` | MATCH |
+| `native-no-line-3` | `checked_in` | MATCH |
+
+The opaque order is defined by normalized native identities privately and does not disclose names. This validates all three additional native-referenced documents' original byte digests, while refusing to invent an unproven producer.
+
+**Preserved failure history:** [42161613718](https://github.com/infoconex/dotnet-modernization/actions/runs/42161613718) revealed two synthetic verifier defects (prefix separator duplication and unsupported hash algorithm only checked when bytes present). After both were corrected, [42161953501](https://github.com/infoconex/dotnet-modernization/actions/runs/42161953501) achieved the first **7/7** native byte result but the later opaque origin breakdown was not yet in that executing code. [42162017966](https://github.com/infoconex/dotnet-modernization/actions/runs/42162017966) is the final accepted run including origin categories and all 13 controls. Intermediate Windows failure `INVALID_CAPTURE_PATHMAP` was a parser assumption about leading/trailing MSBuild mapping separators; corrected with fail-closed mapping validation. These were research harness failures, not application regressions.
+
+**Release/governance:** Native source-document byte coverage for this one frozen CSV candidate is now **7/7**. Existing managed-reader checksum disclosure is still **0/4**, and no stakeholder-approved alternate Gate C evidence pathway exists. Therefore **Gate C UNSATISFIED, Source Link HOLD**. No Visual Studio Package Manager **project installation**, source retrieval, or real debugger source stepping was established. Do not claim this workflow validates all five production PDBs or grants production acceptance.
+
+### Residual research and decision boundary
+
+1. Independently corroborate the effective `Csc Sources` task parameter/argv with the private pre-target snapshot; avoid overclaiming complete compiler invocation solely from `@(Compile)`.
+2. Attribute the intermediate input to an actual generating target/tool only using separately observed producer evidence. Its byte digest already authenticates; its origin remains unknown.
+3. Consider broader all-five-production-assembly native source coverage only after scoped validation justification, a new isolated experiment and preserved original gates.
+4. Any alternative standalone native-checksum Gate C pathway, Source Link adoption, merger or publication requires **explicit stakeholder approval**. Keep #66 and draft PR #67 open until review.
+

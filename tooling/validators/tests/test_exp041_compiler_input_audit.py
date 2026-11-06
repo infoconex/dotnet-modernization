@@ -92,8 +92,8 @@ class CompilerInputsTests(unittest.TestCase):
             b.parent.mkdir()
             a.write_bytes(b"a")
             b.write_bytes(b"b")
-            na = "/src/files/"+str(a).casefold()
-            nb = "/src/files/"+str(b).casefold()
+            na = "/src/files/"+str(a).replace("\\", "/").casefold()
+            nb = "/src/files/"+str(b).replace("\\", "/").casefold()
             dbi = {"status":"DBI_PARSED", "dbi":{na,nb}, "c13":{na,nb},
                    "lines":set(), "c13_algorithm_counts":{"NONE":2}}
             result = verify({na:record(b"a"),nb:record(b"b")}, dbi,
@@ -157,8 +157,8 @@ class CompilerInputsTests(unittest.TestCase):
             generated.parent.mkdir(parents=True)
             checked_in.write_bytes(b"ordinary")
             generated.write_bytes(b"generated")
-            a = "/src/files/" + str(checked_in).casefold()
-            b = "/src/files/" + str(generated).casefold()
+            a = "/src/files/" + str(checked_in).replace("\\", "/").casefold()
+            b = "/src/files/" + str(generated).replace("\\", "/").casefold()
             dbi = {"status":"DBI_PARSED", "dbi":{a,b}, "c13":{a,b},
                    "lines":{a}, "c13_algorithm_counts":{"NONE":2}}
             result=verify({a:record(b"ordinary"),b:record(b"generated")},

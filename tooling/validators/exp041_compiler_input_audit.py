@@ -10,6 +10,7 @@ import base64
 import hashlib
 import json
 import os
+import re
 from pathlib import Path
 import subprocess
 import sys
@@ -40,11 +41,20 @@ def decode(encoded):
 def parse_pathmap(value):
     if not value:
         return []
+    # MSBuild may concatenate mapping fragments with commas or semicolons,
+    # including leading/trailing empty separators. They are not mappings.
+    # An empty interior segment is ambiguous and rejected.
+    tokens = re.split(r"[,;]", value)
+    while tokens and not tokens[0].strip():
+        tokens.pop(0)
+    while tokens and not tokens[-1].strip():
+        tokens.pop()
     result = []
-    for item in value.split(","):
-        pair = item.split("=", 1)
-        require(len(pair) == 2 and all(pair), "INVALID_CAPTURE_PATHMAP")
-        left, right = (x.replace("\\", "/") for x in pair)
+    for item in tokens:
+        require(bool(item.strip()), "AMBIGUOUS_CAPTURE_PATHMAP_SEPARATOR")
+        pair = item.rsplit("=", 1)
+        require(len(pair) == 2 and all(pair), "INVALID_CAPTURE_PATHMAP_ENTRY")
+        left, right = (x.strip().replace("\\", "/") for x in pair)
         require(left.startswith("/") or (len(left) > 2 and left[1] == ":"),
                 "INVALID_CAPTURE_PATHMAP_ROOT")
         require(not any(left.casefold() == x[0].casefold() for x in result),

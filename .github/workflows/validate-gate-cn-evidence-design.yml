@@ -121,6 +121,17 @@ jobs:
             --scope "$scope" \
             --native-report "$root/exp043-five-pdb-source-audit.json" \
             --managed-report "$root/exp043-managed-reader-exposure.json"
+          # Emit only the two strictly allowlisted and authenticated sanitized
+          # reports AFTER all source-run and original ZIP checks pass. Raw
+          # compiler inputs, native PDBs, document keys and hashes remain private.
+          # The preliminary inventory report is intentionally NOT archived.
+          python3 - "$root/exp043-five-pdb-source-audit.json" "$root/exp043-managed-reader-exposure.json" <<'PY'
+          import base64,hashlib,sys
+          for label,path in zip(("NATIVE","MANAGED"),sys.argv[1:]):
+              raw=open(path,"rb").read()
+              print("EXP043_VERIFIED_"+label+"_JSON_SHA256="+hashlib.sha256(raw).hexdigest())
+              print("EXP043_VERIFIED_"+label+"_JSON_BASE64="+base64.b64encode(raw).decode("ascii"))
+          PY
 
       - name: Unconditionally erase temporary sanitized artifact and private signed redirect URL
         if: always()

@@ -1,0 +1,71 @@
+name: Gate C-N D2b actual local NuGet/CLR identity (RESEARCH ONLY)
+
+on:
+  pull_request:
+    paths:
+      - '.github/workflows/validate-gate-cn-d2b-local-nuget.yml'
+      - 'tooling/pilots/gate-cn/D2b/**'
+      - 'tooling/fixtures/gate-cn/D2b/**'
+      - 'methodology/acceptance-gates/reviews/2026-11-06/gate-cn-d2b-**'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  isolated-real-nuget-identity:
+    name: D2b real local NuGet restore and CLR candidate identity negatives
+    runs-on: windows-2022
+    timeout-minutes: 25
+    steps:
+      - name: Checkout exact immutable research source
+        uses: actions/checkout@08c6903cd8c0fde910a37f88322edcfb5dd907a8 # v5.0.0
+        with:
+          ref: ${{ github.event.pull_request.head.sha || github.sha }}
+          persist-credentials: false
+
+      - name: Verify exact head revision
+        shell: pwsh
+        env:
+          EXPECTED_SHA: ${{ github.event.pull_request.head.sha || github.sha }}
+        run: |
+          $actual = (& git rev-parse HEAD).Trim()
+          if ($LASTEXITCODE -ne 0 -or $actual -cne $env:EXPECTED_SHA) {
+            throw 'D2B_WRONG_EXPERIMENT_SHA'
+          }
+
+      - name: Run two disposable real NuGet restores and five negatives
+        shell: pwsh
+        env:
+          EXPECTED_SHA: ${{ github.event.pull_request.head.sha || github.sha }}
+        run: |
+          & ./tooling/pilots/gate-cn/D2b/run.ps1 -ExpectedCommit $env:EXPECTED_SHA
+          if ($LASTEXITCODE -ne 0) { throw 'D2B_REAL_RESEARCH_NOT_VERIFIED' }
+
+      - name: Unconditionally erase all generated NuGet/compiled private inputs
+        if: always()
+        shell: pwsh
+        run: |
+          $private = Join-Path $env:RUNNER_TEMP 'gate-cn-d2b-private'
+          $fixture = Join-Path $env:GITHUB_WORKSPACE 'tooling/fixtures/gate-cn/D2a'
+          foreach ($path in @($private, (Join-Path $fixture 'bin'), (Join-Path $fixture 'obj'))) {
+            if (Test-Path -LiteralPath $path) {
+              Remove-Item -LiteralPath $path -Recurse -Force -ErrorAction Stop
+            }
+          }
+
+      - name: Retain only sanitized fixed-category results
+        if: success()
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4.6.2
+        with:
+          name: gate-cn-d2b-sanitized-research-only
+          path: ${{ runner.temp }}/gate-cn-d2b-sanitized.json
+          if-no-files-found: error
+          retention-days: 30
+
+      - name: Explicit research-only release posture
+        if: always()
+        shell: pwsh
+        run: |
+          Write-Host 'D2b local disposable research only, no RecordSift or published packages'
+          Write-Host 'Gate C UNSATISFIED; Gate C-N release NOT_AUTHORIZED; Source Link HOLD'

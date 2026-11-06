@@ -17,7 +17,7 @@ if ((& git -C $app rev-parse HEAD).Trim() -cne $frozen -or $LASTEXITCODE -ne 0) 
 if (Test-Path -LiteralPath $evidence) {throw 'EXP043 managed reader evidence must be new'}
 New-Item -ItemType Directory -Path $evidence | Out-Null
 $archiveSpecs=@(
-  @{Name='dnlib.4.5.0.nupkg';Id='dnlib';Version='4.5.0';Hash='63bc2f9579568204cc8b30fa9f6700a231bcf868a8032e09118887afee58'},
+  @{Name='dnlib.4.5.0.nupkg';Id='dnlib';Version='4.5.0';Hash='63bc2f9579568204cc8b30fa9f6700a231bcf868a8032e09118887af3eafee58'},
   @{Name='mono.cecil.0.11.6.nupkg';Id='mono.cecil';Version='0.11.6';Hash='d2a23832aaa948ba9a01acc42b5726e34c5f995958f1b30d45c0e7c70b3a72d5'}
 )
 # Verify pinned archive SHA256 against previous EXP-036/040 independent

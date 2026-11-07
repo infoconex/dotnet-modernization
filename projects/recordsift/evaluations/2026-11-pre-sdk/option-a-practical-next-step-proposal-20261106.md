@@ -1,5 +1,17 @@
 # RecordSift Option A — practical modernization restart and first change proposal
 
+> **Historical proposal; implementation subsequently completed.** Sections 1–6 below preserve the original proposal and pre-implementation authorization state as written. They are not a description of the current application state. The actual outcome is recorded immediately below.
+
+## Implementation outcome — November 6, 2026 (Pacific)
+
+- **Completed D-001:** RecordSift [PR #258](https://github.com/infoconex/RecordSift/pull/258) corrected the local NUnit runner to cover all five assemblies, merged only to `release/0.2` at `338257f84a72a04136801aa93c3c435e28a61dce`.
+- **Completed D-002:** The stakeholder separately approved the isolated candidate [issue #259](https://github.com/infoconex/RecordSift/issues/259); [PR #260](https://github.com/infoconex/RecordSift/pull/260) added one conditional root `Directory.Build.props` default and removed ten duplicate project declarations. The standing delegated review board approved the exact candidate; it was **squash-merged only to `release/0.2`**, commit `c53d47b425cce365eeeb1dcfe950ed7973fc6cd4`. This later implementation authorization does not retroactively expand the original Option A research approval.
+- **Verified on actual post-merge commit:** Windows .NET Framework 4.8 build, five NUnit suites, API/XML, dependency audit [run 42348544078](https://github.com/infoconex/RecordSift/actions/runs/42348544078); independent clean net48 unpublished NuGet consumer [run 42348544079](https://github.com/infoconex/RecordSift/actions/runs/42348544079); engineering documentation [run 42348544074](https://github.com/infoconex/RecordSift/actions/runs/42348544074). All three **completed successfully** with head `c53d47b425cce365eeeb1dcfe950ed7973fc6cd4`.
+- **Property/override verification:** disposable Windows [run 42348207227](https://github.com/infoconex/RecordSift/actions/runs/42348207227) reported all ten projects C# 7.3 in both Debug and Release (20/20), and project override precedence (2 checks); the temporary workflow edit was reverted before final merge.
+- **Unchanged boundaries:** RecordSift `main` still `8358780829458854a4b0356df5ac5e685f0a34c8`. No NuGet publication, release promotion, SDK-style conversion, framework or dependency upgrades, Source Link or production Gate C-N authorization. Managed Gate C `UNSATISFIED`, native C-N `NOT_AUTHORIZED`, Source Link `HOLD`.
+- **New work requires a new scope decision:** Do not repeat D-001/D-002 or treat the remaining historical proposal's future-tense authorization request as open work. Proposed review-board governance remains **draft/unmerged in research PR #86**; research `main` merge still needs the separately governed approval.
+
+
 **Prepared:** November 6, 2026 Pacific. **State:** DOCUMENTATION / PROPOSED APPLICATION CHANGE ONLY; no implementation permission. **Stakeholder decision:** [issue #85](https://github.com/infoconex/dotnet-modernization/issues/85) records the user's explicit **YES** to Option A — preserve bounded Gate C-N research and return to the practical modernization roadmap.
 
 ## 1. Executive decision, without specialized compiler knowledge

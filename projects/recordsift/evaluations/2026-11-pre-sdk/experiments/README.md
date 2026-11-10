@@ -25,3 +25,7 @@ All RecordSift experiments anchor to the **application production baseline** `ma
 See [evidence manifest](../evidence/manifest.md) for immutable container digests, artifact IDs and corrected/failed runs.
 
 **Interpretation:** A workflow can pass while an intentionally unsuccessful negative control demonstrates a missing dependency. State the result of each command, not merely its enclosing workflow.
+
+## Subsequent article-specific verification
+
+- [EXP-044 — NuGet.Config source inheritance and ordinary restore](EXP-044-nuget-config-source-inheritance.md): **Verified** on Windows with .NET SDK 10.0.403 / NuGet CLI 7.9.0.83; four positive/negative source controls plus ordinary fresh-directory restore passed. [Definitive run 42737924517](https://github.com/infoconex/RecordSift/actions/runs/42737924517). Research-only; no RecordSift production configuration change.

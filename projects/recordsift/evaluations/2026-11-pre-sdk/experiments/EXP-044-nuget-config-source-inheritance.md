@@ -6,7 +6,7 @@
 **Unchanged application main baseline:** `3627a62260437db0bde83c5c7d3be56caee8af95`  
 **Isolated research branch:** [research/nuget-config-inheritance-20261109](https://github.com/infoconex/RecordSift/tree/research/nuget-config-inheritance-20261109)  
 **Research-only draft PR:** [#266 — DO NOT MERGE](https://github.com/infoconex/RecordSift/pull/266)  
-**Observed run:** [GitHub Actions 42737739041](https://github.com/infoconex/RecordSift/actions/runs/42737739041); [uploaded full-log artifact 13727322956](https://github.com/infoconex/RecordSift/actions/runs/42737739041/artifacts/13727322956). The script's A–E checks **passed**, but that workflow's overall conclusion was **failure** because an *additional evidence push* was rejected after a concurrent run updated the research branch. This does **not** indicate a NuGet configuration or restore failure. A workflow-only follow-up changed the archival step to execute only for push events; review its checks separately.
+**Definitive successful run:** [GitHub Actions 42737924517](https://github.com/infoconex/RecordSift/actions/runs/42737924517); [complete execution artifact 13728071750](https://github.com/infoconex/RecordSift/actions/runs/42737924517/artifacts/13728071750). **Research job passed**; four inheritance checks and ordinary restore each passed independently. The same PR commit also passed the existing Windows build/test, documentation, and clean-consumer workflows. An [earlier run 42737739041](https://github.com/infoconex/RecordSift/actions/runs/42737739041) passed A–E but its overall job failed at a subsequent evidence-push race. The workflow was adjusted so PR checks do not push evidence; the definitive run is fully green.
 
 ## Purpose and boundaries
 
@@ -84,7 +84,7 @@ dotnet nuget list source
 nuget restore .\RecordSift.sln -NonInteractive -PackagesDirectory <fresh temporary directory> -Verbosity detailed
 ```
 
-There was **no `-ConfigFile` argument**. Effective source listing showed exactly **`nuget.org [Enabled]`**, and restore exited **0**. The full verbose restore log was preserved in the [workflow artifact](https://github.com/infoconex/RecordSift/actions/runs/42737739041/artifacts/13727322956) under `record-sift-restore.log`. This verifies successful normal restore and effective source configuration **in the tested runner**. It does not separately prove every downloaded package's origin or a security guarantee; caches and tool/version differences remain relevant.
+There was **no `-ConfigFile` argument**. Effective source listing showed exactly **`nuget.org [Enabled]`**, and restore exited **0**. The full verbose restore log was preserved in the [workflow artifact](https://github.com/infoconex/RecordSift/actions/runs/42737924517/artifacts/13728071750) under `record-sift-restore.log`. This verifies successful normal restore and effective source configuration **in the tested runner**. It does not separately prove every downloaded package's origin or a security guarantee; caches and tool/version differences remain relevant.
 
 The [normal-restore source listing](https://github.com/infoconex/RecordSift/blob/research/nuget-config-inheritance-20261109/research/nuget-config/evidence/record-sift-effective-sources.txt) is also retained separately.
 
@@ -94,6 +94,6 @@ The [normal-restore source listing](https://github.com/infoconex/RecordSift/blob
 - **Verified:** ordinary `packages.config` restore succeeded with the existing repository `NuGet.Config` and no explicit config selection.
 - **Not verified by this experiment:** runtime audit advisory contact, enforcement of organizational network policy, cache package provenance, general portability to all NuGet versions, source mapping behavior, or complete deterministic builds.
 - **Recommendation:** Evaluate adding `<disabledPackageSources><clear /></disabledPackageSources>` to RecordSift's production `NuGet.Config` if the intended policy is to enable explicitly declared nuget.org. Organizational policy must be considered. **Not approved or committed.** Any implementation requires separate owner authorization and its own checks.
-- **Article:** Cite actual A–E outputs and tool versions; replace expected-result notes with observed results and differentiate the research job's successful assertions from the initial CI run's later archival-race failure.
+- **Article:** Cite actual A–E outputs and tool versions; replace expected-result notes with observed results and differentiate the research job's successful assertions from the historical archival-race failure and the definitive green rerun.
 
 No merges, releases, application source changes or blog publication were performed under this research.

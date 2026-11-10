@@ -88,12 +88,29 @@ There was **no `-ConfigFile` argument**. Effective source listing showed exactly
 
 The [normal-restore source listing](https://github.com/infoconex/RecordSift/blob/research/nuget-config-inheritance-20261109/research/nuget-config/evidence/record-sift-effective-sources.txt) is also retained separately.
 
+## Follow-up case-study positive/negative restore evidence
+
+The initial EXP-044 A–D checks used `dotnet nuget list source`, and E successfully restored the original RecordSift configuration without `-ConfigFile`. They did not themselves execute an intentionally disabled-source restore.
+
+A later isolated case-study stage in [RecordSift PR #268](https://github.com/infoconex/RecordSift/pull/268) added that negative control without changing production `main`:
+
+- [Exact stage execution commit `27daf116f23415ea117257ed5789ee9ab9963517`](https://github.com/infoconex/RecordSift/commit/27daf116f23415ea117257ed5789ee9ab9963517)
+- [Successful stage workflow #42744343004](https://github.com/infoconex/RecordSift/actions/runs/42744343004) and [artifact #13730207481](https://github.com/infoconex/RecordSift/actions/runs/42744343004/artifacts/13730207481)
+- Disposable `packages.config` referencing RecordSift's existing `NUnit 3.14.0`, with a fresh output directory for each restore, `-DirectDownload` and `-NoHttpCache`, and **no** `-ConfigFile` or `-Source` argument
+
+| Control | Actual exit code | Installed | Disposition |
+| --- | ---: | --- | --- |
+| Inherited `nuget.org` disabled; child omits `disabledPackageSources` clear | 1 | No | Expected failure verified |
+| Same source; child includes `disabledPackageSources` clear | 0 | Yes | Expected success verified |
+
+The successful stage run also retained the original positive/negative source-listing controls and successful ordinary RecordSift solution restore. The two restore controls establish actual restore behavior on the observed Windows/NuGet CLI 7.9.0.83 runner. They do **not** prove an enterprise compliance policy, exhaustive package provenance, all tool versions, or audit advisory network contact.
+
 ## Interpretation and proposed disposition
 
 - **Verified:** `packageSources` and `disabledPackageSources` are distinct inherited collections, and their `<clear />` elements independently affect effective source behavior.
 - **Verified:** ordinary `packages.config` restore succeeded with the existing repository `NuGet.Config` and no explicit config selection.
 - **Not verified by this experiment:** runtime audit advisory contact, enforcement of organizational network policy, cache package provenance, general portability to all NuGet versions, source mapping behavior, or complete deterministic builds.
 - **Recommendation:** Evaluate adding `<disabledPackageSources><clear /></disabledPackageSources>` to RecordSift's production `NuGet.Config` if the intended policy is to enable explicitly declared nuget.org. Organizational policy must be considered. **Not approved or committed.** Any implementation requires separate owner authorization and its own checks.
-- **Article:** Cite actual A–E outputs and tool versions; replace expected-result notes with observed results and differentiate the research job's successful assertions from the historical archival-race failure and the definitive green rerun.
+- **Article:** Cite A–E, the separate stage restore controls, and tool versions; replace expected-result notes with observed results and differentiate the research job's successful assertions from the historical archival-race failure and the definitive green rerun.
 
 No merges, releases, application source changes or blog publication were performed under this research.

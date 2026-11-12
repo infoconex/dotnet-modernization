@@ -1,0 +1,72 @@
+name: EXP-020 isolated PathMap with deterministic C# compilation
+
+# Historical experiment: manual execution only; no automatic PR builds.
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  source-path-normalization:
+    runs-on: windows-2022
+    timeout-minutes: 95
+    steps:
+      - name: Checkout research-only code
+        uses: actions/checkout@08c6903cd8c0fde910a37f88322edcfb5dd907a8 # v5.0.0
+        with:
+          persist-credentials: false
+      - name: Checkout immutable RecordSift source without push credentials
+        uses: actions/checkout@08c6903cd8c0fde910a37f88322edcfb5dd907a8 # v5.0.0
+        with:
+          repository: infoconex/RecordSift
+          ref: 8358780829458854a4b0356df5ac5e685f0a34c8
+          path: recordsift
+          fetch-depth: 0
+          persist-credentials: false
+      - name: Pin reader SDK
+        uses: actions/setup-dotnet@a98b56852c35b8e3190ac28c8c2271da59106c68 # v6.0.0
+        with:
+          dotnet-version: "10.0.403"
+      - name: Verify Python PE comparison fixtures
+        shell: pwsh
+        run: |
+          python -m unittest discover -s tooling/validators/tests -p test_pe_variation.py -v
+          if ($LASTEXITCODE -ne 0) { throw 'PE comparison fixture tests failed.' }
+      - name: Compile metadata-only extractors using pinned SDK
+        shell: pwsh
+        run: |
+          $sdk = (& dotnet --version).Trim()
+          if ($LASTEXITCODE -ne 0 -or $sdk -cne '10.0.403') { throw "Wrong .NET SDK $sdk" }
+          dotnet build tooling/assembly-metadata/src/AssemblyMetadata.csproj -c Release -nologo -v minimal
+          if ($LASTEXITCODE -ne 0) { throw 'Original compiled metadata extractor failed to build.' }
+          dotnet build tooling/pe-provenance/src/PeProvenance.csproj -c Release -nologo -v minimal
+          if ($LASTEXITCODE -ne 0) { throw 'Managed PE provenance reader failed to build.' }
+      - name: Run seven genuine frozen-source Release builds with complete consumer checks
+        shell: pwsh
+        run: |
+          & ./tooling/pilots/recordsift/EXP-020/run.ps1 -ApplicationRoot (Join-Path $env:GITHUB_WORKSPACE 'recordsift') -EvidenceRoot (Join-Path $env:RUNNER_TEMP 'RecordSift-EXP-020')
+          if ($LASTEXITCODE -ne 0) { throw 'PathMap source/metadata/negative-control acceptance failed.' }
+      - name: Retain only JSON source/PE/gates evidence, no compiled DLLs/PDBs/nupkg
+        if: always()
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4.6.2
+        with:
+          name: recordsift-exp020-pathmap-isolation-evidence
+          retention-days: 30
+          if-no-files-found: warn
+          path: |
+            ${{ runner.temp }}/RecordSift-EXP-020/experiment-report.json
+            ${{ runner.temp }}/RecordSift-EXP-020/evaluated-pathmap-properties.json
+            ${{ runner.temp }}/RecordSift-EXP-020/mapped-cross-worktree.json
+            ${{ runner.temp }}/RecordSift-EXP-020/intentionally-wrong-map.json
+            ${{ runner.temp }}/RecordSift-EXP-020/mapped-original-pe.json
+            ${{ runner.temp }}/RecordSift-EXP-020/mapped-independent-pe.json
+            ${{ runner.temp }}/RecordSift-EXP-020/wrong-map-independent-pe.json
+            ${{ runner.temp }}/RecordSift-EXP-020/logical-*.json
+            ${{ runner.temp }}/RecordSift-EXP-020/*-release-evidence/pilot-report.json
+            ${{ runner.temp }}/RecordSift-EXP-020/*-release-evidence/nunit-*.xml
+            ${{ runner.temp }}/RecordSift-EXP-020/unmapped-deterministic-control/experiment-report.json
+            ${{ runner.temp }}/RecordSift-EXP-020/unmapped-deterministic-control/toolchain.json
+            ${{ runner.temp }}/RecordSift-EXP-020/unmapped-deterministic-control/effective-deterministic-settings.json
+            ${{ runner.temp }}/RecordSift-EXP-020/unmapped-deterministic-control/deterministic-reproducibility.json
+            ${{ runner.temp }}/RecordSift-EXP-020/unmapped-deterministic-control/*-release-evidence/pilot-report.json

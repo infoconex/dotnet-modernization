@@ -55,3 +55,8 @@ See [evidence manifest](../evidence/manifest.md) for immutable container digests
 - [EXP-044 — NuGet.Config source inheritance and ordinary restore](EXP-044-nuget-config-source-inheritance.md): **Verified** on Windows with .NET SDK 10.0.403 / NuGet CLI 7.9.0.83; four positive/negative source controls plus ordinary fresh-directory restore passed. [Definitive run 42737924517](https://github.com/infoconex/RecordSift/actions/runs/42737924517). Research-only; no RecordSift production configuration change.
 
 
+
+
+## EXP-038 — Native structured source checksum and managed document key association (November 5, 2026)
+
+[Full experiment and independent assessment](EXP-038-document-to-native-stream-key.md), [issue #60](https://github.com/infoconex/dotnet-modernization/issues/60), draft [PR #61](https://github.com/infoconex/dotnet-modernization/pull/61), **[successful Windows run 42148192785](https://github.com/infoconex/dotnet-modernization/actions/runs/42148192785)**. Exact pinned dnlib/Cecil reader document URL plus native PDB source stream key were compared privately: unmapped fixture case-insensitive key matches, but `/pathmap` fixture **and four real RecordSift CSV source documents** do not until slash/backslash normalization + casefold. Every owned CSV document's SHA256 was independently decoded from structured native checksum metadata and verified against the physical compiler-input bytes. All original and manual candidate release gates remain PASS. Sanitized artifact **13471336047**, SHA256 `723e444ff56fa29c47d1843e5dedce673b6e2c5dafdd99fbabe6c58dab904c54`, with private raw URL manifests erased. **Observed failure mechanism VERIFIED; unmodified managed readers still 0/4, full Gate C UNSATISFIED, source-link adoption HOLD.**

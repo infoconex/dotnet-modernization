@@ -126,3 +126,21 @@ The consolidated matrix above covered EXP-001–035 and predates [EXP-036](exper
 | Authentic VS Package Manager installation / debugger source stepping | **NOT TESTED** | Independent stakeholder approval gates remain open |
 
 **Disposition unchanged:** Source Link **HOLD**. No changes to the existing approval-gate policy, RecordSift, packages or default branches. Reported evidence only; not production modernization authorization.
+
+
+## November 5 EXP-038 addendum — source checksum key mismatch explained but approval unchanged
+
+**[Successful isolated experiment 42148192785](https://github.com/infoconex/dotnet-modernization/actions/runs/42148192785)**, [full report](experiments/EXP-038-document-to-native-stream-key.md), draft [PR #61](https://github.com/infoconex/dotnet-modernization/pull/61), executing SHA `fea65001d757d824ff1d908dd5baed5844b42db0`. With unchanged frozen RecordSift, old API/NUnit/XML/package/clean net48 consumer and five logical-compatibility categories passed again. Exact packaged managed reader versions were preserved and the native PE/PDB identity checks passed.
+
+The EXP-037 pathmap result is now explained at the precise source-name level: **both** pinned dnlib and Cecil source-doc URLs construct a named source-checksum key that is found by case-insensitive matching in no-pathmap positive controls but **not found** after pathmap; in mapped fixtures **and each of four selected actual CSV source documents**, normalizing slash and backslash separators plus casefold makes the document name and digest-bearing named stream key equal. The actual native source-file record was structurally parsed (algorithm GUID/length/digest) and matched to physical compiler-input SHA256 for all four owned files, not merely found as a free byte substring. A private ephemeral URL manifest was used solely in bounded runner memory/files and deleted before sanitized artifact upload.
+
+| Decision gate | Evidence | Status/decision |
+|---|---|---|
+| Original frozen app API/behaviors/packaging/consumer | 425 API, 419 NUnit (418 pass/1 skip), five XML, unpublished nupkg, clean net48 consumer, five compatibility categories | **PASS** for bounded manual-import candidate |
+| Exact native SHA256 record per selected owned CSV source | Native GUID/length/checksum structured decode + physical source digest match | **VERIFIED 4/4** |
+| Actual managed document vs native stream key mapping | Both pinned readers fail case-insensitive key lookup when pathmapped; separator normalization + casefold matches real digest-bearing stream | **ROOT MECHANISM VERIFIED** for selected four and controlled fixtures |
+| Managed reader exposure / existing Gate C all-relevant-doc authenticity | Both unmodified readers still return 0/4; unclassified/generated/external document inventory not covered | **UNSATISFIED; FAIL-CLOSED** |
+| Authentic IDE NuGet project install and actual Visual Studio debugging | Neither executed | **NOT TESTED** |
+| Source Link production adoption | Requires separate stakeholder decision and additional acceptance | **HOLD** |
+
+**Consolidated recommendation:** do not change Roslyn, remove pathmap, migrate PDB format, or add a runtime package based on a **reader lookup mismatch**. Prefer a separately evaluated, bounded, generalizable, independent normalized-key structural verifier as a **proposed** alternative Gate C evidence pathway, with explicit complete-document/negative/security evidence and approval. Do not silently relabel existing Gate C PASSED. Compiler-server and native symbol writer identity remains partially captured but need not be asserted as the cause of this observation.

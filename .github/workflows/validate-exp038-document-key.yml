@@ -1,0 +1,84 @@
+name: EXP-038 native source-document stream-key association (research only)
+
+# Historical experiment: run manually only.
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  differential:
+    runs-on: windows-2022
+    timeout-minutes: 110
+    steps:
+      - uses: actions/checkout@08c6903cd8c0fde910a37f88322edcfb5dd907a8 # v5.0.0
+        with:
+          persist-credentials: false
+      - uses: actions/checkout@08c6903cd8c0fde910a37f88322edcfb5dd907a8 # v5.0.0
+        with:
+          repository: infoconex/RecordSift
+          ref: 8358780829458854a4b0356df5ac5e685f0a34c8
+          fetch-depth: 0
+          path: recordsift
+          persist-credentials: false
+      - uses: actions/setup-dotnet@a98b56852c35b8e3190ac28c8c2271da59106c68 # v6.0.0
+        with:
+          dotnet-version: '10.0.403'
+      - name: Compile existing independent assembly metadata validator
+        shell: pwsh
+        run: |
+          dotnet build tooling/assembly-metadata/src/AssemblyMetadata.csproj -c Release -nologo -v minimal
+          if ($LASTEXITCODE -ne 0) { throw 'Original metadata validator unavailable' }
+      - name: Reuse full EXP-024 frozen original and candidate release/consumer acceptance
+        shell: pwsh
+        run: |
+          & ./tooling/pilots/recordsift/EXP-024/run.ps1 -ApplicationRoot (Join-Path $env:GITHUB_WORKSPACE 'recordsift') -EvidenceRoot (Join-Path $env:RUNNER_TEMP 'exp037-exp024')
+          if ($LASTEXITCODE -ne 0) { throw 'Original compatibility acceptance failed' }
+      - name: Verify synthetic compiler-log capture controls and retain sanitized observed switches
+        shell: pwsh
+        run: |
+          python tooling/pilots/recordsift/EXP-037/compiler_capture.py --self-test
+          if ($LASTEXITCODE -ne 0) { throw 'Compiler sanitization self-test failed' }
+          python tooling/pilots/recordsift/EXP-037/compiler_capture.py --private-log (Join-Path $env:RUNNER_TEMP 'exp037-exp024/msbuild-diagnostic-private.log') --output (Join-Path $env:RUNNER_TEMP 'exp037-compiler-capture.json')
+          if ($LASTEXITCODE -ne 0) { throw 'Compiler capture failed' }
+      - name: Exact managed-reader package acquisition and original preflight
+        shell: pwsh
+        run: |
+          $root=Join-Path $env:RUNNER_TEMP 'exp037-archives'
+          New-Item -ItemType Directory -Path $root -Force | Out-Null
+          curl.exe --fail --location --retry 3 --silent --show-error --proto '=https' --proto-redir '=https' --max-filesize 31457280 'https://api.nuget.org/v3-flatcontainer/dnlib/4.5.0/dnlib.4.5.0.nupkg' --output (Join-Path $root 'dnlib.4.5.0.nupkg')
+          if ($LASTEXITCODE -ne 0) { throw 'Pinned dnlib archive unavailable' }
+          curl.exe --fail --location --retry 3 --silent --show-error --proto '=https' --proto-redir '=https' --max-filesize 31457280 'https://api.nuget.org/v3-flatcontainer/mono.cecil/0.11.6/mono.cecil.0.11.6.nupkg' --output (Join-Path $root 'mono.cecil.0.11.6.nupkg')
+          if ($LASTEXITCODE -ne 0) { throw 'Pinned Cecil archive unavailable' }
+          python tooling/pilots/recordsift/EXP-036/nuget_reader_preflight.py --dnlib (Join-Path $root 'dnlib.4.5.0.nupkg') --cecil (Join-Path $root 'mono.cecil.0.11.6.nupkg') --output (Join-Path $root 'static-audit.json')
+          if ($LASTEXITCODE -ne 0) { throw 'Official archive preflight failed' }
+      - name: Verify pinned readers + five controls; compare managed document lookup to native stream keys
+        shell: pwsh
+        run: |
+          & ./tooling/pilots/recordsift/EXP-036/run_fixture.ps1 -ArchiveRoot (Join-Path $env:RUNNER_TEMP 'exp037-archives') -Experiment37Variants -Experiment38Keys -ApplicationRoot (Join-Path $env:GITHUB_WORKSPACE 'recordsift')
+          if ($LASTEXITCODE -ne 0) { throw 'Differential fixture acceptance failed' }
+      - name: Structural-only named PDB stream inventory for two fixtures and actual frozen CSV
+        shell: pwsh
+        run: |
+          $fixtures=Join-Path $env:RUNNER_TEMP 'exp036-fixture'
+          $csv=Join-Path $env:GITHUB_WORKSPACE 'recordsift/src/RecordSift.Infrastructure.Csv/bin/Release'
+          python tooling/pilots/recordsift/EXP-036/named_stream_gap.py --fixture-sha1-dll (Join-Path $fixtures 'SHA1/Fixture-SHA1.dll') --fixture-sha1-pdb (Join-Path $fixtures 'SHA1/Fixture-SHA1.pdb') --fixture-sha256-dll (Join-Path $fixtures 'SHA256/Fixture-SHA256.dll') --fixture-sha256-pdb (Join-Path $fixtures 'SHA256/Fixture-SHA256.pdb') --csv-dll (Join-Path $csv 'RecordSift.Infrastructure.Csv.dll') --csv-pdb (Join-Path $csv 'RecordSift.Infrastructure.Csv.pdb') --output (Join-Path $env:RUNNER_TEMP 'exp037-pdb-structure.json')
+          if ($LASTEXITCODE -ne 0) { throw 'Independent native PDB structure probe failed' }
+      - name: Read-only physical digest byte scan across validated native PDB streams
+        shell: pwsh
+        run: |
+          python tooling/pilots/recordsift/EXP-037/pdb_digest_scan.py --fixture-root (Join-Path $env:RUNNER_TEMP 'exp036-fixture') --application-root (Join-Path $env:GITHUB_WORKSPACE 'recordsift') --output (Join-Path $env:RUNNER_TEMP 'exp037-raw-digests.json')
+          if ($LASTEXITCODE -ne 0) { throw 'Independent physical native PDB digest search failed' }
+      - name: Upload ONLY sanitized experimental metadata, never private logs, sources, symbols, binaries, or archives
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4.6.2
+        with:
+          name: exp038-sanitized-document-stream-key-metadata
+          path: |
+            ${{ runner.temp }}/exp037-compiler-capture.json
+            ${{ runner.temp }}/exp036-fixture/exp037-variants.json
+            ${{ runner.temp }}/exp037-pdb-structure.json
+            ${{ runner.temp }}/exp037-raw-digests.json
+            ${{ runner.temp }}/exp036-fixture/exp038-keys.json
+          if-no-files-found: error
+          retention-days: 30

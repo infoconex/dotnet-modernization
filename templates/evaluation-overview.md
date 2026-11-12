@@ -39,13 +39,15 @@ A baseline has **one source inventory** and **one executed verification record**
 
 Do not equate source-declared settings with evaluated MSBuild or executed behavior. Refer to the [baseline methodology](../methodology/evaluation-process.md#2-establish-the-baseline) for procedure. Keep proposals, findings and modernization recommendations in their own sections.
 
-## Application behavior and evidence
+## Technical discovery navigation
 
-**Authoritative behavior sources:** `<links to current requirements, scenarios, architecture, consumer contracts, or not documented>`  
-**Representative workflows and boundaries:** `<brief description or links covering important inputs/outputs, success and failure paths; only what is relevant>`  
-**Behavioral verification and gaps:** `<links to traceability, tests or run evidence with verification method, plus unresolved or contradictory claims>`
+**Application type and consumers:** `<library, API, service, desktop, etc.; one-line context>`  
+**Authoritative technical records:** `<links to the source-pinned baseline, configuration, build/CI, dependency, deployment and compatibility evidence>`  
+**Unverified technical facts or conflicting sources:** `<links to observed gaps, missing execution or stale documentation; no proposed fixes>`
 
-Reference the application's existing documentation and evidence rather than copying specifications or test matrices. When no such documentation exists, distinguish what current source inspection supports from inferred intent and runtime behavior not yet verified. This summary complements, but does not duplicate, the technical baseline.
+This is a short navigation summary, **not another inventory**. The application baseline owns technical detail. Reference functional requirements and scenarios only when they identify a relevant consumer or compatibility contract; do not reproduce application specifications or workflow catalogs.
+
+**Discovery and assessment are separate outputs.** A discovery-only evaluation stops after factual inventory, evidence classification and gaps. The screening, opportunities, experiments, decisions and implementation sequence below belong to a separately authorized **assessment or later phase**; omit or defer those sections when outside the current scope.
 
 ## Modernization area screening
 

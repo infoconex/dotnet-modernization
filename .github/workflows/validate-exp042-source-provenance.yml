@@ -1,13 +1,7 @@
 name: EXP-042 actual Csc source parameters and intermediate producer research only
 
+# Historical research: manual workflow dispatch only.
 on:
-  pull_request:
-    paths:
-      - '.github/workflows/validate-exp042-source-provenance.yml'
-      - 'tooling/pilots/recordsift/EXP-042/**'
-      - 'tooling/pilots/recordsift/EXP-024/run.ps1'
-      - 'tooling/validators/exp042_source_provenance.py'
-      - 'tooling/validators/tests/test_exp042_source_provenance.py'
   workflow_dispatch:
 
 permissions:

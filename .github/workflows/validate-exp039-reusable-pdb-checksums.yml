@@ -1,15 +1,7 @@
 name: EXP-039 reusable classic Windows PDB checksum verifier research only
 
+# Historical research: manually run only.
 on:
-  pull_request:
-    paths:
-      - '.github/workflows/validate-exp039-reusable-pdb-checksums.yml'
-      - 'tooling/pilots/recordsift/EXP-037/**'
-      - 'tooling/pilots/recordsift/EXP-038/**'
-      - 'tooling/validators/classic_pdb_document_checksums.py'
-      - 'tooling/validators/tests/test_classic_pdb_document_checksums.py'
-      - 'tooling/pilots/recordsift/EXP-036/ReaderProbe.cs'
-      - 'tooling/pilots/recordsift/EXP-036/run_fixture.ps1'
   workflow_dispatch:
 
 permissions:

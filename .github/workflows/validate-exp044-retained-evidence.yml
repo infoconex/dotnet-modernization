@@ -1,13 +1,7 @@
 name: EXP-044 immutable sanitized live evidence replay (research only)
 
+# Archived research workflow: manual validation only.
 on:
-  pull_request:
-    paths:
-      - '.github/workflows/validate-exp044-retained-evidence.yml'
-      - 'tooling/validators/gate_cn_live_evidence_consistency.py'
-      - 'tooling/validators/tests/test_gate_cn_live_evidence_consistency.py'
-      - 'methodology/acceptance-gates/gate-cn-exp044-evidence-scope.json'
-      - 'methodology/acceptance-gates/evidence/exp044-non-recordsift-sanitized.json'
   workflow_dispatch:
 
 permissions:

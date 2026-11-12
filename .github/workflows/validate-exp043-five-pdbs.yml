@@ -1,14 +1,7 @@
 name: EXP-043 five frozen production native PDB provenance research only
 
+# Historical research: manual dispatch only.
 on:
-  pull_request:
-    paths:
-      - '.github/workflows/validate-exp043-five-pdbs.yml'
-      - 'tooling/pilots/recordsift/EXP-043/**'
-      - 'tooling/validators/exp043_five_pdb_audit.py'
-      - 'tooling/validators/exp043_managed_reader_exposure.py'
-      - 'tooling/validators/tests/test_exp043_managed_reader_exposure.py'
-      - 'tooling/validators/tests/test_exp043_five_pdb_audit.py'
   workflow_dispatch:
 
 permissions:

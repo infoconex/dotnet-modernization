@@ -1,14 +1,7 @@
 name: EXP-019 frozen-source opt-in deterministic compiler isolation
 
+# Historical experiment: manual execution only; no automatic PR builds.
 on:
-  pull_request:
-    paths:
-      - ".github/workflows/validate-recordsift-deterministic-isolation.yml"
-      - "tooling/pilots/recordsift/EXP-019/**"
-      - "projects/recordsift/evaluations/2026-11-pre-sdk/experiments/EXP-019-deterministic-compiler.md"
-      - "tooling/pe-provenance/**"
-      - "tooling/validators/pe_variation.py"
-      - "tooling/validators/tests/test_pe_variation.py"
   workflow_dispatch:
 
 permissions:

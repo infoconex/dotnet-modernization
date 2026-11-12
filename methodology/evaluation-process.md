@@ -13,7 +13,7 @@ An assistant with **no prior conversation context** must be able to start from t
 ### Inspect before asking
 
 1. Confirm the owning repository, current default branch/full SHA, access level, project inventory, existing CI/build/test commands and requirements/consumer constraints. Follow repository-specific instructions and check relevant existing evaluations.
-2. Identify which questions can be answered from code, documentation, recorded decisions or previous evidence. Do not ask these again.
+2. Identify existing authoritative requirements, acceptance scenarios, architecture, test traceability and compatibility evidence where available. Compare material claims with the current source revision; flag missing, conflicting or historical documentation. Answer repository-evidenced questions before interviewing stakeholders.
 3. Review the [investigation catalog](investigation-catalog.md) as a relevance screen, **not** a list of mandatory work. Note relevant unknowns and exclusions.
 4. Explain the known baseline, available evidence, and unresolved human decisions before starting the interview.
 
@@ -51,6 +51,8 @@ Establish **two complementary records for the unchanged application** before mod
 
 1. **Source-backed discovery:** At an immutable full Git SHA, inventory the application's identity and versions, Git repository and directory structure, existing configuration files (including modernization-related files that are absent), all relevant `.sln`/`.slnx` and project files, configurations, direct/dependency graph, build inputs, scripts, CI, packaging and runtime requirements.
 2. **Executed compatibility verification:** Record the actual host/toolchain and commands, restore/build results, all discovered/passed/failed/skipped tests, relevant public APIs/assembly/resources/XML contracts, package/consumer results, and links to logs/artifacts. State any unexecuted or failing gate explicitly.
+
+**Behavioral discovery before opportunity assessment:** Establish a proportionate understanding of who or what invokes the application, its primary capabilities and application-facing entry points, representative successful workflows, expected failure/boundary behavior, inputs/outputs, component and data paths, business rules and externally observable contracts. Start from existing authoritative specifications and traceability, then trace representative paths through implementation and tests. For undocumented applications, record source-backed observations and unresolved questions rather than treating inferred intent as an approved requirement. Flag contradictory or stale documentation, distinguish inspection from executed verification, and link to the authoritative evidence and material gaps from the evaluation overview. Reuse existing application records rather than reproducing their requirements, scenarios or test matrices. Do not require exhaustive workflow mapping or unrelated runtime experiments merely to complete discovery.
 
 **Use the [application baseline template](../templates/application-baseline.md)** for a substantial application and keep the inventory in a single `baseline.md`. Smaller evaluations can summarize equivalent relevant facts in the [evaluation overview](../templates/evaluation-overview.md). The template owns the detailed field checklist; **do not duplicate it in the methodology or repeat facts across baseline sections**. A baseline should describe what exists, not propose implementation.
 

@@ -1,13 +1,7 @@
 name: EXP-041 original compiler input and native PDB audit research only
 
+# Historical experiment: manually dispatched only.
 on:
-  pull_request:
-    paths:
-      - '.github/workflows/validate-exp041-original-inputs.yml'
-      - 'tooling/pilots/recordsift/EXP-041/**'
-      - 'tooling/pilots/recordsift/EXP-024/run.ps1'
-      - 'tooling/validators/exp041_compiler_input_audit.py'
-      - 'tooling/validators/tests/test_exp041_compiler_input_audit.py'
   workflow_dispatch:
 
 permissions:

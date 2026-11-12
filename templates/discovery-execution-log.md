@@ -42,6 +42,7 @@ This template is a **working record**, not an executable script. Create a row fo
 |---|---|
 | Work status and date | `<in progress/complete/blocked; date/time and zone>` |
 | Operator | `<manual operator / CI workflow / source inspection>` |
+| Checkout acquisition | `<fresh isolated clone / existing checkout / other; remote, destination, setup side effects>` |
 | Source identity | `<repository, branch/tag, exact commit SHA, dirty state>` |
 | Target scope | `<solution, project, TFM, configuration, platform, host as relevant>` |
 | Applicability | `<SDK-style/traditional/mixed; framework family; OS/toolchain; tested vs assumed>` |

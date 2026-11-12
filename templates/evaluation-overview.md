@@ -39,6 +39,14 @@ A baseline has **one source inventory** and **one executed verification record**
 
 Do not equate source-declared settings with evaluated MSBuild or executed behavior. Refer to the [baseline methodology](../methodology/evaluation-process.md#2-establish-the-baseline) for procedure. Keep proposals, findings and modernization recommendations in their own sections.
 
+## Application behavior and evidence
+
+**Authoritative behavior sources:** `<links to current requirements, scenarios, architecture, consumer contracts, or not documented>`  
+**Representative workflows and boundaries:** `<brief description or links covering important inputs/outputs, success and failure paths; only what is relevant>`  
+**Behavioral verification and gaps:** `<links to traceability, tests or run evidence with verification method, plus unresolved or contradictory claims>`
+
+Reference the application's existing documentation and evidence rather than copying specifications or test matrices. When no such documentation exists, distinguish what current source inspection supports from inferred intent and runtime behavior not yet verified. This summary complements, but does not duplicate, the technical baseline.
+
 ## Modernization area screening
 
 Use the [investigation catalog](../methodology/investigation-catalog.md) to identify relevant opportunities and explicit exclusions. This is a *screening*, not a requirement to evaluate all catalog areas. Add only meaningful rows; keep applicability, assessment state, evidence, decision and implementation distinct.

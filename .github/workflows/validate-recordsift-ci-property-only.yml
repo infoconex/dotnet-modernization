@@ -1,11 +1,7 @@
 name: EXP-021 isolated CI property on traditional net48 without Source Link
 
+# Historical experiment: manual execution only; no automatic PR builds.
 on:
-  pull_request:
-    paths:
-      - ".github/workflows/validate-recordsift-ci-property-only.yml"
-      - "tooling/pilots/recordsift/EXP-021/**"
-      - "projects/recordsift/evaluations/2026-11-pre-sdk/experiments/EXP-021-ci-property-only.md"
   workflow_dispatch:
 
 permissions:

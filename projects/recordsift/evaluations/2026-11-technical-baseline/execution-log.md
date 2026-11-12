@@ -34,11 +34,34 @@ This is the authoritative operator progress record, separate from the final tech
 
 ## Next operator step — DISC-001
 
-**Working directory:** root of the owner's local RecordSift checkout.  
-**Tool prerequisites:** Git on PATH. These commands are Git-native; no .NET SDK, NuGet or MSBuild is required.  
-**Side effects:** none expected. Review remote URL and filenames before sharing; redact embedded credentials if present.
+**Recommended setup:** use a **fresh, isolated clone** for this documented RecordSift walkthrough, even if an existing checkout is available. It prevents old `bin`/`obj` outputs or local changes from influencing the source baseline without destroying an existing working directory. A clean checkout is **not** proof of a clean NuGet/SDK/MSBuild host environment.
 
-Execute **individually** in PowerShell:
+**Prerequisite:** Git on PATH (Git 2.23+ for `git switch`). No .NET SDK, NuGet CLI, or MSBuild is required for this step. **Side effects:** the clone downloads source and creates only a new folder; switching to the frozen SHA populates its tracked files. No remote changes, build, restore, or tests.
+
+**1. Confirm Git (run separately):**
+
+```powershell
+git --version
+```
+
+**2. Clone into a new directory.** Replace the example parent path with an existing directory you choose. **Only continue with clone if the destination check returns `False`**; never delete or overwrite an existing directory.
+
+```powershell
+Set-Location "C:\path\to\parent-directory"
+Test-Path .\RecordSift-discovery
+git clone --no-checkout https://github.com/infoconex/RecordSift.git RecordSift-discovery
+Set-Location .\RecordSift-discovery
+```
+
+**3. Check out the exact frozen discovery commit, not the moving head of `main`:**
+
+```powershell
+git switch --detach 1809d06c0fade59e4769d16e0f8eaf10fa426004
+```
+
+The detached HEAD state is expected and intentional. If cloning or checkout fails, retain the actual message and stop; do not try to hide a mismatch.
+
+**4. Verify the result (run separately):**
 
 ```powershell
 git rev-parse --show-toplevel
@@ -48,9 +71,11 @@ git status --porcelain=v1 --untracked-files=all
 git remote get-url origin
 ```
 
-**Capture:** output from each command, any error/exit code, and approximate local execution date. Record whether HEAD matches the frozen SHA. Do not switch branches or reset files to make it match without discussing what that would mean.
+**Expected, but not yet observed:** HEAD equals the frozen SHA; the branch name is blank because of detached HEAD; porcelain status is blank because the working tree is clean. Capture the actual outputs, approximate local execution date and any errors. Review the remote URL and local path for private information before sharing.
 
-**Expected next assistant action:** reconcile manual results with EV-001; finish DISC-001 or document differences, update baseline and manifest, then provide the **DISC-002** commands. Do not skip to restore/build or treat historical runs as current evidence.
+**Alternative:** an existing checkout is acceptable for other applications or when a fresh clone is impractical. Inspect its state first. Do not `git pull`, `git reset`, `git clean` or change branches just to force a match.
+
+**Expected assistant action:** reconcile the captured Git output with [EV-001](evidence/manifest.md), record the clone method and results, update the technical baseline and then prepare DISC-002. Do **not** claim clone or checkout success until actual operator evidence has been provided.
 
 ## Article progress
 

@@ -1,6 +1,6 @@
-# Historical research records
+# Research-repository history
 
-- [Retained source and experiment index](HISTORICAL-RESEARCH-INDEX.md) — documents source-preservation decisions and limitations of previously stacked research PRs.
-- [Research-branch retirement inventory](research-branch-retirement-register-20261111.md) — immutable branch-tip and provenance audit, not authorization to delete branches.
+- [Research branch retirement inventory](research-branch-retirement-register-20261111.md) — exact historical branch-tip and provenance audit; not permission to delete branches.
+- [RecordSift historical research source index](../../projects/recordsift/evaluations/2026-11-pre-sdk/history/HISTORICAL-RESEARCH-INDEX.md) — application-specific experiment preservation and alternate-path investigations.
 
-These are **dated records of this research repository**, not a reusable application-evaluation methodology. Their historical claims and commit-pinned URLs remain unchanged.
+The branch-retirement inventory is repository-wide governance history; RecordSift-specific history, experiment scripts and archived snapshots belong to its dated evaluation. These records do not authorize release changes.

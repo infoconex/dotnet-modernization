@@ -23,6 +23,8 @@ Which low-risk improvements deliver value to an existing Windows-only .NET Frame
 - [Decisions](decisions.md) — decisions explicitly proposed, not silently approved.
 - [Experiments](experiments/README.md) — individually reproducible investigation notes.
 - [Evidence manifest](evidence/manifest.md) — GitHub Actions runs, artifact IDs, experiment branches and immutable image digests.
+- [Archived experiment workflows and source](archives/README.md) — immutable RecordSift-specific YAML and alternate PDB research snapshots, stored outside active workflows.
+- [Historical experiment source index](history/HISTORICAL-RESEARCH-INDEX.md) — preservation decisions and the original evidence trails.
 - [EXP-043 retained sanitized reports](evidence/README.md) — RecordSift's five-assembly audit and managed-reader exposure.
 - [RecordSift-focused Gate C-N strategy review](reviews/gate-cn-engineering-perspectives-strategy-review-20261106.md) — application modernization recommendation, not production approval.
 

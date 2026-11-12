@@ -3,7 +3,7 @@
 **Classification:** Historical, source-preserved, **not generalized or re-executed from this archive**.  
 **Application:** [infoconex/RecordSift](https://github.com/infoconex/RecordSift)  
 **Frozen baseline:** `main@8358780829458854a4b0356df5ac5e685f0a34c8`  
-**Original result source:** [EXP-001–013](../../../../projects/recordsift/evaluations/2026-11-pre-sdk/experiments/README.md) and [evidence manifest](../../../../projects/recordsift/evaluations/2026-11-pre-sdk/evidence/manifest.md)
+**Original result source:** [EXP-001–013](../experiments/README.md) and [evidence manifest](../evidence/manifest.md)
 
 Each YAML file below is a **byte-for-byte preserved UTF-8 file** copied from an immutable original RecordSift workflow commit. The Git blob SHA of each archive was compared with its original immediately after creation. Do **not** edit these historical snapshots; create a distinct reusable implementation with separate tests rather than rewriting original evidence.
 
@@ -37,6 +37,6 @@ EXP-001–003 and EXP-005–006 also have recorded experiment commands and evide
 - GitHub-hosted runner images, registry feeds, container tags, restored packages and available tools can change. The archived files' contents are immutable, but their **environment is not**; compare current behavior against dated reports rather than claiming exact replays.
 - Artifacts may have expired. Logs, artifact IDs and observed outcomes are recorded in the dated experiment/evidence files.
 - These workflows perform **writes in temporary checkouts** during isolation and may contain intentional failing controls. They do not grant permission to change application source branches or release pipelines.
-- Place archived source outside `.github/workflows/` until a *separately authorized* isolated reproduction. Read the [tooling guide](../../../README.md) for a safe adaptation procedure and the plan for reusable validators.
+- Place archived source outside `.github/workflows/` until a *separately authorized* isolated reproduction. Read the [tooling guide](../../../../../tooling/README.md) for a safe adaptation procedure and the plan for reusable validators.
 
 **Archival acceptance:** The eight archived Git blob IDs above are identical to the linked source workflow blobs. **Execution acceptance:** Not performed for these archival copies; no claim of current-run compatibility.

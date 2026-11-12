@@ -1,12 +1,7 @@
 name: Gate C-N D2b actual local NuGet/CLR identity (RESEARCH ONLY)
 
+# Historical research: manual workflow dispatch only.
 on:
-  pull_request:
-    paths:
-      - '.github/workflows/validate-gate-cn-d2b-local-nuget.yml'
-      - 'tooling/pilots/gate-cn/D2b/**'
-      - 'tooling/fixtures/gate-cn/D2b/**'
-      - 'methodology/acceptance-gates/reviews/2026-11-06/gate-cn-d2b-**'
   workflow_dispatch:
 
 permissions:

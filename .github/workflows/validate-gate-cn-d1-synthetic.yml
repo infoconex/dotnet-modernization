@@ -1,12 +1,7 @@
 name: Gate C-N D1 approved synthetic negatives (NO RELEASE)
 
+# Historical research: manual-only execution.
 on:
-  pull_request:
-    paths:
-      - '.github/workflows/validate-gate-cn-d1-synthetic.yml'
-      - 'tooling/validators/gate_cn_d1_synthetic.py'
-      - 'tooling/validators/tests/test_gate_cn_d1_synthetic.py'
-      - 'methodology/acceptance-gates/reviews/2026-11-06/gate-cn-d1-**'
   workflow_dispatch:
 
 permissions:

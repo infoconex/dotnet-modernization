@@ -13,7 +13,7 @@ An assistant with **no prior conversation context** must be able to start from t
 ### Inspect before asking
 
 1. Confirm the owning repository, current default branch/full SHA, access level, project inventory, existing CI/build/test commands and requirements/consumer constraints. Follow repository-specific instructions and check relevant existing evaluations.
-2. Identify which questions can be answered from code, documentation, recorded decisions or previous evidence. Do not ask these again.
+2. Identify existing engineering documentation and evidence for solution structure, project configuration, tooling, dependencies, testing, CI/CD, packaging, deployment and compatibility. Consult requirements or scenarios only to establish application type, consumers and relevant contracts. Answer questions from current source and existing evidence before interviewing stakeholders.
 3. Review the [investigation catalog](investigation-catalog.md) as a relevance screen, **not** a list of mandatory work. Note relevant unknowns and exclusions.
 4. Explain the known baseline, available evidence, and unresolved human decisions before starting the interview.
 
@@ -51,6 +51,8 @@ Establish **two complementary records for the unchanged application** before mod
 
 1. **Source-backed discovery:** At an immutable full Git SHA, inventory the application's identity and versions, Git repository and directory structure, existing configuration files (including modernization-related files that are absent), all relevant `.sln`/`.slnx` and project files, configurations, direct/dependency graph, build inputs, scripts, CI, packaging and runtime requirements.
 2. **Executed compatibility verification:** Record the actual host/toolchain and commands, restore/build results, all discovered/passed/failed/skipped tests, relevant public APIs/assembly/resources/XML contracts, package/consumer results, and links to logs/artifacts. State any unexecuted or failing gate explicitly.
+
+**Technical discovery before opportunity assessment:** Establish how the application is assembled, configured, built, verified and delivered: solution/project topology, project references, frameworks, compiler and MSBuild inputs, shared/conditional configuration, SDKs and other toolchains, NuGet/dependency sources, test infrastructure, CI/CD, packaging, hosting and relevant compatibility contracts. Record applicable configuration files **including their absence** as observations, not recommendations. Establish only the functional context needed to identify application type, consumers, component responsibilities and externally observable contracts; link to existing requirements or scenarios rather than recreating them or exhaustively tracing workflows. Distinguish source-inspected declarations, tool-evaluated values, executed results and gaps. **Discovery records facts, including failures and missing verification; evaluation of benefits, risks, modernization candidates and implementation sequences belongs to later assessment**, not the baseline or a discovery-only article.
 
 **Use the [application baseline template](../templates/application-baseline.md)** for a substantial application and keep the inventory in a single `baseline.md`. Smaller evaluations can summarize equivalent relevant facts in the [evaluation overview](../templates/evaluation-overview.md). The template owns the detailed field checklist; **do not duplicate it in the methodology or repeat facts across baseline sections**. A baseline should describe what exists, not propose implementation.
 

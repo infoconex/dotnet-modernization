@@ -23,6 +23,8 @@
 | Blocked | Environmental or access limitation prevented the intended experiment. |
 | Not executed | No run; do not describe as passed. |
 
+**Qualify how each material claim was verified.** Keep the outcome label above and identify the evidence method separately: **source-inspected** (declarations or implementation reviewed), **tool-evaluated** (actual evaluated configuration), **executed** (commands/tests or observed runtime behavior), or **reused historical execution** (a previously recorded run at its original revision and environment). Cite the repository path at an immutable full commit SHA for source claims (and a symbol or line range when helpful); cite commands, host, run/log/artifact and source SHA for execution claims. Describe the exact proposition supported and any untested scope. Inspection of code does not prove runtime behavior; documented acceptance criteria do not prove a test passed; a historical passing run does not establish verification at a newer SHA. If a method or critical evidence is missing, record the relevant limitation rather than upgrading the claim to an executed result.
+
 **Never equate workflow status = success with every embedded experiment passing.** A deliberately failing negative control can coexist with a successful workflow.
 
 ## Failure attribution and probe validity

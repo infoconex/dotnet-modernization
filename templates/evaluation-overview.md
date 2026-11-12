@@ -39,6 +39,16 @@ A baseline has **one source inventory** and **one executed verification record**
 
 Do not equate source-declared settings with evaluated MSBuild or executed behavior. Refer to the [baseline methodology](../methodology/evaluation-process.md#2-establish-the-baseline) for procedure. Keep proposals, findings and modernization recommendations in their own sections.
 
+## Technical discovery navigation
+
+**Application type and consumers:** `<library, API, service, desktop, etc.; one-line context>`  
+**Authoritative technical records:** `<links to the source-pinned baseline, configuration, build/CI, dependency, deployment and compatibility evidence>`  
+**Unverified technical facts or conflicting sources:** `<links to observed gaps, missing execution or stale documentation; no proposed fixes>`
+
+This is a short navigation summary, **not another inventory**. The application baseline owns technical detail. Reference functional requirements and scenarios only when they identify a relevant consumer or compatibility contract; do not reproduce application specifications or workflow catalogs.
+
+**Discovery and assessment are separate outputs.** A discovery-only evaluation stops after factual inventory, evidence classification and gaps. The screening, opportunities, experiments, decisions and implementation sequence below belong to a separately authorized **assessment or later phase**; omit or defer those sections when outside the current scope.
+
 ## Modernization area screening
 
 Use the [investigation catalog](../methodology/investigation-catalog.md) to identify relevant opportunities and explicit exclusions. This is a *screening*, not a requirement to evaluate all catalog areas. Add only meaningful rows; keep applicability, assessment state, evidence, decision and implementation distinct.

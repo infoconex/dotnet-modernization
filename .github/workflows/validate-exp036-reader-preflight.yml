@@ -1,10 +1,7 @@
 name: EXP-036 managed reader archive preflight (no execution)
 
+# Historical read-only research: manual execution only; no automatic PR builds.
 on:
-  pull_request:
-    paths:
-      - '.github/workflows/validate-exp036-reader-preflight.yml'
-      - 'tooling/pilots/recordsift/EXP-036/**'
   workflow_dispatch:
 
 permissions:

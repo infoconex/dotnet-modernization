@@ -1,11 +1,7 @@
 name: EXP-029 independent native Windows PDB document checksum audit
 
+# Historical experiment: manual execution only; no automatic PR builds.
 on:
-  pull_request:
-    paths:
-      - '.github/workflows/validate-exp029-pdb-document-checksums.yml'
-      - 'tooling/pilots/recordsift/EXP-029/**'
-      - 'projects/recordsift/evaluations/2026-11-pre-sdk/experiments/EXP-029-pdb-document-checksums.md'
   workflow_dispatch:
 
 permissions:

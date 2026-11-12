@@ -1,10 +1,7 @@
 name: EXP-036 trusted fixture managed PDB comparison (research only)
 
+# Historical isolated fixture: manual execution only; no automatic PR builds.
 on:
-  pull_request:
-    paths:
-      - '.github/workflows/validate-exp036-managed-fixture.yml'
-      - 'tooling/pilots/recordsift/EXP-036/**'
   workflow_dispatch:
 
 permissions:

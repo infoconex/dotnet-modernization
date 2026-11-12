@@ -30,11 +30,45 @@ This is the **reusable how-to** for collecting an evidence-backed technical base
 
 Run commands individually. Capture the **exact command**, working directory, full output or durable excerpt, exit code, date, tool version, environment, and source SHA. A green workflow does not establish that every expected check ran. Never replace a failed command with a different one and report the original as successful.
 
-## DISC-001 — Identify the exact source
+## DISC-001 — Acquire and identify the exact source
 
-**Purpose:** establish the immutable input and local checkout state before collecting facts.
+**Purpose:** obtain a trustworthy local source checkout if needed, then establish the immutable revision and working-tree state before collecting technical facts. Cloning is an **optional setup path**, not a required action for an existing checkout.
 
-In the repository checkout, run individually:
+### A. Confirm Git is available
+
+Run in PowerShell:
+
+```powershell
+git --version
+```
+
+If Git is unavailable, install it through an approved method or use an existing supported Git environment. Record the version actually used; do not assume Git is installed.
+
+### B. Choose **one** source-acquisition path
+
+**If the repository is already cloned:** navigate to the existing checkout (replace the example path with its real location):
+
+```powershell
+Set-Location "C:\path\to\existing-checkout"
+```
+
+Do **not** run `git clone` again just to perform discovery. First inspect the checkout, even if it is on another branch or contains local changes.
+
+**If no local checkout exists:** select a parent directory in which you are permitted to create a new folder; navigate there, then clone using the application's **actual remote URL**. Replace the URL and folder name:
+
+```powershell
+Set-Location "C:\path\to\parent-directory"
+git clone https://github.com/OWNER/REPOSITORY.git REPOSITORY
+Set-Location .\REPOSITORY
+```
+
+Run these commands individually and capture any clone errors. The Git clone command **downloads source from the remote, creates a local directory and Git metadata, and checks out the remote default branch**. It does **not** modify the remote repository, but it requires network access and writes to disk. An authenticated remote may require credential handling; do not copy tokens into the URL or evidence. Use the approved clone URL for private or non-GitHub repositories.
+
+**Do not assume the cloned default-branch HEAD equals the selected frozen baseline SHA.** Branches move over time. If they differ, record the difference before deciding whether to switch to a detached commit or create a new evaluation revision; never silently reset or switch the checkout.
+
+### C. Inspect source identity and state
+
+From **inside** the checkout, execute the following commands individually:
 
 ```powershell
 git rev-parse --show-toplevel
@@ -44,11 +78,11 @@ git status --porcelain=v1 --untracked-files=all
 git remote get-url origin
 ```
 
-**Applicability:** any Git repository; independent of .NET project format and target framework. **Safety:** remote URLs or untracked filenames can expose secrets; review/redact before sharing.
+**Applicability:** cloning and these commands work for a Git repository independently of its language, .NET target framework or SDK/traditional project format. `git branch --show-current` can return an empty value for a detached HEAD; record that rather than treating it as a failure. For an application not stored in Git, identify its immutable source by the corresponding source-control or archive mechanism instead of inventing a Git commit.
 
-**Capture:** repository URL (sanitized), full HEAD SHA, branch/tag, dirty/clean status and relevant changes, timestamp, and any submodules or separately versioned dependencies. Record non-Git source identity by its own immutable mechanism rather than inventing a commit.
+**Evidence and safety:** capture whether the repository was already present or cloned for this investigation, the actual clone URL/command when applicable, Git version, local repository root (sanitize private paths), full HEAD SHA, current ref, dirty/clean status, timestamp and any relevant submodule/external source identifiers. Remote URLs and untracked filenames may reveal secrets; review/redact copies before sharing.
 
-**Stop/check:** if HEAD differs from the intended baseline, or relevant changes are untracked, record the difference and agree which revision is being investigated. Do not silently switch branches or clean the working tree.
+**Stop/check:** if HEAD differs from the intended baseline, or relevant files are modified/untracked, record the difference and agree which revision is being examined. Do not run `git switch`, `git pull`, `git reset`, `git clean` or `git submodule update` automatically. These can alter the checkout or downloads and are not required for initial identification.
 
 ## DISC-002 — Inventory solutions and projects
 

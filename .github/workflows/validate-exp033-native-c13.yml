@@ -1,0 +1,53 @@
+name: EXP-033 independent native PDB CodeView C13 checksum structure
+
+# Historical experiment: manual execution only; no automatic PR builds.
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  windows-pdb-c13-independent-tool:
+    runs-on: windows-2022
+    timeout-minutes: 100
+    steps:
+      - uses: actions/checkout@08c6903cd8c0fde910a37f88322edcfb5dd907a8 # v5.0.0
+        with:
+          persist-credentials: false
+      - uses: actions/checkout@08c6903cd8c0fde910a37f88322edcfb5dd907a8 # v5.0.0
+        with:
+          repository: infoconex/RecordSift
+          ref: 8358780829458854a4b0356df5ac5e685f0a34c8
+          fetch-depth: 0
+          path: recordsift
+          persist-credentials: false
+      - uses: actions/setup-dotnet@a98b56852c35b8e3190ac28c8c2271da59106c68 # v6.0.0
+        with:
+          dotnet-version: '10.0.403'
+      - name: Prepare original metadata gate
+        shell: pwsh
+        run: |
+          dotnet build tooling/assembly-metadata/src/AssemblyMetadata.csproj -c Release -nologo -v minimal
+          if ($LASTEXITCODE -ne 0) { throw 'Metadata tool build failed.' }
+      - name: Build traditional Source Link candidate and run unchanged full Release gates
+        shell: pwsh
+        run: |
+          & ./tooling/pilots/recordsift/EXP-024/run.ps1 -ApplicationRoot (Join-Path $env:GITHUB_WORKSPACE 'recordsift') -EvidenceRoot (Join-Path $env:RUNNER_TEMP 'RecordSift-EXP-024-for-033')
+          if ($LASTEXITCODE -ne 0) { throw 'Candidate or historical Release gates failed.' }
+      - name: Inspect genuine C13 chunks and file-list checksum markers independently
+        shell: pwsh
+        run: |
+          & ./tooling/pilots/recordsift/EXP-033/probe.ps1 -ApplicationRoot (Join-Path $env:GITHUB_WORKSPACE 'recordsift') -EvidenceRoot (Join-Path $env:RUNNER_TEMP 'exp033-evidence')
+          if ($LASTEXITCODE -ne 0) { throw 'Independent CodeView C13 tool probe blocked or failed.' }
+      - name: Preserve only bounded structural metadata
+        if: always()
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4.6.2
+        with:
+          name: exp033-c13-checksum-inventory
+          retention-days: 30
+          if-no-files-found: warn
+          path: |
+            ${{ runner.temp }}/exp033-evidence/*.json
+            ${{ runner.temp }}/RecordSift-EXP-024-for-033/experiment-report.json
+            ${{ runner.temp }}/RecordSift-EXP-024-for-033/candidate-versus-original-compatibility.json

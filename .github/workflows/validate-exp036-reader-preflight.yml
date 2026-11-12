@@ -1,0 +1,38 @@
+name: EXP-036 managed reader archive preflight (no execution)
+
+# Historical read-only research: manual execution only; no automatic PR builds.
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  nonexecuting-preflight:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@08c6903cd8c0fde910a37f88322edcfb5dd907a8 # v5.0.0
+        with:
+          persist-credentials: false
+      - name: Independent synthetic positive and negative preflight controls
+        shell: bash
+        run: |
+          set -euo pipefail
+          python -m unittest discover -s tooling/pilots/recordsift/EXP-036 -p 'test_*.py' -v
+      - name: Acquire pinned archive bytes only; never install or load either reader
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p "$RUNNER_TEMP/exp036"
+          curl --fail --location --retry 3 --silent --show-error --proto '=https' --proto-redir '=https' --max-filesize 31457280 'https://api.nuget.org/v3-flatcontainer/dnlib/4.5.0/dnlib.4.5.0.nupkg' --output "$RUNNER_TEMP/exp036/dnlib.4.5.0.nupkg"
+          curl --fail --location --retry 3 --silent --show-error --proto '=https' --proto-redir '=https' --max-filesize 31457280 'https://api.nuget.org/v3-flatcontainer/mono.cecil/0.11.6/mono.cecil.0.11.6.nupkg' --output "$RUNNER_TEMP/exp036/mono.cecil.0.11.6.nupkg"
+          python tooling/pilots/recordsift/EXP-036/nuget_reader_preflight.py --dnlib "$RUNNER_TEMP/exp036/dnlib.4.5.0.nupkg" --cecil "$RUNNER_TEMP/exp036/mono.cecil.0.11.6.nupkg" --output "$RUNNER_TEMP/exp036/research-metadata-only.json"
+      - name: Preserve JSON package metadata only; no archives, source, PDB or DLL
+        if: success()
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4.6.2
+        with:
+          name: exp036-nonexecuting-package-preflight
+          path: ${{ runner.temp }}/exp036/research-metadata-only.json
+          retention-days: 30
+          if-no-files-found: error

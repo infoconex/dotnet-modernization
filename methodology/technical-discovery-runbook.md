@@ -32,9 +32,9 @@ Run commands individually. Capture the **exact command**, working directory, ful
 
 ## DISC-001 — Acquire and identify the exact source
 
-**Purpose:** obtain a trustworthy local source checkout if needed, then establish the immutable revision and working-tree state before collecting technical facts. Cloning is an **optional setup path**, not a required action for an existing checkout.
+**Purpose:** obtain a trustworthy source checkout, then record the exact revision and working-tree state. **For a reproducible case study, prefer a fresh clone into a new, dedicated folder** rather than resetting or cleaning an existing workspace. Reusing an existing checkout is still valid when its state is inspected and documented.
 
-### A. Confirm Git is available
+### A. Confirm Git and select a safe location
 
 Run in PowerShell:
 
@@ -42,33 +42,39 @@ Run in PowerShell:
 git --version
 ```
 
-If Git is unavailable, install it through an approved method or use an existing supported Git environment. Record the version actually used; do not assume Git is installed.
+Choose an existing parent directory where creating a new checkout is permitted. Verify that your intended destination folder does **not** exist before cloning. **Do not delete, overwrite, reset, or clean an existing directory** just to make a discovery look reproducible.
 
-### B. Choose **one** source-acquisition path
+### B. Choose one acquisition path
 
-**If the repository is already cloned:** navigate to the existing checkout (replace the example path with its real location):
+**Preferred for a new baseline walkthrough — fresh isolated clone:**
+
+The following is an example. Replace the parent path, Git remote and frozen source SHA with the application's actual values. The example paths are placeholders, not assumptions about the operator's machine.
+
+```powershell
+Set-Location "C:\path\to\parent-directory"
+Test-Path .\REPOSITORY-discovery
+git clone --no-checkout https://github.com/OWNER/REPOSITORY.git REPOSITORY-discovery
+Set-Location .\REPOSITORY-discovery
+git switch --detach FULL_COMMIT_SHA
+```
+
+**Stop if `Test-Path` returns `True`; choose a different unused folder name.** Run commands individually and check errors before continuing. `git clone --no-checkout` creates a new local repository without checking out the changing default branch; `git switch --detach` then populates its working tree at the **frozen immutable commit**. The detached HEAD is intentional for a baseline snapshot. `git switch` requires Git 2.23+; on older installations, evaluate an appropriate documented alternative rather than silently changing the instructions.
+
+**Side effects:** clone downloads Git objects and writes the new destination folder; switching to the frozen commit writes its tracked files. These commands do not change the remote repository or an existing checkout. Private/enterprise repositories may require an approved authenticated remote. Never embed credentials in recorded clone URLs.
+
+**Existing checkout path — if you deliberately choose to reuse it:**
 
 ```powershell
 Set-Location "C:\path\to\existing-checkout"
 ```
 
-Do **not** run `git clone` again just to perform discovery. First inspect the checkout, even if it is on another branch or contains local changes.
+Do not clone again into the same folder. Inspect the existing checkout **before** any operation that changes its branch or files. Reusing it is not evidence of a clean environment; record its status and any ignored/generated files that could affect the investigation.
 
-**If no local checkout exists:** select a parent directory in which you are permitted to create a new folder; navigate there, then clone using the application's **actual remote URL**. Replace the URL and folder name:
+**Do not assume the default-branch HEAD equals the frozen baseline SHA**, even immediately after cloning. Avoid automatically running `git pull`, `git reset`, `git clean`, or branch switches in an existing workspace.
 
-```powershell
-Set-Location "C:\path\to\parent-directory"
-git clone https://github.com/OWNER/REPOSITORY.git REPOSITORY
-Set-Location .\REPOSITORY
-```
+### C. Verify the local source state
 
-Run these commands individually and capture any clone errors. The Git clone command **downloads source from the remote, creates a local directory and Git metadata, and checks out the remote default branch**. It does **not** modify the remote repository, but it requires network access and writes to disk. An authenticated remote may require credential handling; do not copy tokens into the URL or evidence. Use the approved clone URL for private or non-GitHub repositories.
-
-**Do not assume the cloned default-branch HEAD equals the selected frozen baseline SHA.** Branches move over time. If they differ, record the difference before deciding whether to switch to a detached commit or create a new evaluation revision; never silently reset or switch the checkout.
-
-### C. Inspect source identity and state
-
-From **inside** the checkout, execute the following commands individually:
+Inside the chosen checkout, run these native Git commands individually:
 
 ```powershell
 git rev-parse --show-toplevel
@@ -78,11 +84,15 @@ git status --porcelain=v1 --untracked-files=all
 git remote get-url origin
 ```
 
-**Applicability:** cloning and these commands work for a Git repository independently of its language, .NET target framework or SDK/traditional project format. `git branch --show-current` can return an empty value for a detached HEAD; record that rather than treating it as a failure. For an application not stored in Git, identify its immutable source by the corresponding source-control or archive mechanism instead of inventing a Git commit.
+For the preferred fresh-detached clone, the expected observations are: **HEAD equals the recorded SHA**, `git branch --show-current` prints no branch name, and `git status --porcelain` prints nothing. These are *expected*, not proof until the operator shares actual output. For a reused checkout, record any divergence. Check optional submodules or external source dependencies separately when relevant.
 
-**Evidence and safety:** capture whether the repository was already present or cloned for this investigation, the actual clone URL/command when applicable, Git version, local repository root (sanitize private paths), full HEAD SHA, current ref, dirty/clean status, timestamp and any relevant submodule/external source identifiers. Remote URLs and untracked filenames may reveal secrets; review/redact copies before sharing.
+**Applicability:** Git operations are independent of .NET Framework, current .NET, SDK-style or traditional project formats. Applications not stored in Git need a different source-identity mechanism.
 
-**Stop/check:** if HEAD differs from the intended baseline, or relevant files are modified/untracked, record the difference and agree which revision is being examined. Do not run `git switch`, `git pull`, `git reset`, `git clean` or `git submodule update` automatically. These can alter the checkout or downloads and are not required for initial identification.
+**Evidence:** method of acquisition (fresh clone / existing), sanitized remote, Git version, approximate execution time, full source SHA, checkout/ref state, clean/dirty status and relevant external inputs. Redact personal paths, credentials and secrets before committing or sharing.
+
+**Limit:** a pristine Git working tree does **not** establish a pristine build environment. Installed SDKs, targeting packs, MSBuild, user-level NuGet configuration, global package caches, environment variables and network feeds can still affect subsequent commands. Record those in DISC-004 onward.
+
+**Stop/check:** if HEAD differs from the intended SHA, the checkout is unexpectedly dirty, the commit cannot be checked out, or the clone fails, preserve the actual diagnostic and resolve the mismatch before continuing. Do not erase evidence by cleaning or resetting files.
 
 ## DISC-002 — Inventory solutions and projects
 

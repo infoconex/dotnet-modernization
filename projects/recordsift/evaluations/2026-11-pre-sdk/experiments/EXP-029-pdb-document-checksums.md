@@ -20,3 +20,16 @@ Sources:
 - https://www.llvm.org/docs/CommandGuide/llvm-pdbutil.html (documented `-files`, `-l`, `-modules`).
 - [EXP-028](EXP-028-remote-source-proof.md)
 - [issue #37](https://github.com/infoconex/dotnet-modernization/issues/37)
+
+
+## Verified inventory result
+
+**Successful execution:** [Windows 2022 run 41978667142](https://github.com/infoconex/dotnet-modernization/actions/runs/41978667142), research code SHA `598043642babd4a4c1737aa46907eace376dc7ee`. Original baseline and provider-integrated candidate passed 425 public API records, all 419 NUnit tests (418 pass/1 skip), five XML documentation checks, unpublished local NuGet package, clean installed net48 consumer and all five logical compatibility categories. Independent reader `llvm-pdbutil dump -modules -files -l` exited 0; selected C# source was present in the actual native PDB inventory, and existing EXP-025 independently verified PE/PDB identity and Source Link JSON.
+
+**Retained metadata:** artifact [13392598479](https://github.com/infoconex/dotnet-modernization/actions/runs/41978667142/artifacts/13392598479), ZIP SHA-256 `cde5fefe3930bd22c8f7ff89b1bf62b6c708540ffa2a6b9f4dff34f83c384cde`, 30-day retention. Downloaded and inspected `exp029-document-inventory.json`: 116 output lines, **five file-reference lines containing '(no checksum)'**, selected `CsvStreamImporterAdapter.cs` present twice. Distinct displayed filenames included `CsvRecordReaderAdapter.cs`, `CsvStreamImporterAdapter.cs`, `CharacterLimitedTextReader.cs` and `MalformedCsvException.cs`. The duplicate record-reader entry means **five reported entries, not five unique files**.
+
+**Precise conclusion:** LLVM reports no checksum **in the file metadata it can decode** from this managed classic Windows PDB. This is an **unverified PDB document-checksum acceptance gate**; do not claim that all PDB checksum records are absent or that a debugger cannot work. A second reader using the managed Windows PDB document interfaces must inspect `GetCheckSumAlgorithmId` and `GetCheckSum`, correlate exact compiler input bytes (Windows CRLF vs immutable Git LF), and include deliberately corrupted checksum negative controls before closing the gate.
+
+**Earlier failed run:** [41978366739](https://github.com/infoconex/dotnet-modernization/actions/runs/41978366739) was a PowerShell empty Git-diff array harness defect. This was corrected without touching RecordSift. Do not classify a harness error as a product failure.
+
+**Security gate for a future independent DiaSymReader experiment:** Do not execute older vulnerable `Microsoft.DiaSymReader.Native` packages; consult September 2026 Microsoft advisories [CVE-2026-69522](https://github.com/advisories/GHSA-2j8r-3c22-8565) and [CVE-2026-71328](https://github.com/advisories/GHSA-63gh-g2x5-x69v). Any separately provisioned reader must be assessed and patched (or use a verified updated Windows component) before running PDB parsing.

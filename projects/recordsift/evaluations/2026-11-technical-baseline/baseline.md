@@ -4,6 +4,7 @@
 **Source branch observed:** `main`  
 **Source revision frozen:** [`1809d06c0fade59e4769d16e0f8eaf10fa426004`](https://github.com/infoconex/RecordSift/tree/1809d06c0fade59e4769d16e0f8eaf10fa426004)  
 **Initial source inspection:** 2026-11-12 (GitHub repository tree/README)  
+**Required discovery host:** Windows (application scope per README; actual operator OS/version/build not yet collected)  
 **Local checkout and working tree:** **Not examined** — pending DISC-001 operator commands  
 **Executed verification date:** **Not executed in this evaluation**  
 **Current disposition:** Partial source inspection only; no evaluated or executed application verification claimed.
@@ -22,6 +23,7 @@ The [application README at the frozen SHA](https://github.com/infoconex/RecordSi
 | Declared platform/framework | Windows / .NET Framework 4.8 per README | EV-003 |
 | Solution path | `RecordSift.sln` | EV-002 |
 | Local source changes | Not yet inspected | DISC-001 |
+| Discovery host | Windows required; actual OS/version/build not yet verified | DISC-001 |
 | Build configuration / MSBuild evaluation | Not yet inspected/evaluated | DISC-003/005 |
 
 ## Source project inventory

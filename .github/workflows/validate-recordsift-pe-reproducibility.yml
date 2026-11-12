@@ -1,14 +1,7 @@
 name: EXP-018 identical-source managed PE reproducibility investigation
 
+# Historical experiment: manual execution only; do not run on pull requests.
 on:
-  pull_request:
-    paths:
-      - ".github/workflows/validate-recordsift-pe-reproducibility.yml"
-      - "tooling/pe-provenance/**"
-      - "tooling/validators/pe_variation.py"
-      - "tooling/validators/tests/test_pe_variation.py"
-      - "tooling/pilots/recordsift/EXP-018/**"
-      - "projects/recordsift/evaluations/2026-11-pre-sdk/experiments/EXP-018-identical-source-pe.md"
   workflow_dispatch:
 
 permissions:

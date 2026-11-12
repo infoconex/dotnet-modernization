@@ -127,7 +127,6 @@ The consolidated matrix above covered EXP-001–035 and predates [EXP-036](exper
 
 **Disposition unchanged:** Source Link **HOLD**. No changes to the existing approval-gate policy, RecordSift, packages or default branches. Reported evidence only; not production modernization authorization.
 
-
 ## November 5 EXP-038 addendum — source checksum key mismatch explained but approval unchanged
 
 **[Successful isolated experiment 42148192785](https://github.com/infoconex/dotnet-modernization/actions/runs/42148192785)**, [full report](experiments/EXP-038-document-to-native-stream-key.md), draft [PR #61](https://github.com/infoconex/dotnet-modernization/pull/61), executing SHA `fea65001d757d824ff1d908dd5baed5844b42db0`. With unchanged frozen RecordSift, old API/NUnit/XML/package/clean net48 consumer and five logical-compatibility categories passed again. Exact packaged managed reader versions were preserved and the native PE/PDB identity checks passed.
@@ -144,3 +143,20 @@ The EXP-037 pathmap result is now explained at the precise source-name level: **
 | Source Link production adoption | Requires separate stakeholder decision and additional acceptance | **HOLD** |
 
 **Consolidated recommendation:** do not change Roslyn, remove pathmap, migrate PDB format, or add a runtime package based on a **reader lookup mismatch**. Prefer a separately evaluated, bounded, generalizable, independent normalized-key structural verifier as a **proposed** alternative Gate C evidence pathway, with explicit complete-document/negative/security evidence and approval. Do not silently relabel existing Gate C PASSED. Compiler-server and native symbol writer identity remains partially captured but need not be asserted as the cause of this observation.
+
+## November 5 EXP-039 addendum — independent verifier succeeds but complete native source stream inventory remains open
+
+[Successful EXP-039 CI 42152491141](https://github.com/infoconex/dotnet-modernization/actions/runs/42152491141), [experiment](experiments/EXP-039-reusable-windows-pdb-checksum-verifier.md), [draft PR #63](https://github.com/infoconex/dotnet-modernization/pull/63), executing SHA `6597250630998c01da43c5c6527cda478cb9008a`. A reusable Python stdlib research tool with 21 passing synthetic tests reconstructs exact normalized document URL to native `/SRC/FILES/` key, verifies PE/PDB identity and structured checksum records, and cryptographically validates physical compiler-input bytes. It independently verified **one of one** managed-reader-discovered source in each of five compiler-option fixtures and **four of four** actual frozen CSV sources, preserving 425 API / 419 NUnit (418 pass/1 skip) / five XML / original local nupkg / clean net48 consumer and five compatibility-category acceptance.
+
+**Coverage matters more than headline 4/4:** the actual CSV PDB has seven native named source streams but only four independently reader-discovered document identities. The remaining **three** are unclassified; the verifier explicitly says `INCOMPLETE_OR_UNCLASSIFIED_NATIVE_STREAMS`. The test proves authentic SHA256 for four declared compiler inputs but **not** all native PDB document records, not all application assemblies, and not a security-approved replacement reader. A clean full-source checksum Gate C claim is **not** justified.
+
+| Gate | EXP-039 status | Decision |
+|---|---|---|
+| Original app API/test/XML/package/consumer compatibility | **Verified** in frozen original and manual candidate | Historical compatibility preserved in scoped experiment |
+| Independent native structured physical hash (5 fixtures, 4 owned CSV) | **VERIFIED** | Reusable audit candidate, not current Gate C acceptance |
+| All native source-stream/document/physical-input coverage | **INCOMPLETE** (three unmatched CSV native source streams) | Require targeted C13/source provenance classification |
+| Existing unmodified managed-reader Gate C | **UNSATISFIED** (dnlib and Cecil still 0/4) | No silent policy replacement |
+| Authentic VS package-install, debugger source retrieval and stepping | **NOT TESTED** | Retain independent gates |
+| Source Link production approval | **HOLD** | Consolidated stakeholder approval still required |
+
+**Research boundary unchanged:** no RecordSift code/pin/target change, no merge or publication. The portable-PDB format option and native vulnerable reader are not used as shortcuts; exact compiler-server/writer identity remains partial.

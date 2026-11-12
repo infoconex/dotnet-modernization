@@ -10,6 +10,10 @@ The [original RecordSift source validation scripts](https://github.com/infoconex
 
 For the evidence behind each workflow, see the [dated RecordSift experiment index](../projects/recordsift/evaluations/2026-11-pre-sdk/experiments/README.md) and [run manifest](../projects/recordsift/evaluations/2026-11-pre-sdk/evidence/manifest.md).
 
+## Alternate / blocked PDB research archive
+
+The [EXP-029 and EXP-031 alternate PDB experiments](archives/recordsift/2026-11/alternate-pdb-research.md) are preserved **outside active workflows and validators**. EXP-031 was blocked on patched native-reader availability; neither archived experiment is automatically executed or approved for use in a release gate.
+
 ## Assembly metadata tooling
 
 The [metadata-only assembly extractor](assembly-metadata/README.md) provides compiled public API/assembly identity/resource-name manifests for the compatibility comparator. It reads ECMA-335 PE metadata without loading application dependencies and requires separate runtime and clean-consumer verification.

@@ -1,0 +1,146 @@
+name: Gate C-N research-only evidence design validation
+
+# Archived research workflow: manual validation only.
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  actions: read
+
+jobs:
+  research-only-sanitized-evidence:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 8
+    steps:
+      - uses: actions/checkout@08c6903cd8c0fde910a37f88322edcfb5dd907a8 # v5.0.0
+        with:
+          persist-credentials: false
+
+      - name: Execute independent synthetic positive and fail-closed negative controls
+        run: python3 -m unittest discover -s tooling/validators/tests -p 'test_gate_cn_evidence_consistency.py' -v
+
+      - name: Execute non-RecordSift synthetic live-adapter controls (no application build)
+        run: python3 -m unittest discover -s tooling/validators/tests -p 'test_gate_cn_live_provenance.py' -v
+
+      - name: Verify immutable EXP-043 sanitized artifact metadata without reproducing PDB experiments
+        shell: bash
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          set -euo pipefail
+          test -n "$GH_TOKEN"
+          root="$RUNNER_TEMP/gate-cn-evidence"
+          mkdir -p "$root"
+          scope="projects/recordsift/evaluations/2026-11-pre-sdk/gate-cn-recordsift-scope.json"
+          api="https://api.github.com/repos/infoconex/dotnet-modernization/actions/artifacts/13482117590"
+          curl --fail --silent --show-error --proto '=https' --max-time 30 \
+            -H "Authorization: Bearer $GH_TOKEN" -H 'Accept: application/vnd.github+json' \
+            "$api" -o "$root/metadata.json"
+          # Verify the original successful workflow independently of the
+          # artifact object's embedded workflow_run metadata.
+          run_id="$(python3 -c 'import json,sys; print(json.load(open(sys.argv[1],encoding="utf-8"))["source_evidence"]["run_id"])' "$scope")"
+          curl --fail --silent --show-error --proto '=https' --max-time 30 \
+            -H "Authorization: Bearer $GH_TOKEN" -H 'Accept: application/vnd.github+json' \
+            "https://api.github.com/repos/infoconex/dotnet-modernization/actions/runs/$run_id" \
+            -o "$root/original-run-metadata.json"
+          python3 - "$root/metadata.json" "$scope" "$root/original-run-metadata.json" <<'PY'
+          import json, sys
+          a=json.load(open(sys.argv[1],encoding="utf-8"))
+          s=json.load(open(sys.argv[2],encoding="utf-8"))["source_evidence"]
+          r=json.load(open(sys.argv[3],encoding="utf-8"))
+          assert r["id"] == s["run_id"]
+          assert r["head_sha"] == s["executing_research_sha"]
+          assert r["workflow_id"] == s["workflow_id"]
+          assert r["status"] == "completed" and r["conclusion"] == "success"
+          assert r["event"] == "pull_request" and r["run_attempt"] >= 1
+          assert r["repository"]["full_name"] == "infoconex/dotnet-modernization"
+          assert a["id"] == s["artifact_id"]
+          assert a["workflow_run"]["id"] == s["run_id"]
+          assert a["workflow_run"]["head_sha"] == s["executing_research_sha"]
+          assert a["digest"] == "sha256:" + s["artifact_zip_sha256"]
+          assert a["name"] == "exp043-five-production-pdb-provenance-sanitized"
+          assert a["expired"] is False
+          assert a["size_in_bytes"] <= 65536
+          PY
+          # Request the redirect with the GitHub token, then fetch the artifact
+          # from the temporary HTTPS blob URL WITHOUT passing that token.
+          curl --silent --show-error --proto '=https' --max-time 30 \
+            -H "Authorization: Bearer $GH_TOKEN" -H 'Accept: application/vnd.github+json' \
+            -D "$root/headers.private" -o /dev/null "$api/zip"
+          python3 - "$root/headers.private" "$root/bloburl.private" <<'PY'
+          import sys, urllib.parse
+          headers=open(sys.argv[1],encoding="iso-8859-1").read().splitlines()
+          values=[line.split(":",1)[1].strip() for line in headers
+                  if line.lower().startswith("location:")]
+          assert len(values)==1, "Expected exactly one GitHub artifact redirect"
+          u=urllib.parse.urlparse(values[0])
+          host=(u.hostname or "").lower()
+          assert u.scheme=="https" and u.port in (None,443)
+          assert host.endswith(".blob.core.windows.net") or host.endswith(".githubusercontent.com")
+          open(sys.argv[2],"w",encoding="utf-8").write(values[0])
+          PY
+          bloburl="$(cat "$root/bloburl.private")"
+          curl --fail --location --silent --proto '=https' \
+            --proto-redir '=https' --max-time 60 --max-filesize 65536 \
+            "$bloburl" --output "$root/sanitized.zip"
+          python3 - "$root/sanitized.zip" "$scope" "$root" <<'PY'
+          import hashlib, json, sys, zipfile
+          p, scope_path, root = sys.argv[1:]
+          expected=json.load(open(scope_path,encoding="utf-8"))["source_evidence"]
+          data=open(p,"rb").read()
+          assert hashlib.sha256(data).hexdigest() == expected["artifact_zip_sha256"]
+          expected_names={"exp043-initial-native-inventory.json",
+                          "exp043-five-pdb-source-audit.json",
+                          "exp043-managed-reader-exposure.json"}
+          with zipfile.ZipFile(p) as z:
+              names=z.namelist()
+              assert len(names)==3 and set(names)==expected_names
+              for name in names:
+                  info=z.getinfo(name)
+                  assert info.file_size <= 128*1024
+                  raw=z.read(name)
+                  obj=json.loads(raw)
+                  assert isinstance(obj,dict)
+                  if name != "exp043-initial-native-inventory.json":
+                      with open(root+"/"+name,"wb") as f: f.write(raw)
+          print("EXP-043 sanitized artifact metadata, archive SHA256 and three allowlisted JSON files verified")
+          PY
+          python3 tooling/validators/gate_cn_evidence_consistency.py \
+            --scope "$scope" \
+            --native-report "$root/exp043-five-pdb-source-audit.json" \
+            --managed-report "$root/exp043-managed-reader-exposure.json"
+          # Only the two strictly allowlisted source/reader reports are
+          # retained. Verify their exact bytes, SHA256 and durable Git copies.
+          # The preliminary inventory report intentionally is not archived.
+          python3 - "$scope" "$root/exp043-five-pdb-source-audit.json" \
+            "$root/exp043-managed-reader-exposure.json" \
+            "methodology/acceptance-gates/evidence/exp043-five-pdb-source-audit.json" \
+            "methodology/acceptance-gates/evidence/exp043-managed-reader-exposure.json" <<'PY'
+          import hashlib,json,sys
+          scope=json.load(open(sys.argv[1],encoding="utf-8"))
+          hashes=scope["source_evidence"]["sanitized_report_sha256"]
+          expected={"exp043-five-pdb-source-audit.json",
+                    "exp043-managed-reader-exposure.json"}
+          assert set(hashes)==expected
+          for name,original,retained in zip(
+                  ("exp043-five-pdb-source-audit.json",
+                   "exp043-managed-reader-exposure.json"),
+                  sys.argv[2:4],sys.argv[4:6]):
+              from_run=open(original,"rb").read()
+              from_git=open(retained,"rb").read()
+              assert from_run==from_git
+              assert hashlib.sha256(from_run).hexdigest()==hashes[name]
+              assert hashlib.sha256(from_git).hexdigest()==hashes[name]
+          print("EXP043 two strictly allowlisted sanitized reports authenticated byte-for-byte from original artifact and retained Git copies")
+          PY
+
+      - name: Unconditionally erase temporary sanitized artifact and private signed redirect URL
+        if: always()
+        shell: bash
+        run: |
+          rm -rf -- "$RUNNER_TEMP/gate-cn-evidence"
+
+      - name: Preserve governance boundary
+        run: |
+          echo 'Gate C-N DESIGN/RESEARCH VALIDATION ONLY; legacy managed checksum Gate C UNSATISFIED; Source Link production HOLD'

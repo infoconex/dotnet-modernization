@@ -1,0 +1,153 @@
+{
+  "all_five_verified": true,
+  "experiment": "EXP-043",
+  "gate_c": "UNSATISFIED",
+  "not_proven": [
+    "existing managed-reader checksum Gate C",
+    "authentic Visual Studio Package Manager project installation",
+    "live debugger source stepping",
+    "hostile or arbitrary PDB parsing safety"
+  ],
+  "phase": "candidate",
+  "privacy": "fixed public component labels and aggregate numbers only; no original paths, source bytes, PDB contents, private command lines, or digests",
+  "required_components": 5,
+  "results": [
+    {
+      "actual_csc_task_source_binding": "MATCHED_INDEPENDENT_TASK_PARAMETER",
+      "actual_csc_task_source_count": 24,
+      "c13_algorithm_counts": {
+        "NONE": 28
+      },
+      "c13_checksum_records": 28,
+      "c13_documents": 24,
+      "captured_original_inputs": 24,
+      "component": "Domain",
+      "dbi_documents": 24,
+      "diagnostic_text_source_observation": "DIAGNOSTIC_TEXT_INCOMPLETE_OR_DISAGREES",
+      "generated_source_producer": "VERIFIED_TARGET_EXECUTION_AND_BYTES",
+      "line_referenced_documents": 20,
+      "named_native_documents": 24,
+      "native_inventory": "COVERED_BY_CAPTURE",
+      "native_missing_original_bytes": 0,
+      "native_named_vs_dbi_c13": "MATCHED",
+      "native_origin_categories": {
+        "checked_in": 23,
+        "intermediate_location_producer_unverified": 1
+      },
+      "no_line_native_documents": 4,
+      "original_bytes_verified": 24,
+      "status": "VERIFIED",
+      "structured_event": "STRUCTURED_CSC_TASK_INPUT_EVENT"
+    },
+    {
+      "actual_csc_task_source_binding": "MATCHED_INDEPENDENT_TASK_PARAMETER",
+      "actual_csc_task_source_count": 23,
+      "c13_algorithm_counts": {
+        "NONE": 23
+      },
+      "c13_checksum_records": 23,
+      "c13_documents": 23,
+      "captured_original_inputs": 23,
+      "component": "Application",
+      "dbi_documents": 23,
+      "diagnostic_text_source_observation": "DIAGNOSTIC_TEXT_INCOMPLETE_OR_DISAGREES",
+      "generated_source_producer": "VERIFIED_TARGET_EXECUTION_AND_BYTES",
+      "line_referenced_documents": 16,
+      "named_native_documents": 23,
+      "native_inventory": "COVERED_BY_CAPTURE",
+      "native_missing_original_bytes": 0,
+      "native_named_vs_dbi_c13": "MATCHED",
+      "native_origin_categories": {
+        "checked_in": 22,
+        "intermediate_location_producer_unverified": 1
+      },
+      "no_line_native_documents": 7,
+      "original_bytes_verified": 23,
+      "status": "VERIFIED",
+      "structured_event": "STRUCTURED_CSC_TASK_INPUT_EVENT"
+    },
+    {
+      "actual_csc_task_source_binding": "MATCHED_INDEPENDENT_TASK_PARAMETER",
+      "actual_csc_task_source_count": 7,
+      "c13_algorithm_counts": {
+        "NONE": 8
+      },
+      "c13_checksum_records": 8,
+      "c13_documents": 7,
+      "captured_original_inputs": 7,
+      "component": "Infrastructure.Csv",
+      "dbi_documents": 7,
+      "diagnostic_text_source_observation": "DIAGNOSTIC_TEXT_INCOMPLETE_OR_DISAGREES",
+      "generated_source_producer": "VERIFIED_TARGET_EXECUTION_AND_BYTES",
+      "line_referenced_documents": 4,
+      "named_native_documents": 7,
+      "native_inventory": "COVERED_BY_CAPTURE",
+      "native_missing_original_bytes": 0,
+      "native_named_vs_dbi_c13": "MATCHED",
+      "native_origin_categories": {
+        "checked_in": 6,
+        "intermediate_location_producer_unverified": 1
+      },
+      "no_line_native_documents": 3,
+      "original_bytes_verified": 7,
+      "status": "VERIFIED",
+      "structured_event": "STRUCTURED_CSC_TASK_INPUT_EVENT"
+    },
+    {
+      "actual_csc_task_source_binding": "MATCHED_INDEPENDENT_TASK_PARAMETER",
+      "actual_csc_task_source_count": 7,
+      "c13_algorithm_counts": {
+        "NONE": 10
+      },
+      "c13_checksum_records": 10,
+      "c13_documents": 7,
+      "captured_original_inputs": 7,
+      "component": "Infrastructure.Reporting",
+      "dbi_documents": 7,
+      "diagnostic_text_source_observation": "DIAGNOSTIC_TEXT_INCOMPLETE_OR_DISAGREES",
+      "generated_source_producer": "VERIFIED_TARGET_EXECUTION_AND_BYTES",
+      "line_referenced_documents": 5,
+      "named_native_documents": 7,
+      "native_inventory": "COVERED_BY_CAPTURE",
+      "native_missing_original_bytes": 0,
+      "native_named_vs_dbi_c13": "MATCHED",
+      "native_origin_categories": {
+        "checked_in": 6,
+        "intermediate_location_producer_unverified": 1
+      },
+      "no_line_native_documents": 2,
+      "original_bytes_verified": 7,
+      "status": "VERIFIED",
+      "structured_event": "STRUCTURED_CSC_TASK_INPUT_EVENT"
+    },
+    {
+      "actual_csc_task_source_binding": "MATCHED_INDEPENDENT_TASK_PARAMETER",
+      "actual_csc_task_source_count": 3,
+      "c13_algorithm_counts": {
+        "NONE": 3
+      },
+      "c13_checksum_records": 3,
+      "c13_documents": 3,
+      "captured_original_inputs": 3,
+      "component": "Infrastructure.Xlsx",
+      "dbi_documents": 3,
+      "diagnostic_text_source_observation": "DIAGNOSTIC_TEXT_INCOMPLETE_OR_DISAGREES",
+      "generated_source_producer": "VERIFIED_TARGET_EXECUTION_AND_BYTES",
+      "line_referenced_documents": 1,
+      "named_native_documents": 3,
+      "native_inventory": "COVERED_BY_CAPTURE",
+      "native_missing_original_bytes": 0,
+      "native_named_vs_dbi_c13": "MATCHED",
+      "native_origin_categories": {
+        "checked_in": 2,
+        "intermediate_location_producer_unverified": 1
+      },
+      "no_line_native_documents": 2,
+      "original_bytes_verified": 3,
+      "status": "VERIFIED",
+      "structured_event": "STRUCTURED_CSC_TASK_INPUT_EVENT"
+    }
+  ],
+  "scope": "all five frozen trusted Windows net48 candidate production PDBs",
+  "source_link_adoption": "HOLD"
+}

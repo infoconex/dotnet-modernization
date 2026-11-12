@@ -235,3 +235,56 @@ Executing CI [42170182029](https://github.com/infoconex/dotnet-modernization/act
 | Source Link production adoption | No stakeholder approval for alternative gate | **HOLD** |
 
 Sanitized final artifact ID **13479814833**, ZIP sha256:b0b23a78e8b0e1227631a25e9a3f975dbca4dbb8ae97f8b52d6aea463405a7fc (30-day retention); only counts and fixed categories, private files and research DLLs removed. Draft PR #71 remains unmerged. The bounded native original-input verification **does not automatically redefine Gate C**; explicit stakeholder approval would be required to adopt any alternate acceptance route, and real IDE install and debugger behavior are still independent outstanding gates. Detail: experiments/EXP-043-five-assembly-pdb-provenance.md.
+
+
+## Stakeholder Option B — Gate C-N design and research validation (November 5, 2026)
+
+[Stakeholder decision issue #72](https://github.com/infoconex/dotnet-modernization/issues/72) now records **Option B APPROVED FOR DESIGN/RESEARCH VALIDATION ONLY**. The following is the *authorization record*, **not** a replacement of the approved managed checksum acceptance gate or a Source Link adoption decision. Tracking [issue #73](https://github.com/infoconex/dotnet-modernization/issues/73), isolated stacked [draft PR #74](https://github.com/infoconex/dotnet-modernization/pull/74).
+
+| Evidence/policy dimension | Current disposition |
+| --- | --- |
+| Complete original compiler input / native Windows PDB identity and source bytes (frozen pilot) | Prior EXP-043 research VERIFIED 64/64; unchanged |
+| Exact native C13 line-reference versus dual managed-reader key sets | Prior EXP-043 verified 46 matching keys, 18 native records without lines, 0/46 managed exposed checksums; unchanged |
+| Proposed separate native provenance `Gate C-N` | **SPECIFIED / RESEARCH VALIDATION AUTHORIZED**, **NOT** yet an accepted release gate |
+| New independent sanitized aggregate checker | Historical 25/25 PASS at earlier SHA; fresh-context hardening found coordinated reported checksum-count tamper, unvalidated privacy strings and indirect run identity. At `a61a9df1f02b9255aeb5149d8b293081c4733a85` **29/29** synthetic controls and original ZIP + separate GitHub successful-run metadata PASS in [42177516467](https://github.com/infoconex/dotnet-modernization/actions/runs/42177516467); Ubuntu/Windows reusable tooling PASS [42177516454](https://github.com/infoconex/dotnet-modernization/actions/runs/42177516454). Still only `AGGREGATES_CONSISTENT_RESEARCH_ONLY`, **not** a source-byte gate pass |
+| Existing approved managed-reader checksum Gate C | **UNSATISFIED; unchanged**, even after stakeholder's Option B authorization |
+| Authentic Visual Studio NuGet project installation / actual debugger retrieval and stepping | **NOT TESTED**; remain independent acceptance gates |
+| Source Link production adoption | **HOLD**, no merges/package publication/RecordSift or either main edit |
+| Further authorization | Explicit independent stakeholder approval is still required to *activate* a C-N alternate release gate and resolve original Gate C; separate production adoption approval after IDE evidence |
+
+The C-N [proposed normative standard](https://github.com/infoconex/dotnet-modernization/blob/research/gate-cn-design-validation-20261105/methodology/acceptance-gates/gate-cn-native-pdb-source-provenance.md), [frozen externally pinned scope](https://github.com/infoconex/dotnet-modernization/blob/research/gate-cn-design-validation-20261105/projects/recordsift/evaluations/2026-11-pre-sdk/gate-cn-recordsift-scope.json) and [independent multi-perspective review](https://github.com/infoconex/dotnet-modernization/blob/research/gate-cn-design-validation-20261105/projects/recordsift/evaluations/2026-11-pre-sdk/reviews/Gate-CN-option-B-design-validation-review-20261105.md) preserve all remaining risk and approval boundaries. A consistency checker of sanitized reports cannot substitute for live independent physical-byte source verification; limited 30-day artifact retention is an explicit replay limitation.
+
+
+## Fresh independent Gate C-N release-readiness disposition — 2026-11-05 PT
+
+**Technical finding:** the trusted-runner frozen RecordSift research is strong evidence for a *distinct, separately authorized native physical compiler-input provenance criterion*. It is **not equivalent** to managed reader checksum API behavior. The latest scoped hardened secondary consistency run at `a61a9df1f02b9255aeb5149d8b293081c4733a85` independently passed **29/29 controls** and cross-checked both GitHub artifact and run metadata. The actual 64/64 physical-source proof is retained from EXP-043 run 42173080423, **not** re-established by this metadata workflow.
+
+**Gate approval recommendation: NOT READY to activate a reusable release gate.** Before submitting a new stakeholder acceptance decision, demonstrate a non-RecordSift or independently reconfigured live-provenance execution with an explicit external component/build manifest, signed/reviewer-controlled evidence boundary, repeatable original source-byte checks, all original release contracts, and credible durable archive/replay after 30-day artifact expiration. Require separate named reviewers for build/security/quality/release, including implementation/runner trust and unresolved threat scenarios. Acceptance is limited to authenticated trusted locally produced classic Windows PDBs; unknown and hostile cases must fail closed. Do not demand unrelated Visual Studio/debugger tests to prove native provenance itself, but **do** require them independently before any Source Link production adoption.
+
+**Governance:** Gate C **UNSATISFIED**. C-N **DESIGN VALIDATED / RELEASE NOT AUTHORIZED**. Source Link **HOLD**. Authentic VS Package Manager project install and real source retrieval/stepping **NOT TESTED**. No PR merge or production authorization requested. More broad experiments are not justified without a concrete failure/portability requirement.
+
+## Latest Option B research conclusion — EXP-044 real live portability and durable reports
+
+The prior “non-RecordSift live execution unverified” prerequisite was **narrowly closed** by [EXP-044 #75](https://github.com/infoconex/dotnet-modernization/issues/75): real separate traditional net48 compiler/native PE-PDB/Csc/original source bytes/moniker generator **2/2** on Windows at [run 42182129657](https://github.com/infoconex/dotnet-modernization/actions/runs/42182129657), executing `3c06d003ac75cc8b649a244be8705e44efa2c4c7`. This remains one moniker-producing fixture; additional generators, third-party origins, hostile PDBs, application compatibility and all IDE operations are **not verified**. Frozen RecordSift EXP-043 full original release contracts remain unchanged.
+
+| Current evidence / decision | Disposition |
+| --- | --- |
+| Frozen RecordSift original compiler-source physical provenance | 64/64 trusted five-assembly original inputs VERIFIED, prior EXP-043 only |
+| Different real isolated net48 fixture native physical provenance | **2/2 VERIFIED research only** — one tracked + one generated; [42182129657](https://github.com/infoconex/dotnet-modernization/actions/runs/42182129657) |
+| Secondary independent controls | **29** prior native/managed report controls, **23** non-RecordSift synthetic adapter controls, **12** sanitized archive replay controls; distinct, not 64 live source verifications |
+| EXP-043 original public report archival | Native/managed reports retained, raw SHA256 pinned and exact original artifact ZIP/bytes checked; [42183624502](https://github.com/infoconex/dotnet-modernization/actions/runs/42183624502) SUCCESS at `d7f8af2610ec7f2f2ca325f3bdf36a3be5ee6844` |
+| EXP-044 original public report archival | Byte-identical durable report hash pinned and validated; [42183211855](https://github.com/infoconex/dotnet-modernization/actions/runs/42183211855) SUCCESS at `8a3d8394abb0cd67870c8942c9bbc89265fa4ea1` |
+| Institutional evidence custody/independent signoff | **NOT ESTABLISHED**; Git draft report retention not independently approved, after artifact expiry requires new live build |
+| Managed checksum Gate C / Source Link adoption | **UNSATISFIED / HOLD** |
+| Gate C-N release activation | **NOT AUTHORIZED** — needs named reviewers, externally approved immutable production manifest and new stakeholder approval; do not activate or merge |
+
+The [consolidated Gate C-N readiness memo](../../../../methodology/acceptance-gates/gate-cn-acceptance-readiness-review-20261105.md) documents review findings and next authorization boundary. This is an authorization request for **human governance review**, not a request to retire original Gate C or approve production Source Link.
+
+
+## Formal acceptance *preparation* authority — November 6, 2026 (not production approval)
+
+The stakeholder explicitly **approved preparation** of a formal, independent Gate C-N acceptance review packet in [issue #73](https://github.com/infoconex/dotnet-modernization/issues/73#issuecomment-6680589160); separately tracked by [issue #77](https://github.com/infoconex/dotnet-modernization/issues/77). This **does not** authorize gate activation, waiver/substitution of original managed checksum Gate C, release packaging, PR merges, application/main edits, genuine IDE acceptance or Source Link production adoption.
+
+The review entry points are the [formal independent acceptance packet](../../../../methodology/acceptance-gates/gate-cn-formal-acceptance-review-package-20261106.md), [immutable manifest and custody proposal](../../../../methodology/acceptance-gates/gate-cn-manifest-custody-review-protocol-20261106.md), and [unsigned human reviewer/decision record](../../../../methodology/acceptance-gates/gate-cn-independent-review-decision-record-20261106.md). The package is **ready to present for human reviewer appointments, custody ownership and initial production scope selection**; it is **not yet accepted by those reviewers**. All reviewers are currently unassigned; no independent signatures, approved manifest, production custodian, or reusable approved production enforcement exists. Retained sanitized reports remain historical assertions, not original source-byte replay proof.
+
+**Readiness disposition:** `FORMAL_REVIEW_PACKAGE_PREPARED`; `HUMAN_REVIEW_PENDING`; original managed checksum Gate C `UNSATISFIED`; Gate C-N release `NOT_AUTHORIZED`; Source Link `HOLD`. A separate explicit stakeholder decision is required **later** for any alternative release acceptance.

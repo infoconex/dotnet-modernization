@@ -1,0 +1,106 @@
+{
+  "all_five_readers_audited": true,
+  "experiment": "EXP-043",
+  "limitation": "dnlib and Cecil managed reader API exposure is not a complete native document inventory or authentic debugger operation",
+  "managed_checksum_gate_c": "UNSATISFIED",
+  "phase": "two_pinned_managed_reader_exposure",
+  "privacy": "only native/managed counts, checksum exposure counts and fixed categories; source names, URLs, hashes, PDBs and private stdout never uploaded",
+  "results": [
+    {
+      "cecil": {
+        "managed_document_checksum_exposed": 0,
+        "managed_document_checksum_missing": 20,
+        "managed_document_count": 20
+      },
+      "component": "Domain",
+      "dnlib": {
+        "managed_document_checksum_exposed": 0,
+        "managed_document_checksum_missing": 20,
+        "managed_document_count": 20
+      },
+      "native_documents_not_exposed_by_both_readers": 4,
+      "native_source_documents": 24,
+      "reader_document_agreement": "MATCHED",
+      "reader_documents_match_native_line_references": true,
+      "reader_documents_subset_of_native": true,
+      "status": "VERIFIED_READER_LIMITATION"
+    },
+    {
+      "cecil": {
+        "managed_document_checksum_exposed": 0,
+        "managed_document_checksum_missing": 16,
+        "managed_document_count": 16
+      },
+      "component": "Application",
+      "dnlib": {
+        "managed_document_checksum_exposed": 0,
+        "managed_document_checksum_missing": 16,
+        "managed_document_count": 16
+      },
+      "native_documents_not_exposed_by_both_readers": 7,
+      "native_source_documents": 23,
+      "reader_document_agreement": "MATCHED",
+      "reader_documents_match_native_line_references": true,
+      "reader_documents_subset_of_native": true,
+      "status": "VERIFIED_READER_LIMITATION"
+    },
+    {
+      "cecil": {
+        "managed_document_checksum_exposed": 0,
+        "managed_document_checksum_missing": 4,
+        "managed_document_count": 4
+      },
+      "component": "Infrastructure.Csv",
+      "dnlib": {
+        "managed_document_checksum_exposed": 0,
+        "managed_document_checksum_missing": 4,
+        "managed_document_count": 4
+      },
+      "native_documents_not_exposed_by_both_readers": 3,
+      "native_source_documents": 7,
+      "reader_document_agreement": "MATCHED",
+      "reader_documents_match_native_line_references": true,
+      "reader_documents_subset_of_native": true,
+      "status": "VERIFIED_READER_LIMITATION"
+    },
+    {
+      "cecil": {
+        "managed_document_checksum_exposed": 0,
+        "managed_document_checksum_missing": 5,
+        "managed_document_count": 5
+      },
+      "component": "Infrastructure.Reporting",
+      "dnlib": {
+        "managed_document_checksum_exposed": 0,
+        "managed_document_checksum_missing": 5,
+        "managed_document_count": 5
+      },
+      "native_documents_not_exposed_by_both_readers": 2,
+      "native_source_documents": 7,
+      "reader_document_agreement": "MATCHED",
+      "reader_documents_match_native_line_references": true,
+      "reader_documents_subset_of_native": true,
+      "status": "VERIFIED_READER_LIMITATION"
+    },
+    {
+      "cecil": {
+        "managed_document_checksum_exposed": 0,
+        "managed_document_checksum_missing": 1,
+        "managed_document_count": 1
+      },
+      "component": "Infrastructure.Xlsx",
+      "dnlib": {
+        "managed_document_checksum_exposed": 0,
+        "managed_document_checksum_missing": 1,
+        "managed_document_count": 1
+      },
+      "native_documents_not_exposed_by_both_readers": 2,
+      "native_source_documents": 3,
+      "reader_document_agreement": "MATCHED",
+      "reader_documents_match_native_line_references": true,
+      "reader_documents_subset_of_native": true,
+      "status": "VERIFIED_READER_LIMITATION"
+    }
+  ],
+  "source_link_adoption": "HOLD"
+}

@@ -1,11 +1,7 @@
 name: EXP-020 isolated PathMap with deterministic C# compilation
 
+# Historical experiment: manual execution only; no automatic PR builds.
 on:
-  pull_request:
-    paths:
-      - ".github/workflows/validate-recordsift-pathmap-isolation.yml"
-      - "tooling/pilots/recordsift/EXP-020/**"
-      - "projects/recordsift/evaluations/2026-11-pre-sdk/experiments/EXP-020-pathmap-isolation.md"
   workflow_dispatch:
 
 permissions:

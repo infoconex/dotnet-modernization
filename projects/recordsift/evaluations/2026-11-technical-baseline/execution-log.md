@@ -32,36 +32,54 @@ This is the authoritative operator progress record, separate from the final tech
 
 **Method:** GitHub repository metadata and tracked-tree inspection at `1809d06c0fade59e4769d16e0f8eaf10fa426004`. **Operator:** assistant using connected GitHub repository access, not local Git/MSBuild execution. **Evidence:** [EV-001–003](evidence/manifest.md). **Result:** identified one `.sln`, ten `.csproj` paths, central-file locations and CI workflow paths. **Limitation:** no local dirty-state check, evaluation, compilation, testing or restore performed. This cannot complete DISC-001 or the later steps.
 
-## Next operator step — DISC-001
+## Next operator step — DISC-001: tool preflight and dated checkout
 
-**Recommended setup:** use a **fresh, isolated clone** for this documented RecordSift walkthrough, even if an existing checkout is available. It prevents old `bin`/`obj` outputs or local changes from influencing the source baseline without destroying an existing working directory. A clean checkout is **not** proof of a clean NuGet/SDK/MSBuild host environment.
+**Objective:** first verify tools and upcoming prerequisites; then obtain a **new** RecordSift source checkout named `RecordSift-discovery-YYYY-MM-DD-HHmmss` at the frozen SHA. No local command has yet been reported as executed for this evaluation. Run the commands individually rather than as a custom discovery script.
 
-**Prerequisite:** Git on PATH (Git 2.23+ for `git switch`). No .NET SDK, NuGet CLI, or MSBuild is required for this step. **Side effects:** the clone downloads source and creates only a new folder; switching to the frozen SHA populates its tracked files. No remote changes, build, restore, or tests.
+### 1. Confirm the discovery prerequisites (before cloning)
 
-**1. Confirm Git (run separately):**
+In PowerShell:
 
 ```powershell
+$PSVersionTable.PSVersion
+Get-Command git -ErrorAction SilentlyContinue
 git --version
+Get-Command dotnet -ErrorAction SilentlyContinue
+Get-Command msbuild -ErrorAction SilentlyContinue
+Get-Command nuget -ErrorAction SilentlyContinue
 ```
 
-**2. Clone into a new directory.** Replace the example parent path with an existing directory you choose. **Only continue with clone if the destination check returns `False`**; never delete or overwrite an existing directory.
+**For DISC-001:** PowerShell and Git are required; Git 2.23+ supports the pinned-commit `git switch --detach` step. Record a Git-not-found error and stop rather than proceeding.
+
+**For later RecordSift execution:** the known application uses traditional .NET Framework 4.8 projects and tracked `packages.config` files. We will need a **Windows-compatible build/test environment**, a suitable MSBuild installation, .NET Framework 4.8 targeting assemblies, and a standalone NuGet CLI for the documented restore path. Test runners and any SDK-dependent optional commands will be verified before use. `dotnet` is **not** automatically required for the source checkout or all traditional project builds. `Get-Command` searches PATH only; `msbuild`/`nuget` not found on PATH is a readiness question, not proof the tool is not installed. No software installation is authorized by this preflight.
+
+**Pause at the preflight** if required tools are unavailable or the environment is uncertain; report the results before proceeding with a build/test later. For source-only discovery, non-Git tooling gaps can be recorded and resolved before their steps.
+
+### 2. Create a timestamped discovery directory
+
+Use the prescribed **home-directory-based parent**, unless an alternative writable location is required. The timestamp is generated using the operator's local clock, so it is not a hardcoded date.
 
 ```powershell
-Set-Location "C:\path\to\parent-directory"
-Test-Path .\RecordSift-discovery
-git clone --no-checkout https://github.com/infoconex/RecordSift.git RecordSift-discovery
-Set-Location .\RecordSift-discovery
+$discoveryRoot = Join-Path (Join-Path $HOME 'source') 'discoveries'
+New-Item -ItemType Directory -Path $discoveryRoot -Force
+$discoveryFolder = "RecordSift-discovery-$(Get-Date -Format 'yyyy-MM-dd-HHmmss')"
+$destination = Join-Path $discoveryRoot $discoveryFolder
+Test-Path -LiteralPath $destination
 ```
 
-**3. Check out the exact frozen discovery commit, not the moving head of `main`:**
+**Only continue when `Test-Path` reports `False`**. If the name already exists, create a new timestamped destination and check again; never delete, reset or overwrite an old directory. The `New-Item` command creates a parent directory if absent and has no effect on an existing folder's contents.
+
+### 3. Clone and check out the immutable revision
 
 ```powershell
+git clone --no-checkout https://github.com/infoconex/RecordSift.git $destination
+Set-Location -LiteralPath $destination
 git switch --detach 1809d06c0fade59e4769d16e0f8eaf10fa426004
 ```
 
-The detached HEAD state is expected and intentional. If cloning or checkout fails, retain the actual message and stop; do not try to hide a mismatch.
+Run each command separately and stop on failures. This downloads source, creates the new checkout and populates tracked files at our frozen SHA. It does **not** modify the remote repository. Detached HEAD is expected for this documentation snapshot. It does **not** ensure a clean SDK/MSBuild/NuGet environment, which will be examined later.
 
-**4. Verify the result (run separately):**
+### 4. Verify before documenting success
 
 ```powershell
 git rev-parse --show-toplevel
@@ -71,11 +89,11 @@ git status --porcelain=v1 --untracked-files=all
 git remote get-url origin
 ```
 
-**Expected, but not yet observed:** HEAD equals the frozen SHA; the branch name is blank because of detached HEAD; porcelain status is blank because the working tree is clean. Capture the actual outputs, approximate local execution date and any errors. Review the remote URL and local path for private information before sharing.
+**Expected, not yet observed:** HEAD equals `1809d06c0fade59e4769d16e0f8eaf10fa426004`; current branch output is empty (detached HEAD); status output is empty (clean tracked/untracked working tree).
 
-**Alternative:** an existing checkout is acceptable for other applications or when a fresh clone is impractical. Inspect its state first. Do not `git pull`, `git reset`, `git clean` or change branches just to force a match.
+**Capture:** PowerShell/Git versions, availability or gaps for `dotnet`/`msbuild`/`nuget`, date and actual discovery directory name, sanitized clone/checkout commands, full HEAD SHA and status, actual command errors and any unexpected conditions. Do not share private paths or credential-bearing remote URLs.
 
-**Expected assistant action:** reconcile the captured Git output with [EV-001](evidence/manifest.md), record the clone method and results, update the technical baseline and then prepare DISC-002. Do **not** claim clone or checkout success until actual operator evidence has been provided.
+**Assistant's next action:** verify actual operator results, update EV-001 or add separately sourced execution evidence, complete DISC-001 as applicable, then prepare DISC-002. Do not record expected results as observed or trigger restore/build/test without reviewing prerequisites and side effects.
 
 ## Article progress
 

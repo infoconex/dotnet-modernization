@@ -5,6 +5,7 @@
 **Selected source ref:** `main`, observed 2026-11-12  
 **Frozen source commit:** [`1809d06c0fade59e4769d16e0f8eaf10fa426004`](https://github.com/infoconex/RecordSift/tree/1809d06c0fade59e4769d16e0f8eaf10fa426004)  
 **Discovery opened:** 2026-11-12  
+**Required evaluation host:** **Windows** (RecordSift is Windows-only; host version/build and architecture not yet verified)  
 **Runbook:** [Technical discovery](../../../../methodology/technical-discovery-runbook.md)  
 **Reusable template:** [Application baseline](../../../../templates/application-baseline.md)  
 **Verification approach:** User executes supported native commands one at a time; assistant records facts, limitations, results and article-relevant findings.
@@ -12,6 +13,8 @@
 ## Purpose and boundaries
 
 **Objective:** validate that a portable, documented discovery method can produce a traceable technical baseline using RecordSift as the worked example. This is **not** a new modernization assessment or application implementation.
+
+**Platform boundary:** perform the entire RecordSift discovery on Windows, starting with DISC-001 tool/OS preflight. Do not substitute Linux, macOS or WSL as equivalent verification. Cross-platform exploration would be a separate explicitly scoped assessment.
 
 **Proposed scope for owner-led manual execution:** source identity; solution/project and MSBuild configuration; central settings; NuGet dependencies; toolchain inventory; existing build/test entry points; approved manual restore/build/test verification; CI, runtime, package, and compatibility evidence; synthesis of a dated baseline.
 
@@ -39,4 +42,4 @@ This is not a claim that missing repository-wide files have no equivalents in pa
 
 **Research/implementation separation:** no change to RecordSift source, project files or its application main branch. This documentation remains on its own review PR until approved.
 
-**Next action:** operator executes **DISC-001** using a fresh, isolated `RecordSift-discovery` clone (recommended), checks out immutable commit `1809d06c0fade59e4769d16e0f8eaf10fa426004` in detached HEAD state, and captures native Git identity/status outputs. **No clone has yet been executed or verified.** The assistant then records the actual output and prepares **DISC-002**. The clean source checkout must not be confused with a clean host/toolchain or package-cache environment.
+**Next action:** operator first verifies a Windows host and required tools in **DISC-001**, then creates a dated, isolated `RecordSift-discovery` clone (recommended), checks out immutable commit `1809d06c0fade59e4769d16e0f8eaf10fa426004` in detached HEAD state, and captures native Git identity/status outputs. **No clone has yet been executed or verified.** The assistant then records the actual output and prepares **DISC-002**. The clean source checkout must not be confused with a clean host/toolchain or package-cache environment.

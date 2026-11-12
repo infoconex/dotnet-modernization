@@ -1,11 +1,7 @@
 name: EXP-030 Source Link genuine Git topology controls
 
+# Historical experiment: manual execution only; no automatic PR builds.
 on:
-  pull_request:
-    paths:
-      - '.github/workflows/validate-exp030-git-topology.yml'
-      - 'projects/recordsift/evaluations/2026-11-pre-sdk/experiments/EXP-030-git-topology.md'
-      - 'tooling/validators/sourcelink_native_absence.py'
   workflow_dispatch:
 
 permissions:

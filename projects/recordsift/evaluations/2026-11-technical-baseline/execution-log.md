@@ -34,13 +34,15 @@ This is the authoritative operator progress record, separate from the final tech
 
 ## Next operator step — DISC-001: tool preflight and dated checkout
 
-**Objective:** first verify tools and upcoming prerequisites; then obtain a **new** RecordSift source checkout named `RecordSift-discovery-YYYY-MM-DD-HHmmss` at the frozen SHA. No local command has yet been reported as executed for this evaluation. Run the commands individually rather than as a custom discovery script.
+**Objective:** **require a Windows host**, then verify tools and upcoming prerequisites; obtain a **new** RecordSift source checkout named `RecordSift-discovery-YYYY-MM-DD-HHmmss` at the frozen SHA. No local command has yet been reported as executed for this evaluation. Run the commands individually rather than as a custom discovery script.
 
 ### 1. Confirm the discovery prerequisites (before cloning)
 
-In PowerShell:
+In **PowerShell on Windows** (Windows PowerShell 5.1 or PowerShell 7; record which is used), run these commands individually:
 
 ```powershell
+[System.Runtime.InteropServices.RuntimeInformation]::IsOSPlatform([System.Runtime.InteropServices.OSPlatform]::Windows)
+Get-CimInstance Win32_OperatingSystem | Select-Object Caption, Version, BuildNumber, OSArchitecture
 $PSVersionTable.PSVersion
 Get-Command git -ErrorAction SilentlyContinue
 git --version
@@ -49,9 +51,9 @@ Get-Command msbuild -ErrorAction SilentlyContinue
 Get-Command nuget -ErrorAction SilentlyContinue
 ```
 
-**For DISC-001:** PowerShell and Git are required; Git 2.23+ supports the pinned-commit `git switch --detach` step. Record a Git-not-found error and stop rather than proceeding.
+**Windows is a hard prerequisite for the RecordSift walkthrough, beginning with DISC-001.** The first command must return `True`. If it returns `False`, stop: do not use Linux, macOS or WSL as a substitute for this Windows-only case study. Record the actual Windows version/build and architecture. **For DISC-001:** PowerShell on Windows and Git are required; Git 2.23+ supports the pinned-commit `git switch --detach` step. Record a Git-not-found error and stop rather than proceeding.
 
-**For later RecordSift execution:** the known application uses traditional .NET Framework 4.8 projects and tracked `packages.config` files. We will need a **Windows-compatible build/test environment**, a suitable MSBuild installation, .NET Framework 4.8 targeting assemblies, and a standalone NuGet CLI for the documented restore path. Test runners and any SDK-dependent optional commands will be verified before use. `dotnet` is **not** automatically required for the source checkout or all traditional project builds. `Get-Command` searches PATH only; `msbuild`/`nuget` not found on PATH is a readiness question, not proof the tool is not installed. No software installation is authorized by this preflight.
+**For later RecordSift execution:** the application is a Windows-only .NET Framework 4.8 library using traditional project files and tracked `packages.config` files. We will need a **Windows-compatible build/test environment**, a suitable MSBuild installation, .NET Framework 4.8 targeting assemblies, and a standalone NuGet CLI for the documented restore path. Test runners and any SDK-dependent optional commands will be verified before use. `dotnet` is **not** automatically required for the source checkout or all traditional project builds. `Get-Command` searches PATH only; `msbuild`/`nuget` not found on PATH is a readiness question, not proof the tool is not installed. No software installation is authorized by this preflight.
 
 **Pause at the preflight** if required tools are unavailable or the environment is uncertain; report the results before proceeding with a build/test later. For source-only discovery, non-Git tooling gaps can be recorded and resolved before their steps.
 
@@ -89,9 +91,9 @@ git status --porcelain=v1 --untracked-files=all
 git remote get-url origin
 ```
 
-**Expected, not yet observed:** HEAD equals `1809d06c0fade59e4769d16e0f8eaf10fa426004`; current branch output is empty (detached HEAD); status output is empty (clean tracked/untracked working tree).
+**Expected, not yet observed:** Windows host verified; HEAD equals `1809d06c0fade59e4769d16e0f8eaf10fa426004`; current branch output is empty (detached HEAD); status output is empty (clean tracked/untracked working tree).
 
-**Capture:** PowerShell/Git versions, availability or gaps for `dotnet`/`msbuild`/`nuget`, date and actual discovery directory name, sanitized clone/checkout commands, full HEAD SHA and status, actual command errors and any unexpected conditions. Do not share private paths or credential-bearing remote URLs.
+**Capture:** the verified Windows OS/version/build/architecture, PowerShell/Git versions, availability or gaps for `dotnet`/`msbuild`/`nuget`, date and actual discovery directory name, sanitized clone/checkout commands, full HEAD SHA and status, actual command errors and any unexpected conditions. Do not share private paths or credential-bearing remote URLs.
 
 **Assistant's next action:** verify actual operator results, update EV-001 or add separately sourced execution evidence, complete DISC-001 as applicable, then prepare DISC-002. Do not record expected results as observed or trigger restore/build/test without reviewing prerequisites and side effects.
 

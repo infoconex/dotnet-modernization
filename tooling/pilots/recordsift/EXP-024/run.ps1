@@ -2,7 +2,8 @@
 # No edits survive the disposable checkout. No app push, package publish or symbol upload.
 [CmdletBinding()]
 param([Parameter(Mandatory=$true)][string]$ApplicationRoot,
-      [Parameter(Mandatory=$true)][string]$EvidenceRoot)
+      [Parameter(Mandatory=$true)][string]$EvidenceRoot,
+      [switch]$CaptureLoadedModules)
 $ErrorActionPreference = 'Stop'
 Set-StrictMode -Version Latest
 $frozen = '8358780829458854a4b0356df5ac5e685f0a34c8'
@@ -122,6 +123,17 @@ try {
     }
     $replacement=($props -join "`r`n") + "`r`n" + $anchor + "`r`n" + ($targets -join "`r`n")
     $modified=$projectText.Replace($anchor,$replacement)
+    if ($CaptureLoadedModules) {
+        $probeFile=Join-Path $research 'tooling/pilots/recordsift/EXP-032/ModuleProbe.targets'
+        if (-not (Test-Path -LiteralPath $probeFile)) { throw 'Missing independent module capture import.' }
+        $escaped=[Security.SecurityElement]::Escape($probeFile)
+        $probeImport='  <Import Project="' + $escaped + '" />'
+        $rootEnd=$modified.LastIndexOf('</Project>',[StringComparison]::Ordinal)
+        if ($rootEnd -lt 0 -or $modified.IndexOf('</Project>',$rootEnd + 1,[StringComparison]::Ordinal) -ge 0) {
+            throw 'Cannot safely locate root project closing element.'
+        }
+        $modified=$modified.Substring(0,$rootEnd) + $probeImport + [Environment]::NewLine + $modified.Substring($rootEnd)
+    }
     [IO.File]::WriteAllText($project,$modified,[Text.UTF8Encoding]::new($false))
     Check-Frozen $true
     $baseArgs=@($project,'/p:Configuration=Release','/p:Platform=AnyCPU','/p:Deterministic=true','/p:ContinuousIntegrationBuild=true','/p:BuildProjectReferences=false','-nologo')
@@ -150,7 +162,12 @@ try {
     # Run only CSV with project references disabled; the other original projects
     # remain compiled but are not given CI=true (EXP-021 proved that would fail).
     $log=Join-Path $evidence 'msbuild-diagnostic-private.log'
-    & $msbuild @baseArgs '/t:Rebuild' '/verbosity:diagnostic' *> $log
+    $compileArgs=@($baseArgs)
+    if ($CaptureLoadedModules) {
+       $modulePrivate=Join-Path $evidence 'msbuild-task-modules-private.txt'
+       $compileArgs+=("/p:SourceLinkProbeOutput=$modulePrivate")
+    }
+    & $msbuild @compileArgs '/t:Rebuild' '/verbosity:diagnostic' *> $log
     $exit=$LASTEXITCODE
     if ($exit -ne 0) {
         $report.compile="failed_exit_$exit"
@@ -159,6 +176,36 @@ try {
         throw 'Provider-integrated CSV compile failed; preserve failure evidence.'
     }
     $report.compile='csv_release_completed'
+    if ($CaptureLoadedModules) {
+       if (-not (Test-Path -LiteralPath $modulePrivate)) {
+          throw 'MSBuild did not execute in-process assembly module capture after CoreCompile.'
+       }
+       $moduleRows=@(Get-Content -LiteralPath $modulePrivate)
+       if ($moduleRows.Count -lt 1 -or $moduleRows[0] -notmatch '^HOST\|\d+\|\d+$') {
+          throw 'Missing process/AppDomain identity in captured MSBuild module evidence.'
+       }
+       $report.task_probe_host_identity_observed=$true
+       $summaries=@()
+       foreach ($line in ($moduleRows | Select-Object -Skip 1)) {
+          $parts=$line.Split('|',3)
+          if ($parts.Count -ne 3) {throw 'Malformed assembly module row.'}
+          $assembly=$parts[0];$version=$parts[1];$full=$parts[2]
+          $category=if ($full.StartsWith((Join-Path $app 'packages') + [IO.Path]::DirectorySeparatorChar,[StringComparison]::OrdinalIgnoreCase)) {
+            if($full -match '(?i)Microsoft\.(SourceLink|Build\.Tasks\.Git)\.'){'isolated_build_tool_package_tree'}
+            else {'existing_application_package_tree'}
+          }elseif ($full.StartsWith($app + [IO.Path]::DirectorySeparatorChar,[StringComparison]::OrdinalIgnoreCase)){
+            'inside_disposable_application'
+          }elseif ($full -match '(?i)^[A-Z]:\\Program Files\\') {
+            'preinstalled_host_toolchain'
+          }else {'other_external_location'}
+          $summaries+=@([ordered]@{name=$assembly;version=$version;location_category=$category})
+       }
+       $report.loaded_module_categories=$summaries
+       $report.module_observation_scope='same AppDomain as diagnostic RoslynCodeTaskFactory; not a proof of all other MSBuild nodes'
+       # Raw full module paths remain in the ephemeral private text file and are
+       # NOT included in upload-artifact paths.
+       Write-Report
+    }
     $logText=[IO.File]::ReadAllText($log)
     $report.source_link_compiler_argument_observed=($logText -match '/sourcelink:')
     $report.provider_task_assembly_observed=($logText -match 'tools[\\/]netframework[\\/]Microsoft\.Build\.Tasks\.Git\.dll')

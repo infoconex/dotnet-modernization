@@ -1,0 +1,66 @@
+name: EXP-036 actual frozen CSV managed checksum verification (research only)
+
+# Historically failed real-PDB acceptance: manual replay only, not an automatic CI gate.
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  frozen-csv:
+    runs-on: windows-2022
+    timeout-minutes: 110
+    steps:
+      - uses: actions/checkout@08c6903cd8c0fde910a37f88322edcfb5dd907a8 # v5.0.0
+        with:
+          persist-credentials: false
+      - uses: actions/checkout@08c6903cd8c0fde910a37f88322edcfb5dd907a8 # v5.0.0
+        with:
+          repository: infoconex/RecordSift
+          ref: 8358780829458854a4b0356df5ac5e685f0a34c8
+          fetch-depth: 0
+          path: recordsift
+          persist-credentials: false
+      - uses: actions/setup-dotnet@a98b56852c35b8e3190ac28c8c2271da59106c68 # v6.0.0
+        with:
+          dotnet-version: '10.0.403'
+      - name: Compile existing independent original assembly metadata tool
+        shell: pwsh
+        run: |
+          dotnet build tooling/assembly-metadata/src/AssemblyMetadata.csproj -c Release -nologo -v minimal
+          if($LASTEXITCODE -ne 0){throw 'Frozen compatibility metadata tool missing'}
+      - name: Frozen original + manual Source Link candidate and complete existing release gates
+        shell: pwsh
+        run: |
+          & ./tooling/pilots/recordsift/EXP-024/run.ps1 -ApplicationRoot (Join-Path $env:GITHUB_WORKSPACE 'recordsift') -EvidenceRoot (Join-Path $env:RUNNER_TEMP 'exp036-recordsift-exp024')
+          if($LASTEXITCODE -ne 0){throw 'Original baseline or candidate release gates failed'}
+      - name: Retrieve exact pinned official managed-reader archives and static preflight
+        shell: pwsh
+        run: |
+          $root=Join-Path $env:RUNNER_TEMP 'exp036-archives'
+          New-Item -ItemType Directory -Path $root -Force | Out-Null
+          curl.exe --fail --location --retry 3 --silent --show-error --proto '=https' --proto-redir '=https' --max-filesize 31457280 'https://api.nuget.org/v3-flatcontainer/dnlib/4.5.0/dnlib.4.5.0.nupkg' --output (Join-Path $root 'dnlib.4.5.0.nupkg')
+          if($LASTEXITCODE -ne 0){throw 'dnlib package acquisition failed'}
+          curl.exe --fail --location --retry 3 --silent --show-error --proto '=https' --proto-redir '=https' --max-filesize 31457280 'https://api.nuget.org/v3-flatcontainer/mono.cecil/0.11.6/mono.cecil.0.11.6.nupkg' --output (Join-Path $root 'mono.cecil.0.11.6.nupkg')
+          if($LASTEXITCODE -ne 0){throw 'Cecil package acquisition failed'}
+          python tooling/pilots/recordsift/EXP-036/nuget_reader_preflight.py --dnlib (Join-Path $root 'dnlib.4.5.0.nupkg') --cecil (Join-Path $root 'mono.cecil.0.11.6.nupkg') --output (Join-Path $root 'static-audit.json')
+          if($LASTEXITCODE -ne 0){throw 'Static archive preflight failed'}
+      - name: Reestablish trusted fixtures; create managed-only pinned reader processes
+        shell: pwsh
+        run: |
+          & ./tooling/pilots/recordsift/EXP-036/run_fixture.ps1 -ArchiveRoot (Join-Path $env:RUNNER_TEMP 'exp036-archives')
+          if($LASTEXITCODE -ne 0){throw 'Independent fixture calibration failed'}
+      - name: Compare frozen real CSV PDB managed checksums with local source bytes
+        shell: pwsh
+        run: |
+          & ./tooling/pilots/recordsift/EXP-036/run_frozen_csv.ps1 -ApplicationRoot (Join-Path $env:GITHUB_WORKSPACE 'recordsift') -Experiment24Evidence (Join-Path $env:RUNNER_TEMP 'exp036-recordsift-exp024') -OutputPath (Join-Path $env:RUNNER_TEMP 'exp036-frozen-csv-metadata.json')
+          if($LASTEXITCODE -ne 0){throw 'Frozen PDB managed document checksum audit failed'}
+      - name: Keep sanitized JSON only; no source, PDB, DLL, binaries or package archives
+        if: success()
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4.6.2
+        with:
+          name: exp036-frozen-csv-checksum-metadata-only
+          path: ${{ runner.temp }}/exp036-frozen-csv-metadata.json
+          retention-days: 30
+          if-no-files-found: error

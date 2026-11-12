@@ -19,6 +19,8 @@ internal static class ReaderProbe
     private static readonly Dictionary<string, string> Documents =
         new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase);
 
+    private static readonly HashSet<string> Missing = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
+
     private static void Add(string url, Guid algorithm, byte[] digest)
     {
         if (string.IsNullOrWhiteSpace(url))
@@ -27,7 +29,14 @@ internal static class ReaderProbe
         if (string.IsNullOrEmpty(name) || name == url && (url.Contains("/") || url.Contains("\\")))
             throw new InvalidDataException("Unexpected document path");
         if (digest == null || digest.Length == 0)
-            throw new InvalidDataException("Source document has no checksum bytes");
+        {
+            if (Documents.ContainsKey(name))
+                throw new InvalidDataException("Conflicting missing and present digests");
+            Missing.Add(name);
+            return;
+        }
+        if (Missing.Contains(name))
+            throw new InvalidDataException("Conflicting missing and present digests");
         var hex = BitConverter.ToString(digest).Replace("-", "").ToLowerInvariant();
         var record = algorithm.ToString("D") + "\t" + hex;
         if (Documents.ContainsKey(name) && Documents[name] != record)
@@ -95,17 +104,26 @@ internal static class ReaderProbe
             if (Process.GetCurrentProcess().Modules.Cast<ProcessModule>().Any(m =>
                 m.ModuleName.IndexOf("diasymreader", StringComparison.OrdinalIgnoreCase) >= 0))
                 throw new InvalidDataException("Native DiaSymReader module loaded unexpectedly");
-            if (Documents.Count == 0)
-                throw new InvalidDataException("Reader returned zero checksum-bearing documents");
+            if (Documents.Count == 0 && Missing.Count == 0)
+                throw new InvalidDataException("Reader returned zero source documents");
             foreach (var pair in Documents.OrderBy(x => x.Key, StringComparer.Ordinal))
                 Console.WriteLine("DOC\t" + pair.Key + "\t" + pair.Value);
-            Console.WriteLine("END\t" + Documents.Count);
+            foreach (var name in Missing.OrderBy(x => x, StringComparer.Ordinal))
+                Console.WriteLine("MISSING\t" + name);
+            Console.WriteLine("END\t" + Documents.Count + "\t" + Missing.Count);
             return 0;
         }
         catch (Exception ex)
         {
             // Never emit absolute temporary paths or untrusted diagnostic strings.
-            Console.Error.WriteLine("READER_ERROR\t" + ex.GetType().Name);
+            var detail = "OTHER";
+            if (ex.Message == "Empty source document path") detail = "EMPTY_DOCUMENT_PATH";
+            else if (ex.Message == "Unexpected document path") detail = "BAD_DOCUMENT_PATH";
+            else if (ex.Message == "Conflicting document checksum for same basename") detail = "CONFLICTING_DIGESTS";
+            else if (ex.Message == "Conflicting missing and present digests") detail = "CONFLICTING_MISSING_DIGESTS";
+            else if (ex.Message == "Reader returned zero source documents") detail = "NO_DOCUMENTS";
+            else if (ex.Message == "dnlib failed to initialize managed PDB state") detail = "DNLIB_NO_PDB_STATE";
+            Console.Error.WriteLine("READER_ERROR\t" + ex.GetType().Name + "\t" + detail);
             return 11;
         }
     }

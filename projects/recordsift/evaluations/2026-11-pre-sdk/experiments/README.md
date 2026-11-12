@@ -30,3 +30,5 @@ See [evidence manifest](../evidence/manifest.md) for immutable container digests
 ## Subsequent article-specific verification
 
 - [EXP-044 — NuGet.Config source inheritance and ordinary restore](EXP-044-nuget-config-source-inheritance.md): **Verified** on Windows with .NET SDK 10.0.403 / NuGet CLI 7.9.0.83; four positive/negative source controls plus ordinary fresh-directory restore passed. [Definitive run 42737924517](https://github.com/infoconex/RecordSift/actions/runs/42737924517). Research-only; no RecordSift production configuration change.
+
+| [EXP-016](EXP-016-source-api-regression.md) | Independently compiled enum-value API regression and missing mandatory evidence | **Verified scoped historical experiment:** 3→42 detected by legacy API guard and extracted API; missing evidence fails closed; not proof of general compatibility | [Original run 41884441296](https://github.com/infoconex/dotnet-modernization/actions/runs/41884441296); [PR #28](https://github.com/infoconex/dotnet-modernization/pull/28) |

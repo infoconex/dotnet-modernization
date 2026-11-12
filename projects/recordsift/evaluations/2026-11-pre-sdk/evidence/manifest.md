@@ -65,3 +65,5 @@
 - `research/migration-ci-exp013-20261103` — EXP-013 format-aware CI guard experiments only in disposable checkout.
 
 Experimental research branches are disposable; no experimental application PR was merged or package published. **Separate historical exception:** approved RecordSift [PR #258](https://github.com/infoconex/RecordSift/pull/258) merged only into `release/0.2`; application `main` remains frozen. Actions artifacts can expire, so durable experiment notes remain the evidence record.
+
+**EXP-016 — public API regression controls:** [original successful Windows run 41884441296](https://github.com/infoconex/dotnet-modernization/actions/runs/41884441296). Independently compiled enum-value mutation 3→42 was detected by the legacy public API checker and metadata comparator; missing required API evidence failed closed. Research [PR #28](https://github.com/infoconex/dotnet-modernization/pull/28); no application changes were pushed.

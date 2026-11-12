@@ -48,3 +48,5 @@ Develop reusable **functions and thin workflow callers** only after a separate d
 6. **Do not merge, publish or implement** application changes based on an archived experiment. Any proposed production configuration, format migration, tool migration or SDK conversion needs separate approval and acceptance verification.
 
 This archive is a reproducibility asset and design input, **not an assertion that a reusable execution library has been implemented or revalidated on current runners**.
+
+**Historical EXP-016 pilot:** [run.ps1](pilots/recordsift/EXP-016/run.ps1) introduces a CI-local compiled public enum regression (3→42) and checks that the existing public API guard and metadata comparator detect it, including missing-evidence fail-closed behavior. It is a RecordSift-specific negative control, not a generic production migration gate.

@@ -9,6 +9,7 @@ At the first evaluation baseline it contains five production libraries and five 
 ## Evaluations
 
 - [2026-11: Pre-SDK modernization discovery](evaluations/2026-11-pre-sdk/README.md) — what can safely be improved before SDK-style conversion.
+- [2026-11: Current case-study application discovery](evaluations/2026-11-case-study-discovery/README.md) — pinned present-day workflows, requirements/evidence mapping, and an explicit [technical baseline](evaluations/2026-11-case-study-discovery/baseline.md) with execution gaps; separate from the preserved pre-SDK evaluation.
 
 Future evaluations (such as SDK conversion or runtime migration) should use their **own** dates, baseline SHAs, evidence and verification gates. This repository stores assessment and learning, not the application source code.
 

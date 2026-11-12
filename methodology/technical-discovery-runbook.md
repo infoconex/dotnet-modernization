@@ -30,51 +30,71 @@ This is the **reusable how-to** for collecting an evidence-backed technical base
 
 Run commands individually. Capture the **exact command**, working directory, full output or durable excerpt, exit code, date, tool version, environment, and source SHA. A green workflow does not establish that every expected check ran. Never replace a failed command with a different one and report the original as successful.
 
-## DISC-001 — Acquire and identify the exact source
+## DISC-001 — Check prerequisites, acquire clean source and identify the exact revision
 
-**Purpose:** obtain a trustworthy source checkout, then record the exact revision and working-tree state. **For a reproducible case study, prefer a fresh clone into a new, dedicated folder** rather than resetting or cleaning an existing workspace. Reusing an existing checkout is still valid when its state is inspected and documented.
+**Purpose:** verify the tooling needed to begin, establish what additional tools later discovery operations require, and acquire the exact source revision in a predictable local folder. A **fresh, timestamped checkout** is preferred for a repeatable case study. Reusing an existing checkout is permitted when its state is inspected and documented. This is **step one**, not an assumption that Git, .NET, MSBuild or NuGet are already installed.
 
-### A. Confirm Git and select a safe location
+### A. Preflight — confirm the tools before cloning
 
-Run in PowerShell:
+Run these commands **individually** in PowerShell:
 
 ```powershell
+$PSVersionTable.PSVersion
+Get-Command git -ErrorAction SilentlyContinue
 git --version
+Get-Command dotnet -ErrorAction SilentlyContinue
+Get-Command msbuild -ErrorAction SilentlyContinue
+Get-Command nuget -ErrorAction SilentlyContinue
 ```
 
-Choose an existing parent directory where creating a new checkout is permitted. Verify that your intended destination folder does **not** exist before cloning. **Do not delete, overwrite, reset, or clean an existing directory** just to make a discovery look reproducible.
+`Get-Command` only reports what is on **PATH**; a missing result does not establish the software is absent from the computer. If Git is not available, stop before cloning. Record the PowerShell and Git versions and the found/not-on-PATH state of the other commands. Do **not** invoke unavailable commands or install anything automatically.
 
-### B. Choose one acquisition path
+**Distinguish requirements by phase and project, not just by tool name:**
 
-**Preferred for a new baseline walkthrough — fresh isolated clone:**
+| Tool/prerequisite | When it is needed | Applicability and notes |
+|---|---|---|
+| PowerShell and **Git** | **Required for this PowerShell/Git acquisition procedure** | Git 2.23+ for `git switch`; Git source operations are independent of .NET version and project format |
+| Network access and writable folder | Fresh clone | Clone downloads Git objects and creates a new directory; existing checkout/offline source requires a different documented path |
+| .NET SDK / `dotnet` | Later **only for applicable** SDK CLI inspection, MSBuild evaluation or builds | Not universally required by all traditional .NET Framework projects; installed SDK ≠ .NET Framework targeting pack |
+| MSBuild / Visual Studio Build Tools | Later for applicable MSBuild project evaluation and builds | Actual implementation and components depend on project format, target, OS and build process; `msbuild` may exist only in a Developer PowerShell |
+| Standalone NuGet CLI | Later when the application's documented restore uses `nuget.exe`, including some `packages.config` repositories | Not universally required for SDK-style `PackageReference` projects |
+| Targeting packs, test runners and other platform prerequisites | Later before an approved build/test | Framework, project and host-specific; verify at DISC-004 and before DISC-008–010, not inferred from a tool being on PATH |
 
-The following is an example. Replace the parent path, Git remote and frozen source SHA with the application's actual values. The example paths are placeholders, not assumptions about the operator's machine.
+For an application requiring Windows-specific build tooling, check the host OS before approving build/test steps. **The preflight is an availability screen, not the complete environment inventory**: DISC-004 captures exact SDK/runtime/targeting-pack/MSBuild/NuGet versions and origins. Missing later tools become named readiness gaps, not fabricated successes or automatic installation tasks.
+
+### B. Create a dated, likely unique discovery checkout
+
+**Preferred:** create a new folder named `<Repository>-discovery-YYYY-MM-DD-HHmmss` using the **operator's local timestamp**. The date and time make concurrent evaluations distinguishable; the collision check protects an existing directory. Use a standard parent folder under the user's home directory, or record an approved alternative.
+
+Below, substitute the real repository name and remote URL. These commands are ordinary PowerShell and native Git operations, **not a collector script**. Execute them one at a time after the preflight.
 
 ```powershell
-Set-Location "C:\path\to\parent-directory"
-Test-Path .\REPOSITORY-discovery
-git clone --no-checkout https://github.com/OWNER/REPOSITORY.git REPOSITORY-discovery
-Set-Location .\REPOSITORY-discovery
+$repository = 'REPOSITORY'
+$remoteUrl = 'https://github.com/OWNER/REPOSITORY.git'
+$discoveryRoot = Join-Path (Join-Path $HOME 'source') 'discoveries'
+New-Item -ItemType Directory -Path $discoveryRoot -Force
+$discoveryFolder = "$repository-discovery-$(Get-Date -Format 'yyyy-MM-dd-HHmmss')"
+$destination = Join-Path $discoveryRoot $discoveryFolder
+Test-Path -LiteralPath $destination
+```
+
+**Continue only when `Test-Path` returns `False`.** If it returns `True`, create a different timestamped name and check again. Do not delete or reuse a folder merely to force a clean checkout. The parent-directory creation can write new directories; it does not delete existing source.
+
+Clone without automatically checking out a potentially moving default branch, then select the **full, known baseline commit SHA**:
+
+```powershell
+git clone --no-checkout $remoteUrl $destination
+Set-Location -LiteralPath $destination
 git switch --detach FULL_COMMIT_SHA
 ```
 
-**Stop if `Test-Path` returns `True`; choose a different unused folder name.** Run commands individually and check errors before continuing. `git clone --no-checkout` creates a new local repository without checking out the changing default branch; `git switch --detach` then populates its working tree at the **frozen immutable commit**. The detached HEAD is intentional for a baseline snapshot. `git switch` requires Git 2.23+; on older installations, evaluate an appropriate documented alternative rather than silently changing the instructions.
+Run the clone and checkout individually and stop on any error. The detached HEAD is intentional. The clone downloads source and writes only the new destination; the switch populates tracked files from the pinned commit. Neither modifies the remote repository. Git 2.23+ supports `git switch`. Do not include credentials in recorded URLs.
 
-**Side effects:** clone downloads Git objects and writes the new destination folder; switching to the frozen commit writes its tracked files. These commands do not change the remote repository or an existing checkout. Private/enterprise repositories may require an approved authenticated remote. Never embed credentials in recorded clone URLs.
+**Alternative — existing checkout:** navigate to the existing repository, inspect its current HEAD and status first, and record why a fresh clone was not used. Do **not** run `git pull`, `git reset`, `git clean` or branch-switch commands just to make existing files appear clean. A repository that is not in Git needs its own verified immutable source-identification method.
 
-**Existing checkout path — if you deliberately choose to reuse it:**
+### C. Verify the checkout
 
-```powershell
-Set-Location "C:\path\to\existing-checkout"
-```
-
-Do not clone again into the same folder. Inspect the existing checkout **before** any operation that changes its branch or files. Reusing it is not evidence of a clean environment; record its status and any ignored/generated files that could affect the investigation.
-
-**Do not assume the default-branch HEAD equals the frozen baseline SHA**, even immediately after cloning. Avoid automatically running `git pull`, `git reset`, `git clean`, or branch switches in an existing workspace.
-
-### C. Verify the local source state
-
-Inside the chosen checkout, run these native Git commands individually:
+From inside the chosen checkout, run individually:
 
 ```powershell
 git rev-parse --show-toplevel
@@ -84,15 +104,13 @@ git status --porcelain=v1 --untracked-files=all
 git remote get-url origin
 ```
 
-For the preferred fresh-detached clone, the expected observations are: **HEAD equals the recorded SHA**, `git branch --show-current` prints no branch name, and `git status --porcelain` prints nothing. These are *expected*, not proof until the operator shares actual output. For a reused checkout, record any divergence. Check optional submodules or external source dependencies separately when relevant.
+For a fresh, detached checkout we **expect** the selected full SHA, an empty branch name, and empty porcelain status. These remain expectations until the operator supplies actual output. Check separately for submodules or externally sourced build inputs if the application uses them.
 
-**Applicability:** Git operations are independent of .NET Framework, current .NET, SDK-style or traditional project formats. Applications not stored in Git need a different source-identity mechanism.
+**Evidence:** the actual PowerShell/Git preflight, initial availability of later tools, clone method and timestamped folder name, redacted source/remote identity, source revision, checkout status, command failures and side effects. Redact secrets, user paths and private information in the shared evidence while retaining meaningful context.
 
-**Evidence:** method of acquisition (fresh clone / existing), sanitized remote, Git version, approximate execution time, full source SHA, checkout/ref state, clean/dirty status and relevant external inputs. Redact personal paths, credentials and secrets before committing or sharing.
+**Stop/check:** if Git is unavailable, the destination exists, cloning or switching fails, HEAD differs from the recorded SHA, or the new working tree is unexpectedly dirty, preserve the actual output and resolve the mismatch before DISC-002.
 
-**Limit:** a pristine Git working tree does **not** establish a pristine build environment. Installed SDKs, targeting packs, MSBuild, user-level NuGet configuration, global package caches, environment variables and network feeds can still affect subsequent commands. Record those in DISC-004 onward.
-
-**Stop/check:** if HEAD differs from the intended SHA, the checkout is unexpectedly dirty, the commit cannot be checked out, or the clone fails, preserve the actual diagnostic and resolve the mismatch before continuing. Do not erase evidence by cleaning or resetting files.
+**Important limit:** clean tracked source is not a clean build environment. SDKs, MSBuild, targeting packs, NuGet cache, user-level configuration and network feeds are checked later. An untested tool is never reported as "verified" merely because this preflight found a command name.
 
 ## DISC-002 — Inventory solutions and projects
 

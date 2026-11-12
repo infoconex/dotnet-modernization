@@ -1,10 +1,7 @@
 name: EXP-027 real NuGet acquisition graph and application-pin conflict
 
+# Historical experiment: manual execution only; no automatic PR builds.
 on:
-  pull_request:
-    paths:
-      - '.github/workflows/validate-exp027-nuget-closure.yml'
-      - 'projects/recordsift/evaluations/2026-11-pre-sdk/experiments/EXP-027-real-nuget-closure.md'
   workflow_dispatch:
 
 permissions:

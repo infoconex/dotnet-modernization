@@ -1,12 +1,7 @@
 name: EXP-023A read-only Source Link NuGet build-asset version matrix
 
+# Historical research: execute manually; CI's reusable Python tests remain independently enforced.
 on:
-  pull_request:
-    paths:
-      - ".github/workflows/validate-sourcelink-package-audit.yml"
-      - "tooling/validators/nuget_build_assets.py"
-      - "tooling/validators/tests/test_nuget_build_assets.py"
-      - "projects/recordsift/evaluations/2026-11-pre-sdk/experiments/EXP-023-source-link-asset-audit.md"
   workflow_dispatch:
 
 permissions:

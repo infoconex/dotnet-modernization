@@ -1,12 +1,7 @@
 name: EXP-025 native Windows PDB Source Link structural proof
 
+# Historical research: manual execution only; no automatic PR builds.
 on:
-  pull_request:
-    paths:
-      - '.github/workflows/validate-exp025-native-pdb.yml'
-      - 'tooling/validators/native_windows_pdb_sourcelink.py'
-      - 'tooling/validators/tests/test_native_windows_pdb_sourcelink.py'
-      - 'projects/recordsift/evaluations/2026-11-pre-sdk/experiments/EXP-025-windows-pdb-identity.md'
   workflow_dispatch:
 
 permissions:
@@ -57,6 +52,38 @@ jobs:
         run: |
           & ./tooling/pilots/recordsift/EXP-024/run.ps1 -ApplicationRoot (Join-Path $env:GITHUB_WORKSPACE 'recordsift') -EvidenceRoot (Join-Path $env:RUNNER_TEMP 'RecordSift-EXP-024-for-025')
           if ($LASTEXITCODE -ne 0) { throw 'EXP-024 compilation and compatibility prerequisite failed.' }
+      - name: Inspect generated Source Link JSON and independent PDB tool availability
+        shell: pwsh
+        run: |
+          $ErrorActionPreference='Stop'
+          $project=Join-Path $env:GITHUB_WORKSPACE 'recordsift/src/RecordSift.Infrastructure.Csv'
+          $files=@(Get-ChildItem (Join-Path $project 'obj') -File -Recurse -ErrorAction SilentlyContinue |
+            Where-Object { $_.Name -match 'sourcelink|sourcecontrol' })
+          $rows=@()
+          foreach($file in $files) {
+            $row=[ordered]@{file_name=$file.Name;bytes=$file.Length;
+                sha256=(Get-FileHash -LiteralPath $file.FullName -Algorithm SHA256).Hash.ToLowerInvariant();
+                parsed_source_link_documents=$null;references_frozen_sha=$false}
+            if($file.Name -like '*.json') {
+              try {
+                $raw=Get-Content -LiteralPath $file.FullName -Raw
+                $data=$raw | ConvertFrom-Json
+                $row.parsed_source_link_documents=@($data.documents.PSObject.Properties).Count
+                $row.references_frozen_sha=$raw.Contains('8358780829458854a4b0356df5ac5e685f0a34c8')
+              } catch {
+                $row.parsed_source_link_documents='could_not_parse'
+              }
+            }
+            $rows+=@($row)
+          }
+          $llvm=Get-Command llvm-pdbutil.exe -ErrorAction SilentlyContinue
+          $pdbstr=Get-Command pdbstr.exe -ErrorAction SilentlyContinue
+          $summary=[ordered]@{source_link_intermediate_candidates=$rows;
+               llvm_pdbutil_available=[bool]$llvm;pdbstr_available=[bool]$pdbstr;
+               warning='Provider JSON and intermediate file existence do not prove PDB embedding.'}
+          $summary | ConvertTo-Json -Depth 8 | Set-Content (Join-Path $env:RUNNER_TEMP 'exp025-generated-source-json.json') -Encoding utf8
+          Write-Host ("Diagnostic: intermediate candidates=$($rows.Count), llvm-pdbutil available=$([bool]$llvm), pdbstr available=$([bool]$pdbstr)")
+
       - name: Read real Windows PDB named Source Link streams and CodeView identity
         shell: pwsh
         run: |
@@ -78,6 +105,7 @@ jobs:
           if-no-files-found: warn
           path: |
             ${{ runner.temp }}/exp025-native-windows-pdb.json
+            ${{ runner.temp }}/exp025-generated-source-json.json
             ${{ runner.temp }}/RecordSift-EXP-024-for-025/experiment-report.json
             ${{ runner.temp }}/RecordSift-EXP-024-for-025/candidate-versus-original-compatibility.json
             ${{ runner.temp }}/RecordSift-EXP-024-for-025/candidate-acceptance/pilot-report.json

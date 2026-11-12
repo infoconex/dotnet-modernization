@@ -23,7 +23,7 @@ EXP-039 successfully audited 4/4 separately validated physical original CSV comp
 ## Execution design
 
 - **Offline:** `python3 -m unittest discover -s tooling/validators/tests -p 'test_native_pdb_document_inventory.py' -v`. Positive and negative controls cover the joined DBI/C13/line reference, unmatched referenced or unreferenced streams, unknown payload, duplicate native keys and stream IDs, unsupported C13 hashes, malformed offsets/lengths, absent checksums, wrong module stream, independent reader disagreement and missing DBI. Existing 21 EXP-039 checksum verifier controls rerun independently.
-- **Windows:** `.github/workflows/validate-exp040-native-document-inventory.yml` reruns pinned reader preflight, five direct-Roslyn differential fixtures and actual frozen CSV, full original and manual candidate EXP-024 acceptance, then validates native provenance *before the two reader manifests are deleted in finally*.
+- **Windows (historical):** the [archived EXP-040 workflow](../archives/workflows/validate-exp040-native-document-inventory.yml) reran pinned reader preflight, five direct-Roslyn differential fixtures and actual frozen CSV, full original and manual candidate EXP-024 acceptance, then validates native provenance *before the two reader manifests are deleted in finally*.
 - **Retention:** Only sanitized `exp040-summary.json` and previous EXP-037/038/039 metadata are eligible for the 30-day GitHub Actions artifact. Never include actual PDB, DLL, source or private reader URL manifests.
 
 ## Provisional interpretation

@@ -6,8 +6,6 @@ on:
       - "tooling/assembly-metadata/**"
       - "tooling/validators/compatibility.py"
       - ".github/workflows/validate-assembly-metadata.yml"
-  workflow_dispatch:
-
 permissions:
   contents: read
 

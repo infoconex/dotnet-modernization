@@ -4,7 +4,9 @@ This directory distinguishes **preserved experiment code** from **portable, test
 
 ## Available source artifacts
 
-RecordSift-specific immutable workflow archives are now cataloged with the [RecordSift pre-SDK evaluation](../projects/recordsift/evaluations/2026-11-pre-sdk/archives/README.md), rather than stored alongside shared tool implementations. The original archived source blobs are unchanged.
+RecordSift-specific immutable workflow archives are cataloged with the [RecordSift pre-SDK evaluation](../projects/recordsift/evaluations/2026-11-pre-sdk/archives/README.md), including [31 former research-repository workflows](../projects/recordsift/evaluations/2026-11-pre-sdk/archives/workflows/README.md). Cross-application [Gate C-N](../research/native-pdb-provenance/gate-cn/archives/workflows/README.md) and [Source Link package-asset](../research/source-link-build-assets/README.md) workflow source is archived with its respective research. All archived original YAML blobs are unchanged; none is active GitHub Actions CI.
+
+The only active workflows are reusable metadata-extractor and Python-validator checks triggered by pull requests; manual dispatch has been removed.
 
 [RecordSift November 2026 validation workflow archive](../projects/recordsift/evaluations/2026-11-pre-sdk/archives/README.md) preserves eight complete workflow YAML files from tested historical commits. Archives are **not installed, automatically executed, generalized, or approved for production release validation**. They live outside `.github/workflows/` to prevent GitHub Actions from discovering them in this repository.
 

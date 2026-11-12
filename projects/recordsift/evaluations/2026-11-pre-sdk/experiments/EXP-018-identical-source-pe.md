@@ -11,7 +11,7 @@ A binary hash mismatch does not by itself prove an API, functional, security or 
 
 ## Three actual immutable-source builds
 
-The [EXP-018 Windows runner](../../../../../tooling/pilots/recordsift/EXP-018/run.ps1) and [read-only workflow](../../../../../.github/workflows/validate-recordsift-pe-reproducibility.yml) use:
+The [EXP-018 Windows runner](../../../../../tooling/pilots/recordsift/EXP-018/run.ps1) and [read-only workflow](../archives/workflows/validate-recordsift-pe-reproducibility.yml) use:
 
 1. **Original checkout:** frozen RecordSift source, NuGet restore and Release rebuild of all ten traditional projects.
 2. **Independent detached worktree:** exactly the same Git source SHA, separate filesystem checkout, independent restore and rebuild.

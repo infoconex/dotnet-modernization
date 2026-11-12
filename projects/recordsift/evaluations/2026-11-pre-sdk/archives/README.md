@@ -18,6 +18,10 @@ Each YAML file below is a **byte-for-byte preserved UTF-8 file** copied from an 
 | EXP-012 | [Exact-pinned PackageReference candidate](EXP-012-research-exp012-packagereference.yml) | [Original](https://github.com/infoconex/RecordSift/blob/63eaad20986cdf429fd64f248a5c2a3f9223f857/.github/workflows/research-exp012-packagereference.yml) | `ae04eb501fb18ace7633efa45a4abb5a6d1f6ae8` | Temporary conversion; 414 compiled API/identity pass, original 425-entry raw-metadata gate fails; direct-only candidate downgrades four versions, not consumer-validated. |
 | EXP-013 | [Migration CI and architecture controls](EXP-013-research-exp013-migration-ci.yml) | [Original](https://github.com/infoconex/RecordSift/blob/933c74ec916468ce1e4a5c0c0878ca56a360bc36/.github/workflows/research-exp013-migration-ci.yml) | `e4e3dd796d4c437148c05d5923953c3f660eb556` | Format-aware dependency audit/architecture positive and negative controls in disposable workspaces; Visual Studio GUI migrator not executed. |
 
+## Retired research-repository workflows
+
+The [31 additional original research-repository workflow sources](workflows/README.md) are archived byte-for-byte with the RecordSift evaluation. They are distinct from the eight application-repository workflow archives listed below, and they cannot dispatch automatically or manually from this directory.
+
 ## Related scripts already versioned in RecordSift
 
 The workflows call application-specific scripts already preserved in the immutable original repository. They are **linked, not duplicated** here:

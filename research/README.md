@@ -19,3 +19,5 @@ Add individual notes only when there is enough reusable content to justify them.
 
 - [Native classic-PDB source provenance and Gate C-N](native-pdb-provenance/README.md) — scoped, historical research involving RecordSift and an independent .NET Framework compilation. Not an approved production release gate.
 - [Historical research and branch records](history/README.md) — preserved inventories and original decision context.
+
+- [Source Link package build-asset research archive](source-link-build-assets/README.md) — one-off read-only NuGet asset audit, now inert.

@@ -4,6 +4,8 @@
 **Implementation:** `tooling/validators/gate_cn_live_provenance.py`. It does not replace the verified EXP-043 code or execute RecordSift.
 **Original managed-reader checksum Gate C: UNSATISFIED. Gate C-N release acceptance: NOT AUTHORIZED. Source Link: HOLD.**
 
+**Archive note (November 2026):** The historical EXP-044 live and retained-evidence workflows are now [archived](archives/workflows/README.md) rather than available for direct manual dispatch. The execution/dispatch descriptions below are historical statements, not current CI instructions.
+
 ## Independent finding and bounded hypothesis
 
 The verified EXP-043 verifier enumerates five hard-coded RecordSift components and directory layouts. More importantly, EXP-042's actual generated-source producer observation proves **exactly one** framework-moniker source per component, produced by the traditional MSBuild `GenerateTargetFrameworkMonikerAttribute` target and `WriteLinesToFile`. It does **not** prove arbitrary Roslyn generators, other intermediate files, external/untracked C# inputs or different Csc invocation patterns. A future generic gate must fail closed rather than silently treating those as authenticated by the moniker evidence.

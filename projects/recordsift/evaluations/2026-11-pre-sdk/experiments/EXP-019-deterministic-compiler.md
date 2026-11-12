@@ -12,7 +12,7 @@
 
 ## Controls and independent source verification
 
-The [Windows research script](../../../../../tooling/pilots/recordsift/EXP-019/run.ps1) and [workflow](../../../../../.github/workflows/validate-recordsift-deterministic-isolation.yml) perform **four** fully validated, real ten-project Release builds without modifying any source/project files:
+The [Windows research script](../../../../../tooling/pilots/recordsift/EXP-019/run.ps1) and [workflow](../archives/workflows/validate-recordsift-deterministic-isolation.yml) perform **four** fully validated, real ten-project Release builds without modifying any source/project files:
 
 1. **Historical baseline** — original source checkout, no compiler property override.
 2. **Opt-in A** — same checkout, command-line MSBuild global property /p:Deterministic=true.

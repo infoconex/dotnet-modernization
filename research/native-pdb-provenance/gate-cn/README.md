@@ -14,6 +14,10 @@ This directory contains the proposed native classic Windows-PDB source-provenanc
 - [EXP-044 sanitized non-RecordSift evidence](evidence/exp044-non-recordsift-sanitized.json)
 - [Dated Gate C-N protocol, independent, D1 and D2 review records](reviews/2026-11-06/)
 
+## Retired Gate C-N workflows
+
+The [six original Gate C-N and independent EXP-044 research-workflow definitions](archives/workflows/README.md) are archived byte-for-byte outside active GitHub Actions. They do not constitute a reusable production acceptance gate or new test evidence.
+
 ## RecordSift application evidence
 
 - [RecordSift EXP-043 five-assembly investigation](../../../projects/recordsift/evaluations/2026-11-pre-sdk/experiments/EXP-043-five-assembly-pdb-provenance.md)

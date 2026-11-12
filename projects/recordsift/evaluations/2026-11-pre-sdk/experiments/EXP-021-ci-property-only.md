@@ -14,7 +14,7 @@ A separate suggested configuration enables ContinuousIntegrationBuild=true and a
 
 ## Controls and candidate designs
 
-The [EXP-021 runner](../../../../../tooling/pilots/recordsift/EXP-021/run.ps1) and [read-only workflow](../../../../../.github/workflows/validate-recordsift-ci-property-only.yml) first run **the unchanged EXP-019 control**:
+The [EXP-021 runner](../../../../../tooling/pilots/recordsift/EXP-021/run.ps1) and [read-only workflow](../archives/workflows/validate-recordsift-ci-property-only.yml) first run **the unchanged EXP-019 control**:
 
 1. Historical frozen-source Release build, with no opt-in determinism.
 2. Frozen-source deterministic build in original checkout, only /p:Deterministic=true.

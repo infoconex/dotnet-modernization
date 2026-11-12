@@ -14,7 +14,7 @@ The C# compiler's deterministic inputs can include full source paths. Microsoft'
 
 ## Seven full-gate builds, source never changed
 
-The [Windows runner](../../../../../tooling/pilots/recordsift/EXP-020/run.ps1) and [workflow](../../../../../.github/workflows/validate-recordsift-pathmap-isolation.yml) reuse EXP-019 without modifying its accepted controls:
+The [Windows runner](../../../../../tooling/pilots/recordsift/EXP-020/run.ps1) and [workflow](../archives/workflows/validate-recordsift-pathmap-isolation.yml) reuse EXP-019 without modifying its accepted controls:
 
 1. Historical source build without deterministic override.
 2. Deterministic=true original checkout, no PathMap.

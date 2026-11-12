@@ -2,6 +2,8 @@
 
 All RecordSift experiments anchor to the **application production baseline** `main` at `8358780829458854a4b0356df5ac5e685f0a34c8`. Research workflow changes exist only on disposable `discovery/*` or `research/*` application branches based on that frozen commit. Project-file/package/script transformations were made only in isolated runner workspaces, **not** committed to application main or `release/0.2`. EXP-015, EXP-016 and EXP-017 additionally create disposable **CI-local candidate commits** for truthful provenance; this commit is never pushed.
 
+Historical workflow definitions are preserved in the [inert RecordSift research-workflow archive](../archives/workflows/README.md). Their original CI runs below remain evidence; there is no active dispatch for those experiments in the proposed cleanup.
+
 | ID | Experiment | Observed outcome | Run |
 |---|---|---|---|
 | [EXP-001](EXP-001-baseline.md) | Windows build, all tests, API/package/consumer baseline | Verified | [Main CI](https://github.com/infoconex/RecordSift/actions/runs/41392848910) |

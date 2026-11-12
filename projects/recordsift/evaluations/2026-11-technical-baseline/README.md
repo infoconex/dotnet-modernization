@@ -39,4 +39,4 @@ This is not a claim that missing repository-wide files have no equivalents in pa
 
 **Research/implementation separation:** no change to RecordSift source, project files or its application main branch. This documentation remains on its own review PR until approved.
 
-**Next action:** operator executes **DISC-001**, starting with Git identity/checkout status; assistant records the actual output and then prepares **DISC-002**. The host/toolchain is intentionally not assumed from the historical evaluation.
+**Next action:** operator executes **DISC-001** using a fresh, isolated `RecordSift-discovery` clone (recommended), checks out immutable commit `1809d06c0fade59e4769d16e0f8eaf10fa426004` in detached HEAD state, and captures native Git identity/status outputs. **No clone has yet been executed or verified.** The assistant then records the actual output and prepares **DISC-002**. The clean source checkout must not be confused with a clean host/toolchain or package-cache environment.

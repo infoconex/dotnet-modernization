@@ -19,6 +19,37 @@ The [cross-platform .NET 10 metadata-only extractor](../assembly-metadata/README
 
 The [compatibility snapshot and comparison guide](COMPATIBILITY.md) documents the new `compatibility.py` command, its five optional evidence categories (API, assembly identities, embedded-resource names, NuGet package metadata/path inventory, and NUnit 3 test results), source SHA controls, and its **scoped-match** semantics. Application-specific tools must generate API/assembly/resource manifests before comparison; the toolkit does **not** independently inspect .NET DLLs or certify consumer/runtime compatibility.
 
+## Exact NuGet package and member-byte comparison
+
+Use [`package_payload.py`](package_payload.py) to inspect **two already-built local .nupkg archives**. This is separate from [`compatibility.py`](COMPATIBILITY.md), which intentionally compares logical package dependencies and payload *paths* rather than payload bytes.
+
+~~~shell
+python tooling/validators/package_payload.py \
+  --baseline /evidence/original/Library.1.0.0.nupkg \
+  --candidate /evidence/candidate/Library.1.0.0.nupkg \
+  --output /evidence/reports/nuget-member-bytes.json
+~~~
+
+The output is JSON **schema version 1** and includes SHA-256 of the complete package archive and of each **uncompressed** named member, sizes, counts, and exact added/removed/changed paths with their hashes. The tool does **not** extract members to disk, load/execute .NET assemblies or require NuGet. Choose an output path that does not exist; the tool refuses to overwrite evidence.
+
+| Exit | `overall` | Meaning |
+| --- | --- | --- |
+| 0 | `identical_archive_and_entries` | Whole ZIP bytes and every named uncompressed member match |
+| 1 | `different_container_same_entries` | ZIP bytes differ, but all member content bytes and paths match; timestamp, compression or ZIP record layout can explain this |
+| 1 | `different_entries` | At least one named member's bytes or presence differs; **not automatically a behavior/API regression** |
+| 1 | `incomplete` | A required package file is absent; never treat as a match |
+| 2 | `error` | Unreadable/corrupt/unsafe/oversized/ambiguous package, or other fatal inspection error |
+
+Supported inputs are local ZIP-format NuGet packages with exactly one root `.nuspec`. The tool rejects path traversal, ambiguous case-insensitive duplicates, ZIP symlinks and encrypted members; it bounds ZIP size, member count and expanded member size. Its hashes prove exact observed bytes **only**, not signing trust, package source integrity, semantic IL equivalence, reproducible builds, or security clearance. Match source SHA, build parameters, restore provenance, test/consumer results and signing policy **independently** before drawing modernization conclusions.
+
+Run the fixture tests on any Python host:
+
+~~~shell
+python -m unittest discover -s tooling/validators/tests -p test_package_payload.py -v
+~~~
+
+The complete toolkit also runs in [the Windows and Ubuntu CI workflow](../../.github/workflows/validate-modernization-tooling.yml). The [RecordSift EXP-017 adapter](../pilots/recordsift/EXP-017/controls.py) demonstrates a real three-build comparison, a same-package positive check, a single-DLL byte-change negative check and missing-package fail-closed behavior, without treating RecordSift's legacy .NET Framework layout as a default for other applications.
+
 ## Toolchain, evaluated MSBuild settings and dependencies
 
 These additional commands emit independent, versioned JSON reports. They **do not change source files, run a build, restore packages, validate consumers, or authorize a modernization change**. All output paths must be outside the application's checkout.

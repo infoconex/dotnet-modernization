@@ -1,0 +1,89 @@
+name: EXP-026 Source Link two real Git worktrees reproducibility
+
+# Historical experiment: manual execution only; no automatic PR builds.
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  independent-worktree-probe:
+    runs-on: windows-2022
+    timeout-minutes: 100
+    steps:
+      - uses: actions/checkout@08c6903cd8c0fde910a37f88322edcfb5dd907a8 # v5.0.0
+        with:
+          persist-credentials: false
+      - uses: actions/checkout@08c6903cd8c0fde910a37f88322edcfb5dd907a8 # v5.0.0
+        with:
+          repository: infoconex/RecordSift
+          ref: 8358780829458854a4b0356df5ac5e685f0a34c8
+          path: recordsift-a
+          fetch-depth: 0
+          persist-credentials: false
+      - uses: actions/setup-dotnet@a98b56852c35b8e3190ac28c8c2271da59106c68 # v6.0.0
+        with:
+          dotnet-version: '10.0.403'
+      - name: Build reuse-only metadata inspector
+        shell: pwsh
+        run: |
+          dotnet build tooling/assembly-metadata/src/AssemblyMetadata.csproj -c Release -nologo -v minimal
+          if ($LASTEXITCODE -ne 0) { throw 'Metadata tool compilation failed.' }
+      - name: Build Source Link candidate in two physical Git worktrees with original release gates
+        shell: pwsh
+        run: |
+          $ErrorActionPreference='Stop'
+          $sha='8358780829458854a4b0356df5ac5e685f0a34c8'
+          $a=Join-Path $env:GITHUB_WORKSPACE 'recordsift-a'
+          $b=Join-Path $env:RUNNER_TEMP 'RecordSift-independent-worktree-b'
+          $evidence=Join-Path $env:RUNNER_TEMP 'RecordSift-EXP-026'
+          if((Test-Path $b) -or (Test-Path $evidence)) { throw 'Worktree or evidence already exists.' }
+          & git -C $a worktree add --detach $b $sha
+          if($LASTEXITCODE -ne 0) {throw 'Independent real Git worktree could not be created.'}
+          if(-not (Test-Path (Join-Path $b '.git') -PathType Leaf)){
+            throw 'Second worktree is not authentic .git file-pointer layout.'
+          }
+          if((& git -C $b rev-parse HEAD).Trim() -cne $sha){throw 'Wrong independent worktree commit.'}
+          New-Item -ItemType Directory -Path $evidence -Force | Out-Null
+          $rows=@()
+          foreach($case in @(@{label='A';root=$a},@{label='B';root=$b})) {
+            $folder=Join-Path $evidence ('candidate-'+$case.label)
+            & ./tooling/pilots/recordsift/EXP-024/run.ps1 -ApplicationRoot $case.root -EvidenceRoot $folder
+            if ($LASTEXITCODE -ne 0) { throw "Failed candidate integration or full original acceptance in $($case.label)" }
+            $report=Get-Content (Join-Path $folder 'experiment-report.json') -Raw | ConvertFrom-Json
+            if ($report.application_release_gates -cne 'candidate_425_api_419_nunit_5_xml_local_package_clean_consumer_passed' -or
+                $report.logical_compatibility -cne 'five_categories_matched_original') {
+               throw "Incomplete candidate acceptance in $($case.label)"
+            }
+            $dll=Join-Path $case.root 'src/RecordSift.Infrastructure.Csv/bin/Release/RecordSift.Infrastructure.Csv.dll'
+            $pdb=Join-Path $case.root 'src/RecordSift.Infrastructure.Csv/bin/Release/RecordSift.Infrastructure.Csv.pdb'
+            $rows+=@([ordered]@{case=$case.label;git_sha=$sha;git_pointer=($case.label -ceq 'B');
+              dll_sha256=(Get-FileHash $dll -Algorithm SHA256).Hash.ToLowerInvariant();
+              pdb_sha256=(Get-FileHash $pdb -Algorithm SHA256).Hash.ToLowerInvariant();
+              logical='matched';release_gates='passed'})
+          }
+          $result=[ordered]@{experiment='EXP-026';source_sha=$sha;
+            candidate_paths='different_real_git_worktrees';observations=$rows;
+            csv_dll_byte_identical=($rows[0].dll_sha256 -ceq $rows[1].dll_sha256);
+            windows_pdb_byte_identical=($rows[0].pdb_sha256 -ceq $rows[1].pdb_sha256);
+            interpretation='Byte results are observations; no cross-machine or other target framework implication.'}
+          $result | ConvertTo-Json -Depth 10 | Set-Content (Join-Path $evidence 'experiment-report.json') -Encoding utf8
+          if (-not $result.csv_dll_byte_identical) {
+             throw 'Experiment found distinct CSV DLL bytes in two real Git worktrees; retain evidence and investigate.'
+          }
+          Write-Host "EXP-026 CSV DLL SHA identical across independent Git worktrees: $($rows[0].dll_sha256)"
+          Write-Host "EXP-026 native PDB byte identity observed=$($result.windows_pdb_byte_identical)"
+      - name: Retain metadata, release gate summaries, no binaries/symbols/packages
+        if: always()
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4.6.2
+        with:
+          name: exp026-real-worktrees-hashes
+          retention-days: 30
+          if-no-files-found: warn
+          path: |
+            ${{ runner.temp }}/RecordSift-EXP-026/experiment-report.json
+            ${{ runner.temp }}/RecordSift-EXP-026/candidate-A/experiment-report.json
+            ${{ runner.temp }}/RecordSift-EXP-026/candidate-B/experiment-report.json
+            ${{ runner.temp }}/RecordSift-EXP-026/candidate-A/candidate-versus-original-compatibility.json
+            ${{ runner.temp }}/RecordSift-EXP-026/candidate-B/candidate-versus-original-compatibility.json

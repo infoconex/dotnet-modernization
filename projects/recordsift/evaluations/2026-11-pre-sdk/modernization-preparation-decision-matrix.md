@@ -127,6 +127,7 @@ The consolidated matrix above covered EXP-001–035 and predates [EXP-036](exper
 
 **Disposition unchanged:** Source Link **HOLD**. No changes to the existing approval-gate policy, RecordSift, packages or default branches. Reported evidence only; not production modernization authorization.
 
+
 ## November 5 EXP-038 addendum — source checksum key mismatch explained but approval unchanged
 
 **[Successful isolated experiment 42148192785](https://github.com/infoconex/dotnet-modernization/actions/runs/42148192785)**, [full report](experiments/EXP-038-document-to-native-stream-key.md), draft [PR #61](https://github.com/infoconex/dotnet-modernization/pull/61), executing SHA `fea65001d757d824ff1d908dd5baed5844b42db0`. With unchanged frozen RecordSift, old API/NUnit/XML/package/clean net48 consumer and five logical-compatibility categories passed again. Exact packaged managed reader versions were preserved and the native PE/PDB identity checks passed.

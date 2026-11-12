@@ -1,12 +1,7 @@
 name: EXP-032 inspect actual MSBuild-host Source Link task assembly bindings
 
+# Historical build-host research: execute manually; not on every pull request.
 on:
-  pull_request:
-    paths:
-      - '.github/workflows/validate-exp032-task-module-bindings.yml'
-      - 'tooling/pilots/recordsift/EXP-032/**'
-      - 'tooling/pilots/recordsift/EXP-024/run.ps1'
-      - 'projects/recordsift/evaluations/2026-11-pre-sdk/experiments/EXP-032-task-bindings.md'
   workflow_dispatch:
 
 permissions:

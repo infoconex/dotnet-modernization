@@ -54,3 +54,5 @@
 **GitHub tracking limitation:** This connection can create issues and edit documentation, but does not expose a GitHub milestone-creation/attachment operation. Issues #2 and #3 are linked to the approved evaluation without a created milestone; do not represent a milestone as created.
 
 **Historical EXP-016 addendum (November 4, 2026):** The independently compiled enum-value and missing-evidence negative controls were verified for their narrow scope in [run 41884441296](https://github.com/infoconex/dotnet-modernization/actions/runs/41884441296). See [experiment report](experiments/EXP-016-source-api-regression.md) and [PR #28](https://github.com/infoconex/dotnet-modernization/pull/28). This does not authorize application modernization or release.
+
+**Historical EXP-018:** Three identical-source builds differed in PE/MVID/debug metadata, with unchanged raw method IL token records in the tested scope; [report](experiments/EXP-018-identical-source-pe.md), [PR #32](https://github.com/infoconex/dotnet-modernization/pull/32). No production change authorized.

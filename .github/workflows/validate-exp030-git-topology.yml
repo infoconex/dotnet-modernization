@@ -1,0 +1,144 @@
+name: EXP-030 Source Link genuine Git topology controls
+
+# Historical experiment: manual execution only; no automatic PR builds.
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  real-git-layout-and-candidate:
+    runs-on: windows-2022
+    timeout-minutes: 100
+    strategy:
+      fail-fast: false
+      matrix:
+        topology: [shallow-detached, no-remote-detached, authentic-submodule, authentic-submodule-github-origin]
+    steps:
+      - uses: actions/checkout@08c6903cd8c0fde910a37f88322edcfb5dd907a8 # v5.0.0
+        with:
+          persist-credentials: false
+      - uses: actions/checkout@08c6903cd8c0fde910a37f88322edcfb5dd907a8 # v5.0.0
+        with:
+          repository: infoconex/RecordSift
+          ref: 8358780829458854a4b0356df5ac5e685f0a34c8
+          fetch-depth: 0
+          path: recordsift-original
+          persist-credentials: false
+      - uses: actions/setup-dotnet@a98b56852c35b8e3190ac28c8c2271da59106c68 # v6.0.0
+        with:
+          dotnet-version: '10.0.403'
+      - name: Build original reusable metadata extractor
+        shell: pwsh
+        run: |
+          dotnet build tooling/assembly-metadata/src/AssemblyMetadata.csproj -c Release -nologo -v minimal
+          if ($LASTEXITCODE -ne 0) { throw 'Frozen metadata inspector failed.' }
+      - name: Construct authentic Git topology, execute candidate, inspect PDB
+        shell: pwsh
+        env:
+          TOPOLOGY: ${{ matrix.topology }}
+        run: |
+          $ErrorActionPreference='Stop'
+          $sha='8358780829458854a4b0356df5ac5e685f0a34c8'
+          $source=Join-Path $env:GITHUB_WORKSPACE 'recordsift-original'
+          $evidence=Join-Path $env:RUNNER_TEMP 'exp030-evidence'
+          $fixture=Join-Path $env:RUNNER_TEMP 'exp030-application'
+          $report=[ordered]@{experiment='EXP-030';topology=$env:TOPOLOGY;frozen_commit=$sha;
+              fixture='not_verified';candidate_release_gate='not_executed';native_pdb='not_executed'}
+          New-Item -ItemType Directory -Path $evidence -Force|Out-Null
+          function Save { $report|ConvertTo-Json -Depth 10|Set-Content (Join-Path $evidence 'topology-report.json') -Encoding utf8 }
+          try {
+            if ($env:TOPOLOGY -eq 'shallow-detached') {
+              & git init $fixture|Out-Null
+              if ($LASTEXITCODE -ne 0) {throw 'Could not initialize shallow Git fixture'}
+              & git -C $fixture remote add origin https://github.com/infoconex/RecordSift.git
+              & git -C $fixture fetch --depth 1 origin $sha|Out-Null
+              if ($LASTEXITCODE -ne 0){throw 'Exact commit shallow fetch failed'}
+              & git -C $fixture checkout --detach FETCH_HEAD|Out-Null
+              if ($LASTEXITCODE -ne 0){throw 'Detached shallow checkout failed'}
+            } elseif ($env:TOPOLOGY -eq 'no-remote-detached') {
+              & git -c protocol.file.allow=always clone --no-hardlinks $source $fixture|Out-Null
+              if ($LASTEXITCODE -ne 0){throw 'Local fixture clone failed'}
+              & git -C $fixture checkout --detach $sha|Out-Null
+              if ($LASTEXITCODE -ne 0){throw 'Exact commit detached checkout failed'}
+              & git -C $fixture remote remove origin
+              if ($LASTEXITCODE -ne 0){throw 'Cannot remove origin'}
+            } else {
+              $parent=Join-Path $env:RUNNER_TEMP 'exp030-parent'
+              & git init -b main $parent|Out-Null
+              if ($LASTEXITCODE -ne 0){throw 'Parent init failed'}
+              & git -C $parent config user.name 'Disposable Research CI'
+              & git -C $parent config user.email 'research@example.invalid'
+              & git -C $parent commit --allow-empty -m 'Disposable parent commit'|Out-Null
+              if ($LASTEXITCODE -ne 0){throw 'Parent initial commit failed'}
+              & git -C $parent -c protocol.file.allow=always submodule add $source vendor/RecordSift|Out-Null
+              if ($LASTEXITCODE -ne 0){throw 'Genuine local Git submodule add failed'}
+              $fixture=Join-Path $parent 'vendor/RecordSift'
+              & git -C $fixture checkout --detach $sha|Out-Null
+              if ($LASTEXITCODE -ne 0){throw 'Nested submodule SHA pin failed'}
+              if ($env:TOPOLOGY -eq 'authentic-submodule-github-origin') {
+                & git -C $fixture remote set-url origin https://github.com/infoconex/RecordSift.git
+                if ($LASTEXITCODE -ne 0){throw 'Cannot set nested GitHub origin'}
+                & git -C $parent config -f .gitmodules submodule.vendor/RecordSift.url https://github.com/infoconex/RecordSift.git
+                if ($LASTEXITCODE -ne 0){throw 'Cannot set actual parent .gitmodules GitHub origin'}
+              }
+              & git -C $parent add '.gitmodules' vendor/RecordSift
+              & git -C $parent commit -m 'Pin disposable nested submodule'|Out-Null
+              if ($LASTEXITCODE -ne 0){throw 'Parent submodule gitlink commit failed'}
+              if (-not(Test-Path (Join-Path $fixture '.git') -PathType Leaf)){throw 'Genuine submodule .git file pointer missing'}
+              $link=(& git -C $parent ls-files --stage -- vendor/RecordSift) -join [Environment]::NewLine
+              if ($link -notmatch '^160000\s+[0-9a-f]{40}\s+0\s+vendor/RecordSift$'){throw 'Actual gitlink mode 160000 missing'}
+            }
+            $head=(& git -C $fixture rev-parse HEAD).Trim()
+            $isShallow=((& git -C $fixture rev-parse --is-shallow-repository).Trim() -eq 'true')
+            $remotes=@(& git -C $fixture remote)
+            if ($head -cne $sha){throw 'Wrong pinned fixture SHA'}
+            if ($env:TOPOLOGY -eq 'shallow-detached' -and (-not $isShallow -or $remotes.Count -ne 1)){throw 'Shallow Git fixture invalid'}
+            if ($env:TOPOLOGY -eq 'no-remote-detached' -and ($isShallow -or $remotes.Count -ne 0)){throw 'Missing-remote Git fixture invalid'}
+            $report.fixture='actual_git_layout_verified'
+            $report.shallow=$isShallow
+            $report.remote_count=$remotes.Count
+            $report.git_file_pointer=(Test-Path (Join-Path $fixture '.git') -PathType Leaf)
+            $report.github_remote_configured=(@(& git -C $fixture remote -v | Where-Object {$_ -match 'github.com/infoconex/RecordSift'}).Count -gt 0)
+            Save
+            $candidateDir=Join-Path $evidence 'candidate'
+            & ./tooling/pilots/recordsift/EXP-024/run.ps1 -ApplicationRoot $fixture -EvidenceRoot $candidateDir
+            if ($LASTEXITCODE -ne 0){throw 'Historical candidate integration failed'}
+            $candidate=Get-Content (Join-Path $candidateDir 'experiment-report.json') -Raw|ConvertFrom-Json
+            if ($candidate.application_release_gates -cne 'candidate_425_api_419_nunit_5_xml_local_package_clean_consumer_passed'){throw 'Historical candidate gates incomplete'}
+            $report.candidate_release_gate='passed'
+            $output=Join-Path $fixture 'src/RecordSift.Infrastructure.Csv/bin/Release'
+            if ($env:TOPOLOGY -eq 'no-remote-detached' -or $env:TOPOLOGY -eq 'authentic-submodule') {
+              # These two controls have deliberately invalid provenance for
+              # GitHub Source Link: no origin, or local file-path origin.
+              # Positive compatibility tests still ran before asserting absence.
+              & python tooling/validators/sourcelink_native_absence.py --pdb (Join-Path $output 'RecordSift.Infrastructure.Csv.pdb') --dll (Join-Path $output 'RecordSift.Infrastructure.Csv.dll') --output (Join-Path $evidence 'native-pdb.json')
+              if ($LASTEXITCODE -ne 0){throw 'Expected missing Source Link metadata negative control failed'}
+              $report.native_pdb='verified_missing_sourcelink_negative_control'
+            } else {
+              & python tooling/validators/native_windows_pdb_sourcelink.py --pdb (Join-Path $output 'RecordSift.Infrastructure.Csv.pdb') --dll (Join-Path $output 'RecordSift.Infrastructure.Csv.dll') --output (Join-Path $evidence 'native-pdb.json')
+              if ($LASTEXITCODE -ne 0){throw 'Actual Source Link native PDB failed'}
+              $report.native_pdb='exact_commit_and_codeview_verified'
+            }
+            $diff=@(& git -C $fixture diff --name-only HEAD)
+            if ($LASTEXITCODE -ne 0 -or $diff.Count -ne 0){throw 'Fixture source was modified'}
+            Save
+          }catch{
+            $report.failure_stage='fixture_or_actual_source_link_integration'
+            $report.error_type=$_.Exception.GetType().Name
+            Save
+            throw
+          }
+      - name: Retain topology findings and compatibility JSON only
+        if: always()
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4.6.2
+        with:
+          name: exp030-real-git-${{ matrix.topology }}
+          retention-days: 30
+          if-no-files-found: warn
+          path: |
+            ${{ runner.temp }}/exp030-evidence/topology-report.json
+            ${{ runner.temp }}/exp030-evidence/native-pdb.json
+            ${{ runner.temp }}/exp030-evidence/candidate/experiment-report.json
+            ${{ runner.temp }}/exp030-evidence/candidate/candidate-versus-original-compatibility.json

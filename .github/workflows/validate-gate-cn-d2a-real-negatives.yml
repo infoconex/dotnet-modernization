@@ -1,12 +1,7 @@
 name: Gate C-N D2a real Windows negative controls (RESEARCH ONLY)
 
+# Historical isolated Windows negative controls: manual dispatch only.
 on:
-  pull_request:
-    paths:
-      - '.github/workflows/validate-gate-cn-d2a-real-negatives.yml'
-      - 'tooling/fixtures/gate-cn/D2a/**'
-      - 'tooling/pilots/gate-cn/D2a/**'
-      - 'methodology/acceptance-gates/reviews/2026-11-06/gate-cn-d2a-**'
   workflow_dispatch:
 
 permissions:

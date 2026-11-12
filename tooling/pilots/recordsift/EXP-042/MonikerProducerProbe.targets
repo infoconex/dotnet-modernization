@@ -1,0 +1,96 @@
+<Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <!-- EXP-042: disposable frozen candidate, private evidence only. -->
+  <!-- A generator may be skipped incrementally; force an isolated, bounded
+       intermediate output to be absent before the real target executes. -->
+  <UsingTask TaskName="RecordSiftResearchMonikerProducerProbe"
+             TaskFactory="RoslynCodeTaskFactory"
+             AssemblyFile="$(MSBuildToolsPath)\Microsoft.Build.Tasks.Core.dll">
+    <ParameterGroup>
+      <Mode ParameterType="System.String" Required="true" />
+      <OutputPath ParameterType="System.String" Required="true" />
+      <ProjectDir ParameterType="System.String" Required="true" />
+      <CaptureRoot ParameterType="System.String" Required="true" />
+    </ParameterGroup>
+    <Task>
+      <Using Namespace="System" />
+      <Using Namespace="System.IO" />
+      <Using Namespace="System.Text" />
+      <Using Namespace="System.Security.Cryptography" />
+      <Code Type="Fragment" Language="cs"><![CDATA[
+        try {
+          string full = Path.GetFullPath(Path.IsPathRooted(OutputPath)
+              ? OutputPath : Path.Combine(ProjectDir, OutputPath));
+          string obj = Path.GetFullPath(Path.Combine(ProjectDir, "obj"))
+              .TrimEnd(Path.DirectorySeparatorChar) + Path.DirectorySeparatorChar;
+          if (!full.StartsWith(obj, StringComparison.OrdinalIgnoreCase) ||
+              !Path.GetFileName(full).EndsWith(".AssemblyAttributes.cs",
+                                               StringComparison.OrdinalIgnoreCase)) {
+            Log.LogError("EXP042_GENERATOR_OUTPUT_OUTSIDE_PRIVATE_OBJ_ALLOWLIST");
+            return false;
+          }
+          if (Mode == "prepare") {
+            if (Directory.Exists(CaptureRoot)) {
+              Log.LogError("EXP042_PRIVATE_PRODUCER_ROOT_PREEXISTS");
+              return false;
+            }
+            Directory.CreateDirectory(CaptureRoot);
+            string before = Path.Combine(CaptureRoot, "producer-before.flag");
+            if (File.Exists(before) || File.Exists(Path.Combine(CaptureRoot, "producer-after.tsv"))) {
+              Log.LogError("EXP042_GENERATOR_PROBE_ALREADY_RAN");
+              return false;
+            }
+            if (File.Exists(full)) { File.Delete(full); }
+            if (File.Exists(full)) {
+              Log.LogError("EXP042_GENERATOR_OUTPUT_NOT_REMOVED");
+              return false;
+            }
+            File.WriteAllText(before, "PREPARED_ABSENT", Encoding.ASCII);
+          } else if (Mode == "record") {
+            if (File.ReadAllText(Path.Combine(CaptureRoot,"producer-before.flag"),
+                                Encoding.ASCII) != "PREPARED_ABSENT" ||
+                !File.Exists(full)) {
+              Log.LogError("EXP042_GENERATOR_OUTPUT_NOT_OBSERVED");
+              return false;
+            }
+            byte[] bytes = File.ReadAllBytes(full);
+            if (bytes.Length > 16 * 1024 * 1024) {
+              Log.LogError("EXP042_GENERATOR_BYTES_OVERSIZED");
+              return false;
+            }
+            string digest;
+            using (var sha = SHA256.Create()) {
+              digest = BitConverter.ToString(sha.ComputeHash(bytes))
+                  .Replace("-", "").ToLowerInvariant();
+            }
+            string identity = Convert.ToBase64String(Encoding.UTF8.GetBytes(full));
+            File.WriteAllText(Path.Combine(CaptureRoot, "producer-after.tsv"),
+                "PRODUCER\t" + identity + "\t" + digest + "\n", Encoding.ASCII);
+          } else {
+            Log.LogError("EXP042_INVALID_PRODUCER_PROBE_MODE");
+            return false;
+          }
+          return true;
+        } catch (Exception) {
+          // Exception messages may disclose private compiler source paths.
+          Log.LogError("EXP042_GENERATOR_PROVENANCE_CAPTURE_FAILED_CLOSED");
+          return false;
+        }
+      ]]></Code>
+    </Task>
+  </UsingTask>
+  <Target Name="RecordSiftResearchPrepareMonikerInput"
+          BeforeTargets="GenerateTargetFrameworkMonikerAttribute"
+          DependsOnTargets="_SetTargetFrameworkMonikerAttribute">
+    <RecordSiftResearchMonikerProducerProbe Mode="prepare"
+        OutputPath="$(TargetFrameworkMonikerAssemblyAttributesPath)"
+        ProjectDir="$(MSBuildProjectDirectory)"
+        CaptureRoot="$(SourceInputCaptureRoot)-producer" />
+  </Target>
+  <Target Name="RecordSiftResearchRecordMonikerInput"
+          AfterTargets="GenerateTargetFrameworkMonikerAttribute">
+    <RecordSiftResearchMonikerProducerProbe Mode="record"
+        OutputPath="$(TargetFrameworkMonikerAssemblyAttributesPath)"
+        ProjectDir="$(MSBuildProjectDirectory)"
+        CaptureRoot="$(SourceInputCaptureRoot)-producer" />
+  </Target>
+</Project>

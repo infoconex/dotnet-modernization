@@ -1,14 +1,7 @@
 name: EXP-016 compiled-source API regression negative controls
 
+# Historical experiment: manual execution only; do not run on pull requests.
 on:
-  pull_request:
-    paths:
-      - ".github/workflows/validate-recordsift-source-api-regression.yml"
-      - "tooling/pilots/recordsift/EXP-014/**"
-      - "tooling/pilots/recordsift/EXP-016/**"
-      - "tooling/validators/compatibility.py"
-      - "tooling/assembly-metadata/**"
-      - "projects/recordsift/evaluations/2026-11-pre-sdk/experiments/EXP-016-source-api-regression.md"
   workflow_dispatch:
 
 permissions:

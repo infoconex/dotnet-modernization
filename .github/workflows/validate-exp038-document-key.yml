@@ -1,13 +1,7 @@
 name: EXP-038 native source-document stream-key association (research only)
 
+# Historical experiment: run manually only.
 on:
-  pull_request:
-    paths:
-      - '.github/workflows/validate-exp038-document-key.yml'
-      - 'tooling/pilots/recordsift/EXP-037/**'
-      - 'tooling/pilots/recordsift/EXP-038/**'
-      - 'tooling/pilots/recordsift/EXP-036/ReaderProbe.cs'
-      - 'tooling/pilots/recordsift/EXP-036/run_fixture.ps1'
   workflow_dispatch:
 
 permissions:

@@ -1,14 +1,7 @@
 name: EXP-028 exact frozen Source Link raw source URL and byte parity
 
+# Historical Source Link evidence: manual execution only; no automatic PR builds.
 on:
-  pull_request:
-    paths:
-      - '.github/workflows/validate-exp028-remote-source.yml'
-      - 'tooling/validators/sourcelink_remote_source.py'
-      - 'tooling/validators/tests/test_sourcelink_remote_source.py'
-      - 'tooling/validators/native_windows_pdb_sourcelink.py'
-      - 'tooling/validators/tests/test_native_windows_pdb_sourcelink.py'
-      - 'projects/recordsift/evaluations/2026-11-pre-sdk/experiments/EXP-028-remote-source-proof.md'
   workflow_dispatch:
 
 permissions:

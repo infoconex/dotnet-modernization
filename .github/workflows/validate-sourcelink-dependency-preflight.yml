@@ -1,14 +1,7 @@
 name: EXP-023B pinned Source Link dependency preflight (read-only)
 
+# Historical read-only research: run deliberately; reusable Python CI remains active.
 on:
-  pull_request:
-    paths:
-      - '.github/workflows/validate-sourcelink-dependency-preflight.yml'
-      - 'tooling/validators/nuget_dependency_preflight.py'
-      - 'tooling/validators/tests/test_nuget_dependency_preflight.py'
-      - 'tooling/validators/sourcelink_tool_asset_preflight.py'
-      - 'tooling/validators/tests/test_sourcelink_tool_asset_preflight.py'
-      - 'projects/recordsift/evaluations/2026-11-pre-sdk/experiments/EXP-023B-dependency-preflight.md'
   workflow_dispatch:
 
 permissions:

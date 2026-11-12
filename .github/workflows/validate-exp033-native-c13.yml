@@ -1,11 +1,7 @@
 name: EXP-033 independent native PDB CodeView C13 checksum structure
 
+# Historical experiment: manual execution only; no automatic PR builds.
 on:
-  pull_request:
-    paths:
-      - '.github/workflows/validate-exp033-native-c13.yml'
-      - 'tooling/pilots/recordsift/EXP-033/**'
-      - 'projects/recordsift/evaluations/2026-11-pre-sdk/experiments/EXP-033-c13-checksum-structure.md'
   workflow_dispatch:
 
 permissions:

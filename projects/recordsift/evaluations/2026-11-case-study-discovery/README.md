@@ -5,7 +5,7 @@
 **Comparison branch:** `main` at [`1809d06c0fade59e4769d16e0f8eaf10fa426004`](https://github.com/infoconex/RecordSift/commit/1809d06c0fade59e4769d16e0f8eaf10fa426004)  
 **Historical pre-SDK source:** `main` at [`8358780829458854a4b0356df5ac5e685f0a34c8`](https://github.com/infoconex/RecordSift/commit/8358780829458854a4b0356df5ac5e685f0a34c8)  
 **Discovery date:** 2026-11-11  
-**Phase:** source-backed application discovery; compatibility execution at the case-study SHA not performed  
+**Phase:** technical discovery, not modernization assessment; compatibility execution at the case-study SHA not performed  
 **Scope/approval:** repository inspection and documentation-only discovery in `dotnet-modernization`, authorized by the application owner on 2026-11-11. No RecordSift source changes, experiments, release actions or merges authorized by this record.  
 **Record status:** source inspection completed for the scoped paths; runtime verification at the case-study SHA **not executed**.
 
@@ -17,7 +17,7 @@ The companion [technical baseline](baseline.md) owns source configuration, proje
 
 Evidence notation used below:
 
-- **Source-inspected, current case-study SHA:** the named file or implementation is present and expresses the described behavior. It does **not** establish that code ran at `68fdee8210f2cde71674250ce56d110b8ffeeac3`.
+- **Source-inspected, current case-study SHA:** the named source file, project declaration or configuration was inspected; this does **not** establish evaluated settings, dependency restore, build success or runtime execution at `68fdee8210f2cde71674250ce56d110b8ffeeac3`.
 - **Reused execution, another SHA:** a linked CI or experiment actually ran on the stated original source and environment; its result is not silently promoted to this case-study SHA.
 - **Not executed / unresolved:** no matching run was performed or the described question cannot be answered from the inspected evidence.
 

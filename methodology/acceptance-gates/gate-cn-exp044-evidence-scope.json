@@ -1,0 +1,18 @@
+{
+  "schema": "gate-cn-exp044-sanitized-scope-v1",
+  "authorization": "DESIGN_VALIDATION_ONLY",
+  "application_repository": "infoconex/dotnet-modernization",
+  "application_commit": "3c06d003ac75cc8b649a244be8705e44efa2c4c7",
+  "component": "AnotherLibrary.Core",
+  "expected_native_documents": 2,
+  "expected_tracked_inputs": 1,
+  "expected_generated_inputs": 1,
+  "source_evidence": {
+    "run_id": 42182129657,
+    "workflow_id": 409057169,
+    "executing_research_sha": "3c06d003ac75cc8b649a244be8705e44efa2c4c7",
+    "artifact_id": 13486535447,
+    "artifact_zip_sha256": "dcb76d42aeccfd2e9524ca347bf24e4678430ab4a52960331450e41f27aa2bf6",
+    "sanitized_json_sha256": "e54696eeb8a860d5142288f4c57e152d673201f979f8ee8d31ac9ecd03c14439"
+  }
+}

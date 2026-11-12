@@ -1,0 +1,30 @@
+{
+  "application_commit": "3c06d003ac75cc8b649a244be8705e44efa2c4c7",
+  "application_repository": "infoconex/dotnet-modernization",
+  "gate_cn_release_acceptance": "NOT_AUTHORIZED",
+  "legacy_gate_c": "UNSATISFIED",
+  "not_proven": "Other source generators, arbitrary compiler layouts or input origins, application-specific release/consumer acceptance, managed checksum APIs, Visual Studio/debugger operation, hostile PDB safety, independent release approval or production adoption",
+  "required_components": 1,
+  "results": [
+    {
+      "actual_csc_sources_verified": 2,
+      "c13_algorithm_counts": {
+        "NONE": 2
+      },
+      "c13_checksum_records": 2,
+      "c13_documents": 2,
+      "component": "AnotherLibrary.Core",
+      "dbi_documents": 2,
+      "generated_inputs_verified": 1,
+      "line_referenced_documents": 1,
+      "named_native_documents": 2,
+      "native_named_vs_dbi_c13": "MATCHED",
+      "native_pe_pdb_identity_matched": true,
+      "original_bytes_verified": 2,
+      "status": "RESEARCH_VERIFIED"
+    }
+  ],
+  "schema": "gate-cn-live-research-result-v1",
+  "source_link_adoption": "HOLD",
+  "verdict": "SCOPED_LIVE_PROVENANCE_RESEARCH_VERIFIED"
+}

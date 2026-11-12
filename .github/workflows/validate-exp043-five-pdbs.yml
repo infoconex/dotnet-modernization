@@ -1,0 +1,105 @@
+name: EXP-043 five frozen production native PDB provenance research only
+
+# Historical research: manual dispatch only.
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  isolated-unit-controls:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 8
+    steps:
+      - uses: actions/checkout@08c6903cd8c0fde910a37f88322edcfb5dd907a8 # v5.0.0
+        with:
+          persist-credentials: false
+      - name: Run independent five-component and fail-closed audit controls
+        run: |
+          python3 -m unittest discover -s tooling/validators/tests -p 'test_exp043_*.py' -v
+
+  all-five-frozen-native-pdbs:
+    runs-on: windows-2022
+    timeout-minutes: 110
+    steps:
+      - uses: actions/checkout@08c6903cd8c0fde910a37f88322edcfb5dd907a8 # v5.0.0
+        with:
+          persist-credentials: false
+      - uses: actions/checkout@08c6903cd8c0fde910a37f88322edcfb5dd907a8 # v5.0.0
+        with:
+          repository: infoconex/RecordSift
+          ref: 8358780829458854a4b0356df5ac5e685f0a34c8
+          fetch-depth: 0
+          path: recordsift
+          persist-credentials: false
+      - uses: actions/setup-dotnet@a98b56852c35b8e3190ac28c8c2271da59106c68 # v6.0.0
+        with:
+          dotnet-version: '10.0.403'
+      - name: Confirm exact immutable frozen source
+        shell: pwsh
+        run: |
+          $sha=(& git -C recordsift rev-parse HEAD).Trim()
+          if ($LASTEXITCODE -ne 0 -or $sha -cne '8358780829458854a4b0356df5ac5e685f0a34c8') {
+            throw 'EXP043 frozen source mismatch'
+          }
+      - name: Build approved independent assembly API metadata validator
+        shell: pwsh
+        run: |
+          dotnet build tooling/assembly-metadata/src/AssemblyMetadata.csproj -c Release -nologo -v minimal
+          if ($LASTEXITCODE -ne 0) { throw 'Original metadata validator build failed' }
+      - name: Reuse verified original and CSV candidate full release gates, source snapshots, producer and Csc logger
+        shell: pwsh
+        run: |
+          & ./tooling/pilots/recordsift/EXP-024/run.ps1 -ApplicationRoot (Join-Path $env:GITHUB_WORKSPACE 'recordsift') -EvidenceRoot (Join-Path $env:RUNNER_TEMP 'exp043-evidence/exp024') -CaptureCompilerSources -CaptureProducerProvenance
+          if ($LASTEXITCODE -ne 0) { throw 'Unchanged EXP024 frozen release/source baseline failed' }
+      - name: First inventory four original PDBs alongside verified CSV candidate without trusting PDB keys as file paths
+        shell: pwsh
+        run: |
+          $root=Join-Path $env:RUNNER_TEMP 'exp043-evidence'
+          python tooling/validators/exp043_five_pdb_audit.py --app-root (Join-Path $env:GITHUB_WORKSPACE 'recordsift') --evidence-root $root --phase inventory --output (Join-Path $env:RUNNER_TEMP 'exp043-initial-native-inventory.json')
+          if ($LASTEXITCODE -ne 0) { throw 'EXP043 preliminary native inventory blocked' }
+      - name: Build remaining four disposable Source Link candidates and rerun full five-assembly acceptance
+        shell: pwsh
+        run: |
+          & ./tooling/pilots/recordsift/EXP-043/build-remaining.ps1 -ApplicationRoot (Join-Path $env:GITHUB_WORKSPACE 'recordsift') -EvidenceRoot (Join-Path $env:RUNNER_TEMP 'exp043-evidence')
+          if ($LASTEXITCODE -ne 0) { throw 'EXP043 five-assembly candidate or full release gates failed' }
+      - name: Independently audit five actual Csc Sources events, original source bytes, generated producers and native PDBs
+        shell: pwsh
+        run: |
+          $root=Join-Path $env:RUNNER_TEMP 'exp043-evidence'
+          python tooling/validators/exp043_five_pdb_audit.py --app-root (Join-Path $env:GITHUB_WORKSPACE 'recordsift') --evidence-root $root --phase candidate --output (Join-Path $env:RUNNER_TEMP 'exp043-five-pdb-source-audit.json')
+          if ($LASTEXITCODE -ne 0) { throw 'EXP043 complete five-assembly native source provenance not established; preserve only sanitized report' }
+          $report=Get-Content (Join-Path $env:RUNNER_TEMP 'exp043-five-pdb-source-audit.json') -Raw | ConvertFrom-Json
+          if (-not $report.all_five_verified -or $report.required_components -ne 5 -or $report.gate_c -cne 'UNSATISFIED' -or $report.source_link_adoption -cne 'HOLD') {
+            throw 'EXP043 five assembly provenance or policy gate invalid'
+          }
+          Write-Host 'EXP043 complete five-assembly source audit verified; managed Gate C remains UNSATISFIED'
+      - name: Inspect two pinned managed readers on all five PDBs without native COM or document logging
+        shell: pwsh
+        run: |
+          $root=Join-Path $env:RUNNER_TEMP 'exp043-evidence'
+          $readers=Join-Path $root 'managed-readers-private'
+          & ./tooling/pilots/recordsift/EXP-043/inspect-managed-readers.ps1 -ApplicationRoot (Join-Path $env:GITHUB_WORKSPACE 'recordsift') -EvidenceRoot $readers
+          if ($LASTEXITCODE -ne 0) { throw 'EXP043 pinned managed reader execution blocked' }
+          python tooling/validators/exp043_managed_reader_exposure.py --app-root (Join-Path $env:GITHUB_WORKSPACE 'recordsift') --reader-root $readers --output (Join-Path $env:RUNNER_TEMP 'exp043-managed-reader-exposure.json')
+          if ($LASTEXITCODE -ne 0) { throw 'EXP043 managed reader document coverage unproven; preserve only sanitized status' }
+      - name: Erase every private compiler input, generated producer, diagnostic, preprocessed source and research binary
+        if: always()
+        shell: pwsh
+        run: |
+          $root=Join-Path $env:RUNNER_TEMP 'exp043-evidence'
+          if (Test-Path -LiteralPath $root) {
+            Remove-Item -LiteralPath $root -Recurse -Force -ErrorAction Stop
+          }
+      - name: Upload ONLY sanitized five-assembly aggregate metadata
+        if: always()
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4.6.2
+        with:
+          name: exp043-five-production-pdb-provenance-sanitized
+          path: |
+            ${{ runner.temp }}/exp043-initial-native-inventory.json
+            ${{ runner.temp }}/exp043-five-pdb-source-audit.json
+            ${{ runner.temp }}/exp043-managed-reader-exposure.json
+          if-no-files-found: warn
+          retention-days: 30

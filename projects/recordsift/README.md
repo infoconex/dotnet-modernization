@@ -14,4 +14,4 @@ Future evaluations (such as SDK conversion or runtime migration) should use thei
 
 ## Related cross-application research
 
-The [Gate C-N native-PDB provenance investigation](../../research/native-pdb-provenance/README.md) references RecordSift as its primary case study, with a separate non-RecordSift portability fixture. RecordSift's own experiment results and decisions remain in its dated evaluation.
+The [Gate C-N native-PDB provenance investigation](../../research/native-pdb-provenance/README.md) references RecordSift as its primary case study, with a separate non-RecordSift portability fixture. RecordSift's own [experiment results and preserved sanitized reports](evaluations/2026-11-pre-sdk/evidence/README.md), together with its application-focused [strategy review](evaluations/2026-11-pre-sdk/reviews/gate-cn-engineering-perspectives-strategy-review-20261106.md), remain in its dated evaluation.

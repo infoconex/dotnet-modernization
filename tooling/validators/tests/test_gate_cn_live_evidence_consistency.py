@@ -11,7 +11,7 @@ from gate_cn_evidence_consistency import EvidenceError, read_json
 from gate_cn_live_evidence_consistency import validate, UNPROVEN
 
 ROOT = Path(__file__).resolve().parents[3]
-SCOPE_PATH = (ROOT / "methodology/acceptance-gates/"
+SCOPE_PATH = (ROOT / "research/native-pdb-provenance/gate-cn/"
               "gate-cn-exp044-evidence-scope.json")
 
 

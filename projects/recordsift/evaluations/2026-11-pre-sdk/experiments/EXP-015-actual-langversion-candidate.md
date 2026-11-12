@@ -11,7 +11,7 @@ Centralizing ten identical C# language-version declarations into one conditional
 
 ## Isolated change and workflow
 
-The [research-only workflow](../../../../../.github/workflows/validate-recordsift-langversion-candidate.yml) calls the [EXP-015 adapter](../../../../../tooling/pilots/recordsift/EXP-015/run.ps1) on Windows 2022.
+The [research-only workflow](../archives/workflows/validate-recordsift-langversion-candidate.yml) calls the [EXP-015 adapter](../../../../../tooling/pilots/recordsift/EXP-015/run.ps1) on Windows 2022.
 
 1. Verify exact frozen RecordSift SHA and an initially clean checkout. Create an independent detached baseline Git worktree.
 2. Remove exactly one existing LangVersion 7.3 element in each of five production and five test projects. Create Directory.Build.props with a conditional default of 7.3 when LangVersion is otherwise empty. Do not change imports, code, dependencies or framework.

@@ -11,7 +11,7 @@ These four YAML files are **source archives**, copied verbatim from the named Re
 
 ## Evidence and limits
 
-- The [evidence manifest](../../../../../projects/recordsift/evaluations/2026-11-pre-sdk/evidence/manifest.md) and [experiment index](../../../../../projects/recordsift/evaluations/2026-11-pre-sdk/experiments/README.md) retain outcomes, workflow runs, failures and qualifications. These archived sources alone are not proof that all checks passed.
+- The [evidence manifest](../../evidence/manifest.md) and [experiment index](../../experiments/README.md) retain outcomes, workflow runs, failures and qualifications. These archived sources alone are not proof that all checks passed.
 - The existing [historical workflow archive](../README.md) contains additional snapshots, including an earlier EXP-007 revision. Preserve both versions: the branch-head archive is **not** a replacement for the earlier original.
 - Source contents were fetched from GitHub by branch and their original blob SHA recorded above. Do not claim a newly executed test or long-term GitHub Actions artifact retention.
 - Original branch heads and original commit history remain separately addressable by immutable commit SHA as long as GitHub retains the objects. This archive safeguards the four workflow source files independently of branch deletion, not all branch commit metadata.

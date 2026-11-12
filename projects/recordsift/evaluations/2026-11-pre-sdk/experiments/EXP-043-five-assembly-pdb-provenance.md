@@ -66,3 +66,7 @@ All 64 source-document references are distinct **within their production assembl
 **Quality/release:** compatibility gates include all five actual assemblies/test suites, copied candidate DLLs and local package/consumer checks, independent negative controls and sanitized retained evidence. No authentic Visual Studio Package Manager project-install or real debugger source stepping was executed.
 
 **Governance:** Native PDB original physical input source provenance **VERIFIED 64/64** for frozen five-assembly candidate; two original managed reader implementations expose **0/46** checksums despite identical 46-document subsets; earlier approved managed checksum **Gate C UNSATISFIED**, Source Link production **HOLD**, not waived. This is evidence for a *future stakeholder decision* on a potential alternate gate, not implicit authorization to change the gate. Retain PR #71 **DRAFT/UNMERGED**; do not merge/publish or modify either main branch without explicit approval.
+
+## Retained public evidence (organization note)
+
+The original sanitized [five-assembly audit](../evidence/exp043-five-pdb-source-audit.json) and [managed-reader exposure report](../evidence/exp043-managed-reader-exposure.json) are retained beside this RecordSift experiment. Their bytes and original executing-run identifiers are preserved. See the [cross-application Gate C-N protocol](../../../../../research/native-pdb-provenance/gate-cn/README.md) for scope, other-application research and unresolved production acceptance conditions.

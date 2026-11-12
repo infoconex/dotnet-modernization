@@ -4,7 +4,11 @@ This directory distinguishes **preserved experiment code** from **portable, test
 
 ## Available source artifacts
 
-[RecordSift November 2026 validation workflow archive](archives/recordsift/2026-11/README.md) preserves eight complete workflow YAML files from tested historical commits. Archives are **not installed, automatically executed, generalized, or approved for production release validation**. They live outside `.github/workflows/` to prevent GitHub Actions from discovering them in this repository.
+RecordSift-specific immutable workflow archives are cataloged with the [RecordSift pre-SDK evaluation](../projects/recordsift/evaluations/2026-11-pre-sdk/archives/README.md), including [31 former research-repository workflows](../projects/recordsift/evaluations/2026-11-pre-sdk/archives/workflows/README.md). Cross-application [Gate C-N](../research/native-pdb-provenance/gate-cn/archives/workflows/README.md) and [Source Link package-asset](../research/source-link-build-assets/README.md) workflow source is archived with its respective research. All archived original YAML blobs are unchanged; none is active GitHub Actions CI.
+
+The only active workflows are reusable metadata-extractor and Python-validator checks triggered by pull requests; manual dispatch has been removed.
+
+[RecordSift November 2026 validation workflow archive](../projects/recordsift/evaluations/2026-11-pre-sdk/archives/README.md) preserves eight complete workflow YAML files from tested historical commits. Archives are **not installed, automatically executed, generalized, or approved for production release validation**. They live outside `.github/workflows/` to prevent GitHub Actions from discovering them in this repository.
 
 The [original RecordSift source validation scripts](https://github.com/infoconex/RecordSift/tree/8358780829458854a4b0356df5ac5e685f0a34c8/scripts) remain owned by the application repository, not silently copied into shared tooling. Notably, the frozen `main` version of `scripts/run_tests.ps1` omits the XLSX suite; the approved fix exists on RecordSift `release/0.2` only. Do not use the original script as evidence of a full five-suite run.
 
@@ -12,7 +16,7 @@ For the evidence behind each workflow, see the [dated RecordSift experiment inde
 
 ## Alternate / blocked PDB research archive
 
-The [EXP-029 and EXP-031 alternate PDB experiments](archives/recordsift/2026-11/alternate-pdb-research.md) are preserved **outside active workflows and validators**. EXP-031 was blocked on patched native-reader availability; neither archived experiment is automatically executed or approved for use in a release gate.
+The [EXP-029 and EXP-031 alternate PDB experiments](../projects/recordsift/evaluations/2026-11-pre-sdk/archives/alternate-pdb-research.md) are preserved **outside active workflows and validators**. EXP-031 was blocked on patched native-reader availability; neither archived experiment is automatically executed or approved for use in a release gate.
 
 ## Assembly metadata tooling
 
@@ -44,7 +48,7 @@ Develop reusable **functions and thin workflow callers** only after a separate d
 
 ## Safe reproduction of a historical workflow
 
-1. Read the [archive provenance and caveats](archives/recordsift/2026-11/README.md) and the corresponding experiment. Select the **exact original application commit** and workflow file. For a *historical* check, distinguish its original evidence/result from later corrected workflows; do not replace a known failing control with a success claim.
+1. Read the [archive provenance and caveats](../projects/recordsift/evaluations/2026-11-pre-sdk/archives/README.md) and the corresponding experiment. Select the **exact original application commit** and workflow file. For a *historical* check, distinguish its original evidence/result from later corrected workflows; do not replace a known failing control with a success claim.
 2. Use a **new isolated branch/checkout** of the application at the chosen baseline. Review workflow branch-trigger filters, source-diff guards, hard-coded working directories, expected counts, credentials, package feeds and platform prerequisites. A historical file copied unchanged into a new branch is **not guaranteed to trigger or pass**.
 3. Inspect the current action and container image provenance and runner capabilities, including Windows Docker availability. Tags and hosted runners are mutable; original image digests, installed tools and signed/pinned actions need independent verification before rerun. Never assume an archived workflow is safe or supported indefinitely.
 4. Copy or adapt the workflow in the **application's temporary branch**, under `.github/workflows/`, only with explicit authorization for that experiment. Validate syntax and no unintended release/publish/deploy steps; preserve permissions and isolation. Do not run these archives from the methodology repository or commit temporary project conversions.

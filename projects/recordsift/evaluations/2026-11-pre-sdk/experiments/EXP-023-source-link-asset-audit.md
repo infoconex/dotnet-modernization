@@ -12,7 +12,7 @@ Thus Source Link is **not required for deterministic compilation or Roslyn path 
 
 ## Exact pinned package candidates and safety
 
-The [read-only CI workflow](../../../../../.github/workflows/validate-sourcelink-package-audit.yml) retrieves archives from the official nuget.org v3 flat-container API without installing packages, importing MSBuild targets or executing task DLLs.
+The [original read-only workflow](../../../../../research/source-link-build-assets/archives/workflows/validate-sourcelink-package-audit.yml) retrieved archives from the official nuget.org v3 flat-container API without installing packages, importing MSBuild targets or executing task DLLs.
 
 | Versions | Archive inventory | Execution policy |
 | --- | --- | --- |

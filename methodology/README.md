@@ -12,3 +12,9 @@ A reusable process for assessing .NET applications regardless of whether the pro
 - [Experiment template](../templates/experiment.md).
 
 Avoid treating any RecordSift-specific tool version or conclusion as automatically applicable to another application.
+
+## Organization boundary
+
+Keep reusable evaluation *instructions* here. Put an application's measurements, baselines, and decisions under [`projects/`](../projects/README.md); cross-application technical investigations, evidence, and reviews under [`research/`](../research/README.md). A proposed technical acceptance mechanism is not automatically an approved methodology or production gate.
+
+The [PR review-board governance policy](pr-review-board-governance.md) remains a scoped operating policy for this repository and the RecordSift pilot, not a universal recommendation for other organizations.

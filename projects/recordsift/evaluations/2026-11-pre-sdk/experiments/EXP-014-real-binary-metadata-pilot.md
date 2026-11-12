@@ -58,7 +58,7 @@ The disposable **build checkout** may contain generated/untracked build, restore
 
 ## Execution safety and evidence
 
-The workflow `.github/workflows/validate-recordsift-metadata-pilot.yml` runs only on proposed research changes or explicit dispatch, with `contents: read` permissions. The source checkout is public and pinned, package output stays on the runner, and no NuGet publishing, Git pushes, tags or application merges occur. Only reports, metadata text/JSON and NUnit XML are retained as ephemeral CI artifacts for **30 days**. Archives and NuGet packages are *not uploaded*. Outputs live outside the RecordSift checkout.
+The [historical workflow](../archives/workflows/validate-recordsift-metadata-pilot.yml) originally ran on proposed research changes or explicit dispatch (it is now archived and inactive), with `contents: read` permissions. The source checkout is public and pinned, package output stays on the runner, and no NuGet publishing, Git pushes, tags or application merges occur. Only reports, metadata text/JSON and NUnit XML are retained as ephemeral CI artifacts for **30 days**. Archives and NuGet packages are *not uploaded*. Outputs live outside the RecordSift checkout.
 
 **Acceptance requires** the Windows CI job to finish successfully, each original gate's success to be verified from the run, actual source/toolchain SHA and package evidence, full 419-test suite, a repeated scoped match and a real negative-control detection. If any prerequisite fails, record **blocked/failed** findings rather than claiming the extractor is validated.
 

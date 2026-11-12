@@ -12,7 +12,7 @@ The chosen change is intentionally meaningful but buildable: the public CLR enum
 
 ## Independently built revisions
 
-The [Windows workflow](../../../../../.github/workflows/validate-recordsift-source-api-regression.yml) calls the [experiment adapter](../../../../../tooling/pilots/recordsift/EXP-016/run.ps1) using the existing application-owned API, XML, package and clean-consumer gates plus shared .NET metadata extractor and compatibility comparator.
+The [Windows workflow](../archives/workflows/validate-recordsift-source-api-regression.yml) calls the [experiment adapter](../../../../../tooling/pilots/recordsift/EXP-016/run.ps1) using the existing application-owned API, XML, package and clean-consumer gates plus shared .NET metadata extractor and compatibility comparator.
 
 1. Check out the immutable baseline with no push credentials; require clean source. Create a detached separate baseline worktree. Restore/build all ten projects in Release and run the EXP-014 complete baseline gate (five NUnit suites, 425 legacy API entries, XML, unpublished NuGet package, clean consumer, metadata and repeated capture with external-evidence negative control).
 2. In the distinct initially clean candidate checkout, make exactly one edit in src/RecordSift.Domain/Results/ImportStatus.cs: change implicit Canceled=3 to explicit Canceled=42. Commit locally **only inside CI**. Require exactly one changed file, different Git tree hashes and preserve the actual patch and candidate commit SHA. Never push to RecordSift.

@@ -3,7 +3,7 @@
 **Classification:** Historical, source-preserved, **not generalized or re-executed from this archive**.  
 **Application:** [infoconex/RecordSift](https://github.com/infoconex/RecordSift)  
 **Frozen baseline:** `main@8358780829458854a4b0356df5ac5e685f0a34c8`  
-**Original result source:** [EXP-001–013](../../../../projects/recordsift/evaluations/2026-11-pre-sdk/experiments/README.md) and [evidence manifest](../../../../projects/recordsift/evaluations/2026-11-pre-sdk/evidence/manifest.md)
+**Original result source:** [EXP-001–013](../experiments/README.md) and [evidence manifest](../evidence/manifest.md)
 
 Each YAML file below is a **byte-for-byte preserved UTF-8 file** copied from an immutable original RecordSift workflow commit. The Git blob SHA of each archive was compared with its original immediately after creation. Do **not** edit these historical snapshots; create a distinct reusable implementation with separate tests rather than rewriting original evidence.
 
@@ -17,6 +17,10 @@ Each YAML file below is a **byte-for-byte preserved UTF-8 file** copied from an 
 | EXP-011 | [NuGet inventory and restored HintPaths](EXP-011-research-exp011-nuget-graph.yml) | [Original](https://github.com/infoconex/RecordSift/blob/a94381f97843d692265e805aeb899e616c60a7bb/.github/workflows/research-exp011-nuget-graph.yml) | `2bb9a7042a592981bb4c0e9869d310956e30a0af` | 17 declared packages, 13 restored package IDs, 13 real DLL paths and 11 distributable dependencies; historical direct/transitive origin not proved. |
 | EXP-012 | [Exact-pinned PackageReference candidate](EXP-012-research-exp012-packagereference.yml) | [Original](https://github.com/infoconex/RecordSift/blob/63eaad20986cdf429fd64f248a5c2a3f9223f857/.github/workflows/research-exp012-packagereference.yml) | `ae04eb501fb18ace7633efa45a4abb5a6d1f6ae8` | Temporary conversion; 414 compiled API/identity pass, original 425-entry raw-metadata gate fails; direct-only candidate downgrades four versions, not consumer-validated. |
 | EXP-013 | [Migration CI and architecture controls](EXP-013-research-exp013-migration-ci.yml) | [Original](https://github.com/infoconex/RecordSift/blob/933c74ec916468ce1e4a5c0c0878ca56a360bc36/.github/workflows/research-exp013-migration-ci.yml) | `e4e3dd796d4c437148c05d5923953c3f660eb556` | Format-aware dependency audit/architecture positive and negative controls in disposable workspaces; Visual Studio GUI migrator not executed. |
+
+## Retired research-repository workflows
+
+The [31 additional original research-repository workflow sources](workflows/README.md) are archived byte-for-byte with the RecordSift evaluation. They are distinct from the eight application-repository workflow archives listed below, and they cannot dispatch automatically or manually from this directory.
 
 ## Related scripts already versioned in RecordSift
 
@@ -37,6 +41,6 @@ EXP-001–003 and EXP-005–006 also have recorded experiment commands and evide
 - GitHub-hosted runner images, registry feeds, container tags, restored packages and available tools can change. The archived files' contents are immutable, but their **environment is not**; compare current behavior against dated reports rather than claiming exact replays.
 - Artifacts may have expired. Logs, artifact IDs and observed outcomes are recorded in the dated experiment/evidence files.
 - These workflows perform **writes in temporary checkouts** during isolation and may contain intentional failing controls. They do not grant permission to change application source branches or release pipelines.
-- Place archived source outside `.github/workflows/` until a *separately authorized* isolated reproduction. Read the [tooling guide](../../../README.md) for a safe adaptation procedure and the plan for reusable validators.
+- Place archived source outside `.github/workflows/` until a *separately authorized* isolated reproduction. Read the [tooling guide](../../../../../tooling/README.md) for a safe adaptation procedure and the plan for reusable validators.
 
 **Archival acceptance:** The eight archived Git blob IDs above are identical to the linked source workflow blobs. **Execution acceptance:** Not performed for these archival copies; no claim of current-run compatibility.

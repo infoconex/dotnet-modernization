@@ -1,10 +1,7 @@
 name: EXP-036 actual frozen CSV managed checksum verification (research only)
 
+# Historically failed real-PDB acceptance: manual replay only, not an automatic CI gate.
 on:
-  pull_request:
-    paths:
-      - '.github/workflows/validate-exp036-frozen-csv.yml'
-      - 'tooling/pilots/recordsift/EXP-036/**'
   workflow_dispatch:
 
 permissions:

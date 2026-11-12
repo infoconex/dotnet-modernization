@@ -6,7 +6,8 @@ param(
     [Parameter(Mandatory = $true)][string]$ApplicationRoot,
     [Parameter(Mandatory = $true)][string]$EvidenceRoot,
     [string]$ExpectedCommit = '8358780829458854a4b0356df5ac5e685f0a34c8',
-    [string]$ExperimentId = 'EXP-014'
+    [string]$ExperimentId = 'EXP-014',
+    [switch]$ExpectCanceledEnumRegression
 )
 $ErrorActionPreference = 'Stop'
 Set-StrictMode -Version Latest
@@ -37,8 +38,25 @@ foreach ($path in $assemblies) {
 # Verify application-owned compiled API and XML documentation gates before new extraction.
 Push-Location $application
 try {
-    & powershell.exe -NoProfile -ExecutionPolicy Bypass -File (Join-Path $application 'scripts/verify_public_api.ps1')
-    if ($LASTEXITCODE -ne 0) { throw "Existing RecordSift public API gate failed: $LASTEXITCODE" }
+    $apiOutput = @(& powershell.exe -NoProfile -ExecutionPolicy Bypass -File (Join-Path $application 'scripts/verify_public_api.ps1') 2>&1)
+    $apiExit = $LASTEXITCODE
+    $apiText = $apiOutput -join "`n"
+    $apiOutput | ForEach-Object { Write-Host $_ }
+    if ($ExpectCanceledEnumRegression) {
+        # An expected failure only counts if the application-owned checker reports
+        # exactly the actual baseline and changed compiled enum constant.
+        if ($apiExit -eq 0 -or
+            -not $apiText.Contains('literal RecordSift.Domain.Results.ImportStatus.Canceled=3') -or
+            -not $apiText.Contains('literal RecordSift.Domain.Results.ImportStatus.Canceled=42')) {
+            throw "Expected enum public API regression not reported by the original checker (exit=$apiExit)."
+        }
+        Write-Host 'EXPECTED NEGATIVE: original 425-entry gate detected Canceled enum value 3 to 42.'
+        # The intentional failed native powershell.exe invocation leaves LASTEXITCODE nonzero.
+        # Clear only its process status after validating the exact expected mismatch; otherwise
+        # the following successful PowerShell-only XML script can inherit a false failure.
+        $global:LASTEXITCODE = 0
+    }
+    elseif ($apiExit -ne 0) { throw "Existing RecordSift public API gate failed: $apiExit" }
     & (Join-Path $application 'scripts/verify_xml_documentation.ps1')
     if ($LASTEXITCODE -ne 0) { throw "Existing XML documentation gate failed: $LASTEXITCODE" }
 
@@ -175,7 +193,7 @@ $report = [ordered]@{
     extractor_commit = (& git -C $repoRoot rev-parse HEAD).Trim()
     runtime = 'Windows Server 2022 / .NET 10 metadata reader with .NET Framework 4.8 release binaries'
     checks = [ordered]@{
-        existing_api_gate = 'passed'
+        existing_api_gate = $(if ($ExpectCanceledEnumRegression) { 'expected_enum_regression_detected' } else { 'passed' })
         xml_documentation_gate = 'passed'
         nunit_baseline = '418 passed; 1 skipped; 0 failed / 419 total (five suites)'
         package_build = 'passed'
@@ -196,5 +214,5 @@ $cleanProofStatus = @(& git -C $sourceProof status --porcelain --untracked-files
 if ($LASTEXITCODE -ne 0 -or $cleanProofStatus.Count -ne 0) {
     throw "Source attribution worktree is dirty: $($cleanProofStatus -join ' | ')"
 }
-Write-Host "PASS: Real RecordSift .NET Framework 4.8 pilot, source SHA $expected; all five assemblies and suite gates passed."
+Write-Host "PASS: Real RecordSift .NET Framework 4.8 pilot, source SHA $expected; application API guard outcome=$($report.checks.existing_api_gate); metadata, full suites and other gates passed."
 Write-Host 'This validates an unchanged-source REPEAT, NOT a migration candidate or a change in target framework.'

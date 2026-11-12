@@ -1,13 +1,7 @@
 name: EXP-017 real NuGet archive and DLL payload-byte comparison
 
+# Historical experiment: manual execution only; do not run on pull requests.
 on:
-  pull_request:
-    paths:
-      - ".github/workflows/validate-recordsift-package-payload.yml"
-      - "tooling/validators/package_payload.py"
-      - "tooling/validators/tests/test_package_payload.py"
-      - "tooling/pilots/recordsift/EXP-017/**"
-      - "projects/recordsift/evaluations/2026-11-pre-sdk/experiments/EXP-017-package-payload-bytes.md"
   workflow_dispatch:
 
 permissions:

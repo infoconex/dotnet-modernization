@@ -1,0 +1,79 @@
+name: EXP-041 original compiler input and native PDB audit research only
+
+# Historical experiment: manually dispatched only.
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  independent-controls:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 8
+    steps:
+      - uses: actions/checkout@08c6903cd8c0fde910a37f88322edcfb5dd907a8 # v5.0.0
+        with:
+          persist-credentials: false
+      - name: Offline original compiler-input snapshot and full identity controls
+        run: |
+          python3 -m unittest discover -s tooling/validators/tests -p 'test_exp041_compiler_input_audit.py' -v
+
+  frozen-windows-source-audit:
+    runs-on: windows-2022
+    timeout-minutes: 110
+    steps:
+      - uses: actions/checkout@08c6903cd8c0fde910a37f88322edcfb5dd907a8 # v5.0.0
+        with:
+          persist-credentials: false
+      - uses: actions/checkout@08c6903cd8c0fde910a37f88322edcfb5dd907a8 # v5.0.0
+        with:
+          repository: infoconex/RecordSift
+          ref: 8358780829458854a4b0356df5ac5e685f0a34c8
+          fetch-depth: 0
+          path: recordsift
+          persist-credentials: false
+      - uses: actions/setup-dotnet@a98b56852c35b8e3190ac28c8c2271da59106c68 # v6.0.0
+        with:
+          dotnet-version: '10.0.403'
+      - name: Assert frozen application source
+        shell: pwsh
+        run: |
+          $rev=(& git -C recordsift rev-parse HEAD).Trim()
+          if ($LASTEXITCODE -ne 0 -or $rev -cne '8358780829458854a4b0356df5ac5e685f0a34c8') { throw 'Frozen application commit mismatch' }
+      - name: Compile existing independent API assembly metadata validator
+        shell: pwsh
+        run: |
+          dotnet build tooling/assembly-metadata/src/AssemblyMetadata.csproj -c Release -nologo -v minimal
+          if ($LASTEXITCODE -ne 0) { throw 'Original metadata validator failed' }
+      - name: Reuse exact original and candidate frozen release gates, with PRIVATE pre-/post-Csc input capture
+        shell: pwsh
+        run: |
+          & ./tooling/pilots/recordsift/EXP-024/run.ps1 -ApplicationRoot (Join-Path $env:GITHUB_WORKSPACE 'recordsift') -EvidenceRoot (Join-Path $env:RUNNER_TEMP 'exp041-exp024') -CaptureCompilerSources
+          if ($LASTEXITCODE -ne 0) { throw 'EXP041 original/candidate release acceptance or capture failed' }
+      - name: Independently audit all native CSV source identities against compiler-time physical snapshots
+        shell: pwsh
+        run: |
+          $evidence=Join-Path $env:RUNNER_TEMP 'exp041-exp024'
+          $private=Join-Path $evidence 'exp041-original-inputs-private'
+          try {
+            $csv=Join-Path $env:GITHUB_WORKSPACE 'recordsift/src/RecordSift.Infrastructure.Csv/bin/Release'
+            python tooling/validators/exp041_compiler_input_audit.py --dll (Join-Path $csv 'RecordSift.Infrastructure.Csv.dll') --pdb (Join-Path $csv 'RecordSift.Infrastructure.Csv.pdb') --capture-dir $private --app-root (Join-Path $env:GITHUB_WORKSPACE 'recordsift') --output (Join-Path $env:RUNNER_TEMP 'exp041-source-audit.json')
+            if ($LASTEXITCODE -ne 0) { throw 'EXP041 private native/PDB source-byte audit failed closed' }
+            $report=Get-Content (Join-Path $env:RUNNER_TEMP 'exp041-source-audit.json') -Raw | ConvertFrom-Json
+            if ($report.gate_c -cne 'UNSATISFIED' -or $report.source_link_adoption -cne 'HOLD') {
+              throw 'Research gate was silently redefined'
+            }
+            Write-Host "EXP041 captured=$($report.captured_compiler_inputs) matched=$($report.original_input_sha256_or_sha1_matches) missing=$($report.native_documents_without_captured_input) complete=$($report.native_inventory)"
+          } finally {
+            if (Test-Path -LiteralPath $private) {
+              Remove-Item -LiteralPath $private -Force -Recurse -ErrorAction Stop
+            }
+          }
+      - name: Upload ONLY sanitized aggregate EXP-041 research metadata
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4.6.2
+        with:
+          name: exp041-sanitized-original-input-audit
+          path: ${{ runner.temp }}/exp041-source-audit.json
+          if-no-files-found: error
+          retention-days: 30

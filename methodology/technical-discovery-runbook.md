@@ -32,13 +32,17 @@ Run commands individually. Capture the **exact command**, working directory, ful
 
 ## DISC-001 — Check prerequisites, acquire clean source and identify the exact revision
 
-**Purpose:** verify the tooling needed to begin, establish what additional tools later discovery operations require, and acquire the exact source revision in a predictable local folder. A **fresh, timestamped checkout** is preferred for a repeatable case study. Reusing an existing checkout is permitted when its state is inspected and documented. This is **step one**, not an assumption that Git, .NET, MSBuild or NuGet are already installed.
+**Purpose:** verify the **application's required host platform** and tooling before starting, then acquire the exact source revision in a predictable local folder. A **fresh, timestamped checkout** is preferred for a repeatable case study. Reusing an existing checkout is permitted when its state is inspected and documented. This is **step one**, not an assumption that Git, .NET, MSBuild or NuGet are already installed.
+
+**Platform rule:** this runbook applies to different .NET project types, but **each application evaluation must declare its supported OS and use an appropriate host from DISC-001 onward**. A Windows-only application such as RecordSift must be discovered and verified on Windows, even though some Git and source-inspection commands could technically run elsewhere. Do not substitute Linux, macOS or WSL for Windows without a separately authorized and clearly classified compatibility investigation. Other projects may specify different hosts.
 
 ### A. Preflight — confirm the tools before cloning
 
-Run these commands **individually** in PowerShell:
+Run these commands **individually** in PowerShell, beginning with the operating-system check:
 
 ```powershell
+[System.Runtime.InteropServices.RuntimeInformation]::OSDescription
+[System.Runtime.InteropServices.RuntimeInformation]::OSArchitecture
 $PSVersionTable.PSVersion
 Get-Command git -ErrorAction SilentlyContinue
 git --version
@@ -47,7 +51,7 @@ Get-Command msbuild -ErrorAction SilentlyContinue
 Get-Command nuget -ErrorAction SilentlyContinue
 ```
 
-`Get-Command` only reports what is on **PATH**; a missing result does not establish the software is absent from the computer. If Git is not available, stop before cloning. Record the PowerShell and Git versions and the found/not-on-PATH state of the other commands. Do **not** invoke unavailable commands or install anything automatically.
+**Before cloning, compare the reported host OS with the application's declared platform requirement.** Stop and select an approved host if they are incompatible. For Windows-specific applications, record the Windows version/build and architecture from a Windows-native query such as `Get-CimInstance Win32_OperatingSystem`. Do not present WSL as Windows application verification. `Get-Command` only reports what is on **PATH**; a missing result does not establish the software is absent from the computer. If Git is not available, stop before cloning. Record the PowerShell and Git versions and the found/not-on-PATH state of the other commands. Do **not** invoke unavailable commands or install anything automatically.
 
 **Distinguish requirements by phase and project, not just by tool name:**
 
@@ -60,7 +64,7 @@ Get-Command nuget -ErrorAction SilentlyContinue
 | Standalone NuGet CLI | Later when the application's documented restore uses `nuget.exe`, including some `packages.config` repositories | Not universally required for SDK-style `PackageReference` projects |
 | Targeting packs, test runners and other platform prerequisites | Later before an approved build/test | Framework, project and host-specific; verify at DISC-004 and before DISC-008–010, not inferred from a tool being on PATH |
 
-For an application requiring Windows-specific build tooling, check the host OS before approving build/test steps. **The preflight is an availability screen, not the complete environment inventory**: DISC-004 captures exact SDK/runtime/targeting-pack/MSBuild/NuGet versions and origins. Missing later tools become named readiness gaps, not fabricated successes or automatic installation tasks.
+Use the required platform from the beginning, **not only when running builds and tests**. **The preflight is an availability screen, not the complete environment inventory**: DISC-004 captures exact SDK/runtime/targeting-pack/MSBuild/NuGet versions and origins. Missing later tools become named readiness gaps, not fabricated successes or automatic installation tasks.
 
 ### B. Create a dated, likely unique discovery checkout
 

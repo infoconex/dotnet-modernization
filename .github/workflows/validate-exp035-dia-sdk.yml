@@ -1,12 +1,7 @@
 name: EXP-035 signed Visual Studio DIA checksum feasibility (research only)
 
+# Historical experiment: manual execution only; no automatic PR builds.
 on:
-  pull_request:
-    paths:
-      - '.github/workflows/validate-exp035-dia-sdk.yml'
-      - 'tooling/pilots/recordsift/EXP-035/**'
-      - 'tooling/validators/dia_source_checksum_assessment.py'
-      - 'tooling/validators/tests/test_dia_source_checksum_assessment.py'
   workflow_dispatch:
 
 permissions:

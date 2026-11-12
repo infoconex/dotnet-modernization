@@ -1,11 +1,7 @@
 name: EXP-037 compiler invocation and native PDB differential (research only)
 
+# Historical diagnostic workflow; manual only, including intentionally unsuccessful inherited checksum gate.
 on:
-  pull_request:
-    paths:
-      - '.github/workflows/validate-exp037-compiler-pdb.yml'
-      - 'tooling/pilots/recordsift/EXP-037/**'
-      - 'tooling/pilots/recordsift/EXP-036/run_fixture.ps1'
   workflow_dispatch:
 
 permissions:

@@ -1,18 +1,7 @@
 name: EXP-040 native DBI and C13 document provenance research only
 
+# Historical research: manual-only; do not run on unrelated PRs.
 on:
-  pull_request:
-    paths:
-      - '.github/workflows/validate-exp040-native-document-inventory.yml'
-      - 'tooling/pilots/recordsift/EXP-037/**'
-      - 'tooling/pilots/recordsift/EXP-038/**'
-      - 'tooling/validators/classic_pdb_document_checksums.py'
-      - 'tooling/validators/native_pdb_document_inventory.py'
-      - 'tooling/validators/tests/test_native_pdb_document_inventory.py'
-      - 'tooling/validators/tests/test_classic_pdb_document_checksums.py'
-      - 'tooling/pilots/recordsift/EXP-036/ReaderProbe.cs'
-      - 'tooling/pilots/recordsift/EXP-036/run_fixture.ps1'
-      - 'tooling/pilots/recordsift/EXP-036/run_fixture.ps1'
   workflow_dispatch:
 
 permissions:

@@ -1,12 +1,7 @@
 name: EXP-034 verify every PDB-listed owned CSV source against raw Git blobs
 
+# Historical research: manual-only execution; reusable validator tests run separately.
 on:
-  pull_request:
-    paths:
-      - '.github/workflows/validate-exp034-all-pdb-owned-sources.yml'
-      - 'tooling/validators/sourcelink_all_owned_sources.py'
-      - 'tooling/validators/tests/test_sourcelink_all_owned_sources.py'
-      - 'projects/recordsift/evaluations/2026-11-pre-sdk/experiments/EXP-034-all-owned-source-provenance.md'
   workflow_dispatch:
 
 permissions:

@@ -1,10 +1,7 @@
 name: EXP-026 Source Link two real Git worktrees reproducibility
 
+# Historical experiment: manual execution only; no automatic PR builds.
 on:
-  pull_request:
-    paths:
-      - '.github/workflows/validate-exp026-two-source-worktrees.yml'
-      - 'projects/recordsift/evaluations/2026-11-pre-sdk/experiments/EXP-026-two-worktrees.md'
   workflow_dispatch:
 
 permissions:

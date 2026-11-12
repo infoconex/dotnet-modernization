@@ -1,11 +1,7 @@
 name: EXP-024 disposable traditional net48 Source Link import and build
 
+# Historical research: manual execution only; no automatic PR builds.
 on:
-  pull_request:
-    paths:
-      - '.github/workflows/validate-exp024-windows-sourcelink-import.yml'
-      - 'tooling/pilots/recordsift/EXP-024/**'
-      - 'projects/recordsift/evaluations/2026-11-pre-sdk/experiments/EXP-024-sourcelink-windows-import.md'
   workflow_dispatch:
 
 permissions:

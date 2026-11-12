@@ -29,7 +29,7 @@ jobs:
           test -n "$GH_TOKEN"
           root="$RUNNER_TEMP/exp044-archive-replay"
           mkdir -p "$root"
-          scope="methodology/acceptance-gates/gate-cn-exp044-evidence-scope.json"
+          scope="research/native-pdb-provenance/gate-cn/gate-cn-exp044-evidence-scope.json"
           run_id="$(python3 -c 'import json,sys; print(json.load(open(sys.argv[1],encoding="utf-8"))["source_evidence"]["run_id"])' "$scope")"
           artifact_id="$(python3 -c 'import json,sys; print(json.load(open(sys.argv[1],encoding="utf-8"))["source_evidence"]["artifact_id"])' "$scope")"
           api="https://api.github.com/repos/infoconex/dotnet-modernization/actions/artifacts/$artifact_id"
@@ -99,7 +99,7 @@ jobs:
           # The archived text and the original expiring artifact must match
           # the external pinned report SHA256 exactly, byte-for-byte.
           python3 - "$root/exp044-sanitized.json" "$scope" \
-            "methodology/acceptance-gates/evidence/exp044-non-recordsift-sanitized.json" <<'PY'
+            "research/native-pdb-provenance/gate-cn/evidence/exp044-non-recordsift-sanitized.json" <<'PY'
           import hashlib,json,sys
           actual=open(sys.argv[1],"rb").read()
           archived=open(sys.argv[3],"rb").read()

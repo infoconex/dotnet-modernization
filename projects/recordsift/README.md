@@ -11,3 +11,7 @@ At the first evaluation baseline it contains five production libraries and five 
 - [2026-11: Pre-SDK modernization discovery](evaluations/2026-11-pre-sdk/README.md) — what can safely be improved before SDK-style conversion.
 
 Future evaluations (such as SDK conversion or runtime migration) should use their **own** dates, baseline SHAs, evidence and verification gates. This repository stores assessment and learning, not the application source code.
+
+## Related cross-application research
+
+The [Gate C-N native-PDB provenance investigation](../../research/native-pdb-provenance/README.md) references RecordSift as its primary case study, with a separate non-RecordSift portability fixture. RecordSift's own experiment results and decisions remain in its dated evaluation.

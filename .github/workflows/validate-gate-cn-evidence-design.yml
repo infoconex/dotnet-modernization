@@ -115,8 +115,8 @@ jobs:
           # The preliminary inventory report intentionally is not archived.
           python3 - "$scope" "$root/exp043-five-pdb-source-audit.json" \
             "$root/exp043-managed-reader-exposure.json" \
-            "methodology/acceptance-gates/evidence/exp043-five-pdb-source-audit.json" \
-            "methodology/acceptance-gates/evidence/exp043-managed-reader-exposure.json" <<'PY'
+            "research/native-pdb-provenance/gate-cn/evidence/exp043-five-pdb-source-audit.json" \
+            "research/native-pdb-provenance/gate-cn/evidence/exp043-managed-reader-exposure.json" <<'PY'
           import hashlib,json,sys
           scope=json.load(open(sys.argv[1],encoding="utf-8"))
           hashes=scope["source_evidence"]["sanitized_report_sha256"]

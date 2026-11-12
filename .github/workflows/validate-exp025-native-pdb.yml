@@ -1,12 +1,7 @@
 name: EXP-025 native Windows PDB Source Link structural proof
 
+# Historical research: manual execution only; no automatic PR builds.
 on:
-  pull_request:
-    paths:
-      - '.github/workflows/validate-exp025-native-pdb.yml'
-      - 'tooling/validators/native_windows_pdb_sourcelink.py'
-      - 'tooling/validators/tests/test_native_windows_pdb_sourcelink.py'
-      - 'projects/recordsift/evaluations/2026-11-pre-sdk/experiments/EXP-025-windows-pdb-identity.md'
   workflow_dispatch:
 
 permissions:

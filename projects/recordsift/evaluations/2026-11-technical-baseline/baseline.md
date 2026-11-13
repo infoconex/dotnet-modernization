@@ -88,9 +88,11 @@ The [getting-started guide](https://github.com/infoconex/RecordSift/blob/1809d06
 | Existing CI runner | `10.0.303` | `C:\Program Files\dotnet\sdk` |
 | Existing CI runner | `10.0.404` | `C:\Program Files\dotnet\sdk` |
 | Existing CI runner | `11.0.100` | `C:\Program Files\dotnet\sdk` |
-| Operator local | Not checked | Not checked |
+| Operator local | `8.0.428` | `C:\Program Files\dotnet\sdk` |
+| Operator local | `9.0.321` | `C:\Program Files\dotnet\sdk` |
+| Operator local | `10.0.404` | `C:\Program Files\dotnet\sdk` |
 
-**Scope:** All 12 SDK versions are the observed output of `dotnet --list-sdks` for the research runner. Their reported paths are SDK installation roots, not a claim that each version has a different path.
+**Scope:** All 12 SDK versions are the observed output of `dotnet --list-sdks` for the research runner. Their reported paths are SDK installation roots, not a claim that each version has a different path. **Operator-local evidence (EV-020, 2026-11-13):** `dotnet --list-sdks` at `D:\RecordSift` reported exactly three installed SDK versions: `8.0.428`, `9.0.321`, and `10.0.404`, all under `C:\Program Files\dotnet\sdk`. All three versions are also listed in the independent CI runner's 12-entry inventory. The different inventory sizes are not evidence of a build failure or a requirement to install the missing CI versions. This command does not enumerate .NET runtimes.
 
 ### 27. .NET Runtime Inventory
 
@@ -535,11 +537,13 @@ Each distribution has its own record. NuGet package upload acceptance was previo
 
 | 25 | git --version | Operator PowerShell session (`D:\RecordSift`) | Git 2.56.0.windows.4 (self-reported) | Git version | Not recorded | Output supplied | EV-019; operator-provided output in discovery conversation, 2026-11-13 |
 
+| 26 | dotnet --list-sdks | Operator PowerShell session (`D:\RecordSift`) | .NET CLI (selected SDK version not separately queried) | Three installed SDKs: 8.0.428, 9.0.321, 10.0.404 | Not recorded | Output supplied | EV-020; operator-provided output in discovery conversation, 2026-11-13 |
+
 ### 59. Findings and Gaps
 
 | Finding | Impact | Evidence | Next Check |
 |---|---|---|---|
-| Operator Windows toolchain inventory incomplete | Operator supplied Windows 11 Pro/version/build/architecture (items 20–23, EV-017), PowerShell 7.7.0 (item 24, EV-018), and Git 2.56.0.windows.4 (item 25, EV-019); local SDK/runtime, MSBuild, NuGet and targeting-pack inventories remain unchecked | Items 20–31; EV-016–019 | Continue read-only local prerequisite inventory at item 26 |
+| Operator Windows toolchain inventory incomplete | Operator supplied Windows 11 Pro/version/build/architecture (items 20–23, EV-017), PowerShell 7.7.0 (item 24, EV-018), and Git 2.56.0.windows.4 (item 25, EV-019); local SDK inventory was supplied for item 26 (EV-020); runtime, MSBuild, NuGet and targeting-pack inventories remain unchecked | Items 20–31; EV-016–020 | Continue read-only local prerequisite inventory at item 27 |
 | Clean local checkout not verified | Local filesystem and Git state remain unknown | Items 33–38 | Clone selected SHA into unique discovery folder |
 | Operator-local MSBuild evaluation outstanding | CI evaluated 20 project/configuration scopes; local tool/import differences remain unverified | Item 44; EV-015 | Evaluate the same properties on an approved operator Windows checkout if local parity is required |
 | Build-policy properties not explicitly set in evaluated results | `Deterministic`, `TreatWarningsAsErrors` and `PlatformTarget` returned empty strings; the output alone does not establish compiler-switch behavior | Item 44; [CI evidence](https://github.com/infoconex/RecordSift/actions/runs/43501555831/job/132148357265) | Inspect actual compiler invocations and existing build gates before proposing policy changes |
@@ -549,7 +553,7 @@ Each distribution has its own record. NuGet package upload acceptance was previo
 
 | Check | Reason Deferred | Revisit When |
 |---|---|---|
-| Windows toolchain preflight (remaining items 26–31) | Operator provided OS items 20–23, PowerShell version (item 24) and Git version (item 25); local .NET and build tools still need checking | Continue read-only local prerequisite inventory |
+| Windows toolchain preflight (remaining items 27–31) | Operator provided OS items 20–23, PowerShell version (item 24), Git version (item 25), and three installed .NET SDKs (item 26); local runtime and build tools still need checking | Continue read-only local prerequisite inventory |
 | Local checkout verification | No isolated Windows discovery folder created | After host prerequisite checks |
 | Operator-local MSBuild property parity | Existing CI evaluated the frozen source (EV-015); local tool/import parity remains unverified | If local parity is required, after host preflight and checkout |
 | Local restore/build/test | Operator approval and environment verification required | After source checkout and side-effect review |

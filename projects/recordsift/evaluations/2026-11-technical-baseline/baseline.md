@@ -102,28 +102,28 @@
 
 | Project Path | Role | Project Format | Target Framework | Language Version | Output Type | MSBuild Platform | SDK or ToolsVersion | Direct Project Reference |
 |---|---|---|---|---|---|---|---|---|
-| src/RecordSift.Domain/RecordSift.Domain.csproj | Production | Traditional | net48 | 7.3 | Library | AnyCPU | 15.0 | None |
-| src/RecordSift.Application/RecordSift.Application.csproj | Production | Traditional | net48 | 7.3 | Library | AnyCPU | 15.0 | ../RecordSift.Domain/RecordSift.Domain.csproj |
-| src/RecordSift.Infrastructure.Csv/RecordSift.Infrastructure.Csv.csproj | Production | Traditional | net48 | 7.3 | Library | AnyCPU | 15.0 | ../RecordSift.Application/RecordSift.Application.csproj |
-| src/RecordSift.Infrastructure.Csv/RecordSift.Infrastructure.Csv.csproj | Production | Traditional | net48 | 7.3 | Library | AnyCPU | 15.0 | ../RecordSift.Domain/RecordSift.Domain.csproj |
-| src/RecordSift.Infrastructure.Xlsx/RecordSift.Infrastructure.Xlsx.csproj | Production | Traditional | net48 | 7.3 | Library | AnyCPU | 15.0 | ../RecordSift.Application/RecordSift.Application.csproj |
-| src/RecordSift.Infrastructure.Xlsx/RecordSift.Infrastructure.Xlsx.csproj | Production | Traditional | net48 | 7.3 | Library | AnyCPU | 15.0 | ../RecordSift.Domain/RecordSift.Domain.csproj |
-| src/RecordSift.Infrastructure.Reporting/RecordSift.Infrastructure.Reporting.csproj | Production | Traditional | net48 | 7.3 | Library | AnyCPU | 15.0 | ../RecordSift.Application/RecordSift.Application.csproj |
-| src/RecordSift.Infrastructure.Reporting/RecordSift.Infrastructure.Reporting.csproj | Production | Traditional | net48 | 7.3 | Library | AnyCPU | 15.0 | ../RecordSift.Domain/RecordSift.Domain.csproj |
-| tests/RecordSift.Domain.Tests/RecordSift.Domain.Tests.csproj | Test | Traditional | net48 | 7.3 | Library | AnyCPU | 15.0 | ../../src/RecordSift.Domain/RecordSift.Domain.csproj |
-| tests/RecordSift.Application.Tests/RecordSift.Application.Tests.csproj | Test | Traditional | net48 | 7.3 | Library | AnyCPU | 15.0 | ../../src/RecordSift.Application/RecordSift.Application.csproj |
-| tests/RecordSift.Application.Tests/RecordSift.Application.Tests.csproj | Test | Traditional | net48 | 7.3 | Library | AnyCPU | 15.0 | ../../src/RecordSift.Domain/RecordSift.Domain.csproj |
-| tests/RecordSift.Infrastructure.Csv.Tests/RecordSift.Infrastructure.Csv.Tests.csproj | Test | Traditional | net48 | 7.3 | Library | AnyCPU | 15.0 | ../RecordSift.Application.Tests/RecordSift.Application.Tests.csproj |
-| tests/RecordSift.Infrastructure.Csv.Tests/RecordSift.Infrastructure.Csv.Tests.csproj | Test | Traditional | net48 | 7.3 | Library | AnyCPU | 15.0 | ../../src/RecordSift.Infrastructure.Csv/RecordSift.Infrastructure.Csv.csproj |
-| tests/RecordSift.Infrastructure.Csv.Tests/RecordSift.Infrastructure.Csv.Tests.csproj | Test | Traditional | net48 | 7.3 | Library | AnyCPU | 15.0 | ../../src/RecordSift.Application/RecordSift.Application.csproj |
-| tests/RecordSift.Infrastructure.Csv.Tests/RecordSift.Infrastructure.Csv.Tests.csproj | Test | Traditional | net48 | 7.3 | Library | AnyCPU | 15.0 | ../../src/RecordSift.Domain/RecordSift.Domain.csproj |
-| tests/RecordSift.Infrastructure.Xlsx.Tests/RecordSift.Infrastructure.Xlsx.Tests.csproj | Test | Traditional | net48 | 7.3 | Library | AnyCPU | 15.0 | ../../src/RecordSift.Infrastructure.Xlsx/RecordSift.Infrastructure.Xlsx.csproj |
-| tests/RecordSift.Infrastructure.Xlsx.Tests/RecordSift.Infrastructure.Xlsx.Tests.csproj | Test | Traditional | net48 | 7.3 | Library | AnyCPU | 15.0 | ../../src/RecordSift.Application/RecordSift.Application.csproj |
-| tests/RecordSift.Infrastructure.Xlsx.Tests/RecordSift.Infrastructure.Xlsx.Tests.csproj | Test | Traditional | net48 | 7.3 | Library | AnyCPU | 15.0 | ../../src/RecordSift.Domain/RecordSift.Domain.csproj |
-| tests/RecordSift.Infrastructure.Reporting.Tests/RecordSift.Infrastructure.Reporting.Tests.csproj | Test | Traditional | net48 | 7.3 | Library | AnyCPU | 15.0 | ../../src/RecordSift.Infrastructure.Csv/RecordSift.Infrastructure.Csv.csproj |
-| tests/RecordSift.Infrastructure.Reporting.Tests/RecordSift.Infrastructure.Reporting.Tests.csproj | Test | Traditional | net48 | 7.3 | Library | AnyCPU | 15.0 | ../../src/RecordSift.Infrastructure.Reporting/RecordSift.Infrastructure.Reporting.csproj |
-| tests/RecordSift.Infrastructure.Reporting.Tests/RecordSift.Infrastructure.Reporting.Tests.csproj | Test | Traditional | net48 | 7.3 | Library | AnyCPU | 15.0 | ../../src/RecordSift.Application/RecordSift.Application.csproj |
-| tests/RecordSift.Infrastructure.Reporting.Tests/RecordSift.Infrastructure.Reporting.Tests.csproj | Test | Traditional | net48 | 7.3 | Library | AnyCPU | 15.0 | ../../src/RecordSift.Domain/RecordSift.Domain.csproj |
+| src/RecordSift.Domain/RecordSift.Domain.csproj | Production | Traditional | v4.8 | 7.3 | Library | AnyCPU | 15.0 | None |
+| src/RecordSift.Application/RecordSift.Application.csproj | Production | Traditional | v4.8 | 7.3 | Library | AnyCPU | 15.0 | ../RecordSift.Domain/RecordSift.Domain.csproj |
+| src/RecordSift.Infrastructure.Csv/RecordSift.Infrastructure.Csv.csproj | Production | Traditional | v4.8 | 7.3 | Library | AnyCPU | 15.0 | ../RecordSift.Application/RecordSift.Application.csproj |
+| src/RecordSift.Infrastructure.Csv/RecordSift.Infrastructure.Csv.csproj | Production | Traditional | v4.8 | 7.3 | Library | AnyCPU | 15.0 | ../RecordSift.Domain/RecordSift.Domain.csproj |
+| src/RecordSift.Infrastructure.Xlsx/RecordSift.Infrastructure.Xlsx.csproj | Production | Traditional | v4.8 | 7.3 | Library | AnyCPU | 15.0 | ../RecordSift.Application/RecordSift.Application.csproj |
+| src/RecordSift.Infrastructure.Xlsx/RecordSift.Infrastructure.Xlsx.csproj | Production | Traditional | v4.8 | 7.3 | Library | AnyCPU | 15.0 | ../RecordSift.Domain/RecordSift.Domain.csproj |
+| src/RecordSift.Infrastructure.Reporting/RecordSift.Infrastructure.Reporting.csproj | Production | Traditional | v4.8 | 7.3 | Library | AnyCPU | 15.0 | ../RecordSift.Application/RecordSift.Application.csproj |
+| src/RecordSift.Infrastructure.Reporting/RecordSift.Infrastructure.Reporting.csproj | Production | Traditional | v4.8 | 7.3 | Library | AnyCPU | 15.0 | ../RecordSift.Domain/RecordSift.Domain.csproj |
+| tests/RecordSift.Domain.Tests/RecordSift.Domain.Tests.csproj | Test | Traditional | v4.8 | 7.3 | Library | AnyCPU | 15.0 | ../../src/RecordSift.Domain/RecordSift.Domain.csproj |
+| tests/RecordSift.Application.Tests/RecordSift.Application.Tests.csproj | Test | Traditional | v4.8 | 7.3 | Library | AnyCPU | 15.0 | ../../src/RecordSift.Application/RecordSift.Application.csproj |
+| tests/RecordSift.Application.Tests/RecordSift.Application.Tests.csproj | Test | Traditional | v4.8 | 7.3 | Library | AnyCPU | 15.0 | ../../src/RecordSift.Domain/RecordSift.Domain.csproj |
+| tests/RecordSift.Infrastructure.Csv.Tests/RecordSift.Infrastructure.Csv.Tests.csproj | Test | Traditional | v4.8 | 7.3 | Library | AnyCPU | 15.0 | ../RecordSift.Application.Tests/RecordSift.Application.Tests.csproj |
+| tests/RecordSift.Infrastructure.Csv.Tests/RecordSift.Infrastructure.Csv.Tests.csproj | Test | Traditional | v4.8 | 7.3 | Library | AnyCPU | 15.0 | ../../src/RecordSift.Infrastructure.Csv/RecordSift.Infrastructure.Csv.csproj |
+| tests/RecordSift.Infrastructure.Csv.Tests/RecordSift.Infrastructure.Csv.Tests.csproj | Test | Traditional | v4.8 | 7.3 | Library | AnyCPU | 15.0 | ../../src/RecordSift.Application/RecordSift.Application.csproj |
+| tests/RecordSift.Infrastructure.Csv.Tests/RecordSift.Infrastructure.Csv.Tests.csproj | Test | Traditional | v4.8 | 7.3 | Library | AnyCPU | 15.0 | ../../src/RecordSift.Domain/RecordSift.Domain.csproj |
+| tests/RecordSift.Infrastructure.Xlsx.Tests/RecordSift.Infrastructure.Xlsx.Tests.csproj | Test | Traditional | v4.8 | 7.3 | Library | AnyCPU | 15.0 | ../../src/RecordSift.Infrastructure.Xlsx/RecordSift.Infrastructure.Xlsx.csproj |
+| tests/RecordSift.Infrastructure.Xlsx.Tests/RecordSift.Infrastructure.Xlsx.Tests.csproj | Test | Traditional | v4.8 | 7.3 | Library | AnyCPU | 15.0 | ../../src/RecordSift.Application/RecordSift.Application.csproj |
+| tests/RecordSift.Infrastructure.Xlsx.Tests/RecordSift.Infrastructure.Xlsx.Tests.csproj | Test | Traditional | v4.8 | 7.3 | Library | AnyCPU | 15.0 | ../../src/RecordSift.Domain/RecordSift.Domain.csproj |
+| tests/RecordSift.Infrastructure.Reporting.Tests/RecordSift.Infrastructure.Reporting.Tests.csproj | Test | Traditional | v4.8 | 7.3 | Library | AnyCPU | 15.0 | ../../src/RecordSift.Infrastructure.Csv/RecordSift.Infrastructure.Csv.csproj |
+| tests/RecordSift.Infrastructure.Reporting.Tests/RecordSift.Infrastructure.Reporting.Tests.csproj | Test | Traditional | v4.8 | 7.3 | Library | AnyCPU | 15.0 | ../../src/RecordSift.Infrastructure.Reporting/RecordSift.Infrastructure.Reporting.csproj |
+| tests/RecordSift.Infrastructure.Reporting.Tests/RecordSift.Infrastructure.Reporting.Tests.csproj | Test | Traditional | v4.8 | 7.3 | Library | AnyCPU | 15.0 | ../../src/RecordSift.Application/RecordSift.Application.csproj |
+| tests/RecordSift.Infrastructure.Reporting.Tests/RecordSift.Infrastructure.Reporting.Tests.csproj | Test | Traditional | v4.8 | 7.3 | Library | AnyCPU | 15.0 | ../../src/RecordSift.Domain/RecordSift.Domain.csproj |
 
 ## Project settings and evaluated values
 
@@ -131,86 +131,86 @@
 
 | Project Path | Configuration | Framework | Property | Declared Value | Condition |
 |---|---|---|---|---|---|
-| src/RecordSift.Domain/RecordSift.Domain.csproj | All | net48 | LangVersion | 7.3 | Unconditional |
-| src/RecordSift.Domain/RecordSift.Domain.csproj | Debug | net48 | DebugSymbols | true |  '$(Configuration)\|$(Platform)' == 'Debug\|AnyCPU'  |
-| src/RecordSift.Domain/RecordSift.Domain.csproj | Debug | net48 | DebugType | full |  '$(Configuration)\|$(Platform)' == 'Debug\|AnyCPU'  |
-| src/RecordSift.Domain/RecordSift.Domain.csproj | Debug | net48 | Optimize | false |  '$(Configuration)\|$(Platform)' == 'Debug\|AnyCPU'  |
-| src/RecordSift.Domain/RecordSift.Domain.csproj | Debug | net48 | DefineConstants | DEBUG;TRACE |  '$(Configuration)\|$(Platform)' == 'Debug\|AnyCPU'  |
-| src/RecordSift.Domain/RecordSift.Domain.csproj | Release | net48 | DebugType | pdbonly |  '$(Configuration)\|$(Platform)' == 'Release\|AnyCPU'  |
-| src/RecordSift.Domain/RecordSift.Domain.csproj | Release | net48 | Optimize | true |  '$(Configuration)\|$(Platform)' == 'Release\|AnyCPU'  |
-| src/RecordSift.Domain/RecordSift.Domain.csproj | Release | net48 | DefineConstants | TRACE |  '$(Configuration)\|$(Platform)' == 'Release\|AnyCPU'  |
-| src/RecordSift.Application/RecordSift.Application.csproj | All | net48 | LangVersion | 7.3 | Unconditional |
-| src/RecordSift.Application/RecordSift.Application.csproj | Debug | net48 | DebugSymbols | true |  '$(Configuration)\|$(Platform)' == 'Debug\|AnyCPU'  |
-| src/RecordSift.Application/RecordSift.Application.csproj | Debug | net48 | DebugType | full |  '$(Configuration)\|$(Platform)' == 'Debug\|AnyCPU'  |
-| src/RecordSift.Application/RecordSift.Application.csproj | Debug | net48 | Optimize | false |  '$(Configuration)\|$(Platform)' == 'Debug\|AnyCPU'  |
-| src/RecordSift.Application/RecordSift.Application.csproj | Debug | net48 | DefineConstants | DEBUG;TRACE |  '$(Configuration)\|$(Platform)' == 'Debug\|AnyCPU'  |
-| src/RecordSift.Application/RecordSift.Application.csproj | Release | net48 | DebugType | pdbonly |  '$(Configuration)\|$(Platform)' == 'Release\|AnyCPU'  |
-| src/RecordSift.Application/RecordSift.Application.csproj | Release | net48 | Optimize | true |  '$(Configuration)\|$(Platform)' == 'Release\|AnyCPU'  |
-| src/RecordSift.Application/RecordSift.Application.csproj | Release | net48 | DefineConstants | TRACE |  '$(Configuration)\|$(Platform)' == 'Release\|AnyCPU'  |
-| src/RecordSift.Infrastructure.Csv/RecordSift.Infrastructure.Csv.csproj | All | net48 | LangVersion | 7.3 | Unconditional |
-| src/RecordSift.Infrastructure.Csv/RecordSift.Infrastructure.Csv.csproj | Debug | net48 | DebugSymbols | true |  '$(Configuration)\|$(Platform)' == 'Debug\|AnyCPU'  |
-| src/RecordSift.Infrastructure.Csv/RecordSift.Infrastructure.Csv.csproj | Debug | net48 | DebugType | full |  '$(Configuration)\|$(Platform)' == 'Debug\|AnyCPU'  |
-| src/RecordSift.Infrastructure.Csv/RecordSift.Infrastructure.Csv.csproj | Debug | net48 | Optimize | false |  '$(Configuration)\|$(Platform)' == 'Debug\|AnyCPU'  |
-| src/RecordSift.Infrastructure.Csv/RecordSift.Infrastructure.Csv.csproj | Debug | net48 | DefineConstants | DEBUG;TRACE |  '$(Configuration)\|$(Platform)' == 'Debug\|AnyCPU'  |
-| src/RecordSift.Infrastructure.Csv/RecordSift.Infrastructure.Csv.csproj | Release | net48 | DebugType | pdbonly |  '$(Configuration)\|$(Platform)' == 'Release\|AnyCPU'  |
-| src/RecordSift.Infrastructure.Csv/RecordSift.Infrastructure.Csv.csproj | Release | net48 | Optimize | true |  '$(Configuration)\|$(Platform)' == 'Release\|AnyCPU'  |
-| src/RecordSift.Infrastructure.Csv/RecordSift.Infrastructure.Csv.csproj | Release | net48 | DefineConstants | TRACE |  '$(Configuration)\|$(Platform)' == 'Release\|AnyCPU'  |
-| src/RecordSift.Infrastructure.Xlsx/RecordSift.Infrastructure.Xlsx.csproj | All | net48 | LangVersion | 7.3 | Unconditional |
-| src/RecordSift.Infrastructure.Xlsx/RecordSift.Infrastructure.Xlsx.csproj | Debug | net48 | DebugSymbols | true |  '$(Configuration)\|$(Platform)' == 'Debug\|AnyCPU'  |
-| src/RecordSift.Infrastructure.Xlsx/RecordSift.Infrastructure.Xlsx.csproj | Debug | net48 | DebugType | full |  '$(Configuration)\|$(Platform)' == 'Debug\|AnyCPU'  |
-| src/RecordSift.Infrastructure.Xlsx/RecordSift.Infrastructure.Xlsx.csproj | Debug | net48 | Optimize | false |  '$(Configuration)\|$(Platform)' == 'Debug\|AnyCPU'  |
-| src/RecordSift.Infrastructure.Xlsx/RecordSift.Infrastructure.Xlsx.csproj | Debug | net48 | DefineConstants | DEBUG;TRACE |  '$(Configuration)\|$(Platform)' == 'Debug\|AnyCPU'  |
-| src/RecordSift.Infrastructure.Xlsx/RecordSift.Infrastructure.Xlsx.csproj | Release | net48 | DebugType | pdbonly |  '$(Configuration)\|$(Platform)' == 'Release\|AnyCPU'  |
-| src/RecordSift.Infrastructure.Xlsx/RecordSift.Infrastructure.Xlsx.csproj | Release | net48 | Optimize | true |  '$(Configuration)\|$(Platform)' == 'Release\|AnyCPU'  |
-| src/RecordSift.Infrastructure.Xlsx/RecordSift.Infrastructure.Xlsx.csproj | Release | net48 | DefineConstants | TRACE |  '$(Configuration)\|$(Platform)' == 'Release\|AnyCPU'  |
-| src/RecordSift.Infrastructure.Reporting/RecordSift.Infrastructure.Reporting.csproj | All | net48 | LangVersion | 7.3 | Unconditional |
-| src/RecordSift.Infrastructure.Reporting/RecordSift.Infrastructure.Reporting.csproj | Debug | net48 | DebugSymbols | true |  '$(Configuration)\|$(Platform)' == 'Debug\|AnyCPU'  |
-| src/RecordSift.Infrastructure.Reporting/RecordSift.Infrastructure.Reporting.csproj | Debug | net48 | DebugType | full |  '$(Configuration)\|$(Platform)' == 'Debug\|AnyCPU'  |
-| src/RecordSift.Infrastructure.Reporting/RecordSift.Infrastructure.Reporting.csproj | Debug | net48 | Optimize | false |  '$(Configuration)\|$(Platform)' == 'Debug\|AnyCPU'  |
-| src/RecordSift.Infrastructure.Reporting/RecordSift.Infrastructure.Reporting.csproj | Debug | net48 | DefineConstants | DEBUG;TRACE |  '$(Configuration)\|$(Platform)' == 'Debug\|AnyCPU'  |
-| src/RecordSift.Infrastructure.Reporting/RecordSift.Infrastructure.Reporting.csproj | Release | net48 | DebugType | pdbonly |  '$(Configuration)\|$(Platform)' == 'Release\|AnyCPU'  |
-| src/RecordSift.Infrastructure.Reporting/RecordSift.Infrastructure.Reporting.csproj | Release | net48 | Optimize | true |  '$(Configuration)\|$(Platform)' == 'Release\|AnyCPU'  |
-| src/RecordSift.Infrastructure.Reporting/RecordSift.Infrastructure.Reporting.csproj | Release | net48 | DefineConstants | TRACE |  '$(Configuration)\|$(Platform)' == 'Release\|AnyCPU'  |
-| tests/RecordSift.Domain.Tests/RecordSift.Domain.Tests.csproj | All | net48 | LangVersion | 7.3 | Unconditional |
-| tests/RecordSift.Domain.Tests/RecordSift.Domain.Tests.csproj | Debug | net48 | DebugSymbols | true |  '$(Configuration)\|$(Platform)' == 'Debug\|AnyCPU'  |
-| tests/RecordSift.Domain.Tests/RecordSift.Domain.Tests.csproj | Debug | net48 | DebugType | full |  '$(Configuration)\|$(Platform)' == 'Debug\|AnyCPU'  |
-| tests/RecordSift.Domain.Tests/RecordSift.Domain.Tests.csproj | Debug | net48 | Optimize | false |  '$(Configuration)\|$(Platform)' == 'Debug\|AnyCPU'  |
-| tests/RecordSift.Domain.Tests/RecordSift.Domain.Tests.csproj | Debug | net48 | DefineConstants | DEBUG;TRACE |  '$(Configuration)\|$(Platform)' == 'Debug\|AnyCPU'  |
-| tests/RecordSift.Domain.Tests/RecordSift.Domain.Tests.csproj | Release | net48 | DebugType | pdbonly |  '$(Configuration)\|$(Platform)' == 'Release\|AnyCPU'  |
-| tests/RecordSift.Domain.Tests/RecordSift.Domain.Tests.csproj | Release | net48 | Optimize | true |  '$(Configuration)\|$(Platform)' == 'Release\|AnyCPU'  |
-| tests/RecordSift.Domain.Tests/RecordSift.Domain.Tests.csproj | Release | net48 | DefineConstants | TRACE |  '$(Configuration)\|$(Platform)' == 'Release\|AnyCPU'  |
-| tests/RecordSift.Application.Tests/RecordSift.Application.Tests.csproj | All | net48 | LangVersion | 7.3 | Unconditional |
-| tests/RecordSift.Application.Tests/RecordSift.Application.Tests.csproj | Debug | net48 | DebugSymbols | true |  '$(Configuration)\|$(Platform)' == 'Debug\|AnyCPU'  |
-| tests/RecordSift.Application.Tests/RecordSift.Application.Tests.csproj | Debug | net48 | DebugType | full |  '$(Configuration)\|$(Platform)' == 'Debug\|AnyCPU'  |
-| tests/RecordSift.Application.Tests/RecordSift.Application.Tests.csproj | Debug | net48 | Optimize | false |  '$(Configuration)\|$(Platform)' == 'Debug\|AnyCPU'  |
-| tests/RecordSift.Application.Tests/RecordSift.Application.Tests.csproj | Debug | net48 | DefineConstants | DEBUG;TRACE |  '$(Configuration)\|$(Platform)' == 'Debug\|AnyCPU'  |
-| tests/RecordSift.Application.Tests/RecordSift.Application.Tests.csproj | Release | net48 | DebugType | pdbonly |  '$(Configuration)\|$(Platform)' == 'Release\|AnyCPU'  |
-| tests/RecordSift.Application.Tests/RecordSift.Application.Tests.csproj | Release | net48 | Optimize | true |  '$(Configuration)\|$(Platform)' == 'Release\|AnyCPU'  |
-| tests/RecordSift.Application.Tests/RecordSift.Application.Tests.csproj | Release | net48 | DefineConstants | TRACE |  '$(Configuration)\|$(Platform)' == 'Release\|AnyCPU'  |
-| tests/RecordSift.Infrastructure.Csv.Tests/RecordSift.Infrastructure.Csv.Tests.csproj | All | net48 | LangVersion | 7.3 | Unconditional |
-| tests/RecordSift.Infrastructure.Csv.Tests/RecordSift.Infrastructure.Csv.Tests.csproj | Debug | net48 | DebugSymbols | true |  '$(Configuration)\|$(Platform)' == 'Debug\|AnyCPU'  |
-| tests/RecordSift.Infrastructure.Csv.Tests/RecordSift.Infrastructure.Csv.Tests.csproj | Debug | net48 | DebugType | full |  '$(Configuration)\|$(Platform)' == 'Debug\|AnyCPU'  |
-| tests/RecordSift.Infrastructure.Csv.Tests/RecordSift.Infrastructure.Csv.Tests.csproj | Debug | net48 | Optimize | false |  '$(Configuration)\|$(Platform)' == 'Debug\|AnyCPU'  |
-| tests/RecordSift.Infrastructure.Csv.Tests/RecordSift.Infrastructure.Csv.Tests.csproj | Debug | net48 | DefineConstants | DEBUG;TRACE |  '$(Configuration)\|$(Platform)' == 'Debug\|AnyCPU'  |
-| tests/RecordSift.Infrastructure.Csv.Tests/RecordSift.Infrastructure.Csv.Tests.csproj | Release | net48 | DebugType | pdbonly |  '$(Configuration)\|$(Platform)' == 'Release\|AnyCPU'  |
-| tests/RecordSift.Infrastructure.Csv.Tests/RecordSift.Infrastructure.Csv.Tests.csproj | Release | net48 | Optimize | true |  '$(Configuration)\|$(Platform)' == 'Release\|AnyCPU'  |
-| tests/RecordSift.Infrastructure.Csv.Tests/RecordSift.Infrastructure.Csv.Tests.csproj | Release | net48 | DefineConstants | TRACE |  '$(Configuration)\|$(Platform)' == 'Release\|AnyCPU'  |
-| tests/RecordSift.Infrastructure.Xlsx.Tests/RecordSift.Infrastructure.Xlsx.Tests.csproj | All | net48 | LangVersion | 7.3 | Unconditional |
-| tests/RecordSift.Infrastructure.Xlsx.Tests/RecordSift.Infrastructure.Xlsx.Tests.csproj | Debug | net48 | DebugSymbols | true |  '$(Configuration)\|$(Platform)' == 'Debug\|AnyCPU'  |
-| tests/RecordSift.Infrastructure.Xlsx.Tests/RecordSift.Infrastructure.Xlsx.Tests.csproj | Debug | net48 | DebugType | full |  '$(Configuration)\|$(Platform)' == 'Debug\|AnyCPU'  |
-| tests/RecordSift.Infrastructure.Xlsx.Tests/RecordSift.Infrastructure.Xlsx.Tests.csproj | Debug | net48 | Optimize | false |  '$(Configuration)\|$(Platform)' == 'Debug\|AnyCPU'  |
-| tests/RecordSift.Infrastructure.Xlsx.Tests/RecordSift.Infrastructure.Xlsx.Tests.csproj | Debug | net48 | DefineConstants | DEBUG;TRACE |  '$(Configuration)\|$(Platform)' == 'Debug\|AnyCPU'  |
-| tests/RecordSift.Infrastructure.Xlsx.Tests/RecordSift.Infrastructure.Xlsx.Tests.csproj | Release | net48 | DebugType | pdbonly |  '$(Configuration)\|$(Platform)' == 'Release\|AnyCPU'  |
-| tests/RecordSift.Infrastructure.Xlsx.Tests/RecordSift.Infrastructure.Xlsx.Tests.csproj | Release | net48 | Optimize | true |  '$(Configuration)\|$(Platform)' == 'Release\|AnyCPU'  |
-| tests/RecordSift.Infrastructure.Xlsx.Tests/RecordSift.Infrastructure.Xlsx.Tests.csproj | Release | net48 | DefineConstants | TRACE |  '$(Configuration)\|$(Platform)' == 'Release\|AnyCPU'  |
-| tests/RecordSift.Infrastructure.Reporting.Tests/RecordSift.Infrastructure.Reporting.Tests.csproj | All | net48 | LangVersion | 7.3 | Unconditional |
-| tests/RecordSift.Infrastructure.Reporting.Tests/RecordSift.Infrastructure.Reporting.Tests.csproj | Debug | net48 | DebugSymbols | true |  '$(Configuration)\|$(Platform)' == 'Debug\|AnyCPU'  |
-| tests/RecordSift.Infrastructure.Reporting.Tests/RecordSift.Infrastructure.Reporting.Tests.csproj | Debug | net48 | DebugType | full |  '$(Configuration)\|$(Platform)' == 'Debug\|AnyCPU'  |
-| tests/RecordSift.Infrastructure.Reporting.Tests/RecordSift.Infrastructure.Reporting.Tests.csproj | Debug | net48 | Optimize | false |  '$(Configuration)\|$(Platform)' == 'Debug\|AnyCPU'  |
-| tests/RecordSift.Infrastructure.Reporting.Tests/RecordSift.Infrastructure.Reporting.Tests.csproj | Debug | net48 | DefineConstants | DEBUG;TRACE |  '$(Configuration)\|$(Platform)' == 'Debug\|AnyCPU'  |
-| tests/RecordSift.Infrastructure.Reporting.Tests/RecordSift.Infrastructure.Reporting.Tests.csproj | Release | net48 | DebugType | pdbonly |  '$(Configuration)\|$(Platform)' == 'Release\|AnyCPU'  |
-| tests/RecordSift.Infrastructure.Reporting.Tests/RecordSift.Infrastructure.Reporting.Tests.csproj | Release | net48 | Optimize | true |  '$(Configuration)\|$(Platform)' == 'Release\|AnyCPU'  |
-| tests/RecordSift.Infrastructure.Reporting.Tests/RecordSift.Infrastructure.Reporting.Tests.csproj | Release | net48 | DefineConstants | TRACE |  '$(Configuration)\|$(Platform)' == 'Release\|AnyCPU'  |
+| src/RecordSift.Domain/RecordSift.Domain.csproj | All | v4.8 | LangVersion | 7.3 | Unconditional |
+| src/RecordSift.Domain/RecordSift.Domain.csproj | Debug | v4.8 | DebugSymbols | true |  '$(Configuration)\|$(Platform)' == 'Debug\|AnyCPU'  |
+| src/RecordSift.Domain/RecordSift.Domain.csproj | Debug | v4.8 | DebugType | full |  '$(Configuration)\|$(Platform)' == 'Debug\|AnyCPU'  |
+| src/RecordSift.Domain/RecordSift.Domain.csproj | Debug | v4.8 | Optimize | false |  '$(Configuration)\|$(Platform)' == 'Debug\|AnyCPU'  |
+| src/RecordSift.Domain/RecordSift.Domain.csproj | Debug | v4.8 | DefineConstants | DEBUG;TRACE |  '$(Configuration)\|$(Platform)' == 'Debug\|AnyCPU'  |
+| src/RecordSift.Domain/RecordSift.Domain.csproj | Release | v4.8 | DebugType | pdbonly |  '$(Configuration)\|$(Platform)' == 'Release\|AnyCPU'  |
+| src/RecordSift.Domain/RecordSift.Domain.csproj | Release | v4.8 | Optimize | true |  '$(Configuration)\|$(Platform)' == 'Release\|AnyCPU'  |
+| src/RecordSift.Domain/RecordSift.Domain.csproj | Release | v4.8 | DefineConstants | TRACE |  '$(Configuration)\|$(Platform)' == 'Release\|AnyCPU'  |
+| src/RecordSift.Application/RecordSift.Application.csproj | All | v4.8 | LangVersion | 7.3 | Unconditional |
+| src/RecordSift.Application/RecordSift.Application.csproj | Debug | v4.8 | DebugSymbols | true |  '$(Configuration)\|$(Platform)' == 'Debug\|AnyCPU'  |
+| src/RecordSift.Application/RecordSift.Application.csproj | Debug | v4.8 | DebugType | full |  '$(Configuration)\|$(Platform)' == 'Debug\|AnyCPU'  |
+| src/RecordSift.Application/RecordSift.Application.csproj | Debug | v4.8 | Optimize | false |  '$(Configuration)\|$(Platform)' == 'Debug\|AnyCPU'  |
+| src/RecordSift.Application/RecordSift.Application.csproj | Debug | v4.8 | DefineConstants | DEBUG;TRACE |  '$(Configuration)\|$(Platform)' == 'Debug\|AnyCPU'  |
+| src/RecordSift.Application/RecordSift.Application.csproj | Release | v4.8 | DebugType | pdbonly |  '$(Configuration)\|$(Platform)' == 'Release\|AnyCPU'  |
+| src/RecordSift.Application/RecordSift.Application.csproj | Release | v4.8 | Optimize | true |  '$(Configuration)\|$(Platform)' == 'Release\|AnyCPU'  |
+| src/RecordSift.Application/RecordSift.Application.csproj | Release | v4.8 | DefineConstants | TRACE |  '$(Configuration)\|$(Platform)' == 'Release\|AnyCPU'  |
+| src/RecordSift.Infrastructure.Csv/RecordSift.Infrastructure.Csv.csproj | All | v4.8 | LangVersion | 7.3 | Unconditional |
+| src/RecordSift.Infrastructure.Csv/RecordSift.Infrastructure.Csv.csproj | Debug | v4.8 | DebugSymbols | true |  '$(Configuration)\|$(Platform)' == 'Debug\|AnyCPU'  |
+| src/RecordSift.Infrastructure.Csv/RecordSift.Infrastructure.Csv.csproj | Debug | v4.8 | DebugType | full |  '$(Configuration)\|$(Platform)' == 'Debug\|AnyCPU'  |
+| src/RecordSift.Infrastructure.Csv/RecordSift.Infrastructure.Csv.csproj | Debug | v4.8 | Optimize | false |  '$(Configuration)\|$(Platform)' == 'Debug\|AnyCPU'  |
+| src/RecordSift.Infrastructure.Csv/RecordSift.Infrastructure.Csv.csproj | Debug | v4.8 | DefineConstants | DEBUG;TRACE |  '$(Configuration)\|$(Platform)' == 'Debug\|AnyCPU'  |
+| src/RecordSift.Infrastructure.Csv/RecordSift.Infrastructure.Csv.csproj | Release | v4.8 | DebugType | pdbonly |  '$(Configuration)\|$(Platform)' == 'Release\|AnyCPU'  |
+| src/RecordSift.Infrastructure.Csv/RecordSift.Infrastructure.Csv.csproj | Release | v4.8 | Optimize | true |  '$(Configuration)\|$(Platform)' == 'Release\|AnyCPU'  |
+| src/RecordSift.Infrastructure.Csv/RecordSift.Infrastructure.Csv.csproj | Release | v4.8 | DefineConstants | TRACE |  '$(Configuration)\|$(Platform)' == 'Release\|AnyCPU'  |
+| src/RecordSift.Infrastructure.Xlsx/RecordSift.Infrastructure.Xlsx.csproj | All | v4.8 | LangVersion | 7.3 | Unconditional |
+| src/RecordSift.Infrastructure.Xlsx/RecordSift.Infrastructure.Xlsx.csproj | Debug | v4.8 | DebugSymbols | true |  '$(Configuration)\|$(Platform)' == 'Debug\|AnyCPU'  |
+| src/RecordSift.Infrastructure.Xlsx/RecordSift.Infrastructure.Xlsx.csproj | Debug | v4.8 | DebugType | full |  '$(Configuration)\|$(Platform)' == 'Debug\|AnyCPU'  |
+| src/RecordSift.Infrastructure.Xlsx/RecordSift.Infrastructure.Xlsx.csproj | Debug | v4.8 | Optimize | false |  '$(Configuration)\|$(Platform)' == 'Debug\|AnyCPU'  |
+| src/RecordSift.Infrastructure.Xlsx/RecordSift.Infrastructure.Xlsx.csproj | Debug | v4.8 | DefineConstants | DEBUG;TRACE |  '$(Configuration)\|$(Platform)' == 'Debug\|AnyCPU'  |
+| src/RecordSift.Infrastructure.Xlsx/RecordSift.Infrastructure.Xlsx.csproj | Release | v4.8 | DebugType | pdbonly |  '$(Configuration)\|$(Platform)' == 'Release\|AnyCPU'  |
+| src/RecordSift.Infrastructure.Xlsx/RecordSift.Infrastructure.Xlsx.csproj | Release | v4.8 | Optimize | true |  '$(Configuration)\|$(Platform)' == 'Release\|AnyCPU'  |
+| src/RecordSift.Infrastructure.Xlsx/RecordSift.Infrastructure.Xlsx.csproj | Release | v4.8 | DefineConstants | TRACE |  '$(Configuration)\|$(Platform)' == 'Release\|AnyCPU'  |
+| src/RecordSift.Infrastructure.Reporting/RecordSift.Infrastructure.Reporting.csproj | All | v4.8 | LangVersion | 7.3 | Unconditional |
+| src/RecordSift.Infrastructure.Reporting/RecordSift.Infrastructure.Reporting.csproj | Debug | v4.8 | DebugSymbols | true |  '$(Configuration)\|$(Platform)' == 'Debug\|AnyCPU'  |
+| src/RecordSift.Infrastructure.Reporting/RecordSift.Infrastructure.Reporting.csproj | Debug | v4.8 | DebugType | full |  '$(Configuration)\|$(Platform)' == 'Debug\|AnyCPU'  |
+| src/RecordSift.Infrastructure.Reporting/RecordSift.Infrastructure.Reporting.csproj | Debug | v4.8 | Optimize | false |  '$(Configuration)\|$(Platform)' == 'Debug\|AnyCPU'  |
+| src/RecordSift.Infrastructure.Reporting/RecordSift.Infrastructure.Reporting.csproj | Debug | v4.8 | DefineConstants | DEBUG;TRACE |  '$(Configuration)\|$(Platform)' == 'Debug\|AnyCPU'  |
+| src/RecordSift.Infrastructure.Reporting/RecordSift.Infrastructure.Reporting.csproj | Release | v4.8 | DebugType | pdbonly |  '$(Configuration)\|$(Platform)' == 'Release\|AnyCPU'  |
+| src/RecordSift.Infrastructure.Reporting/RecordSift.Infrastructure.Reporting.csproj | Release | v4.8 | Optimize | true |  '$(Configuration)\|$(Platform)' == 'Release\|AnyCPU'  |
+| src/RecordSift.Infrastructure.Reporting/RecordSift.Infrastructure.Reporting.csproj | Release | v4.8 | DefineConstants | TRACE |  '$(Configuration)\|$(Platform)' == 'Release\|AnyCPU'  |
+| tests/RecordSift.Domain.Tests/RecordSift.Domain.Tests.csproj | All | v4.8 | LangVersion | 7.3 | Unconditional |
+| tests/RecordSift.Domain.Tests/RecordSift.Domain.Tests.csproj | Debug | v4.8 | DebugSymbols | true |  '$(Configuration)\|$(Platform)' == 'Debug\|AnyCPU'  |
+| tests/RecordSift.Domain.Tests/RecordSift.Domain.Tests.csproj | Debug | v4.8 | DebugType | full |  '$(Configuration)\|$(Platform)' == 'Debug\|AnyCPU'  |
+| tests/RecordSift.Domain.Tests/RecordSift.Domain.Tests.csproj | Debug | v4.8 | Optimize | false |  '$(Configuration)\|$(Platform)' == 'Debug\|AnyCPU'  |
+| tests/RecordSift.Domain.Tests/RecordSift.Domain.Tests.csproj | Debug | v4.8 | DefineConstants | DEBUG;TRACE |  '$(Configuration)\|$(Platform)' == 'Debug\|AnyCPU'  |
+| tests/RecordSift.Domain.Tests/RecordSift.Domain.Tests.csproj | Release | v4.8 | DebugType | pdbonly |  '$(Configuration)\|$(Platform)' == 'Release\|AnyCPU'  |
+| tests/RecordSift.Domain.Tests/RecordSift.Domain.Tests.csproj | Release | v4.8 | Optimize | true |  '$(Configuration)\|$(Platform)' == 'Release\|AnyCPU'  |
+| tests/RecordSift.Domain.Tests/RecordSift.Domain.Tests.csproj | Release | v4.8 | DefineConstants | TRACE |  '$(Configuration)\|$(Platform)' == 'Release\|AnyCPU'  |
+| tests/RecordSift.Application.Tests/RecordSift.Application.Tests.csproj | All | v4.8 | LangVersion | 7.3 | Unconditional |
+| tests/RecordSift.Application.Tests/RecordSift.Application.Tests.csproj | Debug | v4.8 | DebugSymbols | true |  '$(Configuration)\|$(Platform)' == 'Debug\|AnyCPU'  |
+| tests/RecordSift.Application.Tests/RecordSift.Application.Tests.csproj | Debug | v4.8 | DebugType | full |  '$(Configuration)\|$(Platform)' == 'Debug\|AnyCPU'  |
+| tests/RecordSift.Application.Tests/RecordSift.Application.Tests.csproj | Debug | v4.8 | Optimize | false |  '$(Configuration)\|$(Platform)' == 'Debug\|AnyCPU'  |
+| tests/RecordSift.Application.Tests/RecordSift.Application.Tests.csproj | Debug | v4.8 | DefineConstants | DEBUG;TRACE |  '$(Configuration)\|$(Platform)' == 'Debug\|AnyCPU'  |
+| tests/RecordSift.Application.Tests/RecordSift.Application.Tests.csproj | Release | v4.8 | DebugType | pdbonly |  '$(Configuration)\|$(Platform)' == 'Release\|AnyCPU'  |
+| tests/RecordSift.Application.Tests/RecordSift.Application.Tests.csproj | Release | v4.8 | Optimize | true |  '$(Configuration)\|$(Platform)' == 'Release\|AnyCPU'  |
+| tests/RecordSift.Application.Tests/RecordSift.Application.Tests.csproj | Release | v4.8 | DefineConstants | TRACE |  '$(Configuration)\|$(Platform)' == 'Release\|AnyCPU'  |
+| tests/RecordSift.Infrastructure.Csv.Tests/RecordSift.Infrastructure.Csv.Tests.csproj | All | v4.8 | LangVersion | 7.3 | Unconditional |
+| tests/RecordSift.Infrastructure.Csv.Tests/RecordSift.Infrastructure.Csv.Tests.csproj | Debug | v4.8 | DebugSymbols | true |  '$(Configuration)\|$(Platform)' == 'Debug\|AnyCPU'  |
+| tests/RecordSift.Infrastructure.Csv.Tests/RecordSift.Infrastructure.Csv.Tests.csproj | Debug | v4.8 | DebugType | full |  '$(Configuration)\|$(Platform)' == 'Debug\|AnyCPU'  |
+| tests/RecordSift.Infrastructure.Csv.Tests/RecordSift.Infrastructure.Csv.Tests.csproj | Debug | v4.8 | Optimize | false |  '$(Configuration)\|$(Platform)' == 'Debug\|AnyCPU'  |
+| tests/RecordSift.Infrastructure.Csv.Tests/RecordSift.Infrastructure.Csv.Tests.csproj | Debug | v4.8 | DefineConstants | DEBUG;TRACE |  '$(Configuration)\|$(Platform)' == 'Debug\|AnyCPU'  |
+| tests/RecordSift.Infrastructure.Csv.Tests/RecordSift.Infrastructure.Csv.Tests.csproj | Release | v4.8 | DebugType | pdbonly |  '$(Configuration)\|$(Platform)' == 'Release\|AnyCPU'  |
+| tests/RecordSift.Infrastructure.Csv.Tests/RecordSift.Infrastructure.Csv.Tests.csproj | Release | v4.8 | Optimize | true |  '$(Configuration)\|$(Platform)' == 'Release\|AnyCPU'  |
+| tests/RecordSift.Infrastructure.Csv.Tests/RecordSift.Infrastructure.Csv.Tests.csproj | Release | v4.8 | DefineConstants | TRACE |  '$(Configuration)\|$(Platform)' == 'Release\|AnyCPU'  |
+| tests/RecordSift.Infrastructure.Xlsx.Tests/RecordSift.Infrastructure.Xlsx.Tests.csproj | All | v4.8 | LangVersion | 7.3 | Unconditional |
+| tests/RecordSift.Infrastructure.Xlsx.Tests/RecordSift.Infrastructure.Xlsx.Tests.csproj | Debug | v4.8 | DebugSymbols | true |  '$(Configuration)\|$(Platform)' == 'Debug\|AnyCPU'  |
+| tests/RecordSift.Infrastructure.Xlsx.Tests/RecordSift.Infrastructure.Xlsx.Tests.csproj | Debug | v4.8 | DebugType | full |  '$(Configuration)\|$(Platform)' == 'Debug\|AnyCPU'  |
+| tests/RecordSift.Infrastructure.Xlsx.Tests/RecordSift.Infrastructure.Xlsx.Tests.csproj | Debug | v4.8 | Optimize | false |  '$(Configuration)\|$(Platform)' == 'Debug\|AnyCPU'  |
+| tests/RecordSift.Infrastructure.Xlsx.Tests/RecordSift.Infrastructure.Xlsx.Tests.csproj | Debug | v4.8 | DefineConstants | DEBUG;TRACE |  '$(Configuration)\|$(Platform)' == 'Debug\|AnyCPU'  |
+| tests/RecordSift.Infrastructure.Xlsx.Tests/RecordSift.Infrastructure.Xlsx.Tests.csproj | Release | v4.8 | DebugType | pdbonly |  '$(Configuration)\|$(Platform)' == 'Release\|AnyCPU'  |
+| tests/RecordSift.Infrastructure.Xlsx.Tests/RecordSift.Infrastructure.Xlsx.Tests.csproj | Release | v4.8 | Optimize | true |  '$(Configuration)\|$(Platform)' == 'Release\|AnyCPU'  |
+| tests/RecordSift.Infrastructure.Xlsx.Tests/RecordSift.Infrastructure.Xlsx.Tests.csproj | Release | v4.8 | DefineConstants | TRACE |  '$(Configuration)\|$(Platform)' == 'Release\|AnyCPU'  |
+| tests/RecordSift.Infrastructure.Reporting.Tests/RecordSift.Infrastructure.Reporting.Tests.csproj | All | v4.8 | LangVersion | 7.3 | Unconditional |
+| tests/RecordSift.Infrastructure.Reporting.Tests/RecordSift.Infrastructure.Reporting.Tests.csproj | Debug | v4.8 | DebugSymbols | true |  '$(Configuration)\|$(Platform)' == 'Debug\|AnyCPU'  |
+| tests/RecordSift.Infrastructure.Reporting.Tests/RecordSift.Infrastructure.Reporting.Tests.csproj | Debug | v4.8 | DebugType | full |  '$(Configuration)\|$(Platform)' == 'Debug\|AnyCPU'  |
+| tests/RecordSift.Infrastructure.Reporting.Tests/RecordSift.Infrastructure.Reporting.Tests.csproj | Debug | v4.8 | Optimize | false |  '$(Configuration)\|$(Platform)' == 'Debug\|AnyCPU'  |
+| tests/RecordSift.Infrastructure.Reporting.Tests/RecordSift.Infrastructure.Reporting.Tests.csproj | Debug | v4.8 | DefineConstants | DEBUG;TRACE |  '$(Configuration)\|$(Platform)' == 'Debug\|AnyCPU'  |
+| tests/RecordSift.Infrastructure.Reporting.Tests/RecordSift.Infrastructure.Reporting.Tests.csproj | Release | v4.8 | DebugType | pdbonly |  '$(Configuration)\|$(Platform)' == 'Release\|AnyCPU'  |
+| tests/RecordSift.Infrastructure.Reporting.Tests/RecordSift.Infrastructure.Reporting.Tests.csproj | Release | v4.8 | Optimize | true |  '$(Configuration)\|$(Platform)' == 'Release\|AnyCPU'  |
+| tests/RecordSift.Infrastructure.Reporting.Tests/RecordSift.Infrastructure.Reporting.Tests.csproj | Release | v4.8 | DefineConstants | TRACE |  '$(Configuration)\|$(Platform)' == 'Release\|AnyCPU'  |
 
 ### 39. Output and Validation Settings
 

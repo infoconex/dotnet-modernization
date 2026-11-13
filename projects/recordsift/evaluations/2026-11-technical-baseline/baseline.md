@@ -59,53 +59,91 @@ The [getting-started guide](https://github.com/infoconex/RecordSift/blob/1809d06
 
 ## Discovery host and prerequisite tools
 
-**Existing CI evidence:** [Windows restore, MSBuild and NUnit job](https://github.com/infoconex/RecordSift/actions/runs/43146607664/job/130945777245), pinned to RecordSift commit `1809d06c0fade59e4769d16e0f8eaf10fa426004` and executed November 12, 2026 (UTC), on `windows-2022` runner image `20261101.353.1`. The CI runner and operator's machine are **independent environments**. No operator-local host inventory has been executed.
+**Existing CI evidence:** [Windows host/tool inventory research job](https://github.com/infoconex/RecordSift/actions/runs/43514868868/job/132194144480), executed 2026-11-13 UTC from draft RecordSift research PR #273. The job checked out the immutable application source `1809d06c0fade59e4769d16e0f8eaf10fa426004` on hosted `windows-2022` runner image `20261112.366.7` (`win22`). This is a **specific ephemeral CI machine**, not the operator's Windows environment. A separate [2026-11-12 application build/test run](https://github.com/infoconex/RecordSift/actions/runs/43146607664/job/130945777245) used an earlier runner image; its values are retained as historical evidence, not merged into the new image's complete tool inventory.
 
 | Field | Existing CI Runner | Operator Local |
 |---|---|---|
-| 20. Operating System Name | Microsoft Windows Server 2022 | Not checked |
+| 20. Operating System Name | Microsoft Windows Server 2022 Datacenter | Not checked |
 | 21. Operating System Version | `10.0.20348` | Not checked |
 | 22. Operating System Build | `20348` | Not checked |
-| 23. Operating System Architecture | Not checked | Not checked |
-| 24. PowerShell Version | Not checked | Not checked |
-| 25. Git Version | `2.56.0.windows.4` | Not checked |
-
-**Partial CI observation:** The job ran `C:\Program Files\PowerShell\7\pwsh.exe`, but its exact version was not logged. No OS/processor architecture measurement was captured.
+| 23. Operating System Architecture | 64-bit | Not checked |
+| 24. PowerShell Version | `7.6.10` | Not checked |
+| 25. Git Version | `2.56.1.windows.1` | Not checked |
 
 ### 26. .NET SDK Inventory
 
 | Environment | SDK Version | Installation Path |
 |---|---|---|
-| Existing CI runner | `10.0.403` | Not checked |
+| Existing CI runner | `8.0.134` | `C:\Program Files\dotnet\sdk` |
+| Existing CI runner | `8.0.206` | `C:\Program Files\dotnet\sdk` |
+| Existing CI runner | `8.0.319` | `C:\Program Files\dotnet\sdk` |
+| Existing CI runner | `8.0.428` | `C:\Program Files\dotnet\sdk` |
+| Existing CI runner | `9.0.124` | `C:\Program Files\dotnet\sdk` |
+| Existing CI runner | `9.0.205` | `C:\Program Files\dotnet\sdk` |
+| Existing CI runner | `9.0.321` | `C:\Program Files\dotnet\sdk` |
+| Existing CI runner | `10.0.115` | `C:\Program Files\dotnet\sdk` |
+| Existing CI runner | `10.0.204` | `C:\Program Files\dotnet\sdk` |
+| Existing CI runner | `10.0.303` | `C:\Program Files\dotnet\sdk` |
+| Existing CI runner | `10.0.404` | `C:\Program Files\dotnet\sdk` |
+| Existing CI runner | `11.0.100` | `C:\Program Files\dotnet\sdk` |
 | Operator local | Not checked | Not checked |
 
-**Partial CI observation:** `dotnet --version` reported the selected SDK. Neither a full `dotnet --list-sdks` inventory nor installation paths were logged.
+**Scope:** All 12 SDK versions are the observed output of `dotnet --list-sdks` for the research runner. Their reported paths are SDK installation roots, not a claim that each version has a different path.
 
 ### 27. .NET Runtime Inventory
 
 | Environment | Runtime Name | Runtime Version | Installation Path |
 |---|---|---|---|
-| Existing CI runner | .NET Framework CLR | `v4.0.30319.42000` | Not checked |
+| Existing CI runner | `Microsoft.AspNetCore.App` | `6.0.48` | `C:\Program Files\dotnet\shared\Microsoft.AspNetCore.App` |
+| Existing CI runner | `Microsoft.AspNetCore.App` | `8.0.6` | `C:\Program Files\dotnet\shared\Microsoft.AspNetCore.App` |
+| Existing CI runner | `Microsoft.AspNetCore.App` | `8.0.22` | `C:\Program Files\dotnet\shared\Microsoft.AspNetCore.App` |
+| Existing CI runner | `Microsoft.AspNetCore.App` | `8.0.34` | `C:\Program Files\dotnet\shared\Microsoft.AspNetCore.App` |
+| Existing CI runner | `Microsoft.AspNetCore.App` | `9.0.6` | `C:\Program Files\dotnet\shared\Microsoft.AspNetCore.App` |
+| Existing CI runner | `Microsoft.AspNetCore.App` | `9.0.23` | `C:\Program Files\dotnet\shared\Microsoft.AspNetCore.App` |
+| Existing CI runner | `Microsoft.AspNetCore.App` | `10.0.8` | `C:\Program Files\dotnet\shared\Microsoft.AspNetCore.App` |
+| Existing CI runner | `Microsoft.AspNetCore.App` | `10.0.11` | `C:\Program Files\dotnet\shared\Microsoft.AspNetCore.App` |
+| Existing CI runner | `Microsoft.AspNetCore.App` | `10.0.15` | `C:\Program Files\dotnet\shared\Microsoft.AspNetCore.App` |
+| Existing CI runner | `Microsoft.AspNetCore.App` | `11.0.0` | `C:\Program Files\dotnet\shared\Microsoft.AspNetCore.App` |
+| Existing CI runner | `Microsoft.NETCore.App` | `6.0.48` | `C:\Program Files\dotnet\shared\Microsoft.NETCore.App` |
+| Existing CI runner | `Microsoft.NETCore.App` | `8.0.6` | `C:\Program Files\dotnet\shared\Microsoft.NETCore.App` |
+| Existing CI runner | `Microsoft.NETCore.App` | `8.0.22` | `C:\Program Files\dotnet\shared\Microsoft.NETCore.App` |
+| Existing CI runner | `Microsoft.NETCore.App` | `8.0.34` | `C:\Program Files\dotnet\shared\Microsoft.NETCore.App` |
+| Existing CI runner | `Microsoft.NETCore.App` | `9.0.6` | `C:\Program Files\dotnet\shared\Microsoft.NETCore.App` |
+| Existing CI runner | `Microsoft.NETCore.App` | `9.0.23` | `C:\Program Files\dotnet\shared\Microsoft.NETCore.App` |
+| Existing CI runner | `Microsoft.NETCore.App` | `10.0.8` | `C:\Program Files\dotnet\shared\Microsoft.NETCore.App` |
+| Existing CI runner | `Microsoft.NETCore.App` | `10.0.11` | `C:\Program Files\dotnet\shared\Microsoft.NETCore.App` |
+| Existing CI runner | `Microsoft.NETCore.App` | `10.0.15` | `C:\Program Files\dotnet\shared\Microsoft.NETCore.App` |
+| Existing CI runner | `Microsoft.NETCore.App` | `11.0.0` | `C:\Program Files\dotnet\shared\Microsoft.NETCore.App` |
+| Existing CI runner | `Microsoft.WindowsDesktop.App` | `8.0.6` | `C:\Program Files\dotnet\shared\Microsoft.WindowsDesktop.App` |
+| Existing CI runner | `Microsoft.WindowsDesktop.App` | `8.0.22` | `C:\Program Files\dotnet\shared\Microsoft.WindowsDesktop.App` |
+| Existing CI runner | `Microsoft.WindowsDesktop.App` | `8.0.34` | `C:\Program Files\dotnet\shared\Microsoft.WindowsDesktop.App` |
+| Existing CI runner | `Microsoft.WindowsDesktop.App` | `9.0.6` | `C:\Program Files\dotnet\shared\Microsoft.WindowsDesktop.App` |
+| Existing CI runner | `Microsoft.WindowsDesktop.App` | `9.0.23` | `C:\Program Files\dotnet\shared\Microsoft.WindowsDesktop.App` |
+| Existing CI runner | `Microsoft.WindowsDesktop.App` | `10.0.8` | `C:\Program Files\dotnet\shared\Microsoft.WindowsDesktop.App` |
+| Existing CI runner | `Microsoft.WindowsDesktop.App` | `10.0.11` | `C:\Program Files\dotnet\shared\Microsoft.WindowsDesktop.App` |
+| Existing CI runner | `Microsoft.WindowsDesktop.App` | `10.0.15` | `C:\Program Files\dotnet\shared\Microsoft.WindowsDesktop.App` |
+| Existing CI runner | `Microsoft.WindowsDesktop.App` | `11.0.0` | `C:\Program Files\dotnet\shared\Microsoft.WindowsDesktop.App` |
+| Earlier CI runner (NUnit, 2026-11-12) | .NET Framework CLR | `v4.0.30319.42000` | Not checked |
 | Operator local | Not checked | Not checked | Not checked |
 
-**Partial CI observation:** NUnit reported a .NET Framework CLR runtime, not a full `dotnet --list-runtimes` inventory or the .NET Framework product version.
+**Scope:** The 29 .NET runtime rows above were captured by `dotnet --list-runtimes` on the 2026-11-13 research runner. The separately labeled .NET Framework CLR observation comes from the earlier NUnit run, not from that command; its CLR version does not independently identify the .NET Framework product version. The research runner also recorded .NET Framework 4.x registry values and a direct v4.8 reference-assembly check (item 31).
 
 | Field | Existing CI Runner | Operator Local |
 |---|---|---|
 | 28. MSBuild Version | `17.14.60.43110` | Not checked |
-| 29. MSBuild Installation Source | Visual Studio 2022 Enterprise | Not checked |
-| 30. NuGet CLI Version | Not checked | Not checked |
+| 29. MSBuild Installation Source | Visual Studio Enterprise 2022 | Not checked |
+| 30. NuGet CLI Version | `8.0.0.137` | Not checked |
 
-**Partial CI observation:** NuGet restore succeeded but did not log the CLI version. MSBuild was auto-detected under `C:\Program Files\Microsoft Visual Studio\2022\Enterprise\MSBuild\Current\bin`.
+**Tool provenance:** The [research job](https://github.com/infoconex/RecordSift/actions/runs/43514868868/job/132194144480) resolved MSBuild at `C:\Program Files\Microsoft Visual Studio\2022\Enterprise\MSBuild\Current\Bin\MSBuild.exe` through Visual Studio `vswhere` and resolved `nuget.exe` from `C:\ProgramData\Chocolatey\bin\nuget.exe`. These locations are runner observations, not operator-local paths.
 
 ### 31. .NET Framework Targeting Pack Inventory
 
 | Environment | Framework Version | Installed | Location |
 |---|---|---|---|
-| Existing CI runner | `v4.8` | Not checked | Not checked |
+| Existing CI runner | `v4.8` | True | `C:\Program Files (x86)\Reference Assemblies\Microsoft\Framework\.NETFramework\v4.8` |
 | Operator local | `v4.8` | Not checked | Not checked |
 
-**Partial CI observation:** The successful `net48` build verifies CI build capability, not the exact reference-assembly installation or targeting-pack path.
+**Direct CI file verification:** The [research job](https://github.com/infoconex/RecordSift/actions/runs/43514868868/job/132194144480) confirmed `C:\Program Files (x86)\Reference Assemblies\Microsoft\Framework\.NETFramework\v4.8\mscorlib.dll` and `C:\Program Files (x86)\Reference Assemblies\Microsoft\Framework\.NETFramework\v4.8\RedistList\FrameworkList.xml` both exist. This establishes reference-assembly availability **on that runner**, rather than inferring it from a successful build. The runner's .NET Framework Full registry values were `Release=533509` and `Version=4.8.09221`; these are observed product-registration values, not a new minimum requirement for RecordSift.
 
 ### 32. Test Runner Inventory
 
@@ -484,13 +522,11 @@ Each distribution has its own record. NuGet package upload acceptance was previo
 
 | Finding | Impact | Evidence | Next Check |
 |---|---|---|---|
-| Windows discovery machine not inventoried | Cannot assert local tool/readiness baseline | Items 20–31 | Perform Windows host and tool version commands |
+| Operator Windows discovery machine not inventoried | CI tool inventory verified for the hosted Windows research runner (EV-016), but operator-local versions and paths remain unknown | Items 20–31; EV-016 | Perform operator Windows host and tool version commands |
 | Clean local checkout not verified | Local filesystem and Git state remain unknown | Items 33–38 | Clone selected SHA into unique discovery folder |
 | Operator-local MSBuild evaluation outstanding | CI evaluated 20 project/configuration scopes; local tool/import differences remain unverified | Item 44; EV-015 | Evaluate the same properties on an approved operator Windows checkout if local parity is required |
 | Build-policy properties not explicitly set in evaluated results | `Deterministic`, `TreatWarningsAsErrors` and `PlatformTarget` returned empty strings; the output alone does not establish compiler-switch behavior | Item 44; [CI evidence](https://github.com/infoconex/RecordSift/actions/runs/43501555831/job/132148357265) | Inspect actual compiler invocations and existing build gates before proposing policy changes |
 | CI outcomes are not local execution evidence | CI success cannot verify operator environment | Items 50–52 | Restore, build and run tests in the approved Windows checkout |
-| CI host version and architecture evidence incomplete | Exact OS architecture, PowerShell version, NuGet CLI version and complete SDK/runtime inventories are unavailable | Items 23–30; [Windows CI job](https://github.com/infoconex/RecordSift/actions/runs/43146607664/job/130945777245) | Capture explicit version and inventory outputs in a future CI run |
-| .NET Framework targeting-pack installation not inspected | Successful net48 compilation does not identify the exact installed reference assemblies or their path | Item 31; [Windows CI job](https://github.com/infoconex/RecordSift/actions/runs/43146607664/job/130945777245) | Record the targeting-pack file and path in a future CI run |
 
 ### 60. Deferred Checks
 

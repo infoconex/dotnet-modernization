@@ -1,81 +1,195 @@
-# RecordSift — Discovery report
+# RecordSift — Discovery baseline (blank copy)
 
-This report contains the **answers collected so far**, not instructions or blank form fields. The matching numbers in the [step-by-step guide](../../../../methodology/technical-discovery-runbook.md) explain how to collect more information.
+This is an **unfilled copy** of the [baseline template](../../../../templates/application-baseline.md), ready for the RecordSift discovery. Use the [step-by-step instructions](../../../../methodology/technical-discovery-runbook.md) to collect values. **No report fields have been filled in.**
 
-**Record status:** Initial GitHub source inspection only. No Windows commands have been run or reported for this discovery. Fields 1 and 2 reflect the **example values supplied for this report format**; they do not establish that any local discovery was executed.
+- Each number identifies one report field. Keep the same numbers in every copy.
+- For solutions, projects, settings, dependencies and commands, add a row for each item; column numbers stay the same.
+- Leave fields blank until checked. Use **Not applicable**, **Not checked**, or **Not executed** where appropriate when completing a copy.
+- Link actual outputs when available. Don't include passwords or other secrets.
 
-## Discovery information
+## A. Discovery setup — DISC-001 and DISC-004
 
-**1. Recorder:** Jim Scott
+**1. Recorder:** `<person performing discovery>`
 
-**2. Recorded Date:** 2026-11-12
+**2. Recorded Date:** `<YYYY-MM-DD>`
 
-**12. Source branch:** `main` — observed through GitHub on November 12, 2026.
+| Field | What to record | Answer |
+|---|---|---|
+| 3 | Dated discovery folder | `<folder or not yet created>` |
+| 4 | Operating system, version/build, architecture | `<actual result>` |
+| 5 | PowerShell version (if used) | `<actual result>` |
+| 6 | Git version | `<actual result>` |
+| 7 | Installed .NET SDKs and runtimes | `<versions or not installed>` |
+| 8 | MSBuild / Visual Studio Build Tools version and source | `<actual result>` |
+| 9 | Standalone NuGet CLI version | `<actual result>` |
+| 10 | Framework targeting packs needed and found | `<versions or check result>` |
+| 11 | Test runner and version | `<runner/version or not checked>` |
+| 12 | Selected source branch or tag | `<ref>` |
+| 13 | Exact source commit SHA | `<full SHA>` |
+| 14 | Local checkout status (clean/changes/detached) | `<actual status or not checked>` |
+| 15 | Verification date (if distinct from inspection date) | `<date or not executed>` |
+| 16 | Overall evidence status | `<verified/partial/blocked/not executed>` |
 
-**13. Selected source commit:** [`1809d06c0fade59e4769d16e0f8eaf10fa426004`](https://github.com/infoconex/RecordSift/commit/1809d06c0fade59e4769d16e0f8eaf10fa426004). The local checkout has not been verified.
+Link supporting command output from field **115** when a copy is completed.
 
-**16. Discovery status:** Partial — source files inspected via GitHub; local prerequisite checks, clone, restore, build, and tests have not been performed.
+## B. Application — DISC-002 and DISC-003
 
-## Application information
+| Field | What to fill in | Result |
+|---|---|---|
+| 17 | Application name | `<name>` |
+| 18 | What the application does / application type | `<purpose and type>` |
+| 19 | Public or private repository | `<visibility>` |
+| 20 | HTTPS clone URL | `<URL>` |
+| 21 | SSH clone URL, if used | `<URL or not applicable>` |
+| 22 | Repository default branch | `<branch>` |
+| 23 | License | `<license or unknown>` |
+| 24 | Supported operating systems | `<OS/platform>` |
+| 25 | Published application or package version | `<version and source>` |
+| 26 | Published release/package URL | `<URL or not applicable>` |
+| 27 | Source manifest version | `<value and source>` |
+| 28 | Assembly version | `<value and source>` |
+| 29 | File version | `<value and source>` |
+| 30 | Consumers or entry points | `<library/API/desktop/service, consumers>` |
 
-**17. Application:** RecordSift
+### Solutions (repeat one row per solution)
 
-**18. Description:** CSV/XLSX import, validation and reporting library, described as Windows/.NET Framework 4.8 in its [README at the selected commit](https://github.com/infoconex/RecordSift/blob/1809d06c0fade59e4769d16e0f8eaf10fa426004/README.md). This describes the application's documented requirements; the project files and build have not yet been evaluated.
+| 31 Solution path | 32 Format | 33 Format version | 34 Declared IDE version | 35 Configurations | 36 Platforms | 37 Solution membership/build exclusions |
+|---|---|---|---|---|---|---|
+| `<.sln/.slnx>` | `<format>` | `<value/—>` | `<value/—>` | `<configurations>` | `<platforms>` | `<projects/notes>` |
 
-**19. Repository visibility:** Public GitHub repository.
+### Projects (repeat one row per project, including standalone projects)
 
-**20. HTTPS clone URL:** `https://github.com/infoconex/RecordSift.git`
+| 38 Project path | 39 Role | 40 Project format | 41 Target framework(s) | 42 Language version | 43 Output type | 44 MSBuild Platform | 45 SDK / ToolsVersion | 46 Direct project references |
+|---|---|---|---|---|---|---|---|---|
+| `<project file>` | `<production/test/tool>` | `<SDK-style/traditional>` | `<framework(s)>` | `<version>` | `<output type>` | `<platform>` | `<SDK/version>` | `<paths>` |
 
-**22. Default branch:** `main` when inspected on November 12, 2026.
+## C. Project settings — DISC-003 and DISC-005
 
-**24. Supported operating system:** Windows, as documented in the source README.
+Record values declared in source separately from MSBuild-evaluated results. For conditional or multi-targeted properties, add rows showing the project, configuration, platform and framework. Debug and Release are examples, not mandatory configurations.
 
-## Source inventory
+**Compiler settings (repeat per project and configuration as needed)**
 
-**31. Solution path:** `RecordSift.sln` — found in the tracked tree. Solution membership has not yet been checked.
+| 47 Project/configuration | 48 DebugType | 49 Optimize | 50 DefineConstants | 51 Other compiler settings / conditions |
+|---|---|---|---|---|
+| `<project/configuration>` | `<value>` | `<value>` | `<value>` | `<details>` |
 
-**38. Project paths:** Ten tracked C# project files were identified:
+**Output and validation settings**
 
-- `src/RecordSift.Domain/RecordSift.Domain.csproj`
-- `src/RecordSift.Application/RecordSift.Application.csproj`
-- `src/RecordSift.Infrastructure.Csv/RecordSift.Infrastructure.Csv.csproj`
-- `src/RecordSift.Infrastructure.Xlsx/RecordSift.Infrastructure.Xlsx.csproj`
-- `src/RecordSift.Infrastructure.Reporting/RecordSift.Infrastructure.Reporting.csproj`
-- `tests/RecordSift.Domain.Tests/RecordSift.Domain.Tests.csproj`
-- `tests/RecordSift.Application.Tests/RecordSift.Application.Tests.csproj`
-- `tests/RecordSift.Infrastructure.Csv.Tests/RecordSift.Infrastructure.Csv.Tests.csproj`
-- `tests/RecordSift.Infrastructure.Xlsx.Tests/RecordSift.Infrastructure.Xlsx.Tests.csproj`
-- `tests/RecordSift.Infrastructure.Reporting.Tests/RecordSift.Infrastructure.Reporting.Tests.csproj`
+| 52 Project/configuration | 53 OutputPath | 54 WarningLevel | 55 WarningsAsErrors | 56 DocumentationFile |
+|---|---|---|---|---|
+| `<project/configuration>` | `<path>` | `<value>` | `<value>` | `<path or not declared>` |
 
-**39. Project roles:** Five project paths under `src/` and five under `tests/`. These are directory-based roles, not proof of project configuration or test execution.
+**Project metadata and imports**
 
-**64. Repository directories:** `src/` holds the production project paths; `tests/` holds the test project paths.
+| 57 Project | 58 Default configuration | 59 IsTestProject | 60 FileAlignment | 61 AppDesignerFolder | 62 Imports / shared properties |
+|---|---|---|---|---|---|
+| `<project>` | `<value>` | `<value or —>` | `<value or —>` | `<value or —>` | `<imports or —>` |
 
-**66. Configuration files found:** Root `.editorconfig`, root `NuGet.Config`, seven tracked `packages.config` files (two under `src/` and five under `tests/`), and eight GitHub Actions workflow definitions under `.github/workflows/`.
+**63 — Evaluated MSBuild properties and differences:** `<project/configuration/property/result/evidence, or not evaluated>`
 
-**67. Configuration files not found at the tracked repository root:** `global.json`, `Directory.Build.props`, `Directory.Build.targets`, and `Directory.Packages.props`. This is **not** proof that equivalents, inherited configuration, or machine defaults do not apply.
+## D. Repository folders and configuration — DISC-006
 
-These facts come from [EV-001–EV-003](evidence/manifest.md) and are limited to source inspection at the selected commit.
+**Directories (repeat as needed)**
 
-## What remains to be collected
+| 64 Directory | 65 Purpose |
+|---|---|
+| `<path>` | `<what belongs here>` |
 
-**3–11. Discovery folder and prerequisite versions:** Not yet collected from the Windows machine.
+**Configuration files (including files that are absent)**
 
-**14. Local checkout status:** Not yet checked; fresh clone and exact SHA verification are pending.
+| 66 File / mechanism | 67 Present? | 68 Current purpose / value | 69 Scope, imports or precedence |
+|---|---|---|---|
+| `<path or mechanism>` | `<yes/no/not checked>` | `<settings>` | `<projects/configuration>` |
 
-**41. Declared target frameworks:** Not yet verified from the project files.
+Check relevant `global.json`, `Directory.Build.props`, `Directory.Build.targets`, `Directory.Packages.props`, NuGet configuration, `.editorconfig` and nested imports. A missing file does not imply a change is necessary.
 
-**82–111. Restore, build, tests, CI outcomes and compatibility checks:** No local execution results from this walkthrough. CI workflow paths are known, but actual CI runs at this revision have not been checked.
+## E. Dependencies — DISC-007 and DISC-008
 
-**116. Open gaps:** The host and tool versions, full project configuration, dependency details, source checkout status, and executed verification are still unknown.
+**NuGet declarations (repeat per project/package)**
 
-**119–121. Discovery steps:** DISC-002, DISC-006 and DISC-011 have limited GitHub source-path findings. All operator-run steps remain pending.
+| 70 Project | 71 Package ID | 72 Version | 73 Declared in | 74 Configured feed(s) | 75 Purpose |
+|---|---|---|---|---|---|
+| `<project>` | `<package>` | `<declared version>` | `<packages.config/PackageReference/etc.>` | `<sources or not checked>` | `<production/test/tool>` |
 
-**122. Report disposition:** In progress — further checks needed.
+**Other dependencies (repeat only when present)**
 
-**124. Next action:** Follow DISC-001 in the [step-by-step guide](../../../../methodology/technical-discovery-runbook.md), collect the Windows prerequisite results, and verify a fresh checkout at the selected source commit. Add each verified answer to this report using its numbered field.
+| 76 Project/consumer | 77 Dependency | 78 Mechanism/type | 79 Source file | 80 Version/identity | 81 Resolution/location |
+|---|---|---|---|---|---|
+| `<project>` | `<DLL/COM/native/service>` | `<how used>` | `<location declared>` | `<version/identity>` | `<verified or unknown>` |
 
-## Source evidence
+A configured feed is not proof that a package was restored from it. Keep secrets out of the report.
 
-- [EV-001–EV-003: RecordSift evidence manifest](evidence/manifest.md)
-- [Previous pre-SDK evaluation](../2026-11-pre-sdk/README.md) — historical background at a different source revision, not evidence of local execution for this report
+## F. Build, tests, CI and release — DISC-008 through DISC-012
+
+**Existing commands (record the exact command or entry point found in application documentation/CI)**
+
+| Field | Operation | Command or existing entry point |
+|---|---|---|
+| 82 | Restore | `<actual command>` |
+| 83 | Build (configuration/platform) | `<actual command>` |
+| 84 | Full tests | `<actual command>` |
+| 85 | Compatibility checks | `<commands/scripts>` |
+| 86 | Packaging | `<command/workflow or N/A>` |
+| 87 | Consumer/deployment | `<command/workflow or N/A>` |
+| 88 | Alternate host/CI toolchain details | `<host and versions if different>` |
+
+**Test counts and executed artifacts**
+
+| Field | What to fill in | Actual result |
+|---|---|---|
+| 89 | Tests discovered | `<number or not executed>` |
+| 90 | Tests passed | `<number or not executed>` |
+| 91 | Tests failed | `<number or not executed>` |
+| 92 | Tests skipped | `<number or not executed>` |
+| 93 | Test projects/assemblies actually executed | `<list or not executed>` |
+| 94 | Build warnings/errors and important outputs | `<summary, links or not executed>` |
+| 95 | CI workflow names, triggers and commands | `<paths and details>` |
+| 96 | CI runs checked and their exact source SHA | `<run IDs / status or not checked>` |
+| 97 | Package contents/metadata and release evidence | `<location and outcome or not checked>` |
+| 98 | Runtime / deployment requirements | `<requirements or not applicable>` |
+
+**Checks and outcomes (include the supporting evidence with each result)**
+
+| Field | Check | Outcome and evidence |
+|---|---|---|
+| 99 | Dependency restore | `<pass/fail/blocked/not executed; link>` |
+| 100 | Build | `<result/configuration; link>` |
+| 101 | Automated tests | `<result/test scope; link>` |
+| 102 | Public API | `<result or not applicable; link>` |
+| 103 | Assembly identity | `<result or not applicable; link>` |
+| 104 | Resources | `<result or not applicable; link>` |
+| 105 | XML documentation | `<result or not applicable; link>` |
+| 106 | Package contents | `<result or not applicable; link>` |
+| 107 | Package metadata | `<result or not applicable; link>` |
+| 108 | Dependency validation | `<result or not applicable; link>` |
+| 109 | Vulnerability audit | `<result or not executed; link>` |
+| 110 | Installed-package consumer | `<result or not applicable; link>` |
+| 111 | Application integration checks | `<result or not applicable; link>` |
+
+**Executed commands (repeat one row per actual execution, including failures)**
+
+| 112 Step | 113 Exact command, scope and tool | 114 Result and exit code | 115 Output / evidence link |
+|---|---|---|---|
+| `<DISC-###>` | `<command and project/config/host>` | `<result/exit code>` | `<location or not captured>` |
+
+## G. Review and completion — DISC-013 and DISC-014
+
+**Open issues and missing checks (repeat as needed)**
+
+| 116 Gap or finding | 117 Impact | 118 Evidence / next check |
+|---|---|---|
+| `<missing tool, error, or source-backed fact>` | `<why it matters>` | `<link or next action>` |
+
+**Step completion (one row per DISC step)**
+
+| 119 Step | 120 Result/status | 121 Evidence or missing information |
+|---|---|---|
+| `<DISC-001…DISC-014>` | `<done/partial/blocked/not executed>` | `<link/notes>` |
+
+| Field | Final review | Result |
+|---|---|---|
+| 122 | Overall baseline disposition | `<complete/complete with gaps/further checks needed>` |
+| 123 | Report reviewed by/date | `<reviewer/date or pending>` |
+| 124 | Next action or deferred checks | `<short summary>` |
+
+Complete a copied baseline using observed facts only. Modernization proposals belong in separate documents.

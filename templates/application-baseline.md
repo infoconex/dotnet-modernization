@@ -1,35 +1,72 @@
 # `<Application>` — Discovery baseline
 
-**Blank, reusable template.** Copy this file for each application. The [step-by-step guide](../methodology/technical-discovery-runbook.md) explains how to evaluate each numbered field and populate every table.
+**Blank, reusable template.** Copy this file for each application. Use the [step-by-step guide](../methodology/technical-discovery-runbook.md) to evaluate each numbered item and explain the columns of repeatable tables. Write results **only in the copy**.
 
-A numbered **field** records one value. A numbered **table** records one kind of repeatable data (such as projects or dependencies). Its column headings describe the data within each row and have **no field numbers**. Add one row per applicable item and repeat rows as needed. All values below are deliberately blank; enter answers only into a copied baseline. If a check is not applicable, missing, or unexecuted, describe that in the copy and link evidence as appropriate. Do not include secrets.
+A numbered **field** captures one value; a numbered **table** captures a repeatable kind of data (such as project inventory). Each table column is unnumbered and each row represents one actual record. The values here are deliberately blank. Use `Not checked`, `Not executed`, or `Not applicable` in completed copies when accurate, and retain appropriate evidence without secrets.
+
+## Application information
+
+| Field | Value |
+|---|---|
+| 1. Application Name |  |
+| 2. Application Purpose |  |
+| 3. Application Type |  |
+| 4. Repository Visibility |  |
+| 5. License |  |
+| 6. Supported Operating Systems |  |
+| 7. HTTPS Clone URL |  |
+| 8. SSH Clone URL |  |
+| 9. Repository Default Branch |  |
+| 10. Published Application Version |  |
+| 11. Published Package Version |  |
+| 12. Published Release URL |  |
+| 13. Published Package URL |  |
+| 14. Source Manifest Version |  |
+| 15. Assembly Version |  |
+| 16. File Version |  |
+
+### 17. Consumers and Entry Points
+
+| Consumer or Entry Point | Type | Source or Evidence |
+|---|---|---|
+|   |   |   |
 
 ## Discovery information
 
 | Field | Value |
 |---|---|
-| 1. Discovery By |  |
-| 2. Discovery Date |  |
-| 3. Discovery Folder |  |
+| 18. Discovery By |  |
+| 19. Discovery Date |  |
+| 20. Discovery Folder |  |
 
-## Host and prerequisite tools
+## Source revision and checkout
 
 | Field | Value |
 |---|---|
-| 4. Operating System Name |  |
-| 5. Operating System Version |  |
-| 6. Operating System Build |  |
-| 7. Operating System Architecture |  |
-| 8. PowerShell Version |  |
-| 9. Git Version |  |
+| 21. Selected Source Branch or Tag |  |
+| 22. Source Commit SHA |  |
+| 23. Working Tree Clean |  |
+| 24. Detached HEAD |  |
+| 25. Verification Date |  |
 
-### 10. .NET SDK Inventory
+## Discovery host and prerequisite tools
+
+| Field | Value |
+|---|---|
+| 26. Operating System Name |  |
+| 27. Operating System Version |  |
+| 28. Operating System Build |  |
+| 29. Operating System Architecture |  |
+| 30. PowerShell Version |  |
+| 31. Git Version |  |
+
+### 32. .NET SDK Inventory
 
 | SDK Version | Installation Path |
 |---|---|
 |   |   |
 
-### 11. .NET Runtime Inventory
+### 33. .NET Runtime Inventory
 
 | Runtime Name | Runtime Version | Installation Path |
 |---|---|---|
@@ -37,69 +74,31 @@ A numbered **field** records one value. A numbered **table** records one kind of
 
 | Field | Value |
 |---|---|
-| 12. MSBuild Version |  |
-| 13. MSBuild Installation Source |  |
-| 14. NuGet CLI Version |  |
+| 34. MSBuild Version |  |
+| 35. MSBuild Installation Source |  |
+| 36. NuGet CLI Version |  |
 
-### 15. .NET Framework Targeting Pack Inventory
+### 37. .NET Framework Targeting Pack Inventory
 
 | Framework Version | Installed | Location |
 |---|---|---|
 |   |   |   |
 
-### 16. Test Runner Inventory
+### 38. Test Runner Inventory
 
 | Runner Name | Runner Version | Source or Location |
 |---|---|---|
 |   |   |   |
 
-## Source and checkout
-
-| Field | Value |
-|---|---|
-| 17. HTTPS Clone URL |  |
-| 18. Selected Source Branch or Tag |  |
-| 19. Source Commit SHA |  |
-| 20. Working Tree Clean |  |
-| 21. Detached HEAD |  |
-| 22. Repository Default Branch |  |
-| 23. Verification Date |  |
-| 24. Evidence Status |  |
-
-## Application overview
-
-| Field | Value |
-|---|---|
-| 25. Application Name |  |
-| 26. Application Purpose |  |
-| 27. Application Type |  |
-| 28. Repository Visibility |  |
-| 29. SSH Clone URL |  |
-| 30. License |  |
-| 31. Supported Operating Systems |  |
-| 32. Published Application Version |  |
-| 33. Published Package Version |  |
-| 34. Published Release URL |  |
-| 35. Published Package URL |  |
-| 36. Source Manifest Version |  |
-| 37. Assembly Version |  |
-| 38. File Version |  |
-
-### 39. Consumers and Entry Points
-
-| Consumer or Entry Point | Type | Source or Evidence |
-|---|---|---|
-|   |   |   |
-
 ## Solution and project inventory
 
-### 40. Solutions
+### 39. Solutions
 
 | Solution Path | Format | Format Version | Declared IDE Version | Configuration | Platform | Membership / Build Exclusions |
 |---|---|---|---|---|---|---|
 |   |   |   |   |   |   |   |
 
-### 41. Projects
+### 40. Projects
 
 | Project Path | Role | Project Format | Target Framework | Language Version | Output Type | MSBuild Platform | SDK or ToolsVersion | Direct Project Reference |
 |---|---|---|---|---|---|---|---|---|
@@ -107,25 +106,25 @@ A numbered **field** records one value. A numbered **table** records one kind of
 
 ## Project settings and evaluated values
 
-### 42. Compiler Settings
+### 41. Compiler Settings
 
 | Project Path | Configuration | Framework | Property | Declared Value | Condition |
 |---|---|---|---|---|---|
 |   |   |   |   |   |   |
 
-### 43. Output and Validation Settings
+### 42. Output and Validation Settings
 
 | Project Path | Configuration | Property | Declared Value | Condition |
 |---|---|---|---|---|
 |   |   |   |   |   |
 
-### 44. Project Metadata and Imports
+### 43. Project Metadata and Imports
 
 | Project Path | Metadata or Import Name | Declared Value | Source File |
 |---|---|---|---|
 |   |   |   |   |
 
-### 45. Evaluated MSBuild Properties
+### 44. Evaluated MSBuild Properties
 
 | Project Path | Configuration | Framework | Property | Evaluated Value | Declared Value | Evidence |
 |---|---|---|---|---|---|---|
@@ -133,25 +132,25 @@ A numbered **field** records one value. A numbered **table** records one kind of
 
 ## Repository structure and dependencies
 
-### 46. Repository Directories
+### 45. Repository Directories
 
 | Directory | Purpose |
 |---|---|
 |   |   |
 
-### 47. Repository Configuration
+### 46. Repository Configuration
 
 | File or Mechanism | Present | Scope | Setting Name | Setting Value | Import or Precedence |
 |---|---|---|---|---|---|
 |   |   |   |   |   |   |
 
-### 48. NuGet Package Declarations
+### 47. NuGet Package Declarations
 
 | Project Path | Package ID | Declared Version | Declaration File | Configured Feed | Purpose |
 |---|---|---|---|---|---|
 |   |   |   |   |   |   |
 
-### 49. Other External Dependencies
+### 48. Other External Dependencies
 
 | Consumer | Dependency | Type or Mechanism | Declaration Source | Version or Identity | Resolution or Location |
 |---|---|---|---|---|---|
@@ -159,55 +158,55 @@ A numbered **field** records one value. A numbered **table** records one kind of
 
 ## Restore, build, tests and delivery
 
-### 50. Operation Commands
+### 49. Operation Commands
 
 | Operation | Project or Solution | Configuration | Platform | Command or Workflow | Source |
 |---|---|---|---|---|---|
 |   |   |   |   |   |   |
 
-### 51. Restore Outcomes
+### 50. Restore Outcomes
 
 | Source Revision | Target | Outcome | Error or Note | Evidence |
 |---|---|---|---|---|
 |   |   |   |   |   |
 
-### 52. Build Outcomes
+### 51. Build Outcomes
 
 | Source Revision | Target | Configuration | Platform | Outcome | Warning Count | Error Count | Output or Evidence |
 |---|---|---|---|---|---|---|---|
 |   |   |   |   |   |   |   |   |
 
-### 53. Test Outcomes
+### 52. Test Outcomes
 
 | Source Revision | Test Project or Assembly | Runner | Discovered | Passed | Failed | Skipped | Outcome | Evidence |
 |---|---|---|---|---|---|---|---|---|
 |   |   |   |   |   |   |   |   |   |
 
-### 54. CI Workflows
+### 53. CI Workflows
 
 | Workflow Path | Trigger | Runner OS | Configured Command | Artifact or Deployment |
 |---|---|---|---|---|
 |   |   |   |   |   |
 
-### 55. CI Runs
+### 54. CI Runs
 
 | Workflow | Run URL | Commit SHA | Outcome | Date |
 |---|---|---|---|---|
 |   |   |   |   |   |
 
-### 56. Package and Release Artifacts
+### 55. Package and Release Artifacts
 
 | Artifact | Version | Attribute | Attribute Value | Release URL | Evidence |
 |---|---|---|---|---|---|
 |   |   |   |   |   |   |
 
-### 57. Runtime and Deployment Requirements
+### 56. Runtime and Deployment Requirements
 
 | Requirement | Type | Target Environment | Source or Evidence |
 |---|---|---|---|
 |   |   |   |   |
 
-### 58. Compatibility Checks
+### 57. Compatibility Checks
 
 | Check Type | Target | Method or Command | Outcome | Commit SHA | Evidence |
 |---|---|---|---|---|---|
@@ -215,19 +214,19 @@ A numbered **field** records one value. A numbered **table** records one kind of
 
 ## Evidence and completion
 
-### 59. Executed Command Evidence
+### 58. Executed Command Evidence
 
 | Discovery Step | Command | Working Directory | Tool Version | Target or Configuration | Exit Code | Outcome | Output or Evidence |
 |---|---|---|---|---|---|---|---|
 |   |   |   |   |   |   |   |   |
 
-### 60. Findings and Gaps
+### 59. Findings and Gaps
 
 | Finding | Impact | Evidence | Next Check |
 |---|---|---|---|
 |   |   |   |   |
 
-### 61. Discovery Step Status
+### 60. Discovery Step Status
 
 | Step ID | Status | Evidence or Missing Information |
 |---|---|---|
@@ -235,15 +234,15 @@ A numbered **field** records one value. A numbered **table** records one kind of
 
 | Field | Value |
 |---|---|
-| 62. Overall Baseline Disposition |  |
-| 63. Reviewed By |  |
-| 64. Review Date |  |
-| 65. Next Action |  |
+| 61. Overall Baseline Disposition |  |
+| 62. Reviewed By |  |
+| 63. Review Date |  |
+| 64. Next Action |  |
 
-### 66. Deferred Checks
+### 65. Deferred Checks
 
 | Check | Reason Deferred | Revisit When |
 |---|---|---|
 |   |   |   |
 
-This baseline is a record of collected facts, not a modernization recommendation.
+This baseline records observed application facts and verification outcomes, not proposed modernization work.

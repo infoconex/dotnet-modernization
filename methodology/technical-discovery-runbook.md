@@ -437,21 +437,43 @@ git ls-files
 
 ### 43. Repository Configuration
 
-Inspect `NuGet.Config`, `.editorconfig`, `global.json`, `Directory.Build.props/targets`, `Directory.Packages.props`, `.gitignore` and nested equivalents. Use one row **per setting** with source/scope and precedence. Absence from the tracked tree does not prove a machine-level setting or inherited MSBuild import is absent.
+Inspect tracked `NuGet.Config` / `nuget.config`, `.editorconfig`, `global.json`, `Directory.Build.props/targets`, `Directory.Packages.props`, `.gitignore` and nested equivalents. Use **one row per observed setting** with its precise source and scope; distinguish a repository declaration from an **effective value** returned by tooling. Absence from the tracked tree does not rule out inherited user/machine settings, additional settings outside the checkout or implicit MSBuild imports.
 
 ```powershell
-git ls-files "NuGet.Config" "*NuGet.Config" ".editorconfig" "*.editorconfig" ".gitignore" "AGENTS.md" ".github/copilot-instructions.md" "global.json" "*global.json" "*Directory.Build.props" "*Directory.Build.targets" "*Directory.Packages.props"
+git ls-files "NuGet.Config" "nuget.config" "*NuGet.Config" "*nuget.config" ".editorconfig" "*.editorconfig" ".gitignore" "AGENTS.md" ".github/copilot-instructions.md" "global.json" "*global.json" "*Directory.Build.props" "*Directory.Build.targets" "*Directory.Packages.props"
 ```
+
+**NuGet configuration discovery — inspect every applicable section**, not only feed URLs. See [Microsoft's NuGet.Config reference](https://learn.microsoft.com/en-us/nuget/reference/nuget-config-file) and [configuration precedence guidance](https://learn.microsoft.com/en-us/nuget/consume-packages/configuring-nuget-behavior/).
+
+- **Package and audit feeds:** `packageSources`, `auditSources`, `disabledPackageSources` (including the boolean state by feed), `activePackageSource` (deprecated in modern NuGet), and `packageSourceMapping` (package patterns by source). Record each `<clear />` separately: it discards previously inherited entries **for that collection**, not for every setting.
+- **Supply-chain and transport security:** `trustedSigners` (trust-policy identities and certificate *fingerprints only* where safe), `config.signatureValidationMode`, and per-source `protocolVersion`, `allowInsecureConnections`, `disableTLSCertificateValidation`. Capture when options are version-dependent; for example `auditSources` was added in NuGet 6.12.
+- **Credentials and certificates:** `packageSourceCredentials`, `clientCertificates`, `apikeys`, and proxy credentials. Record **presence, mechanism and scope only**, never a password, token, API key, certificate private key, raw credential-bearing URL, or unredacted secret value.
+- **Storage, restore and installation:** `config.repositoryPath` (packages.config), `config.globalPackagesFolder` (PackageReference), `config.dependencyVersion`, `config.updatePackageLastAccessTime`, `packageRestore`, `packageManagement`, `bindingRedirects`, `solution` and `fallbackPackageFolders` when supported.
+- **Network and publication:** `config.defaultPushSource`, `config.maxHttpRequestsPerSource`, proxy / `no_proxy` settings, source protocol settings, and applicable minimum-package-publication-age controls or exceptions (where the installed NuGet version supports them).
+- **Other settings:** Record any additional actual XML section, key, condition, environment-variable substitution, per-project configuration or NuGet/MSBuild override that changes behavior. Inspect all configuration files in scope, not just this checklist.
+
+For the **repository source** inventory, enter each actually declared setting (including `clear` entries and whether a named feed is explicitly disabled). When an important section is not present, list the absent **section names once in a short note** rather than emitting dozens of empty or `Not declared` table rows. `disabledPackageSources` **not declared** does *not* establish that all sources are enabled in the effective environment. Distinguish `Not declared` (source absence), `Not checked` (runtime state not observed) and `Not applicable` (genuinely irrelevant). Avoid confusing default NuGet behavior with a declared value.
+
+**Effective configuration is a separate, later Windows operator check.** After tool preflight and isolated checkout, inspect inherited user/machine/directory configuration, selected tool version, environment/MSBuild variables, and command-line `--source`/`-Source`, `--configfile`/`-ConfigFile` and `RestoreSources` overrides. A `clear` in a nearer config can replace earlier sources; later applicable overrides can still alter behavior. The safe, read-only commands below list **configured package sources**, not actual download provenance, effective audit settings, credentials or every NuGet configuration key:
+
+```powershell
+# Run from the checked-out repository directory with .NET 6 SDK or later:
+dotnet nuget list source --format Detailed --configfile .\NuGet.Config
+dotnet nuget list source --format Detailed
+```
+
+The first command uses **only** the specified file; the second uses the applicable configuration hierarchy from the working directory. If the .NET CLI is unavailable, use an equivalent compatible `nuget sources List -ConfigFile NuGet.Config` for the **file-only** listing and a plain `nuget sources List` for the effective source list. Do not execute restore/build/test, install packages or change configuration as part of these read-only inspection steps. **Review and redact** all tool output and inspected configuration (including URLs, usernames, environment-variable expansions, proxies and certificates) before saving or sharing evidence. Record `Not checked` if no approved operator output exists.
 
 **How to populate each column (left to right):**
 
-- **File or Mechanism:** Tracked configuration path or discovered mechanism.
-- **Present:** Whether verified present in the scoped source/environment.
-- **Scope:** Repository, directory, project or machine scope.
-- **Setting Name:** One named setting per row.
-- **Setting Value:** That setting's actual value.
-- **Import or Precedence:** How it is imported or which setting has precedence.
+- **File or Mechanism:** Tracked configuration file or separately verified effective mechanism.
+- **Present:** `True`/`False` for inspected repository declarations; `Not checked` for unobserved effective settings.
+- **Scope:** Repository, subdirectory, project, user, machine or command invocation — label which was actually inspected.
+- **Setting Name:** Exact named key/section, for example `packageSources.clear`, `packageSources.nuget.org` or `disabledPackageSources.MyFeed`.
+- **Setting Value:** Source-declared value or a *sanitized*, genuinely evaluated value; secret-bearing settings use `Configured` / `Not declared` rather than their contents.
+- **Import or Precedence:** Source context, `clear` effect, conditional version applicability, inherited precedence or `Not checked` when effective behavior is unverified.
 
+**RecordSift-specific scope:** The pinned repository `NuGet.Config` declares `packageSources` and `auditSources`, each with `<clear />` followed by a nuget.org URL. It does **not** declare `disabledPackageSources` or other optional NuGet configuration sections. This is source inspection, **not** proof of enabled feeds, tool defaults, authentication, local effective settings or feeds used during CI or a future local restore.
 ### 44. NuGet Package Declarations
 
 Inspect `packages.config`, `PackageReference` and central package versions. Prefer **one row per consuming project** and list every package as **ID — declared version — purpose** within its Packages cell (one line per package, separated by `<br>` in GitHub Markdown when needed). Do not collapse different declared versions of the same package or lose per-package conditions. The declaration/version source can be displayed once when shared; otherwise label the individual package's source or use separate scoped rows. The package feed is only the **configured** source, not proven actual download origin. Record complete project path last.

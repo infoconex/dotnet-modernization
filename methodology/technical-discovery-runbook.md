@@ -8,28 +8,69 @@ Don't change the application or publish anything as part of discovery.
 
 ### 1. Check your computer and tools
 
-- Use an operating system supported by the application. **RecordSift requires Windows**; don't use WSL as a substitute.
-- Open PowerShell. Run the commands below **one at a time**:
+- Use a computer that supports the application. **RecordSift requires Windows.**
+- Run **one command at a time**. Keep each tool in its own command snippet, with its actual result directly underneath. If a command cannot run, record the error instead of inventing a version.
+- These examples use PowerShell on Windows. For another OS, use its native system-information command.
 
-```powershell
-[System.Runtime.InteropServices.RuntimeInformation]::OSDescription
-[System.Runtime.InteropServices.RuntimeInformation]::OSArchitecture
-$PSVersionTable.PSVersion
-Get-Command git -ErrorAction SilentlyContinue
-git --version
-Get-Command dotnet -ErrorAction SilentlyContinue
-Get-Command msbuild -ErrorAction SilentlyContinue
-Get-Command nuget -ErrorAction SilentlyContinue
-```
-
-- **Required now:** PowerShell, Git 2.23+ (for `git switch`), network access, and a writable folder for a new clone.
-- **Needed later, depending on the project:** .NET SDK, MSBuild/Visual Studio Build Tools, NuGet CLI, framework targeting packs, and test runners. For RecordSift's traditional .NET Framework 4.8 projects, plan to check Windows MSBuild, .NET Framework 4.8 targeting assemblies, and standalone NuGet before restore/build.
-- If Git is missing, stop. If another command isn't found, make a note; it may be installed but not on your PATH. Don't install anything yet.
-- On Windows, also record the OS version and build:
+**Windows version** (for Windows applications):
 
 ```powershell
 Get-CimInstance Win32_OperatingSystem | Select-Object Caption, Version, BuildNumber, OSArchitecture
 ```
+
+- **Record:** Windows edition, version, build, and architecture.
+
+**PowerShell:**
+
+```powershell
+$PSVersionTable.PSVersion
+```
+
+- **Record:** PowerShell version.
+
+**Git:**
+
+```powershell
+git --version
+```
+
+- **Record:** Git version. Git 2.23+ is needed for the `git switch` command used below. If Git is unavailable, stop before cloning.
+
+**.NET SDK:**
+
+```powershell
+dotnet --info
+```
+
+- **Record:** installed SDK/runtime information, or a command-not-found error.
+
+**MSBuild:**
+
+```powershell
+msbuild -version -nologo
+```
+
+- **Record:** MSBuild version or **not found on PATH**. On Windows it may be available only in a Visual Studio Developer PowerShell.
+
+**Standalone NuGet CLI:**
+
+```powershell
+nuget help
+```
+
+- **Record:** NuGet CLI version shown in the output, or **not found on PATH**.
+
+**.NET Framework 4.8 targeting pack** (when needed on Windows):
+
+```powershell
+Test-Path "\${env:ProgramFiles(x86)}\Reference Assemblies\Microsoft\Framework\.NETFramework\v4.8"
+```
+
+- **Record:** `True` or `False`. `True` confirms only that the standard directory exists; later build checks establish whether targeting actually works.
+
+- **Needed now:** supported OS, PowerShell, Git, network access, and a writable folder.
+- **Needed later:** the build tools, targeting packs, and test runners required by the actual projects. A missing command on PATH does not always mean the tool is uninstalled.
+- **Do not install or change tools automatically.** Record what is available first.
 
 ### 2. Create a dated discovery folder
 
@@ -108,20 +149,44 @@ dotnet sln .\path\to\solution.sln list
 
 ## DISC-004 — Record installed build tools
 
-Run **only** the commands available on the computer:
+- Use the results from DISC-001. Check any tool that wasn't fully identified.
+- Run each command separately and write its result directly below it.
+
+**.NET SDKs:**
 
 ```powershell
-dotnet --info
 dotnet --list-sdks
+```
+
+- **Record:** SDK versions and locations, or the error.
+
+**.NET runtimes:**
+
+```powershell
 dotnet --list-runtimes
+```
+
+- **Record:** runtime versions and locations, or the error.
+
+**MSBuild:**
+
+```powershell
 msbuild -version -nologo
+```
+
+- **Record:** version and which installation supplied it. If unavailable in normal PowerShell, try a Visual Studio Developer PowerShell and note the difference.
+
+**NuGet CLI:**
+
+```powershell
 nuget help
 ```
 
-- **Save:** Windows/OS version, architecture, installed SDKs and runtimes, MSBuild and NuGet versions, and where the tools came from.
-- Check whether required targeting packs and test runners are available.
-- On Windows, `msbuild` may work from a Visual Studio Developer PowerShell even when it isn't on your normal PATH.
-- A .NET SDK installation doesn't guarantee a .NET Framework targeting pack is installed. Note missing tools rather than assuming the build will fail.
+- **Record:** version and path, or the error.
+
+- Check any remaining framework targeting packs and test runners required by the project. Give each its own command and recorded result when identified.
+- **Save:** tool versions, paths, missing prerequisites, and any differences between PowerShell environments.
+- The .NET SDK does **not** guarantee a .NET Framework targeting pack is installed.
 
 ## DISC-005 — Check MSBuild settings
 

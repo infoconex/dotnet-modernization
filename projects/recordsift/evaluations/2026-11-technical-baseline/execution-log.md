@@ -78,7 +78,7 @@ nuget help
 ### .NET Framework 4.8 targeting pack
 
 ```powershell
-Test-Path "\${env:ProgramFiles(x86)}\Reference Assemblies\Microsoft\Framework\.NETFramework\v4.8"
+Test-Path "${env:ProgramFiles(x86)}\Reference Assemblies\Microsoft\Framework\.NETFramework\v4.8"
 ```
 
 **Result:** Not yet executed.

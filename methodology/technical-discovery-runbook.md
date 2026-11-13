@@ -1,10 +1,8 @@
 # .NET Technical Discovery — Step-by-Step Guide
 
-Follow these steps in order to document an existing .NET application. Start with **DISC-001** to check your tools and get a clean copy of the source.
+Follow these steps in order to document an existing .NET application.
 
-Run the built-in commands manually, review their output, and record what you find. Use the [execution log template](../templates/discovery-execution-log.md) for commands and results and the [application baseline template](../templates/application-baseline.md) for the finished documentation.
-
-The steps explain when a command applies and when to stop. Don't change the application or publish anything as part of discovery.
+Don't change the application or publish anything as part of discovery.
 
 ## DISC-001 — Check prerequisites, acquire clean source and identify the exact revision
 

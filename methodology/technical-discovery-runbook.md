@@ -164,7 +164,7 @@ dotnet sln .\path\to\solution.sln list
 - Note project references, output type, language version, and configuration-specific settings.
 - **Save:** each project's path, project type, declared framework(s), and important differences.
 - An SDK-style project can still target .NET Framework. Don't guess settings that aren't declared.
-- Fill **38–42** (versions and consumers), **53–60** (project details), and **47–51, 52–56, 57–62** (source-declared settings, only where applicable).
+- Fill **38–42** (versions and consumers), **53–60** (project details), and **61–68, 69–74, 75–82** (source-declared settings, only where applicable).
 
 - **Report fields:** 38–42, 53–60, 61–68, 69–74, 75–82. Add the findings directly to the copied baseline.
 
@@ -205,7 +205,7 @@ nuget help
 
 - Enter the NuGet CLI version (or command error) in field **14**.
 
-- Check any remaining framework targeting packs and test runners required by the project. Give each its own command and recorded result when identified.
+- Check other targeting packs or test runners only when needed; record their version and installation separately in fields **15–18** using the applicable native tool checks.
 - **Save:** tool versions, paths, missing prerequisites, and any differences between PowerShell environments.
 - The .NET SDK does **not** guarantee a .NET Framework targeting pack is installed.
 - Update **10–18** with detailed versions, and **124–126** for any second host such as CI. Don't record a tool as installed unless verified.
@@ -225,7 +225,7 @@ msbuild .\path\to\project.csproj -getProperty:TargetFramework -getProperty:Targe
 - Replace the path and configuration. Repeat where projects or configurations differ.
 - **Save:** settings found in files and settings returned by MSBuild. They may differ.
 - This command checks property values; it **doesn't build the project**. If your MSBuild version doesn't support it, record that and continue with file inspection.
-- Fill **83–89** with evaluated property values and relevant differences from declared values. Update **47–51, 52–56, 57–62** only when additional evidence changes them.
+- Fill **83–89** with evaluated property values and relevant differences from declared values. Update **61–68, 69–74, 75–82** only when additional evidence changes them.
 
 - **Report fields:** 83–89; 61–68, 69–74, 75–82 if needed. Add the findings directly to the copied baseline.
 
@@ -324,8 +324,8 @@ dotnet nuget list source
 
 ## DISC-014 — Finish the technical baseline
 
-- Update the application's **discovery report** with the facts that have actually been collected.
-- Record actual commands, results and evidence links with their field numbers. Do not copy unanswered questions into the report.
+- Fill the **copied baseline** with the facts that have actually been collected.
+- Record actual commands, results and evidence links in the baseline fields. Do not enter answers in this guide.
 - Check that another engineer can find the same source, understand the setup, and repeat the steps.
 - List any missing results instead of guessing.
 - Save the final baseline with its source commit and discovery date. Modernization recommendations come afterward.

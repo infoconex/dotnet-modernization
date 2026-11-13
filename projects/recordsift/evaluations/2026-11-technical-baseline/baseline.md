@@ -601,6 +601,8 @@ For manual `workflow_dispatch` test filtering, these same five assemblies are in
 
 ### 52. Test Outcomes
 
+**Frozen-commit execution corroboration (2026-11-13 review):** The actual [Windows NUnit job log](https://github.com/infoconex/RecordSift/actions/runs/43146607664/job/130945777245) reports five test counts of 123, 62, 132, 54 and 48 (**419 discovered, 418 passed, 0 failed, 1 skipped**). The one skipped CSV test is `CsvAdversarialSecurityTests.ExtendedFixedSeedCsvCorpusPreservesAtomicFailureAndCallerOwnership`, classified by NUnit as **Explicit** with the stated reason `Run only through the opt-in extended adversarial Windows workflow.` It is not a newly observed failure and should not be counted as executed in the default suite. The successful CI restore, audit, build and NUnit steps were independently reconfirmed for the same frozen source revision. These are **historical CI results**; local operator restore, build and tests remain deferred pending prerequisite verification and authorization.
+
 | Source Revision | Test Project or Assembly | Runner | Discovered | Passed | Failed | Skipped | Outcome | Evidence |
 |---|---|---|---|---|---|---|---|---|
 | 1809d06c0fade59e4769d16e0f8eaf10fa426004 | RecordSift.Domain.Tests | NUnit ConsoleRunner 3.17.0 | 123 | 123 | 0 | 0 | Passed | https://github.com/infoconex/RecordSift/actions/runs/43146607664 |

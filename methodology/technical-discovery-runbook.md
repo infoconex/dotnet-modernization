@@ -122,6 +122,8 @@ Do not mistake a test consumer for a deployed application, assume undiscovered c
 
 **Verified RecordSift CI example:** The [Windows restore, MSBuild and NUnit job](https://github.com/infoconex/RecordSift/actions/runs/43146607664/job/130945777245), for commit `1809d06c0fade59e4769d16e0f8eaf10fa426004`, ran on `windows-2022` image `20261101.353.1` on 2026-11-12 UTC. Its logs report Windows Server 2022 (`10.0.20348`), Git `2.56.0.windows.4`, MSBuild `17.14.60.43110` (Visual Studio 2022 Enterprise) and selected SDK `10.0.403`. PowerShell 7 was invoked without recording its exact version, and NuGet restore succeeded without recording its CLI version. NUnit reported the .NET Framework CLR version `v4.0.30319.42000`; a successful `net48` build does not prove an individually inventoried targeting pack. These observations are **CI evidence only**, not operator-local results.
 
+**Follow-up CI-only inventory (2026-11-13):** [Read-only job `43514868868`](https://github.com/infoconex/RecordSift/actions/runs/43514868868/job/132194144480) queried the newer `windows-2022` image `20261112.366.7`, checked out the same frozen RecordSift source SHA, and captured all 12 SDKs, 29 modern .NET runtimes, OS architecture, exact PowerShell/Git/MSBuild/NuGet versions, and physical .NET Framework v4.8 reference files. Record this as runner-specific CI evidence (EV-016), **not** an operator-local preflight. Older CI results can differ because the image changes; retain dated source references for each.
+
 ### 20. Operating System Name
 
 Use Windows (required for RecordSift); record the **Caption** output from the command below. This is the discovery host, not the application's supported OS (item 8).

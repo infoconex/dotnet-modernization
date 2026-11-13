@@ -165,13 +165,25 @@ One row per consuming project where unambiguous. List **each package ID, declare
 |---|---|---|---|---|
 |   |   |   |   |   |
 
-### 45. Other External Dependencies
+### 45. Non-NuGet Dependencies
 
-One row per project when possible. Group non-NuGet dependencies, preserving each type, version/identity and resolution. If different dependencies have different attributes, label them within the cell or split into scoped rows. Do not repeat project references or NuGet packages.
+Separate **framework assembly references** from **other non-NuGet dependencies**. Project references are in item 37 and NuGet-managed dependencies in item 44. Use linked project names first and paths last; preserve exact names, mechanisms, versions, source/conditions and resolution evidence. `Not declared` is not `Not checked`, and missing project declarations do not establish the absence of runtime or dynamically loaded dependencies.
+
+**A. Framework Assembly References**
+
+| Project | Framework References | Type / Mechanism | Version / Identity | Resolution / Location | Declaration Source | Project Path |
+|---|---|---|---|---|---|---|
+|   |   |   |   |   |   |   |
+
+**B. Other Non-NuGet Dependencies**
+
+Examples include native libraries, COM components, non-NuGet third-party assemblies and external service dependencies. If no declarations are found, write an explicit source-scoped finding **below** the table and identify outstanding runtime checks; do not invent a dependency or use `None` to mean that checks were not performed.
 
 | Project | Dependencies | Type / Mechanism | Version / Identity | Resolution / Location | Declaration Source | Project Path |
 |---|---|---|---|---|---|---|
-|   |   |   |   |   |   |   |
+
+*Source-inspection result and unresolved runtime checks:*
+
 
 ## Restore, build, tests and delivery
 

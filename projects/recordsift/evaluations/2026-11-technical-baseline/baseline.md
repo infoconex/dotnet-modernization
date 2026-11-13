@@ -1,8 +1,8 @@
 # RecordSift — Discovery baseline (blank copy)
 
-**Blank copy for RecordSift.** This copy has not been filled in. Follow the [step-by-step guide](../../../../methodology/technical-discovery-runbook.md) to evaluate each numbered field; write answers **only in your copy**.
+**Unfilled RecordSift copy.** Complete these fields only when the discovery commands have been run. Follow the [step-by-step guide](../../../../methodology/technical-discovery-runbook.md) and enter results **only in the copy**.
 
-All values are intentionally blank. Keep the numbers unchanged. For groups marked **Repeat**, add another copy of that two-column group for each solution, project, package, command, or other applicable item. Use *Not checked*, *Not executed*, or *Not applicable* when those are the actual outcomes. Link evidence and omit secrets.
+**One field = one value.** For multiple SDKs, runtimes, frameworks, projects, packages, configurations or commands, repeat the relevant group or row rather than joining values in a single cell. Each numbered field has a consistent meaning. All values below are intentionally blank. Use `Not checked`, `Not executed`, or `Not applicable` only in the completed copy when supported by evidence.
 
 ## Discovery information
 
@@ -16,43 +16,55 @@ All values are intentionally blank. Keep the numbers unchanged. For groups marke
 
 | Field | Value |
 |---|---|
-| 4. Operating System, Version, Build and Architecture |  |
-| 5. PowerShell Version |  |
-| 6. Git Version |  |
-| 7. .NET SDK and Runtime Versions |  |
-| 8. MSBuild Version and Installation |  |
-| 9. NuGet CLI Version |  |
-| 10. .NET Framework Targeting Packs |  |
-| 11. Test Runner and Version |  |
+| 4. Operating System Name |  |
+| 5. Operating System Version |  |
+| 6. Operating System Build |  |
+| 7. Operating System Architecture |  |
+| 8. PowerShell Version |  |
+| 9. Git Version |  |
+| 10. .NET SDK Version |  |
+| 11. .NET Runtime Version |  |
+| 12. MSBuild Version |  |
+| 13. MSBuild Installation Source |  |
+| 14. NuGet CLI Version |  |
+| 15. Targeting Pack Version |  |
+| 16. Targeting Pack Installed |  |
+| 17. Test Runner Name |  |
+| 18. Test Runner Version |  |
 
 ## Source revision and verification
 
 | Field | Value |
 |---|---|
-| 12. Selected Source Branch or Tag |  |
-| 13. Source Commit SHA |  |
-| 14. Local Checkout Status |  |
-| 15. Verification Date |  |
-| 16. Evidence Status |  |
+| 19. Selected Source Branch or Tag |  |
+| 20. Source Commit SHA |  |
+| 21. Working Tree Clean |  |
+| 22. Detached HEAD |  |
+| 23. Verification Date |  |
+| 24. Evidence Status |  |
 
 ## Application overview
 
 | Field | Value |
 |---|---|
-| 17. Application name |  |
-| 18. Application Purpose and Type |  |
-| 19. Repository Visibility |  |
-| 20. HTTPS clone URL |  |
-| 21. SSH clone URL, if used |  |
-| 22. Repository default branch |  |
-| 23. License |  |
-| 24. Supported Operating Systems |  |
-| 25. Published Application or Package Version |  |
-| 26. Published Release or Package URL |  |
-| 27. Source manifest version |  |
-| 28. Assembly version |  |
-| 29. File version |  |
-| 30. Consumers or entry points |  |
+| 25. Application Name |  |
+| 26. Application Purpose |  |
+| 27. Application Type |  |
+| 28. Repository Visibility |  |
+| 29. HTTPS Clone URL |  |
+| 30. SSH Clone URL |  |
+| 31. Repository Default Branch |  |
+| 32. License |  |
+| 33. Supported Operating System |  |
+| 34. Published Application Version |  |
+| 35. Published Package Version |  |
+| 36. Published Release URL |  |
+| 37. Published Package URL |  |
+| 38. Source Manifest Version |  |
+| 39. Assembly Version |  |
+| 40. File Version |  |
+| 41. Consumer Name |  |
+| 42. Application Entry Point |  |
 
 ## Solutions
 
@@ -60,13 +72,14 @@ Repeat this group for each solution.
 
 | Field | Value |
 |---|---|
-| 31. Solution path |  |
-| 32. Format |  |
-| 33. Format version |  |
-| 34. Declared IDE version |  |
-| 35. Configurations |  |
-| 36. Platforms |  |
-| 37. Solution membership/build exclusions |  |
+| 43. Solution Path |  |
+| 44. Solution Format |  |
+| 45. Solution Format Version |  |
+| 46. Declared IDE Version |  |
+| 47. Solution Configuration |  |
+| 48. Solution Platform |  |
+| 49. Member Project Path |  |
+| 50. Included in Solution Build |  |
 
 ## Projects
 
@@ -74,15 +87,16 @@ Repeat this group for each project, including projects outside a solution.
 
 | Field | Value |
 |---|---|
-| 38. Project path |  |
-| 39. Role |  |
-| 40. Project format |  |
-| 41. Target framework(s) |  |
-| 42. Language version |  |
-| 43. Output type |  |
-| 44. MSBuild Platform |  |
-| 45. SDK / ToolsVersion |  |
-| 46. Direct project references |  |
+| 51. Project Path |  |
+| 52. Project Role |  |
+| 53. Project Format |  |
+| 54. Target Framework |  |
+| 55. Language Version |  |
+| 56. Output Type |  |
+| 57. MSBuild Platform |  |
+| 58. Project SDK Declaration |  |
+| 59. Project ToolsVersion |  |
+| 60. Referenced Project Path |  |
 
 ## Compiler settings
 
@@ -90,11 +104,14 @@ Repeat for each relevant project and configuration; distinguish declared values 
 
 | Field | Value |
 |---|---|
-| 47. Project/configuration |  |
-| 48. DebugType |  |
-| 49. Optimize |  |
-| 50. DefineConstants |  |
-| 51. Other compiler settings / conditions |  |
+| 61. Project Path |  |
+| 62. Configuration Name |  |
+| 63. DebugType |  |
+| 64. Optimize |  |
+| 65. Defined Compiler Constant |  |
+| 66. Other Compiler Setting Name |  |
+| 67. Other Compiler Setting Value |  |
+| 68. Compiler Setting Condition |  |
 
 ## Output and validation settings
 
@@ -102,11 +119,12 @@ Repeat for each relevant project and configuration.
 
 | Field | Value |
 |---|---|
-| 52. Project/configuration |  |
-| 53. OutputPath |  |
-| 54. WarningLevel |  |
-| 55. WarningsAsErrors |  |
-| 56. DocumentationFile |  |
+| 69. Project Path |  |
+| 70. Configuration Name |  |
+| 71. Output Path |  |
+| 72. Warning Level |  |
+| 73. Warnings As Errors |  |
+| 74. Documentation File |  |
 
 ## Project metadata
 
@@ -114,12 +132,14 @@ Repeat for each project where applicable.
 
 | Field | Value |
 |---|---|
-| 57. Project |  |
-| 58. Default configuration |  |
-| 59. IsTestProject |  |
-| 60. FileAlignment |  |
-| 61. AppDesignerFolder |  |
-| 62. Imports / shared properties |  |
+| 75. Project Path |  |
+| 76. Default Configuration |  |
+| 77. Is Test Project |  |
+| 78. File Alignment |  |
+| 79. Application Designer Folder |  |
+| 80. Imported File Path |  |
+| 81. Shared Property Name |  |
+| 82. Shared Property Value |  |
 
 ## Evaluated MSBuild properties
 
@@ -127,7 +147,13 @@ Include relevant project, configuration, framework, property, result, and eviden
 
 | Field | Value |
 |---|---|
-| 63. Evaluated MSBuild Properties and Differences |  |
+| 83. Project Path |  |
+| 84. Configuration Name |  |
+| 85. Target Framework |  |
+| 86. Evaluated Property Name |  |
+| 87. Evaluated Property Value |  |
+| 88. Declared Property Value |  |
+| 89. Evaluation Evidence URL |  |
 
 ## Repository directories
 
@@ -135,8 +161,8 @@ Repeat for meaningful directories.
 
 | Field | Value |
 |---|---|
-| 64. Directory |  |
-| 65. Purpose |  |
+| 90. Directory Path |  |
+| 91. Directory Purpose |  |
 
 ## Repository configuration files
 
@@ -144,10 +170,13 @@ Repeat for each relevant configuration file or mechanism. Record inspected absen
 
 | Field | Value |
 |---|---|
-| 66. File / mechanism |  |
-| 67. Present? |  |
-| 68. Current purpose / value |  |
-| 69. Scope, imports or precedence |  |
+| 92. Configuration File or Mechanism |  |
+| 93. Configuration Present |  |
+| 94. Configuration Purpose |  |
+| 95. Configuration Value |  |
+| 96. Configuration Scope |  |
+| 97. Importing File Path |  |
+| 98. Configuration Precedence |  |
 
 ## NuGet package declarations
 
@@ -155,12 +184,12 @@ Repeat for each package declaration and consuming project.
 
 | Field | Value |
 |---|---|
-| 70. Project |  |
-| 71. Package ID |  |
-| 72. Version |  |
-| 73. Declared in |  |
-| 74. Configured feed(s) |  |
-| 75. Purpose |  |
+| 99. Consuming Project |  |
+| 100. Package ID |  |
+| 101. Declared Package Version |  |
+| 102. Package Declaration File |  |
+| 103. Configured NuGet Feed |  |
+| 104. Package Purpose |  |
 
 ## Other external dependencies
 
@@ -168,12 +197,16 @@ Repeat for each applicable non-NuGet dependency.
 
 | Field | Value |
 |---|---|
-| 76. Project/consumer |  |
-| 77. Dependency |  |
-| 78. Mechanism/type |  |
-| 79. Source file |  |
-| 80. Version/identity |  |
-| 81. Resolution/location |  |
+| 105. Project Path |  |
+| 106. Consuming Component |  |
+| 107. Dependency Name |  |
+| 108. Dependency Mechanism |  |
+| 109. Dependency Type |  |
+| 110. Dependency Declaration File |  |
+| 111. Dependency Version |  |
+| 112. Dependency Identity |  |
+| 113. Dependency Resolution Status |  |
+| 114. Resolved Dependency Location |  |
 
 ## Build, test and delivery commands
 
@@ -181,13 +214,18 @@ Use the native commands or existing workflow entry points that apply to the proj
 
 | Field | Value |
 |---|---|
-| 82. Restore |  |
-| 83. Build (configuration/platform) |  |
-| 84. Full tests |  |
-| 85. Compatibility checks |  |
-| 86. Packaging |  |
-| 87. Consumer/deployment |  |
-| 88. Alternate host/CI toolchain details |  |
+| 115. Restore Command |  |
+| 116. Build Command |  |
+| 117. Build Configuration |  |
+| 118. Build Platform |  |
+| 119. Test Command |  |
+| 120. Compatibility Check Command |  |
+| 121. Packaging Command |  |
+| 122. Consumer Verification Command |  |
+| 123. Deployment Command |  |
+| 124. Alternate Host Name |  |
+| 125. Alternate Tool Name |  |
+| 126. Alternate Tool Version |  |
 
 ## Test, CI and package details
 
@@ -195,16 +233,26 @@ Record actual counts and outcomes; do not infer execution from source files.
 
 | Field | Value |
 |---|---|
-| 89. Tests discovered |  |
-| 90. Tests passed |  |
-| 91. Tests failed |  |
-| 92. Tests skipped |  |
-| 93. Test projects/assemblies actually executed |  |
-| 94. Build warnings/errors and important outputs |  |
-| 95. CI workflow names, triggers and commands |  |
-| 96. CI runs checked and their exact source SHA |  |
-| 97. Package contents/metadata and release evidence |  |
-| 98. Runtime / deployment requirements |  |
+| 127. Tests Discovered |  |
+| 128. Tests Passed |  |
+| 129. Tests Failed |  |
+| 130. Tests Skipped |  |
+| 131. Executed Test Project |  |
+| 132. Executed Test Assembly |  |
+| 133. Build Warning Count |  |
+| 134. Build Error Count |  |
+| 135. Build Output Path |  |
+| 136. CI Workflow Name |  |
+| 137. CI Trigger |  |
+| 138. CI Command |  |
+| 139. CI Run URL |  |
+| 140. CI Run Source SHA |  |
+| 141. CI Run Outcome |  |
+| 142. Package Contents |  |
+| 143. Package Metadata |  |
+| 144. Release Evidence URL |  |
+| 145. Runtime Requirement |  |
+| 146. Deployment Requirement |  |
 
 ## Verification outcomes
 
@@ -212,19 +260,19 @@ Record passed, failed, blocked, not executed, or not applicable, with evidence w
 
 | Field | Value |
 |---|---|
-| 99. Dependency restore |  |
-| 100. Build |  |
-| 101. Automated tests |  |
-| 102. Public API |  |
-| 103. Assembly identity |  |
-| 104. Resources |  |
-| 105. XML documentation |  |
-| 106. Package contents |  |
-| 107. Package metadata |  |
-| 108. Dependency validation |  |
-| 109. Vulnerability audit |  |
-| 110. Installed-package consumer |  |
-| 111. Application integration checks |  |
+| 147. Dependency Restore Outcome |  |
+| 148. Build Outcome |  |
+| 149. Automated Test Outcome |  |
+| 150. Public API Check Outcome |  |
+| 151. Assembly Identity Check Outcome |  |
+| 152. Resource Check Outcome |  |
+| 153. XML Documentation Check Outcome |  |
+| 154. Package Contents Check Outcome |  |
+| 155. Package Metadata Check Outcome |  |
+| 156. Dependency Validation Outcome |  |
+| 157. Vulnerability Audit Outcome |  |
+| 158. Installed-Package Consumer Check Outcome |  |
+| 159. Integration Check Outcome |  |
 
 ## Executed command evidence
 
@@ -232,10 +280,14 @@ Repeat this group for each command actually executed, including failures.
 
 | Field | Value |
 |---|---|
-| 112. Step |  |
-| 113. Exact command, scope and tool |  |
-| 114. Result and exit code |  |
-| 115. Output / evidence link |  |
+| 160. Discovery Step ID |  |
+| 161. Exact Command |  |
+| 162. Command Working Directory |  |
+| 163. Command Tool |  |
+| 164. Command Result |  |
+| 165. Command Exit Code |  |
+| 166. Command Output Excerpt |  |
+| 167. Command Evidence URL |  |
 
 ## Open gaps and findings
 
@@ -243,9 +295,10 @@ Repeat this group for each significant gap or finding.
 
 | Field | Value |
 |---|---|
-| 116. Gap or finding |  |
-| 117. Impact |  |
-| 118. Evidence / next check |  |
+| 168. Finding |  |
+| 169. Finding Impact |  |
+| 170. Finding Evidence URL |  |
+| 171. Next Verification Check |  |
 
 ## Discovery step status
 
@@ -253,16 +306,20 @@ Repeat for each relevant DISC step.
 
 | Field | Value |
 |---|---|
-| 119. Step |  |
-| 120. Result/status |  |
-| 121. Evidence or missing information |  |
+| 172. Discovery Step ID |  |
+| 173. Step Result |  |
+| 174. Step Status |  |
+| 175. Step Evidence URL |  |
+| 176. Missing Information |  |
 
 ## Final review
 
 | Field | Value |
 |---|---|
-| 122. Overall Baseline Disposition |  |
-| 123. Report reviewed by/date |  |
-| 124. Next action or deferred checks |  |
+| 177. Overall Baseline Disposition |  |
+| 178. Reviewed By |  |
+| 179. Review Date |  |
+| 180. Next Action |  |
+| 181. Deferred Check |  |
 
-The baseline records observed facts and execution outcomes, not proposed modernization work.
+This baseline records observed facts, not proposed modernization work.

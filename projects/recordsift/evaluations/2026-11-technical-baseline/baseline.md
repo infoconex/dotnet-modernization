@@ -446,10 +446,10 @@ Each distribution has its own record. NuGet package upload acceptance was previo
 
 | Finding | Impact | Evidence | Next Check |
 |---|---|---|---|
-| Windows discovery machine not inventoried | Cannot assert local tool/readiness baseline | Items 18–29 | Perform Windows host and tool version commands |
-| Clean local checkout not verified | Local filesystem and Git state remain unknown | Items 31–35 | Clone selected SHA into unique discovery folder |
-| Evaluated MSBuild values not independently queried | Declared project properties may differ from evaluated settings | Item 41 | Run MSBuild property queries from Windows Developer PowerShell |
-| CI outcomes are not local execution evidence | CI success cannot verify operator environment | Items 47–49 | Restore, build and run tests in the approved Windows checkout |
+| Windows discovery machine not inventoried | Cannot assert local tool/readiness baseline | Items 20–31 | Perform Windows host and tool version commands |
+| Clean local checkout not verified | Local filesystem and Git state remain unknown | Items 33–38 | Clone selected SHA into unique discovery folder |
+| Evaluated MSBuild values not independently queried | Declared project properties may differ from evaluated settings | Item 44 | Run MSBuild property queries from Windows Developer PowerShell |
+| CI outcomes are not local execution evidence | CI success cannot verify operator environment | Items 50–52 | Restore, build and run tests in the approved Windows checkout |
 
 ### 60. Discovery Item Status
 
@@ -587,7 +587,7 @@ Track three independent evidence dimensions for all 65 baseline items. **Source 
 
 
 
-**Unresolved verification and review:** No operator-run Windows preflight, clean checkout, MSBuild property evaluation, restore, build or test has been captured in this evaluation. Existing CI at the frozen source SHA does not verify local tooling or deployment/runtime conditions. Items 59–60 are **Not reviewed**; the overall item 61 disposition remains **More verification needed**. A `Not applicable` cell means that particular evidence channel is not required for that item, **not** that the full discovery is approved.
+**Unresolved verification and review:** No operator-run Windows preflight, clean checkout, MSBuild property evaluation, restore, build or test has been captured in this evaluation. Existing CI at the frozen source SHA does not verify local tooling or deployment/runtime conditions. Items 62–63 are **Not reviewed**; the overall item 61 disposition remains **More verification needed**. A `Not applicable` cell means that particular evidence channel is not required for that item, **not** that the full discovery is approved.
 
 | Field | Value |
 |---|---|

@@ -152,6 +152,8 @@ The [getting-started guide](https://github.com/infoconex/RecordSift/blob/1809d06
 
 **Tool provenance:** The [research job](https://github.com/infoconex/RecordSift/actions/runs/43514868868/job/132194144480) resolved MSBuild at `C:\Program Files\Microsoft Visual Studio\2022\Enterprise\MSBuild\Current\Bin\MSBuild.exe` through Visual Studio `vswhere` and resolved `nuget.exe` from `C:\ProgramData\Chocolatey\bin\nuget.exe`. These locations are runner observations, not operator-local paths.
 
+**Operator attempt (EV-022, 2026-11-13):** From PowerShell at `D:\RecordSift`, `msbuild -version -nologo` returned that `msbuild` was **not recognized** as a command. This establishes that the unqualified executable could not be resolved in that session; it does **not** establish that MSBuild/Visual Studio is uninstalled. The local MSBuild version (item 28) and installation source (item 29) remain `Not checked`. Next, locate MSBuild with Visual Studio Installer's `vswhere` and run the discovered executable by full path, without changing PATH or installing anything.
+
 ### 31. .NET Framework Targeting Pack Inventory
 
 | Environment | Framework Version | Installed | Location |
@@ -553,11 +555,13 @@ Each distribution has its own record. NuGet package upload acceptance was previo
 
 | 27 | dotnet --list-runtimes | Operator PowerShell session (`D:\RecordSift`) | .NET CLI (selected SDK version not separately queried) | Thirteen installed modern .NET runtime name/version/path entries | Not recorded | Output supplied | EV-021; operator-provided output in discovery conversation, 2026-11-13 |
 
+| 28 | msbuild -version -nologo | Operator PowerShell session (`D:\RecordSift`) | Not resolved on PATH | Version query (no MSBuild executable located) | Not recorded | Command not recognized; no version returned | EV-022; operator-provided PowerShell error in discovery conversation, 2026-11-13 |
+
 ### 59. Findings and Gaps
 
 | Finding | Impact | Evidence | Next Check |
 |---|---|---|---|
-| Operator Windows toolchain inventory incomplete | Operator supplied Windows 11 Pro/version/build/architecture (items 20–23, EV-017), PowerShell 7.7.0 (item 24, EV-018), and Git 2.56.0.windows.4 (item 25, EV-019); local SDK (item 26, EV-020) and runtime inventories (item 27, EV-021) were supplied; MSBuild, NuGet and targeting-pack inventories remain unchecked | Items 20–31; EV-016–021 | Continue read-only local prerequisite inventory at item 28 |
+| Operator Windows toolchain inventory incomplete | Operator supplied Windows 11 Pro/version/build/architecture (items 20–23, EV-017), PowerShell 7.7.0 (item 24, EV-018), and Git 2.56.0.windows.4 (item 25, EV-019); local SDK (item 26, EV-020) and runtime inventories (item 27, EV-021) were supplied; MSBuild could not be invoked by unqualified name (EV-022); its installed version/source, NuGet and targeting-pack inventories remain unchecked | Items 20–31; EV-016–022 | Locate MSBuild with read-only vswhere lookup before querying version |
 | Clean local checkout not verified | Local filesystem and Git state remain unknown | Items 33–38 | Clone selected SHA into unique discovery folder |
 | Operator-local MSBuild evaluation outstanding | CI evaluated 20 project/configuration scopes; local tool/import differences remain unverified | Item 44; EV-015 | Evaluate the same properties on an approved operator Windows checkout if local parity is required |
 | Build-policy properties not explicitly set in evaluated results | `Deterministic`, `TreatWarningsAsErrors` and `PlatformTarget` returned empty strings; the output alone does not establish compiler-switch behavior | Item 44; [CI evidence](https://github.com/infoconex/RecordSift/actions/runs/43501555831/job/132148357265) | Inspect actual compiler invocations and existing build gates before proposing policy changes |
@@ -567,7 +571,7 @@ Each distribution has its own record. NuGet package upload acceptance was previo
 
 | Check | Reason Deferred | Revisit When |
 |---|---|---|
-| Windows toolchain preflight (remaining items 28–31) | Operator provided OS items 20–23, PowerShell version (item 24), Git version (item 25), three installed .NET SDKs (item 26), and 13 runtime entries (item 27); local MSBuild, NuGet and targeting-pack checks remain | Continue read-only local prerequisite inventory |
+| Windows toolchain preflight (remaining items 28–31) | Operator provided OS items 20–23, PowerShell version (item 24), Git version (item 25), three installed .NET SDKs (item 26), and 13 runtime entries (item 27); direct `msbuild` invocation failed to resolve on PATH (EV-022) and version/source remain unknown | Locate MSBuild with vswhere before continuing NuGet and targeting-pack checks |
 | Local checkout verification | No isolated Windows discovery folder created | After host prerequisite checks |
 | Operator-local MSBuild property parity | Existing CI evaluated the frozen source (EV-015); local tool/import parity remains unverified | If local parity is required, after host preflight and checkout |
 | Local restore/build/test | Operator approval and environment verification required | After source checkout and side-effect review |

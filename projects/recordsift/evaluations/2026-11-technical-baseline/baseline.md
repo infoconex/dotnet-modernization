@@ -337,11 +337,13 @@ These are project-file metadata and **explicit** imports, not evaluated MSBuild 
 
 ### 46. Repository Configuration
 
-**Operator-local configuration file inventory (EV-046, 2026-11-13):** In the isolated checkout at the pinned RecordSift commit, the operator ran the item 46 `git ls-files` configuration filename query and received precisely five tracked paths: `.editorconfig`, `.github/copilot-instructions.md`, `.gitignore`, `AGENTS.md`, and `NuGet.Config`. This confirms those files are tracked and no tracked `global.json`, `Directory.Build.props`, `Directory.Build.targets`, `Directory.Packages.props` or additional matching nested configuration filenames were returned by that query. **Tracked-file absence is not evidence that a configuration is missing from the operator's user/machine environment or MSBuild import graph.** The declarations in the table below originated from pinned source inspection. The **NuGet.Config** entries have now been corroborated by an independent operator-local file read (EV-047); other listed file-content declarations still rely on source inspection pending corresponding local checks.
+**Operator-local configuration file inventory (EV-046, 2026-11-13):** In the isolated checkout at the pinned RecordSift commit, the operator ran the item 46 `git ls-files` configuration filename query and received precisely five tracked paths: `.editorconfig`, `.github/copilot-instructions.md`, `.gitignore`, `AGENTS.md`, and `NuGet.Config`. This confirms those files are tracked and no tracked `global.json`, `Directory.Build.props`, `Directory.Build.targets`, `Directory.Packages.props` or additional matching nested configuration filenames were returned by that query. **Tracked-file absence is not evidence that a configuration is missing from the operator's user/machine environment or MSBuild import graph.** The declarations in the table below originated from pinned source inspection. The **NuGet.Config** entries were corroborated by operator-local file inspection (EV-047), and **all `.editorconfig` declarations** were subsequently corroborated against the operator-local file output (EV-048). The other repository instruction/ignore files are identified by tracked paths (EV-046), with content evidence from prior pinned-source inspection where relevant.
 
 NuGet entries below are **declared in the frozen repository source**, not an inventory of effective settings on a Windows machine. The `clear` entries remove previously inherited entries **within their respective source collections**; later configuration layers or command-line choices can still affect effective behavior. The declared feeds are not verified download or audit origins.
 
 **Operator-local NuGet configuration inspection (EV-047, 2026-11-13):** The operator used `Get-Content -LiteralPath .\NuGet.Config` in the isolated checkout pinned to `1809d06c0fade59e4769d16e0f8eaf10fa426004`. The actual XML contains exactly two configuration sections: `<packageSources>` with `<clear />` followed by `<add key="nuget.org" value="https://api.nuget.org/v3/index.json" />`, and `<auditSources>` with `<clear />` followed by `<add key="nuget.org-audit" value="https://api.nuget.org/v3/index.json" />`. No other sections, credentials or additional feeds are declared **in this file**. This matches the source-inspected rows and absent-section note below; it is not evidence of which NuGet sources are enabled or used in the operator's effective configuration. Reading the file does not trigger package restore, build or test.
+
+**Operator-local EditorConfig inspection (EV-048, 2026-11-13):** The operator ran `Get-Content -LiteralPath .\.editorconfig` in the isolated checkout. The file's **66 declared key/value entries**, retaining exact scope and values, match the independently inspected file at the frozen SHA: 1 unscoped `root=true`; 5 under `[*]`; 38 under `[*.{cs,csx}]`; 20 under `[src/**/*.cs]`; 1 under `[*.{csproj,props,targets,config,xml}]`; and 1 under `[*.md]`. It specifies LF, UTF-8, spaces and final newline by default; C# indentation of 4, XML/MSBuild/config indentation of 2; Markdown trailing whitespace preservation; C# style preferences at `suggestion`; and `IDE1006`/naming rule severity declarations at `error`. The member and field naming rules inside `[src/**/*.cs]` are **source-scoped**, not declared for test paths under `tests/`. **Declared severities do not prove effective IDE/analyzer enforcement**, whether a CI style gate ran, or whether every rule applies to every source file. This captures exactly what was printed and does not evaluate editorconfig application to a specific file.
 
 | File or Mechanism | Present | Scope | Setting Name | Setting Value | Import or Precedence |
 |---|---|---|---|---|---|
@@ -349,10 +351,72 @@ NuGet entries below are **declared in the frozen repository source**, not an inv
 | NuGet.Config | True | Repository | packageSources.nuget.org | https://api.nuget.org/v3/index.json | Declared package source following clear |
 | NuGet.Config | True | Repository | auditSources.clear | True | Clears previously inherited audit source entries in this collection |
 | NuGet.Config | True | Repository | auditSources.nuget.org-audit | https://api.nuget.org/v3/index.json | Declared audit source following clear |
-| .editorconfig | True | Repository | root | true | Root-level EditorConfig |
-| .editorconfig | True | Repository | charset | utf-8 | [*] |
-| .editorconfig | True | Repository | indent_style | space | [*] |
-| .editorconfig | True | Repository | dotnet_diagnostic.IDE1006.severity | error | C# analyzer |
+| .editorconfig | True | Repository | `root` | `true` | `Root (unscoped)` |
+| .editorconfig | True | Repository | `charset` | `utf-8` | `[*]` |
+| .editorconfig | True | Repository | `end_of_line` | `lf` | `[*]` |
+| .editorconfig | True | Repository | `indent_style` | `space` | `[*]` |
+| .editorconfig | True | Repository | `insert_final_newline` | `true` | `[*]` |
+| .editorconfig | True | Repository | `trim_trailing_whitespace` | `true` | `[*]` |
+| .editorconfig | True | Repository | `indent_size` | `4` | `[*.{cs,csx}]` |
+| .editorconfig | True | Repository | `dotnet_sort_system_directives_first` | `true` | `[*.{cs,csx}]` |
+| .editorconfig | True | Repository | `dotnet_separate_import_directive_groups` | `false` | `[*.{cs,csx}]` |
+| .editorconfig | True | Repository | `dotnet_style_qualification_for_field` | `false:suggestion` | `[*.{cs,csx}]` |
+| .editorconfig | True | Repository | `dotnet_style_qualification_for_property` | `false:suggestion` | `[*.{cs,csx}]` |
+| .editorconfig | True | Repository | `dotnet_style_qualification_for_method` | `false:suggestion` | `[*.{cs,csx}]` |
+| .editorconfig | True | Repository | `dotnet_style_qualification_for_event` | `false:suggestion` | `[*.{cs,csx}]` |
+| .editorconfig | True | Repository | `dotnet_style_predefined_type_for_locals_parameters_members` | `true:suggestion` | `[*.{cs,csx}]` |
+| .editorconfig | True | Repository | `dotnet_style_predefined_type_for_member_access` | `true:suggestion` | `[*.{cs,csx}]` |
+| .editorconfig | True | Repository | `csharp_style_var_for_built_in_types` | `false:suggestion` | `[*.{cs,csx}]` |
+| .editorconfig | True | Repository | `csharp_style_var_when_type_is_apparent` | `true:suggestion` | `[*.{cs,csx}]` |
+| .editorconfig | True | Repository | `csharp_style_var_elsewhere` | `false:suggestion` | `[*.{cs,csx}]` |
+| .editorconfig | True | Repository | `csharp_style_namespace_declarations` | `block_scoped:suggestion` | `[*.{cs,csx}]` |
+| .editorconfig | True | Repository | `csharp_prefer_braces` | `true:suggestion` | `[*.{cs,csx}]` |
+| .editorconfig | True | Repository | `dotnet_diagnostic.IDE1006.severity` | `error` | `[*.{cs,csx}]` |
+| .editorconfig | True | Repository | `dotnet_naming_rule.constants_pascal.severity` | `error` | `[*.{cs,csx}]` |
+| .editorconfig | True | Repository | `dotnet_naming_rule.constants_pascal.symbols` | `constants` | `[*.{cs,csx}]` |
+| .editorconfig | True | Repository | `dotnet_naming_rule.constants_pascal.style` | `pascal_case` | `[*.{cs,csx}]` |
+| .editorconfig | True | Repository | `dotnet_naming_symbols.constants.applicable_kinds` | `field, local` | `[*.{cs,csx}]` |
+| .editorconfig | True | Repository | `dotnet_naming_symbols.constants.required_modifiers` | `const` | `[*.{cs,csx}]` |
+| .editorconfig | True | Repository | `dotnet_naming_style.pascal_case.capitalization` | `pascal_case` | `[*.{cs,csx}]` |
+| .editorconfig | True | Repository | `dotnet_naming_rule.private_constants_pascal.severity` | `error` | `[*.{cs,csx}]` |
+| .editorconfig | True | Repository | `dotnet_naming_rule.private_constants_pascal.symbols` | `private_constants` | `[*.{cs,csx}]` |
+| .editorconfig | True | Repository | `dotnet_naming_rule.private_constants_pascal.style` | `pascal_case` | `[*.{cs,csx}]` |
+| .editorconfig | True | Repository | `dotnet_naming_symbols.private_constants.applicable_kinds` | `field` | `[*.{cs,csx}]` |
+| .editorconfig | True | Repository | `dotnet_naming_symbols.private_constants.applicable_accessibilities` | `private` | `[*.{cs,csx}]` |
+| .editorconfig | True | Repository | `dotnet_naming_symbols.private_constants.required_modifiers` | `const` | `[*.{cs,csx}]` |
+| .editorconfig | True | Repository | `dotnet_naming_rule.interfaces_use_i.severity` | `error` | `[*.{cs,csx}]` |
+| .editorconfig | True | Repository | `dotnet_naming_rule.interfaces_use_i.symbols` | `interfaces` | `[*.{cs,csx}]` |
+| .editorconfig | True | Repository | `dotnet_naming_rule.interfaces_use_i.style` | `prefixed_pascal` | `[*.{cs,csx}]` |
+| .editorconfig | True | Repository | `dotnet_naming_symbols.interfaces.applicable_kinds` | `interface` | `[*.{cs,csx}]` |
+| .editorconfig | True | Repository | `dotnet_naming_style.prefixed_pascal.required_prefix` | `I` | `[*.{cs,csx}]` |
+| .editorconfig | True | Repository | `dotnet_naming_style.prefixed_pascal.capitalization` | `pascal_case` | `[*.{cs,csx}]` |
+| .editorconfig | True | Repository | `dotnet_naming_rule.locals_and_parameters_camel.severity` | `error` | `[*.{cs,csx}]` |
+| .editorconfig | True | Repository | `dotnet_naming_rule.locals_and_parameters_camel.symbols` | `locals_and_parameters` | `[*.{cs,csx}]` |
+| .editorconfig | True | Repository | `dotnet_naming_rule.locals_and_parameters_camel.style` | `camel_case` | `[*.{cs,csx}]` |
+| .editorconfig | True | Repository | `dotnet_naming_symbols.locals_and_parameters.applicable_kinds` | `local, parameter` | `[*.{cs,csx}]` |
+| .editorconfig | True | Repository | `dotnet_naming_style.camel_case.capitalization` | `camel_case` | `[*.{cs,csx}]` |
+| .editorconfig | True | Repository | `dotnet_naming_rule.types_and_members_pascal.severity` | `error` | `[src/**/*.cs]` |
+| .editorconfig | True | Repository | `dotnet_naming_rule.types_and_members_pascal.symbols` | `types_and_members` | `[src/**/*.cs]` |
+| .editorconfig | True | Repository | `dotnet_naming_rule.types_and_members_pascal.style` | `pascal_case` | `[src/**/*.cs]` |
+| .editorconfig | True | Repository | `dotnet_naming_symbols.types_and_members.applicable_kinds` | `class, struct, enum, delegate, method, property, event` | `[src/**/*.cs]` |
+| .editorconfig | True | Repository | `dotnet_naming_style.pascal_case.capitalization` | `pascal_case` | `[src/**/*.cs]` |
+| .editorconfig | True | Repository | `dotnet_naming_rule.instance_fields_underscore.severity` | `error` | `[src/**/*.cs]` |
+| .editorconfig | True | Repository | `dotnet_naming_rule.instance_fields_underscore.symbols` | `private_fields` | `[src/**/*.cs]` |
+| .editorconfig | True | Repository | `dotnet_naming_rule.instance_fields_underscore.style` | `underscore_camel` | `[src/**/*.cs]` |
+| .editorconfig | True | Repository | `dotnet_naming_symbols.private_fields.applicable_kinds` | `field` | `[src/**/*.cs]` |
+| .editorconfig | True | Repository | `dotnet_naming_symbols.private_fields.applicable_accessibilities` | `private` | `[src/**/*.cs]` |
+| .editorconfig | True | Repository | `dotnet_naming_style.underscore_camel.capitalization` | `camel_case` | `[src/**/*.cs]` |
+| .editorconfig | True | Repository | `dotnet_naming_style.underscore_camel.required_prefix` | `_` | `[src/**/*.cs]` |
+| .editorconfig | True | Repository | `dotnet_naming_rule.static_fields_s_prefix.severity` | `error` | `[src/**/*.cs]` |
+| .editorconfig | True | Repository | `dotnet_naming_rule.static_fields_s_prefix.symbols` | `private_static_fields` | `[src/**/*.cs]` |
+| .editorconfig | True | Repository | `dotnet_naming_rule.static_fields_s_prefix.style` | `s_camel` | `[src/**/*.cs]` |
+| .editorconfig | True | Repository | `dotnet_naming_symbols.private_static_fields.applicable_kinds` | `field` | `[src/**/*.cs]` |
+| .editorconfig | True | Repository | `dotnet_naming_symbols.private_static_fields.applicable_accessibilities` | `private` | `[src/**/*.cs]` |
+| .editorconfig | True | Repository | `dotnet_naming_symbols.private_static_fields.required_modifiers` | `static` | `[src/**/*.cs]` |
+| .editorconfig | True | Repository | `dotnet_naming_style.s_camel.capitalization` | `camel_case` | `[src/**/*.cs]` |
+| .editorconfig | True | Repository | `dotnet_naming_style.s_camel.required_prefix` | `s_` | `[src/**/*.cs]` |
+| .editorconfig | True | Repository | `indent_size` | `2` | `[*.{csproj,props,targets,config,xml}]` |
+| .editorconfig | True | Repository | `trim_trailing_whitespace` | `false` | `[*.md]` |
 | .gitignore | True | Repository | File present | True | Git ignore rules |
 | AGENTS.md | True | Repository | File present | True | Repository instructions |
 | .github/copilot-instructions.md | True | Repository | File present | True | GitHub AI instructions |
@@ -648,6 +712,8 @@ Each distribution has its own record. NuGet package upload acceptance was previo
 
 | 46 | Get-Content -LiteralPath .\NuGet.Config | Operator PowerShell session (`$HOME\source\discoveries\RecordSift-discovery-2026-11-13-145400`) | PowerShell 7.7.0 (previously observed, EV-018) | Repository NuGet.Config declared package and audit sources, clear operations and XML section inventory | Not recorded separately | 2 sections: packageSources.clear and nuget.org; auditSources.clear and nuget.org-audit, both source URLs https://api.nuget.org/v3/index.json; no additional sections | EV-047; operator-provided PowerShell transcript in discovery conversation, 2026-11-13 |
 
+| 46 | Get-Content -LiteralPath .\.editorconfig | Operator PowerShell session (`$HOME\source\discoveries\RecordSift-discovery-2026-11-13-145400`) | PowerShell 7.7.0 (EV-018) | All 66 repository EditorConfig key/value declarations with original scope sections | Not recorded separately | 66 declarations across root, [*], [*.{cs,csx}], [src/**/*.cs], XML/config/project and Markdown sections; source/naming severity declarations matched frozen source | EV-048; operator-provided PowerShell console output, 2026-11-13; independently checked against pinned source |
+
 ### 59. Findings and Gaps
 
 | Finding | Impact | Evidence | Next Check |
@@ -655,7 +721,7 @@ Each distribution has its own record. NuGet package upload acceptance was previo
 | Operator Windows development-tool readiness incomplete | Local OS, PowerShell, Git, SDK/runtime inventories verified (EV-017–021); legacy .NET Framework MSBuild `4.8.10001.0` verified (EV-027), NuGet CLI `7.9.0.83` verified (EV-028), and NUnit ConsoleRunner `3.17.0` executable version verified (EV-030–031). Modern Visual Studio MSBuild is not verified after the Professional uninstall (EV-022–026); the v4.8 reference-assembly check returned `False` (EV-029). This prevents treating local .NET Framework 4.8 build prerequisites as satisfied | Items 20–32; EV-016–031 | Proceed to isolated checkout preparation (item 33) for source inspection; after Community/developer-pack installation verify modern MSBuild and repeat v4.8 reference-assembly check before local build |
 | Required .NET Framework 4.8 reference assembly missing at local checked path | Operator's direct `Test-Path` for `v4.8\mscorlib.dll` returned `False` versus `True` in CI; this is a confirmed local build-prerequisite gap at that path, not a RecordSift source-code failure or proof the runtime is missing | Item 31; EV-016, EV-029 | Install or restore the .NET Framework 4.8 developer/targeting pack as appropriate, then repeat the direct file check before attempting a local build |
 | NUnit executable verified; local tests not yet executed | Local `nunit3-console.exe --version` reported `3.17.0`, consistent with the declared package (EV-030–031); no operator-local tests or checkout SHA verification have occurred | Item 32; EV-030–031 | Record test execution only after isolated source checkout, build prerequisites and approved build/test execution |
-| Isolated checkout and repository configuration declarations partially verified | Operator-local project/solution and repository directory checks were corroborated through items 33–45 (EV-032–045); item 44 retains separate CI MSBuild evaluation evidence (EV-015). The item 46 tracked-file listing confirmed five repository configuration/instruction paths (EV-046). A local read of `NuGet.Config` independently matched the pinned source declaration of two `clear` entries and two nuget.org source entries across package and audit collections, with no other XML sections (EV-047). Other config-file contents and effective machine/user configuration have not yet been locally inspected | Items 33–46; EV-032–047, EV-015 | Continue item 46 with direct `.editorconfig` source inspection; distinguish repository declarations from effective/inherited settings and avoid restore/build/test |
+| Isolated checkout and repository configuration declarations partially verified | Operator-local source/solution, directory and configuration filename inventories have been corroborated (EV-033–046). Local `NuGet.Config` inspection verified package/audit source sections (EV-047), and local `.editorconfig` inspection corroborated all 66 declared rules and their scopes (EV-048). The remaining machine/user NuGet configuration hierarchy, actual restore origin and effective analyzer enforcement have not been verified; no build or test was invoked | Items 33–46; EV-032–048, EV-015 | Continue item 46 with separate NuGet source listing using the specified repository configuration; inspect effective settings independently without exposing private credentials |
 | Operator-local MSBuild evaluation outstanding | CI evaluated 20 project/configuration scopes; local tool/import differences remain unverified | Item 44; EV-015 | Evaluate the same properties on an approved operator Windows checkout if local parity is required |
 | Build-policy properties not explicitly set in evaluated results | `Deterministic`, `TreatWarningsAsErrors` and `PlatformTarget` returned empty strings; the output alone does not establish compiler-switch behavior | Item 44; [CI evidence](https://github.com/infoconex/RecordSift/actions/runs/43501555831/job/132148357265) | Inspect actual compiler invocations and existing build gates before proposing policy changes |
 | Branch-policy references in AI and PR guidance | The pinned `.github/agents/tdd-coach.agent.md`, `.github/copilot-instructions.md` and `.github/pull_request_template.md` contain references to `release/0.1` as a working/PR base. These references are source-declared guidance; their current suitability is unverified and this discovery does not establish whether that branch currently exists | Item 45; EV-045 | Compare these instructions against current branch and release policy during modernization planning before changing any RecordSift guidance |

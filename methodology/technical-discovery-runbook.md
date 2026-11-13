@@ -2,6 +2,8 @@
 
 **Purpose:** Explain how to evaluate each numbered field in the [blank discovery baseline](../templates/application-baseline.md). Copy that baseline before starting, then enter actual findings **only in the copy**. Never record results in this guide.
 
+**For single-value fields, enter only the value:** one category (such as `Library`), status (`Public`), version, date, SHA, or complete URL. Do not append comments, evidence-source labels, or explanatory qualifications in the Value cell. Record provenance and interpretation in an evidence manifest or a table's explicitly labeled evidence column, not by changing the meaning of a field.
+
 A number identifies a **single field** or a **dataset/table**. For a numbered table, its headings define the columns and **each row is one record**. Add rows when a project has multiple frameworks, configurations, references, or other instances. Keep source-declared values separate from observed, evaluated and executed results. Use `Not checked`, `Not executed` or `Not applicable` when warranted; don't guess. Retain evidence and redact personal paths, tokens and credentials.
 
 These commands are Windows PowerShell examples. Use the host appropriate to the application. **RecordSift requires a Windows host, not WSL, Linux or macOS.** Do not change application source or publish anything during discovery.

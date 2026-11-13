@@ -99,7 +99,7 @@ Prefer one row per solution. Group configurations and platforms only when their 
 
 ### 37. Projects
 
-One row per project wherever possible. Use project name first (link to the project file when available), group direct references by name, and put the repository-relative project file path last. Preserve all frameworks/platforms and split only when differences cannot be represented unambiguously.
+One row per project wherever possible. Use project name first (link to the project file when available), group direct references by name, and put the repository-relative project file path last **in this authoritative inventory**. Subsequent project tables use linked names and omit repeated path columns. Preserve all frameworks/platforms and split only when differences cannot be represented unambiguously.
 
 | Project | Role | Format | Target Framework(s) | Language Version | Output Type | MSBuild Platform(s) | SDK or ToolsVersion | Direct Project References | Project Path |
 |---|---|---|---|---|---|---|---|---|---|
@@ -111,33 +111,33 @@ One row per project wherever possible. Use project name first (link to the proje
 
 One row per project whenever possible. D/R means Debug/Release in that order; show one value when both have identical declarations. `Not declared` is not an evaluated default. Document shared exact conditions once; label exceptions or additional configurations and properties explicitly.
 
-| Project | Framework(s) | LangVersion | DebugSymbols (D/R) | DebugType (D/R) | Optimize (D/R) | DefineConstants (D/R) | Conditions / Exceptions | Project Path |
-|---|---|---|---|---|---|---|---|---|
-|   |   |   |   |   |   |   |   |   |
+| Project | Framework(s) | LangVersion | DebugSymbols (D/R) | DebugType (D/R) | Optimize (D/R) | DefineConstants (D/R) | Conditions / Exceptions |
+|---|---|---|---|---|---|---|---|
+|   |   |   |   |   |   |   |   |
 
 ### 39. Output and Validation Settings
 
 One row per project when practical. Use Debug/Release values where declarations differ, one value where identical, and `Not declared` where absent; do not infer evaluated defaults. Preserve other properties and exceptional conditions.
 
-| Project | OutputPath (D/R) | WarningLevel (D/R) | WarningsAsErrors (D/R) | DocumentationFile (D/R) | Conditions / Exceptions | Project Path |
-|---|---|---|---|---|---|---|
-|   |   |   |   |   |   |   |
+| Project | OutputPath (D/R) | WarningLevel (D/R) | WarningsAsErrors (D/R) | DocumentationFile (D/R) | Conditions / Exceptions |
+|---|---|---|---|---|---|
+|   |   |   |   |   |   |
 
 ### 40. Project Metadata and Imports
 
 One row per project. Give each named metadata property a column and list distinct imports together. **Configuration Fallback** is a source-declared value used when `$(Configuration)` is empty, not a verified evaluated/build configuration; record its condition where relevant. `Not declared` means absent from project source, not evaluated false. Preserve exceptional conditional/import scope.
 
-| Project | Configuration Fallback | IsTestProject | FileAlignment | AppDesignerFolder | Imports | Additional Metadata / Conditions | Project Path |
-|---|---|---|---|---|---|---|---|
-|   |   |   |   |   |   |   |   |
+| Project | Configuration Fallback | IsTestProject | FileAlignment | AppDesignerFolder | Imports | Additional Metadata / Conditions |
+|---|---|---|---|---|---|---|
+|   |   |   |   |   |   |   |
 
 ### 41. Evaluated MSBuild Properties
 
 One row per project when possible. Enter only observed evaluated values, labeled by configuration/platform/framework, and distinguish source declarations from evaluated outputs. Link exact command/output; do not populate from XML or successful build alone.
 
-| Project | Configuration / Framework / Platform | Evaluated Properties (name=value) | Declared Properties for Comparison | Evidence | Project Path |
-|---|---|---|---|---|---|
-|   |   |   |   |   |   |
+| Project | Configuration / Framework / Platform | Evaluated Properties (name=value) | Declared Properties for Comparison | Evidence |
+|---|---|---|---|---|
+|   |   |   |   |   |
 
 ## Repository structure and dependencies
 
@@ -163,26 +163,26 @@ Record **declared source settings** in the table, including NuGet `clear` direct
 
 One row per consuming project where unambiguous. List **each package ID, declared version and purpose** together, one per line, alongside version source and configured feed(s). Qualify any differing per-package conditions or feeds rather than merging incompatible details. Configured feed is not proven acquisition origin.
 
-| Project | Packages (ID — Version — Purpose) | Declaration / Version Source | Configured Feed(s) | Project Path |
-|---|---|---|---|---|
-|   |   |   |   |   |
+| Project | Packages (ID — Version — Purpose) | Declaration / Version Source | Configured Feed(s) |
+|---|---|---|---|
+|   |   |   |   |
 
 ### 45. Non-NuGet Dependencies
 
-Separate **framework assembly references** from **other non-NuGet dependencies**. Project references are in item 37 and NuGet-managed dependencies in item 44. Use linked project names first and paths last; preserve exact names, mechanisms, versions, source/conditions and resolution evidence. `Not declared` is not `Not checked`, and missing project declarations do not establish the absence of runtime or dynamically loaded dependencies.
+Separate **framework assembly references** from **other non-NuGet dependencies**. Project references are in item 37 and NuGet-managed dependencies in item 44. Use linked project names first and authoritative paths from item 37 rather than repeating path columns; preserve exact names, mechanisms, versions, source/conditions and resolution evidence. `Not declared` is not `Not checked`, and missing project declarations do not establish the absence of runtime or dynamically loaded dependencies.
 
 **A. Framework Assembly References**
 
-| Project | Framework References | Type / Mechanism | Version / Identity | Resolution / Location | Declaration Source | Project Path |
-|---|---|---|---|---|---|---|
-|   |   |   |   |   |   |   |
+| Project | Framework References | Type / Mechanism | Version / Identity | Resolution / Location | Declaration Source |
+|---|---|---|---|---|---|
+|   |   |   |   |   |   |
 
 **B. Other Non-NuGet Dependencies**
 
 Examples include native libraries, COM components, non-NuGet third-party assemblies and external service dependencies. If no declarations are found, write an explicit source-scoped finding **below** the table and identify outstanding runtime checks; do not invent a dependency or use `None` to mean that checks were not performed.
 
-| Project | Dependencies | Type / Mechanism | Version / Identity | Resolution / Location | Declaration Source | Project Path |
-|---|---|---|---|---|---|---|
+| Project | Dependencies | Type / Mechanism | Version / Identity | Resolution / Location | Declaration Source |
+|---|---|---|---|---|---|
 
 *Source-inspection result and unresolved runtime checks:*
 

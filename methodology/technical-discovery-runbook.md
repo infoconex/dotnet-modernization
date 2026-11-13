@@ -164,7 +164,9 @@ git remote get-url origin
 
 ## DISC-002 — Inventory the application, solutions and projects
 
-- Fill application identity fields: **1. Application Name**, **2. Application Purpose**, **3. Application Type**, **4. Repository Visibility**, **8. SSH Clone URL** (if used), **5. License**, and **6. Supported Operating Systems**. Use the README, repository metadata and source—not guesses.
+- **1. Description:** Write a concise, factual description of what the application does, its primary responsibilities, and intended users or consumers. Start with the repository README and application documentation, then confirm important claims against source. Avoid assumptions, feature wishlists, and modernization recommendations. Enter the description in field **1** of the copied baseline.
+- **2. Application Name:** Record the application's actual name as a separate value from the description.
+- Complete **3. Application Type**, **4. Repository Visibility**, **5. License**, **6. Supported Operating Systems**, and **8. SSH Clone URL** (if used), using repository metadata and source rather than guesses.
 - For application version concepts, keep **10. Published Application Version**, **11. Published Package Version**, **12. Published Release URL**, **13. Published Package URL**, **14. Source Manifest Version**, **15. Assembly Version**, and **16. File Version** separate. Record the source of each.
 - **17. Consumers and Entry Points** is a table: `Consumer or Entry Point` names the executable, library API, service or consumer; `Type` classifies it; `Source or Evidence` links to the declaration, documentation or observed usage. One row per identified entry point/consumer.
 

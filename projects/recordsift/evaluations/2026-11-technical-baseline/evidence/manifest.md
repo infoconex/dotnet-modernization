@@ -47,16 +47,32 @@ The procedures follow baseline item order. **No local Windows commands were exec
 | 24–25 | `dotnet --list-sdks` and `dotnet --list-runtimes` | Appropriate SDK and runtime inventories, not a .NET Framework targeting-pack check | Operator not executed |
 | 26–27 | `msbuild -version -nologo` and `Get-Command msbuild` | Appropriate version and PATH-location checks; Developer PowerShell may be needed | Operator not executed; CI records MSBuild 17.14.60.43110 |
 | 28 | `nuget help` | NuGet CLI prints version information | Operator not executed; NuGet CI restore succeeded |
-| 29 | `Test-Path` against v4.8 reference assemblies | Tests one local reference-assembly directory, not build success | Operator not executed |
-| 31–35 | Unique-folder `git clone --no-checkout`, `git switch --detach`, `git rev-parse HEAD`, `git status`, `git branch --show-current` | Non-overwriting path guard, stop-on-error and exact-SHA comparison reviewed; real checkout unverified | Operator not executed |
+| 29 | `Test-Path` for `v4.8\mscorlib.dll` under .NET Framework reference assemblies | Tests a specific local reference-assembly file, not just the existence of an empty directory or build success | Operator not executed |
+| 31–35 | Prepare unused destination; select source ref and SHA; then `git clone --no-checkout`, `git switch --detach`, `git rev-parse HEAD`, `git status`, `git branch --show-current` | Ordering corrected: selection and SHA pinning precede clone; destination collision guard, stop-on-error and SHA comparison reviewed; real checkout unverified | Operator not executed |
 | 36–37 | `git ls-files` solution/project patterns and optional `dotnet sln ... list` | Correct source inventory workflow; source project files and solution independently inspected via GitHub at selected SHA | Local commands not executed |
 | 38–40 | Inspect project XML via `Get-Content` | Source declarations verified from ten current project files, but not MSBuild evaluated defaults | Local command not executed |
-| 41 | `msbuild -getProperty:TargetFrameworkVersion,LangVersion` | [Microsoft-documented MSBuild 17.8+](https://learn.microsoft.com/en-us/visualstudio/msbuild/evaluate-items-and-properties) syntax; no targets specified, so evaluation does not request a build | Operator not executed |
+| 41 | `msbuild -getProperty:TargetFrameworkVersion,LangVersion -p:Configuration=Release -p:Platform=AnyCPU` | [Microsoft-documented MSBuild 17.8+](https://learn.microsoft.com/en-us/visualstudio/msbuild/evaluate-items-and-properties) syntax with explicit project configuration/platform; no targets requested, so property evaluation does not request a build | Operator not executed |
 | 42–43 | `git ls-files` tracked directories/configuration | Tracked-tree inspection completed through GitHub; effective machine-level imports remain unknown | Local command not executed |
 | 44 | `dotnet nuget list source --configfile .\NuGet.Config` | [Microsoft-documented .NET 6+](https://learn.microsoft.com/en-us/dotnet/core/tools/dotnet-nuget-list-source) option; reads only the specified config rather than inherited settings | Operator not executed |
 | 47 | `nuget restore` from the repository workflow | Exact-commit Windows CI step succeeded; creates/restores package files | [Windows run 43146607664](https://github.com/infoconex/RecordSift/actions/runs/43146607664); operator not executed |
 | 48 | Release `msbuild ... /t:Rebuild` | Exact-commit Windows CI step succeeded; builds files and may modify output directories | [Windows run 43146607664](https://github.com/infoconex/RecordSift/actions/runs/43146607664); operator not executed |
 | 49 | `.\scripts\run_tests.ps1 -Level All` | Parameter and Release artifact prerequisites verified against existing script; CI executed the same script with its default `All` level | [Windows run 43146607664](https://github.com/infoconex/RecordSift/actions/runs/43146607664); operator not executed |
 | 50–51 | `git ls-files .github/workflows` and GitHub Actions run lookups | Tracked workflow definitions and exact-commit run records inspected; not every defined release workflow has been executed in this discovery | Existing exact-commit runs EV-008–EV-010 |
+
+### Review of remaining numbered instructions
+
+The non-command or primarily documentary steps have also been reviewed against their intended evidence and field shape:
+
+| Baseline items | Procedure review | Execution boundary |
+|---|---|---|
+| 1–15 | Repository, published artifact, source metadata, and public API/consumer identity checked at the selected SHA; scalar values remain atomic and links are retained in the evidence manifest | Source/registry inspection only |
+| 16–17 | Discovery operator is not inferred; the baseline records the actual discovery-start date | Operator identity not supplied |
+| 30 | NUnit runner version is a declared package value and is corroborated in existing CI, not a local installation inventory | Operator installation not checked |
+| 32–33 | Source ref and SHA have been selected from immutable repository evidence before any new checkout | No operator checkout |
+| 38–40 | Compiler, output and metadata/import entries are tied to project XML rather than guessed effective defaults | Project XML read; local evaluation pending |
+| 45–46 | Non-NuGet reference declarations and operation commands are separated from evaluated dependency resolution and execution | Source inspection only |
+| 52–54 | Published artifacts, runtime requirements and compatibility checks are distinct; verified CI results retain their source SHA | No additional operator tests |
+| 55–58 | Existing CI commands are identified as CI execution; local missing values, findings, item status and overall disposition are explicit | Overall baseline remains incomplete |
+| 59–62 | No reviewer is invented; no review date is inferred; specific next action and deferred checks are documented | Formal owner review and Windows preflight pending |
 
 The review is a **source and documentation validation**, not an assertion that all PowerShell commands have been run successfully on the operator's Windows machine. Commands for restore, Rebuild and tests require an agreed execution environment and side-effect approval.

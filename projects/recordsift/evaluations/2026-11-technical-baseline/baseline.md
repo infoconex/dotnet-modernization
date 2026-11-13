@@ -1,6 +1,6 @@
 # RecordSift — Discovery baseline
 
-**Description:** `<Application description>`
+**Description:** RecordSift is an MIT-licensed Windows-only .NET Framework 4.8 library for CSV/XLSX import, typed schema mapping, validation, structured diagnostics, and optional JSON/text/diagnostic-CSV reports. It is consumed by other applications rather than providing a standalone interface. [Source README](https://github.com/infoconex/RecordSift/blob/1809d06c0fade59e4769d16e0f8eaf10fa426004/README.md).
 
 [Step-by-Step Instructions](../../../../methodology/technical-discovery-runbook.md)
 
@@ -8,20 +8,20 @@
 
 | Field | Value |
 |---|---|
-| 1. Application Type |  |
-| 2. Repository Visibility |  |
-| 3. License |  |
-| 4. Supported Operating Systems |  |
-| 5. HTTPS Clone URL |  |
-| 6. SSH Clone URL |  |
-| 7. Repository Default Branch |  |
-| 8. Published Application Version |  |
-| 9. Published Package Version |  |
-| 10. Published Release URL |  |
-| 11. Published Package URL |  |
-| 12. Source Manifest Version |  |
-| 13. Assembly Version |  |
-| 14. File Version |  |
+| 1. Application Type | Reusable Windows .NET Framework 4.8 class library; not a standalone application |
+| 2. Repository Visibility | Public (GitHub repository metadata) |
+| 3. License | MIT — [LICENSE](https://github.com/infoconex/RecordSift/blob/1809d06c0fade59e4769d16e0f8eaf10fa426004/LICENSE) |
+| 4. Supported Operating Systems | Windows; .NET Framework 4.8 |
+| 5. HTTPS Clone URL | `https://github.com/infoconex/RecordSift.git` |
+| 6. SSH Clone URL | `git@github.com:infoconex/RecordSift.git` (not tested) |
+| 7. Repository Default Branch | `main` |
+| 8. Published Application Version | `0.1.0` (published) |
+| 9. Published Package Version | `0.1.0` — [NuGet.org](https://www.nuget.org/packages/RecordSift/0.1.0) |
+| 10. Published Release URL | [v0.1.0](https://github.com/infoconex/RecordSift/releases/tag/v0.1.0) |
+| 11. Published Package URL | [NuGet package](https://www.nuget.org/packages/RecordSift/0.1.0) |
+| 12. Source Manifest Version | `0.1.0-rc.1` — [nuspec](https://github.com/infoconex/RecordSift/blob/1809d06c0fade59e4769d16e0f8eaf10fa426004/packaging/RecordSift.nuspec) |
+| 13. Assembly Version | `0.1.0.0` — [AssemblyInfo](https://github.com/infoconex/RecordSift/blob/1809d06c0fade59e4769d16e0f8eaf10fa426004/src/RecordSift.Domain/Properties/AssemblyInfo.cs) |
+| 14. File Version | `0.1.0.0` — [AssemblyInfo](https://github.com/infoconex/RecordSift/blob/1809d06c0fade59e4769d16e0f8eaf10fa426004/src/RecordSift.Domain/Properties/AssemblyInfo.cs) |
 
 ### 15. Consumers and Entry Points
 
@@ -33,29 +33,29 @@
 
 | Field | Value |
 |---|---|
-| 16. Discovery By |  |
-| 17. Discovery Date |  |
-| 18. Discovery Folder |  |
+| 16. Discovery By | Not confirmed; earlier name was a formatting example, not proof of execution |
+| 17. Discovery Date | `2026-11-12` — discovery opened; no local Windows execution yet |
+| 18. Discovery Folder | Not recorded — operator Windows checkout pending |
 
 ## Source revision and checkout
 
 | Field | Value |
 |---|---|
-| 19. Selected Source Branch or Tag |  |
-| 20. Source Commit SHA |  |
-| 21. Working Tree Clean |  |
-| 22. Detached HEAD |  |
+| 19. Selected Source Branch or Tag | `main` — selected upstream revision |
+| 20. Source Commit SHA | [`1809d06c0fade59e4769d16e0f8eaf10fa426004`](https://github.com/infoconex/RecordSift/commit/1809d06c0fade59e4769d16e0f8eaf10fa426004) — immutable selected source revision |
+| 21. Working Tree Clean | Not checked on operator's machine |
+| 22. Detached HEAD | Not checked on operator's machine |
 
 ## Discovery host and prerequisite tools
 
 | Field | Value |
 |---|---|
-| 23. Operating System Name |  |
-| 24. Operating System Version |  |
-| 25. Operating System Build |  |
-| 26. Operating System Architecture |  |
-| 27. PowerShell Version |  |
-| 28. Git Version |  |
+| 23. Operating System Name | Not checked on operator's machine; current GitHub CI used Windows Server 2022 |
+| 24. Operating System Version | Not checked on operator's machine |
+| 25. Operating System Build | Not checked on operator's machine |
+| 26. Operating System Architecture | Not checked on operator's machine |
+| 27. PowerShell Version | Not checked on operator's machine |
+| 28. Git Version | Not checked on operator's machine |
 
 ### 29. .NET SDK Inventory
 
@@ -71,9 +71,9 @@
 
 | Field | Value |
 |---|---|
-| 31. MSBuild Version |  |
-| 32. MSBuild Installation Source |  |
-| 33. NuGet CLI Version |  |
+| 31. MSBuild Version | Not checked locally; current CI used MSBuild 17.14.60.43110 |
+| 32. MSBuild Installation Source | Not checked locally; current CI used Visual Studio 2022 Enterprise MSBuild |
+| 33. NuGet CLI Version | Not checked locally; current CI restore succeeded |
 
 ### 34. .NET Framework Targeting Pack Inventory
 

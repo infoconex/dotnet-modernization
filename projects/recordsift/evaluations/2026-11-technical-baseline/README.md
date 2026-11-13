@@ -24,13 +24,13 @@
 ## Working documents
 
 - [RecordSift baseline](baseline.md) — a copy of the numbered [template](../../../../templates/application-baseline.md), partially populated from previously verified source information. Enter new Windows results **only after** collecting them with the guide.
-- [Evidence manifest](evidence/manifest.md) — immutable GitHub source links now; local/CI outputs to be added **only when collected**.
-- [Reusable runbook](../../../../methodology/technical-discovery-runbook.md) — exact portable procedures and their applicability/side-effect conditions.
+- [Evidence manifest](evidence/manifest.md) — source links, exact-commit existing CI execution evidence, and command-review boundaries; future operator-run evidence is added only when collected.
+- [Step-by-step guide](../../../../methodology/technical-discovery-runbook.md) — all 62 numbered items in baseline order, with Windows command examples, table-column definitions and applicability/side-effect conditions.
 - [Article evidence map](../../../../articles/recordsift-technical-discovery-outline.md) — candidate narrative, not proof or publication-ready copy.
 
-## Initial source-only preflight — 2026-11-12
+## Source inventory and existing exact-commit CI — 2026-11-12
 
-The application repository's `main` HEAD was inspected through GitHub at the frozen SHA. The tracked tree contains `RecordSift.sln`, **ten project files** (five under `src/` and five under `tests/`), a root `NuGet.Config`, root `.editorconfig`, seven tracked `packages.config` files, and eight `.github/workflows/` definitions. These are **source-inspection findings**; they do not establish a local checkout state, tool versions, successful restore, MSBuild-evaluated properties, or current test outcomes. Initial inspection facts are noted here and in [EV-001 and EV-002](evidence/manifest.md). Source-confirmed values have been added to the baseline; the other tables and local execution fields remain incomplete.
+The application repository's `main` HEAD was inspected through GitHub at the frozen SHA. The tracked tree contains `RecordSift.sln`, **ten project files** (five under `src/` and five under `tests/`), a root `NuGet.Config`, root `.editorconfig`, seven tracked `packages.config` files, and eight `.github/workflows/` definitions. The inventory is source-inspected, not the result of a local checkout. Separately, three existing GitHub Actions runs succeeded **at the same selected SHA**: [Windows build/test 43146607664](https://github.com/infoconex/RecordSift/actions/runs/43146607664), [Windows package-consumer 43146607706](https://github.com/infoconex/RecordSift/actions/runs/43146607706), and [documentation checks 43146607615](https://github.com/infoconex/RecordSift/actions/runs/43146607615). The build/test run recorded **419 discovered / 418 passed / 0 failed / 1 skipped** across five NUnit assemblies. These existing CI checks are recorded as CI evidence; they do not establish the operator's local Windows checkout, prerequisites, MSBuild-evaluated property values or a new manual execution. The populated [baseline](baseline.md) retains those distinctions, and [EV-001–014](evidence/manifest.md) trace the sources.
 
 This is not a claim that missing repository-wide files have no equivalents in parent directories, user-level configuration, installed tools or SDK defaults.
 

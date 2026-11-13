@@ -8,10 +8,10 @@
 
 | Field | Value |
 |---|---|
-| 16. Discovery By | Not recorded |
-| 17. Discovery Date | `2026-11-12` |
-| Discovery Status | In progress |
-| Discovery Completed Date | Not completed |
+| 1. Discovery By | Not recorded |
+| 2. Discovery Date | `2026-11-12` |
+| 3. Discovery Status | In progress |
+| 4. Discovery Completed Date | Not completed |
 
 **Status:** Windows host verification, local checkout, evaluated MSBuild properties, local restore/build/test and final review remain outstanding. This status describes discovery progress, not the status of the repository or published release. The completed date is populated only when the discovery is signed off (or formally completed with documented and accepted gaps).
 
@@ -19,22 +19,22 @@
 
 | Field | Value |
 |---|---|
-| 1. Application Type | Library |
-| 2. Repository Visibility | Public |
-| 3. License | MIT |
-| 4. Supported Operating Systems | Windows |
-| 5. HTTPS Clone URL | `https://github.com/infoconex/RecordSift.git` |
-| 6. SSH Clone URL | `git@github.com:infoconex/RecordSift.git` |
-| 7. Repository Default Branch | `main` |
-| 8. Published Application Version | Not applicable |
-| 9. Published Package Version | `0.1.0` |
-| 10. Published Release URL | `https://github.com/infoconex/RecordSift/releases/tag/v0.1.0` |
-| 11. Published Package URL | `https://www.nuget.org/packages/RecordSift/0.1.0` |
-| 12. Source Manifest Version | `0.1.0-rc.1` |
-| 13. Assembly Version | `0.1.0.0` |
-| 14. File Version | `0.1.0.0` |
+| 5. Application Type | Library |
+| 6. Repository Visibility | Public |
+| 7. License | MIT |
+| 8. Supported Operating Systems | Windows |
+| 9. HTTPS Clone URL | `https://github.com/infoconex/RecordSift.git` |
+| 10. SSH Clone URL | `git@github.com:infoconex/RecordSift.git` |
+| 11. Repository Default Branch | `main` |
+| 12. Published Application Version | Not applicable |
+| 13. Published Package Version | `0.1.0` |
+| 14. Published Release URL | `https://github.com/infoconex/RecordSift/releases/tag/v0.1.0` |
+| 15. Published Package URL | `https://www.nuget.org/packages/RecordSift/0.1.0` |
+| 16. Source Manifest Version | `0.1.0-rc.1` |
+| 17. Assembly Version | `0.1.0.0` |
+| 18. File Version | `0.1.0.0` |
 
-### 15. Consumers and Entry Points
+### 19. Consumers and Entry Points
 
 | Consumer or Entry Point | Type | Source or Evidence |
 |---|---|---|
@@ -47,21 +47,21 @@
 
 | Field | Value |
 |---|---|
-| 18. Operating System Name | Not checked |
-| 19. Operating System Version | Not checked |
-| 20. Operating System Build | Not checked |
-| 21. Operating System Architecture | Not checked |
-| 22. PowerShell Version | Not checked |
-| 23. Git Version | Not checked |
+| 20. Operating System Name | Not checked |
+| 21. Operating System Version | Not checked |
+| 22. Operating System Build | Not checked |
+| 23. Operating System Architecture | Not checked |
+| 24. PowerShell Version | Not checked |
+| 25. Git Version | Not checked |
 
-### 24. .NET SDK Inventory
+### 26. .NET SDK Inventory
 
 | SDK Version | Installation Path |
 |---|---|
 
 *Not checked — no operator-run Windows SDK inventory has been supplied.*
 
-### 25. .NET Runtime Inventory
+### 27. .NET Runtime Inventory
 
 | Runtime Name | Runtime Version | Installation Path |
 |---|---|---|
@@ -70,18 +70,18 @@
 
 | Field | Value |
 |---|---|
-| 26. MSBuild Version | Not checked |
-| 27. MSBuild Installation Source | Not checked |
-| 28. NuGet CLI Version | Not checked |
+| 28. MSBuild Version | Not checked |
+| 29. MSBuild Installation Source | Not checked |
+| 30. NuGet CLI Version | Not checked |
 
-### 29. .NET Framework Targeting Pack Inventory
+### 31. .NET Framework Targeting Pack Inventory
 
 | Framework Version | Installed | Location |
 |---|---|---|
 
 *Not checked — the local .NET Framework 4.8 reference-assembly file has not been inspected.*
 
-### 30. Test Runner Inventory
+### 32. Test Runner Inventory
 
 | Runner Name | Runner Version | Source or Location |
 |---|---|---|
@@ -91,18 +91,18 @@
 
 | Field | Value |
 |---|---|
-| 31. Discovery Folder | Not recorded |
-| 32. Selected Source Branch or Tag | `main` |
-| 33. Source Commit SHA | `1809d06c0fade59e4769d16e0f8eaf10fa426004` |
-| Source Committer Date (UTC) | `2026-11-12T03:12:18Z` |
-| 34. Working Tree Clean | Not checked |
-| 35. Detached HEAD | Not checked |
+| 33. Discovery Folder | Not recorded |
+| 34. Selected Source Branch or Tag | `main` |
+| 35. Source Commit SHA | `1809d06c0fade59e4769d16e0f8eaf10fa426004` |
+| 36. Source Committer Date (UTC) | `2026-11-12T03:12:18Z` |
+| 37. Working Tree Clean | Not checked |
+| 38. Detached HEAD | Not checked |
 
-The unnumbered **Source Committer Date (UTC)** field belongs to item 33 and records the timestamp of the exact commit being evaluated. It comes from the pinned [Git commit metadata](https://github.com/infoconex/RecordSift/commit/1809d06c0fade59e4769d16e0f8eaf10fa426004); it is **not** the discovery date, checkout time, first push, or release publication time. No local checkout has been performed for this evaluation.
+**36. Source Committer Date (UTC)** and records the timestamp of the exact commit being evaluated. It comes from the pinned [Git commit metadata](https://github.com/infoconex/RecordSift/commit/1809d06c0fade59e4769d16e0f8eaf10fa426004); it is **not** the discovery date, checkout time, first push, or release publication time. No local checkout has been performed for this evaluation.
 
 ## Solution and project inventory
 
-### 36. Solutions
+### 39. Solutions
 
 One row per solution. The frozen `RecordSift.sln` declares **Debug** and **Release** configurations for the **Any CPU** platform. All ten projects are members of the solution, and all ten have `Build.0` mappings for **both** configurations; no build exclusions are declared for these two solution configurations. These are source-declared mappings, not independently executed builds.
 
@@ -110,7 +110,7 @@ One row per solution. The frozen `RecordSift.sln` declares **Debug** and **Relea
 |---|---|---|---|---|---|---|
 | RecordSift.sln | .sln | 12.00 | 16.0.28701.123 | Debug, Release | Any CPU | All 10 projects mapped to build in both Debug and Release; no declared build exclusions |
 
-### 37. Projects
+### 40. Projects
 
 One row per project; direct references are grouped by project name. Each linked project name opens the immutable source file; the full repository-relative project path is recorded here as the authoritative mapping for subsequent project tables, which use linked project names without repeating paths.
 
@@ -129,7 +129,7 @@ One row per project; direct references are grouped by project name. Each linked 
 
 ## Project settings and evaluated values
 
-### 38. Compiler Settings
+### 41. Compiler Settings
 
 These are **source-declared** compiler properties, not independently evaluated MSBuild values. D/R means Debug / Release. Shared source conditions: Debug = `'$(Configuration)|$(Platform)' == 'Debug|AnyCPU'`; Release = `'$(Configuration)|$(Platform)' == 'Release|AnyCPU'`. `LangVersion` is unconditional. `Not declared` means no corresponding source declaration and does not imply `false`.
 
@@ -146,9 +146,9 @@ These are **source-declared** compiler properties, not independently evaluated M
 | [RecordSift.Infrastructure.Xlsx.Tests](https://github.com/infoconex/RecordSift/blob/1809d06c0fade59e4769d16e0f8eaf10fa426004/tests/RecordSift.Infrastructure.Xlsx.Tests/RecordSift.Infrastructure.Xlsx.Tests.csproj) | v4.8 | 7.3 | true / Not declared | full / pdbonly | false / true | DEBUG;TRACE / TRACE | None |
 | [RecordSift.Infrastructure.Reporting.Tests](https://github.com/infoconex/RecordSift/blob/1809d06c0fade59e4769d16e0f8eaf10fa426004/tests/RecordSift.Infrastructure.Reporting.Tests/RecordSift.Infrastructure.Reporting.Tests.csproj) | v4.8 | 7.3 | true / Not declared | full / pdbonly | false / true | DEBUG;TRACE / TRACE | None |
 
-### 39. Output and Validation Settings
+### 42. Output and Validation Settings
 
-These are **source-declared** values. D/R means Debug / Release and uses the same shared conditions recorded in item 38. A single value is used when Debug and Release declarations agree. `Not declared` means the property is absent, not that MSBuild evaluated it as false or empty.
+These are **source-declared** values. D/R means Debug / Release and uses the same shared conditions recorded in item 41. A single value is used when Debug and Release declarations agree. `Not declared` means the property is absent, not that MSBuild evaluated it as false or empty.
 
 | Project | OutputPath (D/R) | WarningLevel (D/R) | WarningsAsErrors (D/R) | DocumentationFile (D/R) | Conditions / Exceptions |
 |---|---|---|---|---|---|
@@ -163,9 +163,9 @@ These are **source-declared** values. D/R means Debug / Release and uses the sam
 | [RecordSift.Infrastructure.Xlsx.Tests](https://github.com/infoconex/RecordSift/blob/1809d06c0fade59e4769d16e0f8eaf10fa426004/tests/RecordSift.Infrastructure.Xlsx.Tests/RecordSift.Infrastructure.Xlsx.Tests.csproj) | `bin\Debug\` / `bin\Release\` | 4 | Not declared | Not declared | None |
 | [RecordSift.Infrastructure.Reporting.Tests](https://github.com/infoconex/RecordSift/blob/1809d06c0fade59e4769d16e0f8eaf10fa426004/tests/RecordSift.Infrastructure.Reporting.Tests/RecordSift.Infrastructure.Reporting.Tests.csproj) | `bin\Debug\` / `bin\Release\` | 4 | Not declared | Not declared | None |
 
-### 40. Project Metadata and Imports
+### 43. Project Metadata and Imports
 
-These are project-file metadata and **explicit** imports, not evaluated MSBuild values. **Configuration Fallback** is the source-declared `Debug` value only when `$(Configuration)` is empty; it does **not** establish the configuration used during an actual build. `Not declared` means the property was absent from the inspected project XML. Each project name links to its immutable source file; the authoritative repository-relative project paths are in item 37.
+These are project-file metadata and **explicit** imports, not evaluated MSBuild values. **Configuration Fallback** is the source-declared `Debug` value only when `$(Configuration)` is empty; it does **not** establish the configuration used during an actual build. `Not declared` means the property was absent from the inspected project XML. Each project name links to its immutable source file; the authoritative repository-relative project paths are in item 40.
 
 | Project | Configuration Fallback | IsTestProject | FileAlignment | AppDesignerFolder | Imports | Additional Metadata / Conditions |
 |---|---|---|---|---|---|---|
@@ -180,9 +180,9 @@ These are project-file metadata and **explicit** imports, not evaluated MSBuild 
 | [RecordSift.Infrastructure.Xlsx.Tests](https://github.com/infoconex/RecordSift/blob/1809d06c0fade59e4769d16e0f8eaf10fa426004/tests/RecordSift.Infrastructure.Xlsx.Tests/RecordSift.Infrastructure.Xlsx.Tests.csproj) | Debug | true | Not declared | Not declared | `$(MSBuildToolsPath)\Microsoft.CSharp.targets` | None |
 | [RecordSift.Infrastructure.Reporting.Tests](https://github.com/infoconex/RecordSift/blob/1809d06c0fade59e4769d16e0f8eaf10fa426004/tests/RecordSift.Infrastructure.Reporting.Tests/RecordSift.Infrastructure.Reporting.Tests.csproj) | Debug | true | 512 | Not declared | `$(MSBuildToolsPath)\Microsoft.CSharp.targets` | None |
 
-### 41. Evaluated MSBuild Properties
+### 44. Evaluated MSBuild Properties
 
-No independent local MSBuild `-getProperty` evaluation has been executed for this frozen revision. The project-specific table below is reserved for observed values, using linked project names and the authoritative paths in item 37; a successful CI build does not populate it.
+No independent local MSBuild `-getProperty` evaluation has been executed for this frozen revision. The project-specific table below is reserved for observed values, using linked project names and the authoritative paths in item 40; a successful CI build does not populate it.
 
 | Project | Configuration / Framework / Platform | Evaluated Properties (name=value) | Declared Properties for Comparison | Evidence |
 |---|---|---|---|---|
@@ -191,7 +191,7 @@ No independent local MSBuild `-getProperty` evaluation has been executed for thi
 
 ## Repository structure and dependencies
 
-### 42. Repository Directories
+### 45. Repository Directories
 
 | Directory | Purpose |
 |---|---|
@@ -202,7 +202,7 @@ No independent local MSBuild `-getProperty` evaluation has been executed for thi
 | packaging/ | Package manifests |
 | .github/workflows/ | CI and release automation |
 
-### 43. Repository Configuration
+### 46. Repository Configuration
 
 NuGet entries below are **declared in the frozen repository source**, not an inventory of effective settings on a Windows machine. The `clear` entries remove previously inherited entries **within their respective source collections**; later configuration layers or command-line choices can still affect effective behavior. The declared feeds are not verified download or audit origins.
 
@@ -227,7 +227,7 @@ NuGet entries below are **declared in the frozen repository source**, not an inv
 **NuGet sections not declared in this source file:** `disabledPackageSources`, `packageSourceMapping`, `trustedSigners`, `packageSourceCredentials`, `clientCertificates`, `apikeys`, `config` (including signature policy, storage paths, proxy, request limits and push defaults), `packageRestore`, `packageManagement`, `bindingRedirects`, `solution`, `activePackageSource` (legacy), and version-dependent sections such as `minPublishAgeExceptions`. No additional NuGet configuration sections are declared in the inspected file. This is **not** a claim that any such settings are absent from the operator's machine.
 
 **Effective NuGet configuration:** Not checked. No operator-run Windows inspection of the configuration hierarchy, enabled/disabled sources, credentials/policies, package-source mapping, audit behavior, or command-line/environment overrides has been provided. Do not infer effective defaults or the feeds actually used during restore from source XML alone.
-### 44. NuGet Package Declarations
+### 47. NuGet Package Declarations
 
 These are **17 source-declared package references** across seven consuming projects and **13 distinct package IDs**. The project summary keeps package counts easy to scan; the catalog preserves the exact package ID/version-to-project and declaration-source relationships. All seven inspected `packages.config` files declare `targetFramework=net48`. Source-declared package references are not proof of successful restore or actual package acquisition origin.
 
@@ -265,9 +265,9 @@ One row per distinct **package ID and declared version**. Each consumer and its 
 
 **Additional declared package metadata:** NUnit.ConsoleRunner (`3.17.0`): `developmentDependency=true`. No additional package classifications are inferred. The `nuget.org` entries are eligible sources declared by the inspected repository configuration, **not** independently verified origins for each package. Effective feeds and restore resolution remain `Not checked`.
 
-### 45. Non-NuGet Dependencies
+### 48. Non-NuGet Dependencies
 
-Inventory **framework assembly references** separately from other **non-NuGet dependencies**. Project references belong in item 37 and NuGet packages in item 44. The entries below are source declarations from the frozen commit, not proof of installed assemblies or successful resolution. Linked project names resolve to canonical project paths in item 37. Runtime discovery, dynamically loaded dependencies and external service usage have not been comprehensively checked.
+Inventory **framework assembly references** separately from other **non-NuGet dependencies**. Project references belong in item 40 and NuGet packages in item 47. The entries below are source declarations from the frozen commit, not proof of installed assemblies or successful resolution. Linked project names resolve to canonical project paths in item 40. Runtime discovery, dynamically loaded dependencies and external service usage have not been comprehensively checked.
 
 **A. Framework Assembly References**
 
@@ -298,7 +298,7 @@ Use this table for separately declared third-party or locally distributed assemb
 
 ## Restore, build, tests and delivery
 
-### 46. Operation Commands
+### 49. Operation Commands
 
 | Operation | Project or Solution | Configuration | Platform | Command or Workflow | Source |
 |---|---|---|---|---|---|
@@ -311,21 +311,21 @@ Use this table for separately declared third-party or locally distributed assemb
 | Package | RecordSift | Release | Any CPU | .\scripts\build_release_candidate.ps1 -OutputDirectory $feed | .github/workflows/verify-rc-consumer.yml |
 | Installed consumer | RecordSift | Release | Any CPU | .\scripts\verify_clean_consumer.ps1 -CandidateDirectory $feed | .github/workflows/verify-rc-consumer.yml |
 
-### 47. Restore Outcomes
+### 50. Restore Outcomes
 
 | Source Revision | Target | Outcome | Error or Note | Evidence |
 |---|---|---|---|---|
 | 1809d06c0fade59e4769d16e0f8eaf10fa426004 | RecordSift.sln | Passed | Not applicable | https://github.com/infoconex/RecordSift/actions/runs/43146607664 |
 | 1809d06c0fade59e4769d16e0f8eaf10fa426004 | RecordSift.sln | Passed | Not applicable | https://github.com/infoconex/RecordSift/actions/runs/43146607706 |
 
-### 48. Build Outcomes
+### 51. Build Outcomes
 
 | Source Revision | Target | Configuration | Platform | Outcome | Warning Count | Error Count | Output or Evidence |
 |---|---|---|---|---|---|---|---|
 | 1809d06c0fade59e4769d16e0f8eaf10fa426004 | RecordSift.sln | Release | Any CPU | Passed | Not recorded | Not recorded | https://github.com/infoconex/RecordSift/actions/runs/43146607664 |
 | 1809d06c0fade59e4769d16e0f8eaf10fa426004 | RecordSift.sln | Release | Any CPU | Passed | Not recorded | Not recorded | https://github.com/infoconex/RecordSift/actions/runs/43146607706 |
 
-### 49. Test Outcomes
+### 52. Test Outcomes
 
 | Source Revision | Test Project or Assembly | Runner | Discovered | Passed | Failed | Skipped | Outcome | Evidence |
 |---|---|---|---|---|---|---|---|---|
@@ -335,7 +335,7 @@ Use this table for separately declared third-party or locally distributed assemb
 | 1809d06c0fade59e4769d16e0f8eaf10fa426004 | RecordSift.Infrastructure.Reporting.Tests | NUnit ConsoleRunner 3.17.0 | 54 | 54 | 0 | 0 | Passed | https://github.com/infoconex/RecordSift/actions/runs/43146607664 |
 | 1809d06c0fade59e4769d16e0f8eaf10fa426004 | RecordSift.Infrastructure.Xlsx.Tests | NUnit ConsoleRunner 3.17.0 | 48 | 48 | 0 | 0 | Passed | https://github.com/infoconex/RecordSift/actions/runs/43146607664 |
 
-### 50. CI Workflows
+### 53. CI Workflows
 
 These are **configured source definitions**, not proof that every job ran. Group identical commands by workflow, job/stage, runner, configured output and applicable triggers. The recorded commands are representative **exact command excerpts** from the pinned workflow definitions, not an exhaustive list of every step. Keep job-specific prerequisites and publication/deployment gates distinct.
 
@@ -361,7 +361,7 @@ These are **configured source definitions**, not proof that every job ran. Group
 
 **Execution evidence boundary:** Source-defined triggers and commands do not establish observed execution, successful publication or deployment. Separately recorded CI runs and release evidence in the evidence manifest establish only their specific verified runs.
 
-### 51. CI Runs
+### 54. CI Runs
 
 | Workflow | Run URL | Commit SHA | Outcome | Date |
 |---|---|---|---|---|
@@ -369,7 +369,7 @@ These are **configured source definitions**, not proof that every job ran. Group
 | Verify internal release candidate in clean Windows consumer | https://github.com/infoconex/RecordSift/actions/runs/43146607706 | 1809d06c0fade59e4769d16e0f8eaf10fa426004 | Success | 2026-11-12 |
 | Validate engineering documentation | https://github.com/infoconex/RecordSift/actions/runs/43146607615 | 1809d06c0fade59e4769d16e0f8eaf10fa426004 | Success | 2026-11-12 |
 
-### 52. Package and Release Artifacts
+### 55. Package and Release Artifacts
 
 Source declarations, **unpublished CI artifacts**, and **published distributions** are recorded separately. The dates below identify the source snapshot, a CI verification result, or a publication event; they are not interchangeable. Dates/times use UTC, with day-only precision where an exact time is unverified.
 
@@ -408,7 +408,7 @@ Each distribution has its own record. NuGet package upload acceptance was previo
 | Published NuGet package (`RecordSift 0.1.0`) | [`2db5c86bc26010afcb83c2e455d2471d8c9340d6`](https://github.com/infoconex/RecordSift/commit/2db5c86bc26010afcb83c2e455d2471d8c9340d6) | `2026-11-01T21:13:46Z` | Existing [public-feed verification CI](https://github.com/infoconex/RecordSift/actions/runs/41355904536/job/124995742204) confirmed package source; this is not an independently repeated download in this discovery |
 
 **Package provenance boundary:** Existing [recovery CI](https://github.com/infoconex/RecordSift/actions/runs/41355904536/job/124995909555) verified the original package SHA-256 `c6e96f76693358125346d31829bc8a016c75af13aab3261566a6e6033f7c052a` and `SOURCE_COMMIT.txt` against `2db5c86bc26010afcb83c2e455d2471d8c9340d6` before creating the release. The actual public-feed consumer verification reported that same source SHA. The discovery has **not** independently downloaded the NuGet package or its GitHub release assets; this is existing CI evidence, not a new operator execution.
-### 53. Runtime and Deployment Requirements
+### 56. Runtime and Deployment Requirements
 
 | Requirement | Type | Target Environment | Source or Evidence |
 |---|---|---|---|
@@ -416,7 +416,7 @@ Each distribution has its own record. NuGet package upload acceptance was previo
 | .NET Framework 4.8 | Target framework | Consuming application | https://github.com/infoconex/RecordSift/blob/1809d06c0fade59e4769d16e0f8eaf10fa426004/docs/usage/getting-started.md |
 | No Excel installation required | Runtime constraint | XLSX reader | https://github.com/infoconex/RecordSift/blob/1809d06c0fade59e4769d16e0f8eaf10fa426004/docs/usage/getting-started.md |
 
-### 54. Compatibility Checks
+### 57. Compatibility Checks
 
 | Check Type | Target | Method or Command | Outcome | Commit SHA | Evidence |
 |---|---|---|---|---|---|
@@ -432,7 +432,7 @@ Each distribution has its own record. NuGet package upload acceptance was previo
 
 ## Evidence and completion
 
-### 55. Executed Command Evidence
+### 58. Executed Command Evidence
 
 | Baseline Item | Command | Working Directory | Tool Version | Target or Configuration | Exit Code | Outcome | Output or Evidence |
 |---|---|---|---|---|---|---|---|
@@ -442,7 +442,7 @@ Each distribution has its own record. NuGet package upload acceptance was previo
 | 54 | & .\scripts\verify_public_api.ps1 | GitHub Actions Windows checkout | PowerShell (version not logged) | net48 Release | Not recorded | Passed | https://github.com/infoconex/RecordSift/actions/runs/43146607664 |
 | 52 | & .\scripts\verify_clean_consumer.ps1 -CandidateDirectory $feed | GitHub Actions Windows checkout | PowerShell (version not logged) | Local candidate package | Not recorded | Passed | https://github.com/infoconex/RecordSift/actions/runs/43146607706 |
 
-### 56. Findings and Gaps
+### 59. Findings and Gaps
 
 | Finding | Impact | Evidence | Next Check |
 |---|---|---|---|
@@ -451,18 +451,18 @@ Each distribution has its own record. NuGet package upload acceptance was previo
 | Evaluated MSBuild values not independently queried | Declared project properties may differ from evaluated settings | Item 41 | Run MSBuild property queries from Windows Developer PowerShell |
 | CI outcomes are not local execution evidence | CI success cannot verify operator environment | Items 47–49 | Restore, build and run tests in the approved Windows checkout |
 
-### 57. Discovery Item Status
+### 60. Discovery Item Status
 
-Track three independent evidence dimensions for all 62 baseline items. **Source Inspection** means pinned source files, repository metadata, external public artifact metadata or discovery documentation were inspected; it does **not** mean a command ran. **Existing CI** refers only to reviewed GitHub-hosted runs or their logs. **Operator Local** refers only to actual work on the operator's machine, not CI runner execution. A populated item is not automatically locally verified.
+Track three independent evidence dimensions for all 65 baseline items. **Source Inspection** means pinned source files, repository metadata, external public artifact metadata or discovery documentation were inspected; it does **not** mean a command ran. **Existing CI** refers only to reviewed GitHub-hosted runs or their logs. **Operator Local** refers only to actual work on the operator's machine, not CI runner execution. A populated item is not automatically locally verified.
 
 **Status definitions:** Source Inspection uses `Verified` (source/metadata documented), `Partial` (source-only view leaves relevant verification gaps), `Not checked`, or `Not applicable`. Existing CI uses `Passed` (relevant completed CI checks succeeded), `Verified` (run/log/evidence inspected without claiming a new local execution), `Not checked`, or `Not applicable`. Operator Local uses `Passed`/`Failed` only for observed operator-executed checks, `Not executed` for required operations not performed, `Not recorded` for missing operator-supplied information, and `Not applicable` when that item does not require an operator-local check. These status dimensions are **not** substitutes for the final disposition or review approval.
 
 | Baseline Item | Source Inspection | Existing CI | Operator Local | Evidence or Missing Information |
 |---|---|---|---|---|
-| 1 | Verified | Not applicable | Not applicable | EV-003–EV-007 |
-| 2 | Verified | Not applicable | Not applicable | EV-003–EV-007 |
-| 3 | Verified | Not applicable | Not applicable | EV-003–EV-007 |
-| 4 | Verified | Not applicable | Not applicable | EV-003–EV-007 |
+| 1 | Not applicable | Not applicable | Not recorded | Operator identity not supplied |
+| 2 | Verified | Not applicable | Not applicable | Evaluation README |
+| 3 | Verified | Not applicable | Not applicable | In progress; Windows verification and review outstanding |
+| 4 | Verified | Not applicable | Not applicable | Not completed; discovery and final review outstanding |
 | 5 | Verified | Not applicable | Not applicable | EV-003–EV-007 |
 | 6 | Verified | Not applicable | Not applicable | EV-003–EV-007 |
 | 7 | Verified | Not applicable | Not applicable | EV-003–EV-007 |
@@ -474,10 +474,10 @@ Track three independent evidence dimensions for all 62 baseline items. **Source 
 | 13 | Verified | Not applicable | Not applicable | EV-003–EV-007 |
 | 14 | Verified | Not applicable | Not applicable | EV-003–EV-007 |
 | 15 | Verified | Not applicable | Not applicable | EV-003–EV-007 |
-| 16 | Not applicable | Not applicable | Not recorded | Operator identity not supplied |
-| 17 | Verified | Not applicable | Not applicable | Evaluation README |
-| 18 | Not applicable | Not applicable | Not executed | Operator Windows host output missing |
-| 19 | Not applicable | Not applicable | Not executed | Operator Windows host output missing |
+| 16 | Verified | Not applicable | Not applicable | EV-003–EV-007 |
+| 17 | Verified | Not applicable | Not applicable | EV-003–EV-007 |
+| 18 | Verified | Not applicable | Not applicable | EV-003–EV-007 |
+| 19 | Verified | Not applicable | Not applicable | EV-003–EV-007 |
 | 20 | Not applicable | Not applicable | Not executed | Operator Windows host output missing |
 | 21 | Not applicable | Not applicable | Not executed | Operator Windows host output missing |
 | 22 | Not applicable | Not applicable | Not executed | Operator Windows host output missing |
@@ -488,50 +488,115 @@ Track three independent evidence dimensions for all 62 baseline items. **Source 
 | 27 | Not applicable | Not applicable | Not executed | Operator Windows host output missing |
 | 28 | Not applicable | Not applicable | Not executed | Operator Windows host output missing |
 | 29 | Not applicable | Not applicable | Not executed | Operator Windows host output missing |
-| 30 | Verified | Passed | Not executed | Declared runner; local installation not checked |
-| 31 | Not applicable | Not applicable | Not executed | No local discovery folder recorded |
-| 32 | Verified | Not applicable | Not applicable | EV-004 |
-| 33 | Verified | Verified | Not executed | Selected SHA; no local checkout verified |
-| 34 | Not applicable | Not applicable | Not executed | Local Git verification pending |
-| 35 | Not applicable | Not applicable | Not executed | Local Git verification pending |
-| 36 | Verified | Not applicable | Not applicable | EV-011 |
-| 37 | Verified | Not applicable | Not applicable | EV-011 |
-| 38 | Verified | Not applicable | Not applicable | EV-011 |
+| 30 | Not applicable | Not applicable | Not executed | Operator Windows host output missing |
+| 31 | Not applicable | Not applicable | Not executed | Operator Windows host output missing |
+| 32 | Verified | Passed | Not executed | Declared runner; local installation not checked |
+| 33 | Not applicable | Not applicable | Not executed | No local discovery folder recorded |
+| 34 | Verified | Not applicable | Not applicable | EV-004 |
+| 35 | Verified | Verified | Not executed | Selected SHA; no local checkout verified |
+| 36 | Verified | Not applicable | Not applicable | EV-001; frozen source Git committer timestamp, not local checkout time |
+| 37 | Not applicable | Not applicable | Not executed | Local Git verification pending |
+| 38 | Not applicable | Not applicable | Not executed | Local Git verification pending |
 | 39 | Verified | Not applicable | Not applicable | EV-011 |
 | 40 | Verified | Not applicable | Not applicable | EV-011 |
-| 41 | Not applicable | Not checked | Not executed | MSBuild evaluated-property query not executed |
-| 42 | Verified | Not applicable | Not applicable | EV-002 |
-| 43 | Partial | Not checked | Not executed | Tracked settings checked; effective precedence not evaluated |
-| 44 | Verified | Not applicable | Not applicable | EV-012 |
-| 45 | Partial | Not checked | Not executed | Static dependency inspection only |
-| 46 | Verified | Not applicable | Not applicable | EV-013 |
-| 47 | Verified | Passed | Not executed | CI restore passed; local restore not executed |
-| 48 | Verified | Passed | Not executed | CI build passed; local build not executed |
-| 49 | Verified | Passed | Not executed | CI NUnit passed; local suite not executed |
-| 50 | Verified | Not applicable | Not applicable | EV-013 |
-| 51 | Not applicable | Verified | Not applicable | EV-008–EV-010 |
-| 52 | Verified | Passed | Not executed | EV-006, EV-009; EV-005 (published artifacts); exact NuGet registry publication time not checked |
-| 53 | Verified | Not applicable | Not applicable | EV-003 |
-| 54 | Verified | Passed | Not executed | EV-008–EV-010 |
-| 55 | Not applicable | Verified | Not executed | CI command evidence; no operator execution |
-| 56 | Verified | Not applicable | Not applicable | Known gaps documented |
-| 57 | Verified | Not applicable | Not applicable | Status table populated; operator checks outstanding |
-| 58 | Verified | Not applicable | Not applicable | Assessment remains incomplete |
-| 59 | Not applicable | Not applicable | Not applicable | Review not performed |
-| 60 | Not applicable | Not applicable | Not applicable | Review not performed |
-| 61 | Verified | Not applicable | Not applicable | Operator action pending |
-| 62 | Verified | Not applicable | Not executed | Pending checks documented |
+| 41 | Verified | Not applicable | Not applicable | EV-011 |
+| 42 | Verified | Not applicable | Not applicable | EV-011 |
+| 43 | Verified | Not applicable | Not applicable | EV-011 |
+| 44 | Not applicable | Not checked | Not executed | MSBuild evaluated-property query not executed |
+| 45 | Verified | Not applicable | Not applicable | EV-002 |
+| 46 | Partial | Not checked | Not executed | Tracked settings checked; effective precedence not evaluated |
+| 47 | Verified | Not applicable | Not applicable | EV-012 |
+| 48 | Partial | Not checked | Not executed | Static dependency inspection only |
+| 49 | Verified | Not applicable | Not applicable | EV-013 |
+| 50 | Verified | Passed | Not executed | CI restore passed; local restore not executed |
+| 51 | Verified | Passed | Not executed | CI build passed; local build not executed |
+| 52 | Verified | Passed | Not executed | CI NUnit passed; local suite not executed |
+| 53 | Verified | Not applicable | Not applicable | EV-013 |
+| 54 | Not applicable | Verified | Not applicable | EV-008–EV-010 |
+| 55 | Verified | Passed | Not executed | EV-006, EV-009; EV-005 (published artifacts); exact NuGet registry publication time not checked |
+| 56 | Verified | Not applicable | Not applicable | EV-003 |
+| 57 | Verified | Passed | Not executed | EV-008–EV-010 |
+| 58 | Not applicable | Verified | Not executed | CI command evidence; no operator execution |
+| 59 | Verified | Not applicable | Not applicable | Known gaps documented |
+| 60 | Verified | Not applicable | Not applicable | Status table populated; operator checks outstanding |
+| 61 | Verified | Not applicable | Not applicable | Assessment remains incomplete |
+| 62 | Not applicable | Not applicable | Not applicable | Review not performed |
+| 63 | Not applicable | Not applicable | Not applicable | Review not performed |
+| 64 | Verified | Not applicable | Not applicable | Operator action pending |
+| 65 | Verified | Not applicable | Not executed | Pending checks documented |
 
-**Unresolved verification and review:** No operator-run Windows preflight, clean checkout, MSBuild property evaluation, restore, build or test has been captured in this evaluation. Existing CI at the frozen source SHA does not verify local tooling or deployment/runtime conditions. Items 59–60 are **Not reviewed**; the overall item 58 disposition remains **More verification needed**. A `Not applicable` cell means that particular evidence channel is not required for that item, **not** that the full discovery is approved.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+**Unresolved verification and review:** No operator-run Windows preflight, clean checkout, MSBuild property evaluation, restore, build or test has been captured in this evaluation. Existing CI at the frozen source SHA does not verify local tooling or deployment/runtime conditions. Items 59–60 are **Not reviewed**; the overall item 61 disposition remains **More verification needed**. A `Not applicable` cell means that particular evidence channel is not required for that item, **not** that the full discovery is approved.
 
 | Field | Value |
 |---|---|
-| 58. Overall Baseline Disposition | More verification needed |
-| 59. Reviewed By | Not reviewed |
-| 60. Review Date | Not reviewed |
-| 61. Next Action | Verify Windows prerequisites and clean checkout (items 18–35) |
+| 61. Overall Baseline Disposition | More verification needed |
+| 62. Reviewed By | Not reviewed |
+| 63. Review Date | Not reviewed |
+| 64. Next Action | Verify Windows prerequisites and clean checkout (items 20–38) |
 
-### 62. Deferred Checks
+### 65. Deferred Checks
 
 | Check | Reason Deferred | Revisit When |
 |---|---|---|

@@ -2,8 +2,8 @@
 
 This is the **single form** completed during discovery. Use the [step-by-step guide](../methodology/technical-discovery-runbook.md) to gather results. The person performing the checks provides output; the assistant fills in the form.
 
-- **Every field has a permanent ID**, such as `F-006` for Git version. The guide uses these same IDs.
-- **One answer per field.** For project, solution, package and execution tables, use a new row for each item; each column keeps the same field ID. Identify the item by its project/path/name.
+- **Every field has a permanent number**, such as `6` for Git version. The guide uses these same IDs.
+- **One answer per field.** For project, solution, package and execution tables, use a new row for each item; each column keeps the same field number. Identify the item by its project/path/name.
 - Leave unanswered fields as **Not checked**, **Not executed** or **Not applicable**. Do not copy results from an older source revision as new results.
 - Link to actual output or relevant excerpts, and avoid secrets/personal paths. See the [variation guide](../methodology/baseline-variation-guide.md) when builds have conditional settings or multiple frameworks.
 - This records facts, not modernization recommendations.
@@ -12,22 +12,22 @@ This is the **single form** completed during discovery. Use the [step-by-step gu
 
 | Field | What to fill in | Result |
 |---|---|---|
-| F-001 | Person or system performing discovery | `<operator>` |
-| F-002 | Discovery date, time and time zone | `<date/time>` |
-| F-003 | Dated discovery folder | `<folder or not yet created>` |
-| F-004 | Operating system, version/build, architecture | `<actual result>` |
-| F-005 | PowerShell version (if used) | `<actual result>` |
-| F-006 | Git version | `<actual result>` |
-| F-007 | Installed .NET SDKs and runtimes | `<versions or not installed>` |
-| F-008 | MSBuild / Visual Studio Build Tools version and source | `<actual result>` |
-| F-009 | Standalone NuGet CLI version | `<actual result>` |
-| F-010 | Framework targeting packs needed and found | `<versions or check result>` |
-| F-011 | Test runner and version | `<runner/version or not checked>` |
-| F-012 | Selected source branch or tag | `<ref>` |
-| F-013 | Exact source commit SHA | `<full SHA>` |
-| F-014 | Local checkout status (clean/changes/detached) | `<actual status or not checked>` |
-| F-015 | Verification date (if distinct from inspection date) | `<date or not executed>` |
-| F-016 | Overall evidence status | `<verified/partial/blocked/not executed>` |
+| 1 | Person or system performing discovery | `<operator>` |
+| 2 | Discovery date, time and time zone | `<date/time>` |
+| 3 | Dated discovery folder | `<folder or not yet created>` |
+| 4 | Operating system, version/build, architecture | `<actual result>` |
+| 5 | PowerShell version (if used) | `<actual result>` |
+| 6 | Git version | `<actual result>` |
+| 7 | Installed .NET SDKs and runtimes | `<versions or not installed>` |
+| 8 | MSBuild / Visual Studio Build Tools version and source | `<actual result>` |
+| 9 | Standalone NuGet CLI version | `<actual result>` |
+| 10 | Framework targeting packs needed and found | `<versions or check result>` |
+| 11 | Test runner and version | `<runner/version or not checked>` |
+| 12 | Selected source branch or tag | `<ref>` |
+| 13 | Exact source commit SHA | `<full SHA>` |
+| 14 | Local checkout status (clean/changes/detached) | `<actual status or not checked>` |
+| 15 | Verification date (if distinct from inspection date) | `<date or not executed>` |
+| 16 | Overall evidence status | `<verified/partial/blocked/not executed>` |
 
 **Evidence for prerequisites and checkout:** `<link or not yet available>`
 
@@ -35,30 +35,30 @@ This is the **single form** completed during discovery. Use the [step-by-step gu
 
 | Field | What to fill in | Result |
 |---|---|---|
-| F-101 | Application name | `<name>` |
-| F-102 | What the application does / application type | `<purpose and type>` |
-| F-103 | Public or private repository | `<visibility>` |
-| F-104 | HTTPS clone URL | `<URL>` |
-| F-105 | SSH clone URL, if used | `<URL or not applicable>` |
-| F-106 | Repository default branch | `<branch>` |
-| F-107 | License | `<license or unknown>` |
-| F-108 | Supported operating systems | `<OS/platform>` |
-| F-109 | Published application or package version | `<version and source>` |
-| F-110 | Published release/package URL | `<URL or not applicable>` |
-| F-111 | Source manifest version | `<value and source>` |
-| F-112 | Assembly version | `<value and source>` |
-| F-113 | File version | `<value and source>` |
-| F-114 | Consumers or entry points | `<library/API/desktop/service, consumers>` |
+| 17 | Application name | `<name>` |
+| 18 | What the application does / application type | `<purpose and type>` |
+| 19 | Public or private repository | `<visibility>` |
+| 20 | HTTPS clone URL | `<URL>` |
+| 21 | SSH clone URL, if used | `<URL or not applicable>` |
+| 22 | Repository default branch | `<branch>` |
+| 23 | License | `<license or unknown>` |
+| 24 | Supported operating systems | `<OS/platform>` |
+| 25 | Published application or package version | `<version and source>` |
+| 26 | Published release/package URL | `<URL or not applicable>` |
+| 27 | Source manifest version | `<value and source>` |
+| 28 | Assembly version | `<value and source>` |
+| 29 | File version | `<value and source>` |
+| 30 | Consumers or entry points | `<library/API/desktop/service, consumers>` |
 
 ### Solutions (repeat one row per solution)
 
-| F-201 Solution path | F-202 Format | F-203 Format version | F-204 Declared IDE version | F-205 Configurations | F-206 Platforms | F-207 Solution membership/build exclusions |
+| 31 Solution path | 32 Format | 33 Format version | 34 Declared IDE version | 35 Configurations | 36 Platforms | 37 Solution membership/build exclusions |
 |---|---|---|---|---|---|---|
 | `<.sln/.slnx>` | `<format>` | `<value/—>` | `<value/—>` | `<configurations>` | `<platforms>` | `<projects/notes>` |
 
 ### Projects (repeat one row per project, including standalone projects)
 
-| F-211 Project path | F-212 Role | F-213 Project format | F-214 Target framework(s) | F-215 Language version | F-216 Output type | F-217 MSBuild Platform | F-218 SDK / ToolsVersion | F-219 Direct project references |
+| 38 Project path | 39 Role | 40 Project format | 41 Target framework(s) | 42 Language version | 43 Output type | 44 MSBuild Platform | 45 SDK / ToolsVersion | 46 Direct project references |
 |---|---|---|---|---|---|---|---|---|
 | `<project file>` | `<production/test/tool>` | `<SDK-style/traditional>` | `<framework(s)>` | `<version>` | `<output type>` | `<platform>` | `<SDK/version>` | `<paths>` |
 
@@ -68,35 +68,35 @@ Record values declared in source separately from MSBuild-evaluated results. For 
 
 **Compiler settings (repeat per project and configuration as needed)**
 
-| F-301 Project/configuration | F-302 DebugType | F-303 Optimize | F-304 DefineConstants | F-305 Other compiler settings / conditions |
+| 47 Project/configuration | 48 DebugType | 49 Optimize | 50 DefineConstants | 51 Other compiler settings / conditions |
 |---|---|---|---|---|
 | `<project/configuration>` | `<value>` | `<value>` | `<value>` | `<details>` |
 
 **Output and validation settings**
 
-| F-311 Project/configuration | F-312 OutputPath | F-313 WarningLevel | F-314 WarningsAsErrors | F-315 DocumentationFile |
+| 52 Project/configuration | 53 OutputPath | 54 WarningLevel | 55 WarningsAsErrors | 56 DocumentationFile |
 |---|---|---|---|---|
 | `<project/configuration>` | `<path>` | `<value>` | `<value>` | `<path or not declared>` |
 
 **Project metadata and imports**
 
-| F-321 Project | F-322 Default configuration | F-323 IsTestProject | F-324 FileAlignment | F-325 AppDesignerFolder | F-326 Imports / shared properties |
+| 57 Project | 58 Default configuration | 59 IsTestProject | 60 FileAlignment | 61 AppDesignerFolder | 62 Imports / shared properties |
 |---|---|---|---|---|---|
 | `<project>` | `<value>` | `<value or —>` | `<value or —>` | `<value or —>` | `<imports or —>` |
 
-**F-327 — Evaluated MSBuild properties and differences:** `<project/configuration/property/result/evidence, or not evaluated>`
+**63 — Evaluated MSBuild properties and differences:** `<project/configuration/property/result/evidence, or not evaluated>`
 
 ## D. Repository folders and configuration — DISC-006
 
 **Directories (repeat as needed)**
 
-| F-401 Directory | F-402 Purpose |
+| 64 Directory | 65 Purpose |
 |---|---|
 | `<path>` | `<what belongs here>` |
 
 **Configuration files (including files that are absent)**
 
-| F-411 File / mechanism | F-412 Present? | F-413 Current purpose / value | F-414 Scope, imports or precedence |
+| 66 File / mechanism | 67 Present? | 68 Current purpose / value | 69 Scope, imports or precedence |
 |---|---|---|---|
 | `<path or mechanism>` | `<yes/no/not checked>` | `<settings>` | `<projects/configuration>` |
 
@@ -106,13 +106,13 @@ Check relevant `global.json`, `Directory.Build.props`, `Directory.Build.targets`
 
 **NuGet declarations (repeat per project/package)**
 
-| F-501 Project | F-502 Package ID | F-503 Version | F-504 Declared in | F-505 Configured feed(s) | F-506 Purpose |
+| 70 Project | 71 Package ID | 72 Version | 73 Declared in | 74 Configured feed(s) | 75 Purpose |
 |---|---|---|---|---|---|
 | `<project>` | `<package>` | `<declared version>` | `<packages.config/PackageReference/etc.>` | `<sources or not checked>` | `<production/test/tool>` |
 
 **Other dependencies (repeat only when present)**
 
-| F-511 Project/consumer | F-512 Dependency | F-513 Mechanism/type | F-514 Source file | F-515 Version/identity | F-516 Resolution/location |
+| 76 Project/consumer | 77 Dependency | 78 Mechanism/type | 79 Source file | 80 Version/identity | 81 Resolution/location |
 |---|---|---|---|---|---|
 | `<project>` | `<DLL/COM/native/service>` | `<how used>` | `<location declared>` | `<version/identity>` | `<verified or unknown>` |
 
@@ -124,50 +124,50 @@ A configured feed is not proof that a package was restored from it. Keep secrets
 
 | Field | Operation | Command or existing entry point |
 |---|---|---|
-| F-611 | Restore | `<actual command>` |
-| F-612 | Build (configuration/platform) | `<actual command>` |
-| F-613 | Full tests | `<actual command>` |
-| F-614 | Compatibility checks | `<commands/scripts>` |
-| F-615 | Packaging | `<command/workflow or N/A>` |
-| F-616 | Consumer/deployment | `<command/workflow or N/A>` |
-| F-617 | Alternate host/CI toolchain details | `<host and versions if different>` |
+| 82 | Restore | `<actual command>` |
+| 83 | Build (configuration/platform) | `<actual command>` |
+| 84 | Full tests | `<actual command>` |
+| 85 | Compatibility checks | `<commands/scripts>` |
+| 86 | Packaging | `<command/workflow or N/A>` |
+| 87 | Consumer/deployment | `<command/workflow or N/A>` |
+| 88 | Alternate host/CI toolchain details | `<host and versions if different>` |
 
 **Test counts and executed artifacts**
 
 | Field | What to fill in | Actual result |
 |---|---|---|
-| F-621 | Tests discovered | `<number or not executed>` |
-| F-622 | Tests passed | `<number or not executed>` |
-| F-623 | Tests failed | `<number or not executed>` |
-| F-624 | Tests skipped | `<number or not executed>` |
-| F-625 | Test projects/assemblies actually executed | `<list or not executed>` |
-| F-626 | Build warnings/errors and important outputs | `<summary, links or not executed>` |
-| F-627 | CI workflow names, triggers and commands | `<paths and details>` |
-| F-628 | CI runs checked and their exact source SHA | `<run IDs / status or not checked>` |
-| F-629 | Package contents/metadata and release evidence | `<location and outcome or not checked>` |
-| F-630 | Runtime / deployment requirements | `<requirements or not applicable>` |
+| 89 | Tests discovered | `<number or not executed>` |
+| 90 | Tests passed | `<number or not executed>` |
+| 91 | Tests failed | `<number or not executed>` |
+| 92 | Tests skipped | `<number or not executed>` |
+| 93 | Test projects/assemblies actually executed | `<list or not executed>` |
+| 94 | Build warnings/errors and important outputs | `<summary, links or not executed>` |
+| 95 | CI workflow names, triggers and commands | `<paths and details>` |
+| 96 | CI runs checked and their exact source SHA | `<run IDs / status or not checked>` |
+| 97 | Package contents/metadata and release evidence | `<location and outcome or not checked>` |
+| 98 | Runtime / deployment requirements | `<requirements or not applicable>` |
 
 **Checks and outcomes (include the supporting evidence with each result)**
 
 | Field | Check | Outcome and evidence |
 |---|---|---|
-| F-701 | Dependency restore | `<pass/fail/blocked/not executed; link>` |
-| F-702 | Build | `<result/configuration; link>` |
-| F-703 | Automated tests | `<result/test scope; link>` |
-| F-704 | Public API | `<result or not applicable; link>` |
-| F-705 | Assembly identity | `<result or not applicable; link>` |
-| F-706 | Resources | `<result or not applicable; link>` |
-| F-707 | XML documentation | `<result or not applicable; link>` |
-| F-708 | Package contents | `<result or not applicable; link>` |
-| F-709 | Package metadata | `<result or not applicable; link>` |
-| F-710 | Dependency validation | `<result or not applicable; link>` |
-| F-711 | Vulnerability audit | `<result or not executed; link>` |
-| F-712 | Installed-package consumer | `<result or not applicable; link>` |
-| F-713 | Application integration checks | `<result or not applicable; link>` |
+| 99 | Dependency restore | `<pass/fail/blocked/not executed; link>` |
+| 100 | Build | `<result/configuration; link>` |
+| 101 | Automated tests | `<result/test scope; link>` |
+| 102 | Public API | `<result or not applicable; link>` |
+| 103 | Assembly identity | `<result or not applicable; link>` |
+| 104 | Resources | `<result or not applicable; link>` |
+| 105 | XML documentation | `<result or not applicable; link>` |
+| 106 | Package contents | `<result or not applicable; link>` |
+| 107 | Package metadata | `<result or not applicable; link>` |
+| 108 | Dependency validation | `<result or not applicable; link>` |
+| 109 | Vulnerability audit | `<result or not executed; link>` |
+| 110 | Installed-package consumer | `<result or not applicable; link>` |
+| 111 | Application integration checks | `<result or not applicable; link>` |
 
 **Executed commands (repeat one row per actual execution, including failures)**
 
-| F-731 Step | F-732 Exact command, scope and tool | F-733 Result and exit code | F-734 Output / evidence link |
+| 112 Step | 113 Exact command, scope and tool | 114 Result and exit code | 115 Output / evidence link |
 |---|---|---|---|
 | `<DISC-###>` | `<command and project/config/host>` | `<result/exit code>` | `<location or not captured>` |
 
@@ -175,20 +175,20 @@ A configured feed is not proof that a package was restored from it. Keep secrets
 
 **Open issues and missing checks (repeat as needed)**
 
-| F-801 Gap or finding | F-802 Impact | F-803 Evidence / next check |
+| 116 Gap or finding | 117 Impact | 118 Evidence / next check |
 |---|---|---|
 | `<missing tool, error, or source-backed fact>` | `<why it matters>` | `<link or next action>` |
 
 **Step completion (one row per DISC step)**
 
-| F-901 Step | F-902 Result/status | F-903 Evidence or missing information |
+| 119 Step | 120 Result/status | 121 Evidence or missing information |
 |---|---|---|
 | `<DISC-001…DISC-014>` | `<done/partial/blocked/not executed>` | `<link/notes>` |
 
 | Field | Final review | Result |
 |---|---|---|
-| F-911 | Overall baseline disposition | `<complete/complete with gaps/further checks needed>` |
-| F-912 | Report reviewed by/date | `<reviewer/date or pending>` |
-| F-913 | Next action or deferred checks | `<short summary>` |
+| 122 | Overall baseline disposition | `<complete/complete with gaps/further checks needed>` |
+| 123 | Report reviewed by/date | `<reviewer/date or pending>` |
+| 124 | Next action or deferred checks | `<short summary>` |
 
 This form records **what exists and what was observed**. Proposals to modernize the application are separate.

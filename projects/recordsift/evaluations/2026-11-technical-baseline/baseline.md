@@ -103,231 +103,80 @@
 
 ### 37. Projects
 
-| Project Path | Role | Project Format | Target Framework | Language Version | Output Type | MSBuild Platform | SDK or ToolsVersion | Direct Project Reference |
-|---|---|---|---|---|---|---|---|---|
-| src/RecordSift.Domain/RecordSift.Domain.csproj | Production | Traditional | v4.8 | 7.3 | Library | AnyCPU | 15.0 | None |
-| src/RecordSift.Application/RecordSift.Application.csproj | Production | Traditional | v4.8 | 7.3 | Library | AnyCPU | 15.0 | ../RecordSift.Domain/RecordSift.Domain.csproj |
-| src/RecordSift.Infrastructure.Csv/RecordSift.Infrastructure.Csv.csproj | Production | Traditional | v4.8 | 7.3 | Library | AnyCPU | 15.0 | ../RecordSift.Application/RecordSift.Application.csproj |
-| src/RecordSift.Infrastructure.Csv/RecordSift.Infrastructure.Csv.csproj | Production | Traditional | v4.8 | 7.3 | Library | AnyCPU | 15.0 | ../RecordSift.Domain/RecordSift.Domain.csproj |
-| src/RecordSift.Infrastructure.Xlsx/RecordSift.Infrastructure.Xlsx.csproj | Production | Traditional | v4.8 | 7.3 | Library | AnyCPU | 15.0 | ../RecordSift.Application/RecordSift.Application.csproj |
-| src/RecordSift.Infrastructure.Xlsx/RecordSift.Infrastructure.Xlsx.csproj | Production | Traditional | v4.8 | 7.3 | Library | AnyCPU | 15.0 | ../RecordSift.Domain/RecordSift.Domain.csproj |
-| src/RecordSift.Infrastructure.Reporting/RecordSift.Infrastructure.Reporting.csproj | Production | Traditional | v4.8 | 7.3 | Library | AnyCPU | 15.0 | ../RecordSift.Application/RecordSift.Application.csproj |
-| src/RecordSift.Infrastructure.Reporting/RecordSift.Infrastructure.Reporting.csproj | Production | Traditional | v4.8 | 7.3 | Library | AnyCPU | 15.0 | ../RecordSift.Domain/RecordSift.Domain.csproj |
-| tests/RecordSift.Domain.Tests/RecordSift.Domain.Tests.csproj | Test | Traditional | v4.8 | 7.3 | Library | AnyCPU | 15.0 | ../../src/RecordSift.Domain/RecordSift.Domain.csproj |
-| tests/RecordSift.Application.Tests/RecordSift.Application.Tests.csproj | Test | Traditional | v4.8 | 7.3 | Library | AnyCPU | 15.0 | ../../src/RecordSift.Application/RecordSift.Application.csproj |
-| tests/RecordSift.Application.Tests/RecordSift.Application.Tests.csproj | Test | Traditional | v4.8 | 7.3 | Library | AnyCPU | 15.0 | ../../src/RecordSift.Domain/RecordSift.Domain.csproj |
-| tests/RecordSift.Infrastructure.Csv.Tests/RecordSift.Infrastructure.Csv.Tests.csproj | Test | Traditional | v4.8 | 7.3 | Library | AnyCPU | 15.0 | ../RecordSift.Application.Tests/RecordSift.Application.Tests.csproj |
-| tests/RecordSift.Infrastructure.Csv.Tests/RecordSift.Infrastructure.Csv.Tests.csproj | Test | Traditional | v4.8 | 7.3 | Library | AnyCPU | 15.0 | ../../src/RecordSift.Infrastructure.Csv/RecordSift.Infrastructure.Csv.csproj |
-| tests/RecordSift.Infrastructure.Csv.Tests/RecordSift.Infrastructure.Csv.Tests.csproj | Test | Traditional | v4.8 | 7.3 | Library | AnyCPU | 15.0 | ../../src/RecordSift.Application/RecordSift.Application.csproj |
-| tests/RecordSift.Infrastructure.Csv.Tests/RecordSift.Infrastructure.Csv.Tests.csproj | Test | Traditional | v4.8 | 7.3 | Library | AnyCPU | 15.0 | ../../src/RecordSift.Domain/RecordSift.Domain.csproj |
-| tests/RecordSift.Infrastructure.Xlsx.Tests/RecordSift.Infrastructure.Xlsx.Tests.csproj | Test | Traditional | v4.8 | 7.3 | Library | AnyCPU | 15.0 | ../../src/RecordSift.Infrastructure.Xlsx/RecordSift.Infrastructure.Xlsx.csproj |
-| tests/RecordSift.Infrastructure.Xlsx.Tests/RecordSift.Infrastructure.Xlsx.Tests.csproj | Test | Traditional | v4.8 | 7.3 | Library | AnyCPU | 15.0 | ../../src/RecordSift.Application/RecordSift.Application.csproj |
-| tests/RecordSift.Infrastructure.Xlsx.Tests/RecordSift.Infrastructure.Xlsx.Tests.csproj | Test | Traditional | v4.8 | 7.3 | Library | AnyCPU | 15.0 | ../../src/RecordSift.Domain/RecordSift.Domain.csproj |
-| tests/RecordSift.Infrastructure.Reporting.Tests/RecordSift.Infrastructure.Reporting.Tests.csproj | Test | Traditional | v4.8 | 7.3 | Library | AnyCPU | 15.0 | ../../src/RecordSift.Infrastructure.Csv/RecordSift.Infrastructure.Csv.csproj |
-| tests/RecordSift.Infrastructure.Reporting.Tests/RecordSift.Infrastructure.Reporting.Tests.csproj | Test | Traditional | v4.8 | 7.3 | Library | AnyCPU | 15.0 | ../../src/RecordSift.Infrastructure.Reporting/RecordSift.Infrastructure.Reporting.csproj |
-| tests/RecordSift.Infrastructure.Reporting.Tests/RecordSift.Infrastructure.Reporting.Tests.csproj | Test | Traditional | v4.8 | 7.3 | Library | AnyCPU | 15.0 | ../../src/RecordSift.Application/RecordSift.Application.csproj |
-| tests/RecordSift.Infrastructure.Reporting.Tests/RecordSift.Infrastructure.Reporting.Tests.csproj | Test | Traditional | v4.8 | 7.3 | Library | AnyCPU | 15.0 | ../../src/RecordSift.Domain/RecordSift.Domain.csproj |
+One row per project; direct references are grouped by project name. Each linked project name opens the immutable source file; the full repository-relative project path is the final column.
+
+| Project | Role | Format | Target Framework(s) | Language Version | Output Type | MSBuild Platform(s) | SDK or ToolsVersion | Direct Project References | Project Path |
+|---|---|---|---|---|---|---|---|---|---|
+| [RecordSift.Domain](https://github.com/infoconex/RecordSift/blob/1809d06c0fade59e4769d16e0f8eaf10fa426004/src/RecordSift.Domain/RecordSift.Domain.csproj) | Production | Traditional | v4.8 | 7.3 | Library | AnyCPU | 15.0 | None | `src/RecordSift.Domain/RecordSift.Domain.csproj` |
+| [RecordSift.Application](https://github.com/infoconex/RecordSift/blob/1809d06c0fade59e4769d16e0f8eaf10fa426004/src/RecordSift.Application/RecordSift.Application.csproj) | Production | Traditional | v4.8 | 7.3 | Library | AnyCPU | 15.0 | RecordSift.Domain | `src/RecordSift.Application/RecordSift.Application.csproj` |
+| [RecordSift.Infrastructure.Csv](https://github.com/infoconex/RecordSift/blob/1809d06c0fade59e4769d16e0f8eaf10fa426004/src/RecordSift.Infrastructure.Csv/RecordSift.Infrastructure.Csv.csproj) | Production | Traditional | v4.8 | 7.3 | Library | AnyCPU | 15.0 | RecordSift.Application<br>RecordSift.Domain | `src/RecordSift.Infrastructure.Csv/RecordSift.Infrastructure.Csv.csproj` |
+| [RecordSift.Infrastructure.Xlsx](https://github.com/infoconex/RecordSift/blob/1809d06c0fade59e4769d16e0f8eaf10fa426004/src/RecordSift.Infrastructure.Xlsx/RecordSift.Infrastructure.Xlsx.csproj) | Production | Traditional | v4.8 | 7.3 | Library | AnyCPU | 15.0 | RecordSift.Application<br>RecordSift.Domain | `src/RecordSift.Infrastructure.Xlsx/RecordSift.Infrastructure.Xlsx.csproj` |
+| [RecordSift.Infrastructure.Reporting](https://github.com/infoconex/RecordSift/blob/1809d06c0fade59e4769d16e0f8eaf10fa426004/src/RecordSift.Infrastructure.Reporting/RecordSift.Infrastructure.Reporting.csproj) | Production | Traditional | v4.8 | 7.3 | Library | AnyCPU | 15.0 | RecordSift.Application<br>RecordSift.Domain | `src/RecordSift.Infrastructure.Reporting/RecordSift.Infrastructure.Reporting.csproj` |
+| [RecordSift.Domain.Tests](https://github.com/infoconex/RecordSift/blob/1809d06c0fade59e4769d16e0f8eaf10fa426004/tests/RecordSift.Domain.Tests/RecordSift.Domain.Tests.csproj) | Test | Traditional | v4.8 | 7.3 | Library | AnyCPU | 15.0 | RecordSift.Domain | `tests/RecordSift.Domain.Tests/RecordSift.Domain.Tests.csproj` |
+| [RecordSift.Application.Tests](https://github.com/infoconex/RecordSift/blob/1809d06c0fade59e4769d16e0f8eaf10fa426004/tests/RecordSift.Application.Tests/RecordSift.Application.Tests.csproj) | Test | Traditional | v4.8 | 7.3 | Library | AnyCPU | 15.0 | RecordSift.Application<br>RecordSift.Domain | `tests/RecordSift.Application.Tests/RecordSift.Application.Tests.csproj` |
+| [RecordSift.Infrastructure.Csv.Tests](https://github.com/infoconex/RecordSift/blob/1809d06c0fade59e4769d16e0f8eaf10fa426004/tests/RecordSift.Infrastructure.Csv.Tests/RecordSift.Infrastructure.Csv.Tests.csproj) | Test | Traditional | v4.8 | 7.3 | Library | AnyCPU | 15.0 | RecordSift.Application.Tests<br>RecordSift.Infrastructure.Csv<br>RecordSift.Application<br>RecordSift.Domain | `tests/RecordSift.Infrastructure.Csv.Tests/RecordSift.Infrastructure.Csv.Tests.csproj` |
+| [RecordSift.Infrastructure.Xlsx.Tests](https://github.com/infoconex/RecordSift/blob/1809d06c0fade59e4769d16e0f8eaf10fa426004/tests/RecordSift.Infrastructure.Xlsx.Tests/RecordSift.Infrastructure.Xlsx.Tests.csproj) | Test | Traditional | v4.8 | 7.3 | Library | AnyCPU | 15.0 | RecordSift.Infrastructure.Xlsx<br>RecordSift.Application<br>RecordSift.Domain | `tests/RecordSift.Infrastructure.Xlsx.Tests/RecordSift.Infrastructure.Xlsx.Tests.csproj` |
+| [RecordSift.Infrastructure.Reporting.Tests](https://github.com/infoconex/RecordSift/blob/1809d06c0fade59e4769d16e0f8eaf10fa426004/tests/RecordSift.Infrastructure.Reporting.Tests/RecordSift.Infrastructure.Reporting.Tests.csproj) | Test | Traditional | v4.8 | 7.3 | Library | AnyCPU | 15.0 | RecordSift.Infrastructure.Csv<br>RecordSift.Infrastructure.Reporting<br>RecordSift.Application<br>RecordSift.Domain | `tests/RecordSift.Infrastructure.Reporting.Tests/RecordSift.Infrastructure.Reporting.Tests.csproj` |
 
 ## Project settings and evaluated values
 
 ### 38. Compiler Settings
 
-| Project Path | Configuration | Framework | Property | Declared Value | Condition |
-|---|---|---|---|---|---|
-| src/RecordSift.Domain/RecordSift.Domain.csproj | All | v4.8 | LangVersion | 7.3 | Unconditional |
-| src/RecordSift.Domain/RecordSift.Domain.csproj | Debug | v4.8 | DebugSymbols | true |  '$(Configuration)\|$(Platform)' == 'Debug\|AnyCPU'  |
-| src/RecordSift.Domain/RecordSift.Domain.csproj | Debug | v4.8 | DebugType | full |  '$(Configuration)\|$(Platform)' == 'Debug\|AnyCPU'  |
-| src/RecordSift.Domain/RecordSift.Domain.csproj | Debug | v4.8 | Optimize | false |  '$(Configuration)\|$(Platform)' == 'Debug\|AnyCPU'  |
-| src/RecordSift.Domain/RecordSift.Domain.csproj | Debug | v4.8 | DefineConstants | DEBUG;TRACE |  '$(Configuration)\|$(Platform)' == 'Debug\|AnyCPU'  |
-| src/RecordSift.Domain/RecordSift.Domain.csproj | Release | v4.8 | DebugType | pdbonly |  '$(Configuration)\|$(Platform)' == 'Release\|AnyCPU'  |
-| src/RecordSift.Domain/RecordSift.Domain.csproj | Release | v4.8 | Optimize | true |  '$(Configuration)\|$(Platform)' == 'Release\|AnyCPU'  |
-| src/RecordSift.Domain/RecordSift.Domain.csproj | Release | v4.8 | DefineConstants | TRACE |  '$(Configuration)\|$(Platform)' == 'Release\|AnyCPU'  |
-| src/RecordSift.Application/RecordSift.Application.csproj | All | v4.8 | LangVersion | 7.3 | Unconditional |
-| src/RecordSift.Application/RecordSift.Application.csproj | Debug | v4.8 | DebugSymbols | true |  '$(Configuration)\|$(Platform)' == 'Debug\|AnyCPU'  |
-| src/RecordSift.Application/RecordSift.Application.csproj | Debug | v4.8 | DebugType | full |  '$(Configuration)\|$(Platform)' == 'Debug\|AnyCPU'  |
-| src/RecordSift.Application/RecordSift.Application.csproj | Debug | v4.8 | Optimize | false |  '$(Configuration)\|$(Platform)' == 'Debug\|AnyCPU'  |
-| src/RecordSift.Application/RecordSift.Application.csproj | Debug | v4.8 | DefineConstants | DEBUG;TRACE |  '$(Configuration)\|$(Platform)' == 'Debug\|AnyCPU'  |
-| src/RecordSift.Application/RecordSift.Application.csproj | Release | v4.8 | DebugType | pdbonly |  '$(Configuration)\|$(Platform)' == 'Release\|AnyCPU'  |
-| src/RecordSift.Application/RecordSift.Application.csproj | Release | v4.8 | Optimize | true |  '$(Configuration)\|$(Platform)' == 'Release\|AnyCPU'  |
-| src/RecordSift.Application/RecordSift.Application.csproj | Release | v4.8 | DefineConstants | TRACE |  '$(Configuration)\|$(Platform)' == 'Release\|AnyCPU'  |
-| src/RecordSift.Infrastructure.Csv/RecordSift.Infrastructure.Csv.csproj | All | v4.8 | LangVersion | 7.3 | Unconditional |
-| src/RecordSift.Infrastructure.Csv/RecordSift.Infrastructure.Csv.csproj | Debug | v4.8 | DebugSymbols | true |  '$(Configuration)\|$(Platform)' == 'Debug\|AnyCPU'  |
-| src/RecordSift.Infrastructure.Csv/RecordSift.Infrastructure.Csv.csproj | Debug | v4.8 | DebugType | full |  '$(Configuration)\|$(Platform)' == 'Debug\|AnyCPU'  |
-| src/RecordSift.Infrastructure.Csv/RecordSift.Infrastructure.Csv.csproj | Debug | v4.8 | Optimize | false |  '$(Configuration)\|$(Platform)' == 'Debug\|AnyCPU'  |
-| src/RecordSift.Infrastructure.Csv/RecordSift.Infrastructure.Csv.csproj | Debug | v4.8 | DefineConstants | DEBUG;TRACE |  '$(Configuration)\|$(Platform)' == 'Debug\|AnyCPU'  |
-| src/RecordSift.Infrastructure.Csv/RecordSift.Infrastructure.Csv.csproj | Release | v4.8 | DebugType | pdbonly |  '$(Configuration)\|$(Platform)' == 'Release\|AnyCPU'  |
-| src/RecordSift.Infrastructure.Csv/RecordSift.Infrastructure.Csv.csproj | Release | v4.8 | Optimize | true |  '$(Configuration)\|$(Platform)' == 'Release\|AnyCPU'  |
-| src/RecordSift.Infrastructure.Csv/RecordSift.Infrastructure.Csv.csproj | Release | v4.8 | DefineConstants | TRACE |  '$(Configuration)\|$(Platform)' == 'Release\|AnyCPU'  |
-| src/RecordSift.Infrastructure.Xlsx/RecordSift.Infrastructure.Xlsx.csproj | All | v4.8 | LangVersion | 7.3 | Unconditional |
-| src/RecordSift.Infrastructure.Xlsx/RecordSift.Infrastructure.Xlsx.csproj | Debug | v4.8 | DebugSymbols | true |  '$(Configuration)\|$(Platform)' == 'Debug\|AnyCPU'  |
-| src/RecordSift.Infrastructure.Xlsx/RecordSift.Infrastructure.Xlsx.csproj | Debug | v4.8 | DebugType | full |  '$(Configuration)\|$(Platform)' == 'Debug\|AnyCPU'  |
-| src/RecordSift.Infrastructure.Xlsx/RecordSift.Infrastructure.Xlsx.csproj | Debug | v4.8 | Optimize | false |  '$(Configuration)\|$(Platform)' == 'Debug\|AnyCPU'  |
-| src/RecordSift.Infrastructure.Xlsx/RecordSift.Infrastructure.Xlsx.csproj | Debug | v4.8 | DefineConstants | DEBUG;TRACE |  '$(Configuration)\|$(Platform)' == 'Debug\|AnyCPU'  |
-| src/RecordSift.Infrastructure.Xlsx/RecordSift.Infrastructure.Xlsx.csproj | Release | v4.8 | DebugType | pdbonly |  '$(Configuration)\|$(Platform)' == 'Release\|AnyCPU'  |
-| src/RecordSift.Infrastructure.Xlsx/RecordSift.Infrastructure.Xlsx.csproj | Release | v4.8 | Optimize | true |  '$(Configuration)\|$(Platform)' == 'Release\|AnyCPU'  |
-| src/RecordSift.Infrastructure.Xlsx/RecordSift.Infrastructure.Xlsx.csproj | Release | v4.8 | DefineConstants | TRACE |  '$(Configuration)\|$(Platform)' == 'Release\|AnyCPU'  |
-| src/RecordSift.Infrastructure.Reporting/RecordSift.Infrastructure.Reporting.csproj | All | v4.8 | LangVersion | 7.3 | Unconditional |
-| src/RecordSift.Infrastructure.Reporting/RecordSift.Infrastructure.Reporting.csproj | Debug | v4.8 | DebugSymbols | true |  '$(Configuration)\|$(Platform)' == 'Debug\|AnyCPU'  |
-| src/RecordSift.Infrastructure.Reporting/RecordSift.Infrastructure.Reporting.csproj | Debug | v4.8 | DebugType | full |  '$(Configuration)\|$(Platform)' == 'Debug\|AnyCPU'  |
-| src/RecordSift.Infrastructure.Reporting/RecordSift.Infrastructure.Reporting.csproj | Debug | v4.8 | Optimize | false |  '$(Configuration)\|$(Platform)' == 'Debug\|AnyCPU'  |
-| src/RecordSift.Infrastructure.Reporting/RecordSift.Infrastructure.Reporting.csproj | Debug | v4.8 | DefineConstants | DEBUG;TRACE |  '$(Configuration)\|$(Platform)' == 'Debug\|AnyCPU'  |
-| src/RecordSift.Infrastructure.Reporting/RecordSift.Infrastructure.Reporting.csproj | Release | v4.8 | DebugType | pdbonly |  '$(Configuration)\|$(Platform)' == 'Release\|AnyCPU'  |
-| src/RecordSift.Infrastructure.Reporting/RecordSift.Infrastructure.Reporting.csproj | Release | v4.8 | Optimize | true |  '$(Configuration)\|$(Platform)' == 'Release\|AnyCPU'  |
-| src/RecordSift.Infrastructure.Reporting/RecordSift.Infrastructure.Reporting.csproj | Release | v4.8 | DefineConstants | TRACE |  '$(Configuration)\|$(Platform)' == 'Release\|AnyCPU'  |
-| tests/RecordSift.Domain.Tests/RecordSift.Domain.Tests.csproj | All | v4.8 | LangVersion | 7.3 | Unconditional |
-| tests/RecordSift.Domain.Tests/RecordSift.Domain.Tests.csproj | Debug | v4.8 | DebugSymbols | true |  '$(Configuration)\|$(Platform)' == 'Debug\|AnyCPU'  |
-| tests/RecordSift.Domain.Tests/RecordSift.Domain.Tests.csproj | Debug | v4.8 | DebugType | full |  '$(Configuration)\|$(Platform)' == 'Debug\|AnyCPU'  |
-| tests/RecordSift.Domain.Tests/RecordSift.Domain.Tests.csproj | Debug | v4.8 | Optimize | false |  '$(Configuration)\|$(Platform)' == 'Debug\|AnyCPU'  |
-| tests/RecordSift.Domain.Tests/RecordSift.Domain.Tests.csproj | Debug | v4.8 | DefineConstants | DEBUG;TRACE |  '$(Configuration)\|$(Platform)' == 'Debug\|AnyCPU'  |
-| tests/RecordSift.Domain.Tests/RecordSift.Domain.Tests.csproj | Release | v4.8 | DebugType | pdbonly |  '$(Configuration)\|$(Platform)' == 'Release\|AnyCPU'  |
-| tests/RecordSift.Domain.Tests/RecordSift.Domain.Tests.csproj | Release | v4.8 | Optimize | true |  '$(Configuration)\|$(Platform)' == 'Release\|AnyCPU'  |
-| tests/RecordSift.Domain.Tests/RecordSift.Domain.Tests.csproj | Release | v4.8 | DefineConstants | TRACE |  '$(Configuration)\|$(Platform)' == 'Release\|AnyCPU'  |
-| tests/RecordSift.Application.Tests/RecordSift.Application.Tests.csproj | All | v4.8 | LangVersion | 7.3 | Unconditional |
-| tests/RecordSift.Application.Tests/RecordSift.Application.Tests.csproj | Debug | v4.8 | DebugSymbols | true |  '$(Configuration)\|$(Platform)' == 'Debug\|AnyCPU'  |
-| tests/RecordSift.Application.Tests/RecordSift.Application.Tests.csproj | Debug | v4.8 | DebugType | full |  '$(Configuration)\|$(Platform)' == 'Debug\|AnyCPU'  |
-| tests/RecordSift.Application.Tests/RecordSift.Application.Tests.csproj | Debug | v4.8 | Optimize | false |  '$(Configuration)\|$(Platform)' == 'Debug\|AnyCPU'  |
-| tests/RecordSift.Application.Tests/RecordSift.Application.Tests.csproj | Debug | v4.8 | DefineConstants | DEBUG;TRACE |  '$(Configuration)\|$(Platform)' == 'Debug\|AnyCPU'  |
-| tests/RecordSift.Application.Tests/RecordSift.Application.Tests.csproj | Release | v4.8 | DebugType | pdbonly |  '$(Configuration)\|$(Platform)' == 'Release\|AnyCPU'  |
-| tests/RecordSift.Application.Tests/RecordSift.Application.Tests.csproj | Release | v4.8 | Optimize | true |  '$(Configuration)\|$(Platform)' == 'Release\|AnyCPU'  |
-| tests/RecordSift.Application.Tests/RecordSift.Application.Tests.csproj | Release | v4.8 | DefineConstants | TRACE |  '$(Configuration)\|$(Platform)' == 'Release\|AnyCPU'  |
-| tests/RecordSift.Infrastructure.Csv.Tests/RecordSift.Infrastructure.Csv.Tests.csproj | All | v4.8 | LangVersion | 7.3 | Unconditional |
-| tests/RecordSift.Infrastructure.Csv.Tests/RecordSift.Infrastructure.Csv.Tests.csproj | Debug | v4.8 | DebugSymbols | true |  '$(Configuration)\|$(Platform)' == 'Debug\|AnyCPU'  |
-| tests/RecordSift.Infrastructure.Csv.Tests/RecordSift.Infrastructure.Csv.Tests.csproj | Debug | v4.8 | DebugType | full |  '$(Configuration)\|$(Platform)' == 'Debug\|AnyCPU'  |
-| tests/RecordSift.Infrastructure.Csv.Tests/RecordSift.Infrastructure.Csv.Tests.csproj | Debug | v4.8 | Optimize | false |  '$(Configuration)\|$(Platform)' == 'Debug\|AnyCPU'  |
-| tests/RecordSift.Infrastructure.Csv.Tests/RecordSift.Infrastructure.Csv.Tests.csproj | Debug | v4.8 | DefineConstants | DEBUG;TRACE |  '$(Configuration)\|$(Platform)' == 'Debug\|AnyCPU'  |
-| tests/RecordSift.Infrastructure.Csv.Tests/RecordSift.Infrastructure.Csv.Tests.csproj | Release | v4.8 | DebugType | pdbonly |  '$(Configuration)\|$(Platform)' == 'Release\|AnyCPU'  |
-| tests/RecordSift.Infrastructure.Csv.Tests/RecordSift.Infrastructure.Csv.Tests.csproj | Release | v4.8 | Optimize | true |  '$(Configuration)\|$(Platform)' == 'Release\|AnyCPU'  |
-| tests/RecordSift.Infrastructure.Csv.Tests/RecordSift.Infrastructure.Csv.Tests.csproj | Release | v4.8 | DefineConstants | TRACE |  '$(Configuration)\|$(Platform)' == 'Release\|AnyCPU'  |
-| tests/RecordSift.Infrastructure.Xlsx.Tests/RecordSift.Infrastructure.Xlsx.Tests.csproj | All | v4.8 | LangVersion | 7.3 | Unconditional |
-| tests/RecordSift.Infrastructure.Xlsx.Tests/RecordSift.Infrastructure.Xlsx.Tests.csproj | Debug | v4.8 | DebugSymbols | true |  '$(Configuration)\|$(Platform)' == 'Debug\|AnyCPU'  |
-| tests/RecordSift.Infrastructure.Xlsx.Tests/RecordSift.Infrastructure.Xlsx.Tests.csproj | Debug | v4.8 | DebugType | full |  '$(Configuration)\|$(Platform)' == 'Debug\|AnyCPU'  |
-| tests/RecordSift.Infrastructure.Xlsx.Tests/RecordSift.Infrastructure.Xlsx.Tests.csproj | Debug | v4.8 | Optimize | false |  '$(Configuration)\|$(Platform)' == 'Debug\|AnyCPU'  |
-| tests/RecordSift.Infrastructure.Xlsx.Tests/RecordSift.Infrastructure.Xlsx.Tests.csproj | Debug | v4.8 | DefineConstants | DEBUG;TRACE |  '$(Configuration)\|$(Platform)' == 'Debug\|AnyCPU'  |
-| tests/RecordSift.Infrastructure.Xlsx.Tests/RecordSift.Infrastructure.Xlsx.Tests.csproj | Release | v4.8 | DebugType | pdbonly |  '$(Configuration)\|$(Platform)' == 'Release\|AnyCPU'  |
-| tests/RecordSift.Infrastructure.Xlsx.Tests/RecordSift.Infrastructure.Xlsx.Tests.csproj | Release | v4.8 | Optimize | true |  '$(Configuration)\|$(Platform)' == 'Release\|AnyCPU'  |
-| tests/RecordSift.Infrastructure.Xlsx.Tests/RecordSift.Infrastructure.Xlsx.Tests.csproj | Release | v4.8 | DefineConstants | TRACE |  '$(Configuration)\|$(Platform)' == 'Release\|AnyCPU'  |
-| tests/RecordSift.Infrastructure.Reporting.Tests/RecordSift.Infrastructure.Reporting.Tests.csproj | All | v4.8 | LangVersion | 7.3 | Unconditional |
-| tests/RecordSift.Infrastructure.Reporting.Tests/RecordSift.Infrastructure.Reporting.Tests.csproj | Debug | v4.8 | DebugSymbols | true |  '$(Configuration)\|$(Platform)' == 'Debug\|AnyCPU'  |
-| tests/RecordSift.Infrastructure.Reporting.Tests/RecordSift.Infrastructure.Reporting.Tests.csproj | Debug | v4.8 | DebugType | full |  '$(Configuration)\|$(Platform)' == 'Debug\|AnyCPU'  |
-| tests/RecordSift.Infrastructure.Reporting.Tests/RecordSift.Infrastructure.Reporting.Tests.csproj | Debug | v4.8 | Optimize | false |  '$(Configuration)\|$(Platform)' == 'Debug\|AnyCPU'  |
-| tests/RecordSift.Infrastructure.Reporting.Tests/RecordSift.Infrastructure.Reporting.Tests.csproj | Debug | v4.8 | DefineConstants | DEBUG;TRACE |  '$(Configuration)\|$(Platform)' == 'Debug\|AnyCPU'  |
-| tests/RecordSift.Infrastructure.Reporting.Tests/RecordSift.Infrastructure.Reporting.Tests.csproj | Release | v4.8 | DebugType | pdbonly |  '$(Configuration)\|$(Platform)' == 'Release\|AnyCPU'  |
-| tests/RecordSift.Infrastructure.Reporting.Tests/RecordSift.Infrastructure.Reporting.Tests.csproj | Release | v4.8 | Optimize | true |  '$(Configuration)\|$(Platform)' == 'Release\|AnyCPU'  |
-| tests/RecordSift.Infrastructure.Reporting.Tests/RecordSift.Infrastructure.Reporting.Tests.csproj | Release | v4.8 | DefineConstants | TRACE |  '$(Configuration)\|$(Platform)' == 'Release\|AnyCPU'  |
+These are **source-declared** compiler properties, not independently evaluated MSBuild values. D/R means Debug / Release. Shared source conditions: Debug = `'$(Configuration)|$(Platform)' == 'Debug|AnyCPU'`; Release = `'$(Configuration)|$(Platform)' == 'Release|AnyCPU'`. `LangVersion` is unconditional. `Not declared` means no corresponding source declaration and does not imply `false`.
+
+| Project | Framework(s) | LangVersion | DebugSymbols (D/R) | DebugType (D/R) | Optimize (D/R) | DefineConstants (D/R) | Conditions / Exceptions | Project Path |
+|---|---|---|---|---|---|---|---|---|
+| [RecordSift.Domain](https://github.com/infoconex/RecordSift/blob/1809d06c0fade59e4769d16e0f8eaf10fa426004/src/RecordSift.Domain/RecordSift.Domain.csproj) | v4.8 | 7.3 | true / Not declared | full / pdbonly | false / true | DEBUG;TRACE / TRACE | None | `src/RecordSift.Domain/RecordSift.Domain.csproj` |
+| [RecordSift.Application](https://github.com/infoconex/RecordSift/blob/1809d06c0fade59e4769d16e0f8eaf10fa426004/src/RecordSift.Application/RecordSift.Application.csproj) | v4.8 | 7.3 | true / Not declared | full / pdbonly | false / true | DEBUG;TRACE / TRACE | None | `src/RecordSift.Application/RecordSift.Application.csproj` |
+| [RecordSift.Infrastructure.Csv](https://github.com/infoconex/RecordSift/blob/1809d06c0fade59e4769d16e0f8eaf10fa426004/src/RecordSift.Infrastructure.Csv/RecordSift.Infrastructure.Csv.csproj) | v4.8 | 7.3 | true / Not declared | full / pdbonly | false / true | DEBUG;TRACE / TRACE | None | `src/RecordSift.Infrastructure.Csv/RecordSift.Infrastructure.Csv.csproj` |
+| [RecordSift.Infrastructure.Xlsx](https://github.com/infoconex/RecordSift/blob/1809d06c0fade59e4769d16e0f8eaf10fa426004/src/RecordSift.Infrastructure.Xlsx/RecordSift.Infrastructure.Xlsx.csproj) | v4.8 | 7.3 | true / Not declared | full / pdbonly | false / true | DEBUG;TRACE / TRACE | None | `src/RecordSift.Infrastructure.Xlsx/RecordSift.Infrastructure.Xlsx.csproj` |
+| [RecordSift.Infrastructure.Reporting](https://github.com/infoconex/RecordSift/blob/1809d06c0fade59e4769d16e0f8eaf10fa426004/src/RecordSift.Infrastructure.Reporting/RecordSift.Infrastructure.Reporting.csproj) | v4.8 | 7.3 | true / Not declared | full / pdbonly | false / true | DEBUG;TRACE / TRACE | None | `src/RecordSift.Infrastructure.Reporting/RecordSift.Infrastructure.Reporting.csproj` |
+| [RecordSift.Domain.Tests](https://github.com/infoconex/RecordSift/blob/1809d06c0fade59e4769d16e0f8eaf10fa426004/tests/RecordSift.Domain.Tests/RecordSift.Domain.Tests.csproj) | v4.8 | 7.3 | true / Not declared | full / pdbonly | false / true | DEBUG;TRACE / TRACE | None | `tests/RecordSift.Domain.Tests/RecordSift.Domain.Tests.csproj` |
+| [RecordSift.Application.Tests](https://github.com/infoconex/RecordSift/blob/1809d06c0fade59e4769d16e0f8eaf10fa426004/tests/RecordSift.Application.Tests/RecordSift.Application.Tests.csproj) | v4.8 | 7.3 | true / Not declared | full / pdbonly | false / true | DEBUG;TRACE / TRACE | None | `tests/RecordSift.Application.Tests/RecordSift.Application.Tests.csproj` |
+| [RecordSift.Infrastructure.Csv.Tests](https://github.com/infoconex/RecordSift/blob/1809d06c0fade59e4769d16e0f8eaf10fa426004/tests/RecordSift.Infrastructure.Csv.Tests/RecordSift.Infrastructure.Csv.Tests.csproj) | v4.8 | 7.3 | true / Not declared | full / pdbonly | false / true | DEBUG;TRACE / TRACE | None | `tests/RecordSift.Infrastructure.Csv.Tests/RecordSift.Infrastructure.Csv.Tests.csproj` |
+| [RecordSift.Infrastructure.Xlsx.Tests](https://github.com/infoconex/RecordSift/blob/1809d06c0fade59e4769d16e0f8eaf10fa426004/tests/RecordSift.Infrastructure.Xlsx.Tests/RecordSift.Infrastructure.Xlsx.Tests.csproj) | v4.8 | 7.3 | true / Not declared | full / pdbonly | false / true | DEBUG;TRACE / TRACE | None | `tests/RecordSift.Infrastructure.Xlsx.Tests/RecordSift.Infrastructure.Xlsx.Tests.csproj` |
+| [RecordSift.Infrastructure.Reporting.Tests](https://github.com/infoconex/RecordSift/blob/1809d06c0fade59e4769d16e0f8eaf10fa426004/tests/RecordSift.Infrastructure.Reporting.Tests/RecordSift.Infrastructure.Reporting.Tests.csproj) | v4.8 | 7.3 | true / Not declared | full / pdbonly | false / true | DEBUG;TRACE / TRACE | None | `tests/RecordSift.Infrastructure.Reporting.Tests/RecordSift.Infrastructure.Reporting.Tests.csproj` |
 
 ### 39. Output and Validation Settings
 
-| Project Path | Configuration | Property | Declared Value | Condition |
-|---|---|---|---|---|
-| src/RecordSift.Domain/RecordSift.Domain.csproj | Debug | OutputPath | bin\Debug\ |  '$(Configuration)\|$(Platform)' == 'Debug\|AnyCPU'  |
-| src/RecordSift.Domain/RecordSift.Domain.csproj | Debug | WarningLevel | 4 |  '$(Configuration)\|$(Platform)' == 'Debug\|AnyCPU'  |
-| src/RecordSift.Domain/RecordSift.Domain.csproj | Debug | DocumentationFile | bin\Debug\RecordSift.Domain.xml |  '$(Configuration)\|$(Platform)' == 'Debug\|AnyCPU'  |
-| src/RecordSift.Domain/RecordSift.Domain.csproj | Debug | WarningsAsErrors | 1591 |  '$(Configuration)\|$(Platform)' == 'Debug\|AnyCPU'  |
-| src/RecordSift.Domain/RecordSift.Domain.csproj | Release | OutputPath | bin\Release\ |  '$(Configuration)\|$(Platform)' == 'Release\|AnyCPU'  |
-| src/RecordSift.Domain/RecordSift.Domain.csproj | Release | WarningLevel | 4 |  '$(Configuration)\|$(Platform)' == 'Release\|AnyCPU'  |
-| src/RecordSift.Domain/RecordSift.Domain.csproj | Release | DocumentationFile | bin\Release\RecordSift.Domain.xml |  '$(Configuration)\|$(Platform)' == 'Release\|AnyCPU'  |
-| src/RecordSift.Domain/RecordSift.Domain.csproj | Release | WarningsAsErrors | 1591 |  '$(Configuration)\|$(Platform)' == 'Release\|AnyCPU'  |
-| src/RecordSift.Application/RecordSift.Application.csproj | Debug | OutputPath | bin\Debug\ |  '$(Configuration)\|$(Platform)' == 'Debug\|AnyCPU'  |
-| src/RecordSift.Application/RecordSift.Application.csproj | Debug | WarningLevel | 4 |  '$(Configuration)\|$(Platform)' == 'Debug\|AnyCPU'  |
-| src/RecordSift.Application/RecordSift.Application.csproj | Debug | DocumentationFile | bin\Debug\RecordSift.Application.xml |  '$(Configuration)\|$(Platform)' == 'Debug\|AnyCPU'  |
-| src/RecordSift.Application/RecordSift.Application.csproj | Debug | WarningsAsErrors | 1591 |  '$(Configuration)\|$(Platform)' == 'Debug\|AnyCPU'  |
-| src/RecordSift.Application/RecordSift.Application.csproj | Release | OutputPath | bin\Release\ |  '$(Configuration)\|$(Platform)' == 'Release\|AnyCPU'  |
-| src/RecordSift.Application/RecordSift.Application.csproj | Release | WarningLevel | 4 |  '$(Configuration)\|$(Platform)' == 'Release\|AnyCPU'  |
-| src/RecordSift.Application/RecordSift.Application.csproj | Release | DocumentationFile | bin\Release\RecordSift.Application.xml |  '$(Configuration)\|$(Platform)' == 'Release\|AnyCPU'  |
-| src/RecordSift.Application/RecordSift.Application.csproj | Release | WarningsAsErrors | 1591 |  '$(Configuration)\|$(Platform)' == 'Release\|AnyCPU'  |
-| src/RecordSift.Infrastructure.Csv/RecordSift.Infrastructure.Csv.csproj | Debug | OutputPath | bin\Debug\ |  '$(Configuration)\|$(Platform)' == 'Debug\|AnyCPU'  |
-| src/RecordSift.Infrastructure.Csv/RecordSift.Infrastructure.Csv.csproj | Debug | WarningLevel | 4 |  '$(Configuration)\|$(Platform)' == 'Debug\|AnyCPU'  |
-| src/RecordSift.Infrastructure.Csv/RecordSift.Infrastructure.Csv.csproj | Debug | DocumentationFile | bin\Debug\RecordSift.Infrastructure.Csv.xml |  '$(Configuration)\|$(Platform)' == 'Debug\|AnyCPU'  |
-| src/RecordSift.Infrastructure.Csv/RecordSift.Infrastructure.Csv.csproj | Debug | WarningsAsErrors | 1591 |  '$(Configuration)\|$(Platform)' == 'Debug\|AnyCPU'  |
-| src/RecordSift.Infrastructure.Csv/RecordSift.Infrastructure.Csv.csproj | Release | OutputPath | bin\Release\ |  '$(Configuration)\|$(Platform)' == 'Release\|AnyCPU'  |
-| src/RecordSift.Infrastructure.Csv/RecordSift.Infrastructure.Csv.csproj | Release | WarningLevel | 4 |  '$(Configuration)\|$(Platform)' == 'Release\|AnyCPU'  |
-| src/RecordSift.Infrastructure.Csv/RecordSift.Infrastructure.Csv.csproj | Release | DocumentationFile | bin\Release\RecordSift.Infrastructure.Csv.xml |  '$(Configuration)\|$(Platform)' == 'Release\|AnyCPU'  |
-| src/RecordSift.Infrastructure.Csv/RecordSift.Infrastructure.Csv.csproj | Release | WarningsAsErrors | 1591 |  '$(Configuration)\|$(Platform)' == 'Release\|AnyCPU'  |
-| src/RecordSift.Infrastructure.Xlsx/RecordSift.Infrastructure.Xlsx.csproj | Debug | OutputPath | bin\Debug\ |  '$(Configuration)\|$(Platform)' == 'Debug\|AnyCPU'  |
-| src/RecordSift.Infrastructure.Xlsx/RecordSift.Infrastructure.Xlsx.csproj | Debug | WarningLevel | 4 |  '$(Configuration)\|$(Platform)' == 'Debug\|AnyCPU'  |
-| src/RecordSift.Infrastructure.Xlsx/RecordSift.Infrastructure.Xlsx.csproj | Debug | DocumentationFile | bin\Debug\RecordSift.Infrastructure.Xlsx.xml |  '$(Configuration)\|$(Platform)' == 'Debug\|AnyCPU'  |
-| src/RecordSift.Infrastructure.Xlsx/RecordSift.Infrastructure.Xlsx.csproj | Debug | WarningsAsErrors | 1591 |  '$(Configuration)\|$(Platform)' == 'Debug\|AnyCPU'  |
-| src/RecordSift.Infrastructure.Xlsx/RecordSift.Infrastructure.Xlsx.csproj | Release | OutputPath | bin\Release\ |  '$(Configuration)\|$(Platform)' == 'Release\|AnyCPU'  |
-| src/RecordSift.Infrastructure.Xlsx/RecordSift.Infrastructure.Xlsx.csproj | Release | WarningLevel | 4 |  '$(Configuration)\|$(Platform)' == 'Release\|AnyCPU'  |
-| src/RecordSift.Infrastructure.Xlsx/RecordSift.Infrastructure.Xlsx.csproj | Release | DocumentationFile | bin\Release\RecordSift.Infrastructure.Xlsx.xml |  '$(Configuration)\|$(Platform)' == 'Release\|AnyCPU'  |
-| src/RecordSift.Infrastructure.Xlsx/RecordSift.Infrastructure.Xlsx.csproj | Release | WarningsAsErrors | 1591 |  '$(Configuration)\|$(Platform)' == 'Release\|AnyCPU'  |
-| src/RecordSift.Infrastructure.Reporting/RecordSift.Infrastructure.Reporting.csproj | Debug | OutputPath | bin\Debug\ |  '$(Configuration)\|$(Platform)' == 'Debug\|AnyCPU'  |
-| src/RecordSift.Infrastructure.Reporting/RecordSift.Infrastructure.Reporting.csproj | Debug | WarningLevel | 4 |  '$(Configuration)\|$(Platform)' == 'Debug\|AnyCPU'  |
-| src/RecordSift.Infrastructure.Reporting/RecordSift.Infrastructure.Reporting.csproj | Debug | DocumentationFile | bin\Debug\RecordSift.Infrastructure.Reporting.xml |  '$(Configuration)\|$(Platform)' == 'Debug\|AnyCPU'  |
-| src/RecordSift.Infrastructure.Reporting/RecordSift.Infrastructure.Reporting.csproj | Debug | WarningsAsErrors | 1591 |  '$(Configuration)\|$(Platform)' == 'Debug\|AnyCPU'  |
-| src/RecordSift.Infrastructure.Reporting/RecordSift.Infrastructure.Reporting.csproj | Release | OutputPath | bin\Release\ |  '$(Configuration)\|$(Platform)' == 'Release\|AnyCPU'  |
-| src/RecordSift.Infrastructure.Reporting/RecordSift.Infrastructure.Reporting.csproj | Release | WarningLevel | 4 |  '$(Configuration)\|$(Platform)' == 'Release\|AnyCPU'  |
-| src/RecordSift.Infrastructure.Reporting/RecordSift.Infrastructure.Reporting.csproj | Release | DocumentationFile | bin\Release\RecordSift.Infrastructure.Reporting.xml |  '$(Configuration)\|$(Platform)' == 'Release\|AnyCPU'  |
-| src/RecordSift.Infrastructure.Reporting/RecordSift.Infrastructure.Reporting.csproj | Release | WarningsAsErrors | 1591 |  '$(Configuration)\|$(Platform)' == 'Release\|AnyCPU'  |
-| tests/RecordSift.Domain.Tests/RecordSift.Domain.Tests.csproj | Debug | OutputPath | bin\Debug\ |  '$(Configuration)\|$(Platform)' == 'Debug\|AnyCPU'  |
-| tests/RecordSift.Domain.Tests/RecordSift.Domain.Tests.csproj | Debug | WarningLevel | 4 |  '$(Configuration)\|$(Platform)' == 'Debug\|AnyCPU'  |
-| tests/RecordSift.Domain.Tests/RecordSift.Domain.Tests.csproj | Release | OutputPath | bin\Release\ |  '$(Configuration)\|$(Platform)' == 'Release\|AnyCPU'  |
-| tests/RecordSift.Domain.Tests/RecordSift.Domain.Tests.csproj | Release | WarningLevel | 4 |  '$(Configuration)\|$(Platform)' == 'Release\|AnyCPU'  |
-| tests/RecordSift.Application.Tests/RecordSift.Application.Tests.csproj | Debug | OutputPath | bin\Debug\ |  '$(Configuration)\|$(Platform)' == 'Debug\|AnyCPU'  |
-| tests/RecordSift.Application.Tests/RecordSift.Application.Tests.csproj | Debug | WarningLevel | 4 |  '$(Configuration)\|$(Platform)' == 'Debug\|AnyCPU'  |
-| tests/RecordSift.Application.Tests/RecordSift.Application.Tests.csproj | Release | OutputPath | bin\Release\ |  '$(Configuration)\|$(Platform)' == 'Release\|AnyCPU'  |
-| tests/RecordSift.Application.Tests/RecordSift.Application.Tests.csproj | Release | WarningLevel | 4 |  '$(Configuration)\|$(Platform)' == 'Release\|AnyCPU'  |
-| tests/RecordSift.Infrastructure.Csv.Tests/RecordSift.Infrastructure.Csv.Tests.csproj | Debug | OutputPath | bin\Debug\ |  '$(Configuration)\|$(Platform)' == 'Debug\|AnyCPU'  |
-| tests/RecordSift.Infrastructure.Csv.Tests/RecordSift.Infrastructure.Csv.Tests.csproj | Debug | WarningLevel | 4 |  '$(Configuration)\|$(Platform)' == 'Debug\|AnyCPU'  |
-| tests/RecordSift.Infrastructure.Csv.Tests/RecordSift.Infrastructure.Csv.Tests.csproj | Release | OutputPath | bin\Release\ |  '$(Configuration)\|$(Platform)' == 'Release\|AnyCPU'  |
-| tests/RecordSift.Infrastructure.Csv.Tests/RecordSift.Infrastructure.Csv.Tests.csproj | Release | WarningLevel | 4 |  '$(Configuration)\|$(Platform)' == 'Release\|AnyCPU'  |
-| tests/RecordSift.Infrastructure.Xlsx.Tests/RecordSift.Infrastructure.Xlsx.Tests.csproj | Debug | OutputPath | bin\Debug\ |  '$(Configuration)\|$(Platform)' == 'Debug\|AnyCPU'  |
-| tests/RecordSift.Infrastructure.Xlsx.Tests/RecordSift.Infrastructure.Xlsx.Tests.csproj | Debug | WarningLevel | 4 |  '$(Configuration)\|$(Platform)' == 'Debug\|AnyCPU'  |
-| tests/RecordSift.Infrastructure.Xlsx.Tests/RecordSift.Infrastructure.Xlsx.Tests.csproj | Release | OutputPath | bin\Release\ |  '$(Configuration)\|$(Platform)' == 'Release\|AnyCPU'  |
-| tests/RecordSift.Infrastructure.Xlsx.Tests/RecordSift.Infrastructure.Xlsx.Tests.csproj | Release | WarningLevel | 4 |  '$(Configuration)\|$(Platform)' == 'Release\|AnyCPU'  |
-| tests/RecordSift.Infrastructure.Reporting.Tests/RecordSift.Infrastructure.Reporting.Tests.csproj | Debug | OutputPath | bin\Debug\ |  '$(Configuration)\|$(Platform)' == 'Debug\|AnyCPU'  |
-| tests/RecordSift.Infrastructure.Reporting.Tests/RecordSift.Infrastructure.Reporting.Tests.csproj | Debug | WarningLevel | 4 |  '$(Configuration)\|$(Platform)' == 'Debug\|AnyCPU'  |
-| tests/RecordSift.Infrastructure.Reporting.Tests/RecordSift.Infrastructure.Reporting.Tests.csproj | Release | OutputPath | bin\Release\ |  '$(Configuration)\|$(Platform)' == 'Release\|AnyCPU'  |
-| tests/RecordSift.Infrastructure.Reporting.Tests/RecordSift.Infrastructure.Reporting.Tests.csproj | Release | WarningLevel | 4 |  '$(Configuration)\|$(Platform)' == 'Release\|AnyCPU'  |
+These are **source-declared** values. D/R means Debug / Release and uses the same shared conditions recorded in item 38. A single value is used when Debug and Release declarations agree. `Not declared` means the property is absent, not that MSBuild evaluated it as false or empty.
+
+| Project | OutputPath (D/R) | WarningLevel (D/R) | WarningsAsErrors (D/R) | DocumentationFile (D/R) | Conditions / Exceptions | Project Path |
+|---|---|---|---|---|---|---|
+| [RecordSift.Domain](https://github.com/infoconex/RecordSift/blob/1809d06c0fade59e4769d16e0f8eaf10fa426004/src/RecordSift.Domain/RecordSift.Domain.csproj) | `bin\Debug\` / `bin\Release\` | 4 | 1591 | `bin\Debug\RecordSift.Domain.xml` / `bin\Release\RecordSift.Domain.xml` | None | `src/RecordSift.Domain/RecordSift.Domain.csproj` |
+| [RecordSift.Application](https://github.com/infoconex/RecordSift/blob/1809d06c0fade59e4769d16e0f8eaf10fa426004/src/RecordSift.Application/RecordSift.Application.csproj) | `bin\Debug\` / `bin\Release\` | 4 | 1591 | `bin\Debug\RecordSift.Application.xml` / `bin\Release\RecordSift.Application.xml` | None | `src/RecordSift.Application/RecordSift.Application.csproj` |
+| [RecordSift.Infrastructure.Csv](https://github.com/infoconex/RecordSift/blob/1809d06c0fade59e4769d16e0f8eaf10fa426004/src/RecordSift.Infrastructure.Csv/RecordSift.Infrastructure.Csv.csproj) | `bin\Debug\` / `bin\Release\` | 4 | 1591 | `bin\Debug\RecordSift.Infrastructure.Csv.xml` / `bin\Release\RecordSift.Infrastructure.Csv.xml` | None | `src/RecordSift.Infrastructure.Csv/RecordSift.Infrastructure.Csv.csproj` |
+| [RecordSift.Infrastructure.Xlsx](https://github.com/infoconex/RecordSift/blob/1809d06c0fade59e4769d16e0f8eaf10fa426004/src/RecordSift.Infrastructure.Xlsx/RecordSift.Infrastructure.Xlsx.csproj) | `bin\Debug\` / `bin\Release\` | 4 | 1591 | `bin\Debug\RecordSift.Infrastructure.Xlsx.xml` / `bin\Release\RecordSift.Infrastructure.Xlsx.xml` | None | `src/RecordSift.Infrastructure.Xlsx/RecordSift.Infrastructure.Xlsx.csproj` |
+| [RecordSift.Infrastructure.Reporting](https://github.com/infoconex/RecordSift/blob/1809d06c0fade59e4769d16e0f8eaf10fa426004/src/RecordSift.Infrastructure.Reporting/RecordSift.Infrastructure.Reporting.csproj) | `bin\Debug\` / `bin\Release\` | 4 | 1591 | `bin\Debug\RecordSift.Infrastructure.Reporting.xml` / `bin\Release\RecordSift.Infrastructure.Reporting.xml` | None | `src/RecordSift.Infrastructure.Reporting/RecordSift.Infrastructure.Reporting.csproj` |
+| [RecordSift.Domain.Tests](https://github.com/infoconex/RecordSift/blob/1809d06c0fade59e4769d16e0f8eaf10fa426004/tests/RecordSift.Domain.Tests/RecordSift.Domain.Tests.csproj) | `bin\Debug\` / `bin\Release\` | 4 | Not declared | Not declared | None | `tests/RecordSift.Domain.Tests/RecordSift.Domain.Tests.csproj` |
+| [RecordSift.Application.Tests](https://github.com/infoconex/RecordSift/blob/1809d06c0fade59e4769d16e0f8eaf10fa426004/tests/RecordSift.Application.Tests/RecordSift.Application.Tests.csproj) | `bin\Debug\` / `bin\Release\` | 4 | Not declared | Not declared | None | `tests/RecordSift.Application.Tests/RecordSift.Application.Tests.csproj` |
+| [RecordSift.Infrastructure.Csv.Tests](https://github.com/infoconex/RecordSift/blob/1809d06c0fade59e4769d16e0f8eaf10fa426004/tests/RecordSift.Infrastructure.Csv.Tests/RecordSift.Infrastructure.Csv.Tests.csproj) | `bin\Debug\` / `bin\Release\` | 4 | Not declared | Not declared | None | `tests/RecordSift.Infrastructure.Csv.Tests/RecordSift.Infrastructure.Csv.Tests.csproj` |
+| [RecordSift.Infrastructure.Xlsx.Tests](https://github.com/infoconex/RecordSift/blob/1809d06c0fade59e4769d16e0f8eaf10fa426004/tests/RecordSift.Infrastructure.Xlsx.Tests/RecordSift.Infrastructure.Xlsx.Tests.csproj) | `bin\Debug\` / `bin\Release\` | 4 | Not declared | Not declared | None | `tests/RecordSift.Infrastructure.Xlsx.Tests/RecordSift.Infrastructure.Xlsx.Tests.csproj` |
+| [RecordSift.Infrastructure.Reporting.Tests](https://github.com/infoconex/RecordSift/blob/1809d06c0fade59e4769d16e0f8eaf10fa426004/tests/RecordSift.Infrastructure.Reporting.Tests/RecordSift.Infrastructure.Reporting.Tests.csproj) | `bin\Debug\` / `bin\Release\` | 4 | Not declared | Not declared | None | `tests/RecordSift.Infrastructure.Reporting.Tests/RecordSift.Infrastructure.Reporting.Tests.csproj` |
 
 ### 40. Project Metadata and Imports
 
-| Project Path | Metadata or Import Name | Declared Value | Source File |
-|---|---|---|---|
-| src/RecordSift.Domain/RecordSift.Domain.csproj | Configuration | Debug | src/RecordSift.Domain/RecordSift.Domain.csproj |
-| src/RecordSift.Domain/RecordSift.Domain.csproj | FileAlignment | 512 | src/RecordSift.Domain/RecordSift.Domain.csproj |
-| src/RecordSift.Domain/RecordSift.Domain.csproj | AppDesignerFolder | Properties | src/RecordSift.Domain/RecordSift.Domain.csproj |
-| src/RecordSift.Domain/RecordSift.Domain.csproj | Import | $(MSBuildToolsPath)\Microsoft.CSharp.targets | src/RecordSift.Domain/RecordSift.Domain.csproj |
-| src/RecordSift.Application/RecordSift.Application.csproj | Configuration | Debug | src/RecordSift.Application/RecordSift.Application.csproj |
-| src/RecordSift.Application/RecordSift.Application.csproj | FileAlignment | 512 | src/RecordSift.Application/RecordSift.Application.csproj |
-| src/RecordSift.Application/RecordSift.Application.csproj | AppDesignerFolder | Properties | src/RecordSift.Application/RecordSift.Application.csproj |
-| src/RecordSift.Application/RecordSift.Application.csproj | Import | $(MSBuildToolsPath)\Microsoft.CSharp.targets | src/RecordSift.Application/RecordSift.Application.csproj |
-| src/RecordSift.Infrastructure.Csv/RecordSift.Infrastructure.Csv.csproj | Configuration | Debug | src/RecordSift.Infrastructure.Csv/RecordSift.Infrastructure.Csv.csproj |
-| src/RecordSift.Infrastructure.Csv/RecordSift.Infrastructure.Csv.csproj | FileAlignment | 512 | src/RecordSift.Infrastructure.Csv/RecordSift.Infrastructure.Csv.csproj |
-| src/RecordSift.Infrastructure.Csv/RecordSift.Infrastructure.Csv.csproj | AppDesignerFolder | Properties | src/RecordSift.Infrastructure.Csv/RecordSift.Infrastructure.Csv.csproj |
-| src/RecordSift.Infrastructure.Csv/RecordSift.Infrastructure.Csv.csproj | Import | $(MSBuildToolsPath)\Microsoft.CSharp.targets | src/RecordSift.Infrastructure.Csv/RecordSift.Infrastructure.Csv.csproj |
-| src/RecordSift.Infrastructure.Xlsx/RecordSift.Infrastructure.Xlsx.csproj | Configuration | Debug | src/RecordSift.Infrastructure.Xlsx/RecordSift.Infrastructure.Xlsx.csproj |
-| src/RecordSift.Infrastructure.Xlsx/RecordSift.Infrastructure.Xlsx.csproj | Import | $(MSBuildToolsPath)\Microsoft.CSharp.targets | src/RecordSift.Infrastructure.Xlsx/RecordSift.Infrastructure.Xlsx.csproj |
-| src/RecordSift.Infrastructure.Reporting/RecordSift.Infrastructure.Reporting.csproj | Configuration | Debug | src/RecordSift.Infrastructure.Reporting/RecordSift.Infrastructure.Reporting.csproj |
-| src/RecordSift.Infrastructure.Reporting/RecordSift.Infrastructure.Reporting.csproj | FileAlignment | 512 | src/RecordSift.Infrastructure.Reporting/RecordSift.Infrastructure.Reporting.csproj |
-| src/RecordSift.Infrastructure.Reporting/RecordSift.Infrastructure.Reporting.csproj | Import | $(MSBuildToolsPath)\Microsoft.CSharp.targets | src/RecordSift.Infrastructure.Reporting/RecordSift.Infrastructure.Reporting.csproj |
-| tests/RecordSift.Domain.Tests/RecordSift.Domain.Tests.csproj | Configuration | Debug | tests/RecordSift.Domain.Tests/RecordSift.Domain.Tests.csproj |
-| tests/RecordSift.Domain.Tests/RecordSift.Domain.Tests.csproj | FileAlignment | 512 | tests/RecordSift.Domain.Tests/RecordSift.Domain.Tests.csproj |
-| tests/RecordSift.Domain.Tests/RecordSift.Domain.Tests.csproj | AppDesignerFolder | Properties | tests/RecordSift.Domain.Tests/RecordSift.Domain.Tests.csproj |
-| tests/RecordSift.Domain.Tests/RecordSift.Domain.Tests.csproj | IsTestProject | true | tests/RecordSift.Domain.Tests/RecordSift.Domain.Tests.csproj |
-| tests/RecordSift.Domain.Tests/RecordSift.Domain.Tests.csproj | Import | $(MSBuildToolsPath)\Microsoft.CSharp.targets | tests/RecordSift.Domain.Tests/RecordSift.Domain.Tests.csproj |
-| tests/RecordSift.Application.Tests/RecordSift.Application.Tests.csproj | Configuration | Debug | tests/RecordSift.Application.Tests/RecordSift.Application.Tests.csproj |
-| tests/RecordSift.Application.Tests/RecordSift.Application.Tests.csproj | FileAlignment | 512 | tests/RecordSift.Application.Tests/RecordSift.Application.Tests.csproj |
-| tests/RecordSift.Application.Tests/RecordSift.Application.Tests.csproj | AppDesignerFolder | Properties | tests/RecordSift.Application.Tests/RecordSift.Application.Tests.csproj |
-| tests/RecordSift.Application.Tests/RecordSift.Application.Tests.csproj | IsTestProject | true | tests/RecordSift.Application.Tests/RecordSift.Application.Tests.csproj |
-| tests/RecordSift.Application.Tests/RecordSift.Application.Tests.csproj | Import | $(MSBuildToolsPath)\Microsoft.CSharp.targets | tests/RecordSift.Application.Tests/RecordSift.Application.Tests.csproj |
-| tests/RecordSift.Infrastructure.Csv.Tests/RecordSift.Infrastructure.Csv.Tests.csproj | Configuration | Debug | tests/RecordSift.Infrastructure.Csv.Tests/RecordSift.Infrastructure.Csv.Tests.csproj |
-| tests/RecordSift.Infrastructure.Csv.Tests/RecordSift.Infrastructure.Csv.Tests.csproj | FileAlignment | 512 | tests/RecordSift.Infrastructure.Csv.Tests/RecordSift.Infrastructure.Csv.Tests.csproj |
-| tests/RecordSift.Infrastructure.Csv.Tests/RecordSift.Infrastructure.Csv.Tests.csproj | AppDesignerFolder | Properties | tests/RecordSift.Infrastructure.Csv.Tests/RecordSift.Infrastructure.Csv.Tests.csproj |
-| tests/RecordSift.Infrastructure.Csv.Tests/RecordSift.Infrastructure.Csv.Tests.csproj | IsTestProject | true | tests/RecordSift.Infrastructure.Csv.Tests/RecordSift.Infrastructure.Csv.Tests.csproj |
-| tests/RecordSift.Infrastructure.Csv.Tests/RecordSift.Infrastructure.Csv.Tests.csproj | Import | $(MSBuildToolsPath)\Microsoft.CSharp.targets | tests/RecordSift.Infrastructure.Csv.Tests/RecordSift.Infrastructure.Csv.Tests.csproj |
-| tests/RecordSift.Infrastructure.Xlsx.Tests/RecordSift.Infrastructure.Xlsx.Tests.csproj | Configuration | Debug | tests/RecordSift.Infrastructure.Xlsx.Tests/RecordSift.Infrastructure.Xlsx.Tests.csproj |
-| tests/RecordSift.Infrastructure.Xlsx.Tests/RecordSift.Infrastructure.Xlsx.Tests.csproj | IsTestProject | true | tests/RecordSift.Infrastructure.Xlsx.Tests/RecordSift.Infrastructure.Xlsx.Tests.csproj |
-| tests/RecordSift.Infrastructure.Xlsx.Tests/RecordSift.Infrastructure.Xlsx.Tests.csproj | Import | $(MSBuildToolsPath)\Microsoft.CSharp.targets | tests/RecordSift.Infrastructure.Xlsx.Tests/RecordSift.Infrastructure.Xlsx.Tests.csproj |
-| tests/RecordSift.Infrastructure.Reporting.Tests/RecordSift.Infrastructure.Reporting.Tests.csproj | Configuration | Debug | tests/RecordSift.Infrastructure.Reporting.Tests/RecordSift.Infrastructure.Reporting.Tests.csproj |
-| tests/RecordSift.Infrastructure.Reporting.Tests/RecordSift.Infrastructure.Reporting.Tests.csproj | FileAlignment | 512 | tests/RecordSift.Infrastructure.Reporting.Tests/RecordSift.Infrastructure.Reporting.Tests.csproj |
-| tests/RecordSift.Infrastructure.Reporting.Tests/RecordSift.Infrastructure.Reporting.Tests.csproj | IsTestProject | true | tests/RecordSift.Infrastructure.Reporting.Tests/RecordSift.Infrastructure.Reporting.Tests.csproj |
-| tests/RecordSift.Infrastructure.Reporting.Tests/RecordSift.Infrastructure.Reporting.Tests.csproj | Import | $(MSBuildToolsPath)\Microsoft.CSharp.targets | tests/RecordSift.Infrastructure.Reporting.Tests/RecordSift.Infrastructure.Reporting.Tests.csproj |
+These are project-file metadata and **explicit** imports, not evaluated defaults. `Not declared` means the property was absent from the inspected project XML. The source file for every row is the project path in the last column.
+
+| Project | Default Configuration | IsTestProject | FileAlignment | AppDesignerFolder | Imports | Additional Metadata / Conditions | Project Path |
+|---|---|---|---|---|---|---|---|
+| [RecordSift.Domain](https://github.com/infoconex/RecordSift/blob/1809d06c0fade59e4769d16e0f8eaf10fa426004/src/RecordSift.Domain/RecordSift.Domain.csproj) | Debug | Not declared | 512 | Properties | `$(MSBuildToolsPath)\Microsoft.CSharp.targets` | None | `src/RecordSift.Domain/RecordSift.Domain.csproj` |
+| [RecordSift.Application](https://github.com/infoconex/RecordSift/blob/1809d06c0fade59e4769d16e0f8eaf10fa426004/src/RecordSift.Application/RecordSift.Application.csproj) | Debug | Not declared | 512 | Properties | `$(MSBuildToolsPath)\Microsoft.CSharp.targets` | None | `src/RecordSift.Application/RecordSift.Application.csproj` |
+| [RecordSift.Infrastructure.Csv](https://github.com/infoconex/RecordSift/blob/1809d06c0fade59e4769d16e0f8eaf10fa426004/src/RecordSift.Infrastructure.Csv/RecordSift.Infrastructure.Csv.csproj) | Debug | Not declared | 512 | Properties | `$(MSBuildToolsPath)\Microsoft.CSharp.targets` | None | `src/RecordSift.Infrastructure.Csv/RecordSift.Infrastructure.Csv.csproj` |
+| [RecordSift.Infrastructure.Xlsx](https://github.com/infoconex/RecordSift/blob/1809d06c0fade59e4769d16e0f8eaf10fa426004/src/RecordSift.Infrastructure.Xlsx/RecordSift.Infrastructure.Xlsx.csproj) | Debug | Not declared | Not declared | Not declared | `$(MSBuildToolsPath)\Microsoft.CSharp.targets` | None | `src/RecordSift.Infrastructure.Xlsx/RecordSift.Infrastructure.Xlsx.csproj` |
+| [RecordSift.Infrastructure.Reporting](https://github.com/infoconex/RecordSift/blob/1809d06c0fade59e4769d16e0f8eaf10fa426004/src/RecordSift.Infrastructure.Reporting/RecordSift.Infrastructure.Reporting.csproj) | Debug | Not declared | 512 | Not declared | `$(MSBuildToolsPath)\Microsoft.CSharp.targets` | None | `src/RecordSift.Infrastructure.Reporting/RecordSift.Infrastructure.Reporting.csproj` |
+| [RecordSift.Domain.Tests](https://github.com/infoconex/RecordSift/blob/1809d06c0fade59e4769d16e0f8eaf10fa426004/tests/RecordSift.Domain.Tests/RecordSift.Domain.Tests.csproj) | Debug | true | 512 | Properties | `$(MSBuildToolsPath)\Microsoft.CSharp.targets` | None | `tests/RecordSift.Domain.Tests/RecordSift.Domain.Tests.csproj` |
+| [RecordSift.Application.Tests](https://github.com/infoconex/RecordSift/blob/1809d06c0fade59e4769d16e0f8eaf10fa426004/tests/RecordSift.Application.Tests/RecordSift.Application.Tests.csproj) | Debug | true | 512 | Properties | `$(MSBuildToolsPath)\Microsoft.CSharp.targets` | None | `tests/RecordSift.Application.Tests/RecordSift.Application.Tests.csproj` |
+| [RecordSift.Infrastructure.Csv.Tests](https://github.com/infoconex/RecordSift/blob/1809d06c0fade59e4769d16e0f8eaf10fa426004/tests/RecordSift.Infrastructure.Csv.Tests/RecordSift.Infrastructure.Csv.Tests.csproj) | Debug | true | 512 | Properties | `$(MSBuildToolsPath)\Microsoft.CSharp.targets` | None | `tests/RecordSift.Infrastructure.Csv.Tests/RecordSift.Infrastructure.Csv.Tests.csproj` |
+| [RecordSift.Infrastructure.Xlsx.Tests](https://github.com/infoconex/RecordSift/blob/1809d06c0fade59e4769d16e0f8eaf10fa426004/tests/RecordSift.Infrastructure.Xlsx.Tests/RecordSift.Infrastructure.Xlsx.Tests.csproj) | Debug | true | Not declared | Not declared | `$(MSBuildToolsPath)\Microsoft.CSharp.targets` | None | `tests/RecordSift.Infrastructure.Xlsx.Tests/RecordSift.Infrastructure.Xlsx.Tests.csproj` |
+| [RecordSift.Infrastructure.Reporting.Tests](https://github.com/infoconex/RecordSift/blob/1809d06c0fade59e4769d16e0f8eaf10fa426004/tests/RecordSift.Infrastructure.Reporting.Tests/RecordSift.Infrastructure.Reporting.Tests.csproj) | Debug | true | 512 | Not declared | `$(MSBuildToolsPath)\Microsoft.CSharp.targets` | None | `tests/RecordSift.Infrastructure.Reporting.Tests/RecordSift.Infrastructure.Reporting.Tests.csproj` |
 
 ### 41. Evaluated MSBuild Properties
 
-| Project Path | Configuration | Framework | Property | Evaluated Value | Declared Value | Evidence |
-|---|---|---|---|---|---|---|
+No independent local MSBuild `-getProperty` evaluation has been executed for this frozen revision. The project-specific table below is reserved for observed values, with the source project path last; a successful CI build does not populate it.
+
+| Project | Configuration / Framework / Platform | Evaluated Properties (name=value) | Declared Properties for Comparison | Evidence | Project Path |
+|---|---|---|---|---|---|
 
 *Not checked — no local MSBuild property evaluation has been executed.*
 
@@ -364,59 +213,34 @@
 
 ### 44. NuGet Package Declarations
 
-| Project Path | Package ID | Declared Version | Declaration File | Configured Feed | Purpose |
-|---|---|---|---|---|---|
-| src/RecordSift.Infrastructure.Csv | CsvHelper | 33.1.0 | src/RecordSift.Infrastructure.Csv/packages.config | nuget.org | Production |
-| src/RecordSift.Infrastructure.Csv | Microsoft.Bcl.AsyncInterfaces | 8.0.0 | src/RecordSift.Infrastructure.Csv/packages.config | nuget.org | Production |
-| src/RecordSift.Infrastructure.Csv | Microsoft.Bcl.HashCode | 1.1.1 | src/RecordSift.Infrastructure.Csv/packages.config | nuget.org | Production |
-| src/RecordSift.Infrastructure.Csv | Microsoft.CSharp | 4.7.0 | src/RecordSift.Infrastructure.Csv/packages.config | nuget.org | Production |
-| src/RecordSift.Infrastructure.Csv | System.Memory | 4.5.5 | src/RecordSift.Infrastructure.Csv/packages.config | nuget.org | Production |
-| src/RecordSift.Infrastructure.Csv | System.Buffers | 4.5.1 | src/RecordSift.Infrastructure.Csv/packages.config | nuget.org | Production |
-| src/RecordSift.Infrastructure.Csv | System.Numerics.Vectors | 4.5.0 | src/RecordSift.Infrastructure.Csv/packages.config | nuget.org | Production |
-| src/RecordSift.Infrastructure.Csv | System.Runtime.CompilerServices.Unsafe | 6.0.0 | src/RecordSift.Infrastructure.Csv/packages.config | nuget.org | Production |
-| src/RecordSift.Infrastructure.Csv | System.Threading.Tasks.Extensions | 4.5.4 | src/RecordSift.Infrastructure.Csv/packages.config | nuget.org | Production |
-| src/RecordSift.Infrastructure.Xlsx | ExcelDataReader | 3.9.0 | src/RecordSift.Infrastructure.Xlsx/packages.config | nuget.org | Production |
-| src/RecordSift.Infrastructure.Xlsx | System.ValueTuple | 4.5.0 | src/RecordSift.Infrastructure.Xlsx/packages.config | nuget.org | Production |
-| tests/RecordSift.Application.Tests | NUnit | 3.14.0 | tests/RecordSift.Application.Tests/packages.config | nuget.org | Test framework |
-| tests/RecordSift.Domain.Tests | NUnit | 3.14.0 | tests/RecordSift.Domain.Tests/packages.config | nuget.org | Test framework |
-| tests/RecordSift.Domain.Tests | NUnit.ConsoleRunner | 3.17.0 | tests/RecordSift.Domain.Tests/packages.config | nuget.org | Test runner |
-| tests/RecordSift.Infrastructure.Csv.Tests | NUnit | 3.14.0 | tests/RecordSift.Infrastructure.Csv.Tests/packages.config | nuget.org | Test framework |
-| tests/RecordSift.Infrastructure.Reporting.Tests | NUnit | 3.14.0 | tests/RecordSift.Infrastructure.Reporting.Tests/packages.config | nuget.org | Test framework |
-| tests/RecordSift.Infrastructure.Xlsx.Tests | NUnit | 3.14.0 | tests/RecordSift.Infrastructure.Xlsx.Tests/packages.config | nuget.org | Test framework |
+One row per package-consuming project. Each line of the Packages cell preserves the individual **package ID, declared version and usage**; the linked `packages.config` is in that project's directory. Configured `nuget.org` is an eligible feed, **not** verified package acquisition provenance.
+
+| Project | Packages (ID — Version — Purpose) | Declaration / Version Source | Configured Feed(s) | Project Path |
+|---|---|---|---|---|
+| [RecordSift.Infrastructure.Csv](https://github.com/infoconex/RecordSift/blob/1809d06c0fade59e4769d16e0f8eaf10fa426004/src/RecordSift.Infrastructure.Csv/RecordSift.Infrastructure.Csv.csproj) | CsvHelper — 33.1.0 — Production<br>Microsoft.Bcl.AsyncInterfaces — 8.0.0 — Production<br>Microsoft.Bcl.HashCode — 1.1.1 — Production<br>Microsoft.CSharp — 4.7.0 — Production<br>System.Memory — 4.5.5 — Production<br>System.Buffers — 4.5.1 — Production<br>System.Numerics.Vectors — 4.5.0 — Production<br>System.Runtime.CompilerServices.Unsafe — 6.0.0 — Production<br>System.Threading.Tasks.Extensions — 4.5.4 — Production | [packages.config](https://github.com/infoconex/RecordSift/blob/1809d06c0fade59e4769d16e0f8eaf10fa426004/src/RecordSift.Infrastructure.Csv/packages.config) | nuget.org | `src/RecordSift.Infrastructure.Csv/RecordSift.Infrastructure.Csv.csproj` |
+| [RecordSift.Infrastructure.Xlsx](https://github.com/infoconex/RecordSift/blob/1809d06c0fade59e4769d16e0f8eaf10fa426004/src/RecordSift.Infrastructure.Xlsx/RecordSift.Infrastructure.Xlsx.csproj) | ExcelDataReader — 3.9.0 — Production<br>System.ValueTuple — 4.5.0 — Production | [packages.config](https://github.com/infoconex/RecordSift/blob/1809d06c0fade59e4769d16e0f8eaf10fa426004/src/RecordSift.Infrastructure.Xlsx/packages.config) | nuget.org | `src/RecordSift.Infrastructure.Xlsx/RecordSift.Infrastructure.Xlsx.csproj` |
+| [RecordSift.Application.Tests](https://github.com/infoconex/RecordSift/blob/1809d06c0fade59e4769d16e0f8eaf10fa426004/tests/RecordSift.Application.Tests/RecordSift.Application.Tests.csproj) | NUnit — 3.14.0 — Test framework | [packages.config](https://github.com/infoconex/RecordSift/blob/1809d06c0fade59e4769d16e0f8eaf10fa426004/tests/RecordSift.Application.Tests/packages.config) | nuget.org | `tests/RecordSift.Application.Tests/RecordSift.Application.Tests.csproj` |
+| [RecordSift.Domain.Tests](https://github.com/infoconex/RecordSift/blob/1809d06c0fade59e4769d16e0f8eaf10fa426004/tests/RecordSift.Domain.Tests/RecordSift.Domain.Tests.csproj) | NUnit — 3.14.0 — Test framework<br>NUnit.ConsoleRunner — 3.17.0 — Test runner | [packages.config](https://github.com/infoconex/RecordSift/blob/1809d06c0fade59e4769d16e0f8eaf10fa426004/tests/RecordSift.Domain.Tests/packages.config) | nuget.org | `tests/RecordSift.Domain.Tests/RecordSift.Domain.Tests.csproj` |
+| [RecordSift.Infrastructure.Csv.Tests](https://github.com/infoconex/RecordSift/blob/1809d06c0fade59e4769d16e0f8eaf10fa426004/tests/RecordSift.Infrastructure.Csv.Tests/RecordSift.Infrastructure.Csv.Tests.csproj) | NUnit — 3.14.0 — Test framework | [packages.config](https://github.com/infoconex/RecordSift/blob/1809d06c0fade59e4769d16e0f8eaf10fa426004/tests/RecordSift.Infrastructure.Csv.Tests/packages.config) | nuget.org | `tests/RecordSift.Infrastructure.Csv.Tests/RecordSift.Infrastructure.Csv.Tests.csproj` |
+| [RecordSift.Infrastructure.Reporting.Tests](https://github.com/infoconex/RecordSift/blob/1809d06c0fade59e4769d16e0f8eaf10fa426004/tests/RecordSift.Infrastructure.Reporting.Tests/RecordSift.Infrastructure.Reporting.Tests.csproj) | NUnit — 3.14.0 — Test framework | [packages.config](https://github.com/infoconex/RecordSift/blob/1809d06c0fade59e4769d16e0f8eaf10fa426004/tests/RecordSift.Infrastructure.Reporting.Tests/packages.config) | nuget.org | `tests/RecordSift.Infrastructure.Reporting.Tests/RecordSift.Infrastructure.Reporting.Tests.csproj` |
+| [RecordSift.Infrastructure.Xlsx.Tests](https://github.com/infoconex/RecordSift/blob/1809d06c0fade59e4769d16e0f8eaf10fa426004/tests/RecordSift.Infrastructure.Xlsx.Tests/RecordSift.Infrastructure.Xlsx.Tests.csproj) | NUnit — 3.14.0 — Test framework | [packages.config](https://github.com/infoconex/RecordSift/blob/1809d06c0fade59e4769d16e0f8eaf10fa426004/tests/RecordSift.Infrastructure.Xlsx.Tests/packages.config) | nuget.org | `tests/RecordSift.Infrastructure.Xlsx.Tests/RecordSift.Infrastructure.Xlsx.Tests.csproj` |
 
 ### 45. Other External Dependencies
 
-| Consumer | Dependency | Type or Mechanism | Declaration Source | Version or Identity | Resolution or Location |
-|---|---|---|---|---|---|
-| src/RecordSift.Domain/RecordSift.Domain.csproj | System | Framework assembly reference | src/RecordSift.Domain/RecordSift.Domain.csproj | Not declared | Not checked locally |
-| src/RecordSift.Domain/RecordSift.Domain.csproj | System.Core | Framework assembly reference | src/RecordSift.Domain/RecordSift.Domain.csproj | Not declared | Not checked locally |
-| src/RecordSift.Application/RecordSift.Application.csproj | System | Framework assembly reference | src/RecordSift.Application/RecordSift.Application.csproj | Not declared | Not checked locally |
-| src/RecordSift.Application/RecordSift.Application.csproj | System.Core | Framework assembly reference | src/RecordSift.Application/RecordSift.Application.csproj | Not declared | Not checked locally |
-| src/RecordSift.Infrastructure.Csv/RecordSift.Infrastructure.Csv.csproj | System | Framework assembly reference | src/RecordSift.Infrastructure.Csv/RecordSift.Infrastructure.Csv.csproj | Not declared | Not checked locally |
-| src/RecordSift.Infrastructure.Csv/RecordSift.Infrastructure.Csv.csproj | System.Core | Framework assembly reference | src/RecordSift.Infrastructure.Csv/RecordSift.Infrastructure.Csv.csproj | Not declared | Not checked locally |
-| src/RecordSift.Infrastructure.Xlsx/RecordSift.Infrastructure.Xlsx.csproj | System | Framework assembly reference | src/RecordSift.Infrastructure.Xlsx/RecordSift.Infrastructure.Xlsx.csproj | Not declared | Not checked locally |
-| src/RecordSift.Infrastructure.Xlsx/RecordSift.Infrastructure.Xlsx.csproj | System.Core | Framework assembly reference | src/RecordSift.Infrastructure.Xlsx/RecordSift.Infrastructure.Xlsx.csproj | Not declared | Not checked locally |
-| src/RecordSift.Infrastructure.Xlsx/RecordSift.Infrastructure.Xlsx.csproj | System.IO.Compression | Framework assembly reference | src/RecordSift.Infrastructure.Xlsx/RecordSift.Infrastructure.Xlsx.csproj | Not declared | Not checked locally |
-| src/RecordSift.Infrastructure.Xlsx/RecordSift.Infrastructure.Xlsx.csproj | System.Data | Framework assembly reference | src/RecordSift.Infrastructure.Xlsx/RecordSift.Infrastructure.Xlsx.csproj | Not declared | Not checked locally |
-| src/RecordSift.Infrastructure.Xlsx/RecordSift.Infrastructure.Xlsx.csproj | System.Xml | Framework assembly reference | src/RecordSift.Infrastructure.Xlsx/RecordSift.Infrastructure.Xlsx.csproj | Not declared | Not checked locally |
-| src/RecordSift.Infrastructure.Reporting/RecordSift.Infrastructure.Reporting.csproj | System | Framework assembly reference | src/RecordSift.Infrastructure.Reporting/RecordSift.Infrastructure.Reporting.csproj | Not declared | Not checked locally |
-| src/RecordSift.Infrastructure.Reporting/RecordSift.Infrastructure.Reporting.csproj | System.Core | Framework assembly reference | src/RecordSift.Infrastructure.Reporting/RecordSift.Infrastructure.Reporting.csproj | Not declared | Not checked locally |
-| src/RecordSift.Infrastructure.Reporting/RecordSift.Infrastructure.Reporting.csproj | System.Runtime.Serialization | Framework assembly reference | src/RecordSift.Infrastructure.Reporting/RecordSift.Infrastructure.Reporting.csproj | Not declared | Not checked locally |
-| src/RecordSift.Infrastructure.Reporting/RecordSift.Infrastructure.Reporting.csproj | System.Xml | Framework assembly reference | src/RecordSift.Infrastructure.Reporting/RecordSift.Infrastructure.Reporting.csproj | Not declared | Not checked locally |
-| tests/RecordSift.Domain.Tests/RecordSift.Domain.Tests.csproj | System | Framework assembly reference | tests/RecordSift.Domain.Tests/RecordSift.Domain.Tests.csproj | Not declared | Not checked locally |
-| tests/RecordSift.Domain.Tests/RecordSift.Domain.Tests.csproj | System.Core | Framework assembly reference | tests/RecordSift.Domain.Tests/RecordSift.Domain.Tests.csproj | Not declared | Not checked locally |
-| tests/RecordSift.Application.Tests/RecordSift.Application.Tests.csproj | System | Framework assembly reference | tests/RecordSift.Application.Tests/RecordSift.Application.Tests.csproj | Not declared | Not checked locally |
-| tests/RecordSift.Application.Tests/RecordSift.Application.Tests.csproj | System.Core | Framework assembly reference | tests/RecordSift.Application.Tests/RecordSift.Application.Tests.csproj | Not declared | Not checked locally |
-| tests/RecordSift.Infrastructure.Csv.Tests/RecordSift.Infrastructure.Csv.Tests.csproj | System | Framework assembly reference | tests/RecordSift.Infrastructure.Csv.Tests/RecordSift.Infrastructure.Csv.Tests.csproj | Not declared | Not checked locally |
-| tests/RecordSift.Infrastructure.Csv.Tests/RecordSift.Infrastructure.Csv.Tests.csproj | System.Core | Framework assembly reference | tests/RecordSift.Infrastructure.Csv.Tests/RecordSift.Infrastructure.Csv.Tests.csproj | Not declared | Not checked locally |
-| tests/RecordSift.Infrastructure.Xlsx.Tests/RecordSift.Infrastructure.Xlsx.Tests.csproj | System | Framework assembly reference | tests/RecordSift.Infrastructure.Xlsx.Tests/RecordSift.Infrastructure.Xlsx.Tests.csproj | Not declared | Not checked locally |
-| tests/RecordSift.Infrastructure.Xlsx.Tests/RecordSift.Infrastructure.Xlsx.Tests.csproj | System.Core | Framework assembly reference | tests/RecordSift.Infrastructure.Xlsx.Tests/RecordSift.Infrastructure.Xlsx.Tests.csproj | Not declared | Not checked locally |
-| tests/RecordSift.Infrastructure.Xlsx.Tests/RecordSift.Infrastructure.Xlsx.Tests.csproj | System.IO.Compression | Framework assembly reference | tests/RecordSift.Infrastructure.Xlsx.Tests/RecordSift.Infrastructure.Xlsx.Tests.csproj | Not declared | Not checked locally |
-| tests/RecordSift.Infrastructure.Xlsx.Tests/RecordSift.Infrastructure.Xlsx.Tests.csproj | System.Xml | Framework assembly reference | tests/RecordSift.Infrastructure.Xlsx.Tests/RecordSift.Infrastructure.Xlsx.Tests.csproj | Not declared | Not checked locally |
-| tests/RecordSift.Infrastructure.Reporting.Tests/RecordSift.Infrastructure.Reporting.Tests.csproj | System | Framework assembly reference | tests/RecordSift.Infrastructure.Reporting.Tests/RecordSift.Infrastructure.Reporting.Tests.csproj | Not declared | Not checked locally |
-| tests/RecordSift.Infrastructure.Reporting.Tests/RecordSift.Infrastructure.Reporting.Tests.csproj | System.Core | Framework assembly reference | tests/RecordSift.Infrastructure.Reporting.Tests/RecordSift.Infrastructure.Reporting.Tests.csproj | Not declared | Not checked locally |
-| tests/RecordSift.Infrastructure.Reporting.Tests/RecordSift.Infrastructure.Reporting.Tests.csproj | Microsoft.VisualBasic | Framework assembly reference | tests/RecordSift.Infrastructure.Reporting.Tests/RecordSift.Infrastructure.Reporting.Tests.csproj | Not declared | Not checked locally |
-| tests/RecordSift.Infrastructure.Reporting.Tests/RecordSift.Infrastructure.Reporting.Tests.csproj | System.Web.Extensions | Framework assembly reference | tests/RecordSift.Infrastructure.Reporting.Tests/RecordSift.Infrastructure.Reporting.Tests.csproj | Not declared | Not checked locally |
+One row per project for these **source-declared non-NuGet framework assembly references**. All dependencies listed within each row share the displayed reference mechanism, undeclared version, and unverified local resolution; dynamic runtime dependencies have not been ruled out. The declaration source is the linked project file, with its full relative path last.
+
+| Project | Dependencies | Type / Mechanism | Version / Identity | Resolution / Location | Declaration Source | Project Path |
+|---|---|---|---|---|---|---|
+| [RecordSift.Domain](https://github.com/infoconex/RecordSift/blob/1809d06c0fade59e4769d16e0f8eaf10fa426004/src/RecordSift.Domain/RecordSift.Domain.csproj) | System<br>System.Core | Framework assembly reference | Not declared | Not checked locally | Project file | `src/RecordSift.Domain/RecordSift.Domain.csproj` |
+| [RecordSift.Application](https://github.com/infoconex/RecordSift/blob/1809d06c0fade59e4769d16e0f8eaf10fa426004/src/RecordSift.Application/RecordSift.Application.csproj) | System<br>System.Core | Framework assembly reference | Not declared | Not checked locally | Project file | `src/RecordSift.Application/RecordSift.Application.csproj` |
+| [RecordSift.Infrastructure.Csv](https://github.com/infoconex/RecordSift/blob/1809d06c0fade59e4769d16e0f8eaf10fa426004/src/RecordSift.Infrastructure.Csv/RecordSift.Infrastructure.Csv.csproj) | System<br>System.Core | Framework assembly reference | Not declared | Not checked locally | Project file | `src/RecordSift.Infrastructure.Csv/RecordSift.Infrastructure.Csv.csproj` |
+| [RecordSift.Infrastructure.Xlsx](https://github.com/infoconex/RecordSift/blob/1809d06c0fade59e4769d16e0f8eaf10fa426004/src/RecordSift.Infrastructure.Xlsx/RecordSift.Infrastructure.Xlsx.csproj) | System<br>System.Core<br>System.IO.Compression<br>System.Data<br>System.Xml | Framework assembly reference | Not declared | Not checked locally | Project file | `src/RecordSift.Infrastructure.Xlsx/RecordSift.Infrastructure.Xlsx.csproj` |
+| [RecordSift.Infrastructure.Reporting](https://github.com/infoconex/RecordSift/blob/1809d06c0fade59e4769d16e0f8eaf10fa426004/src/RecordSift.Infrastructure.Reporting/RecordSift.Infrastructure.Reporting.csproj) | System<br>System.Core<br>System.Runtime.Serialization<br>System.Xml | Framework assembly reference | Not declared | Not checked locally | Project file | `src/RecordSift.Infrastructure.Reporting/RecordSift.Infrastructure.Reporting.csproj` |
+| [RecordSift.Domain.Tests](https://github.com/infoconex/RecordSift/blob/1809d06c0fade59e4769d16e0f8eaf10fa426004/tests/RecordSift.Domain.Tests/RecordSift.Domain.Tests.csproj) | System<br>System.Core | Framework assembly reference | Not declared | Not checked locally | Project file | `tests/RecordSift.Domain.Tests/RecordSift.Domain.Tests.csproj` |
+| [RecordSift.Application.Tests](https://github.com/infoconex/RecordSift/blob/1809d06c0fade59e4769d16e0f8eaf10fa426004/tests/RecordSift.Application.Tests/RecordSift.Application.Tests.csproj) | System<br>System.Core | Framework assembly reference | Not declared | Not checked locally | Project file | `tests/RecordSift.Application.Tests/RecordSift.Application.Tests.csproj` |
+| [RecordSift.Infrastructure.Csv.Tests](https://github.com/infoconex/RecordSift/blob/1809d06c0fade59e4769d16e0f8eaf10fa426004/tests/RecordSift.Infrastructure.Csv.Tests/RecordSift.Infrastructure.Csv.Tests.csproj) | System<br>System.Core | Framework assembly reference | Not declared | Not checked locally | Project file | `tests/RecordSift.Infrastructure.Csv.Tests/RecordSift.Infrastructure.Csv.Tests.csproj` |
+| [RecordSift.Infrastructure.Xlsx.Tests](https://github.com/infoconex/RecordSift/blob/1809d06c0fade59e4769d16e0f8eaf10fa426004/tests/RecordSift.Infrastructure.Xlsx.Tests/RecordSift.Infrastructure.Xlsx.Tests.csproj) | System<br>System.Core<br>System.IO.Compression<br>System.Xml | Framework assembly reference | Not declared | Not checked locally | Project file | `tests/RecordSift.Infrastructure.Xlsx.Tests/RecordSift.Infrastructure.Xlsx.Tests.csproj` |
+| [RecordSift.Infrastructure.Reporting.Tests](https://github.com/infoconex/RecordSift/blob/1809d06c0fade59e4769d16e0f8eaf10fa426004/tests/RecordSift.Infrastructure.Reporting.Tests/RecordSift.Infrastructure.Reporting.Tests.csproj) | System<br>System.Core<br>Microsoft.VisualBasic<br>System.Web.Extensions | Framework assembly reference | Not declared | Not checked locally | Project file | `tests/RecordSift.Infrastructure.Reporting.Tests/RecordSift.Infrastructure.Reporting.Tests.csproj` |
 
 ## Restore, build, tests and delivery
 

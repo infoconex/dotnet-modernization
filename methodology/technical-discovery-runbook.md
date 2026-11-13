@@ -333,11 +333,13 @@ For RecordSift at the frozen SHA, `RecordSift.sln` declares solution format `12.
 
 ```powershell
 git ls-files "*.sln" "*.slnx" "*.slnf"
-# When a compatible .NET SDK is installed, list solution members (not build mappings):
+# Optional when a compatible .NET SDK is installed; may trigger first-run SDK initialization (see warning below):
 dotnet sln .\RecordSift.sln list
 # Inspect the tracked solution text for declared configuration/build mapping evidence:
 Get-Content -LiteralPath .\RecordSift.sln
 ```
+
+**First-run side-effect warning:** `dotnet sln ... list` does not restore packages, build projects or run tests, but a .NET SDK invoked for the first time may perform machine/user-profile initialization, including creating an ASP.NET Core HTTPS development certificate. It may also display telemetry information. This is **not** a guaranteed side-effect-free command. When strictly read-only inspection is required, prefer `git ls-files` and `Get-Content -LiteralPath .\RecordSift.sln` to inspect solution membership, header and configuration mappings directly, and omit the optional `dotnet sln` invocation. If a .NET CLI is invoked and first-run setup occurs, record the side effect as separate environment evidence; do not infer that a development certificate is trusted from its creation. Treat solution listing as membership evidence only, not build success or configuration mapping verification.
 
 **How to populate each column (left to right):**
 

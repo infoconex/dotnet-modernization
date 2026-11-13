@@ -35,35 +35,25 @@
 |---|---|
 | 16. Discovery By |  |
 | 17. Discovery Date |  |
-| 18. Discovery Folder |  |
-
-## Source revision and checkout
-
-| Field | Value |
-|---|---|
-| 19. Selected Source Branch or Tag |  |
-| 20. Source Commit SHA |  |
-| 21. Working Tree Clean |  |
-| 22. Detached HEAD |  |
 
 ## Discovery host and prerequisite tools
 
 | Field | Value |
 |---|---|
-| 23. Operating System Name |  |
-| 24. Operating System Version |  |
-| 25. Operating System Build |  |
-| 26. Operating System Architecture |  |
-| 27. PowerShell Version |  |
-| 28. Git Version |  |
+| 18. Operating System Name |  |
+| 19. Operating System Version |  |
+| 20. Operating System Build |  |
+| 21. Operating System Architecture |  |
+| 22. PowerShell Version |  |
+| 23. Git Version |  |
 
-### 29. .NET SDK Inventory
+### 24. .NET SDK Inventory
 
 | SDK Version | Installation Path |
 |---|---|
 |   |   |
 
-### 30. .NET Runtime Inventory
+### 25. .NET Runtime Inventory
 
 | Runtime Name | Runtime Version | Installation Path |
 |---|---|---|
@@ -71,21 +61,31 @@
 
 | Field | Value |
 |---|---|
-| 31. MSBuild Version |  |
-| 32. MSBuild Installation Source |  |
-| 33. NuGet CLI Version |  |
+| 26. MSBuild Version |  |
+| 27. MSBuild Installation Source |  |
+| 28. NuGet CLI Version |  |
 
-### 34. .NET Framework Targeting Pack Inventory
+### 29. .NET Framework Targeting Pack Inventory
 
 | Framework Version | Installed | Location |
 |---|---|---|
 |   |   |   |
 
-### 35. Test Runner Inventory
+### 30. Test Runner Inventory
 
 | Runner Name | Runner Version | Source or Location |
 |---|---|---|
 |   |   |   |
+
+## Source revision and checkout
+
+| Field | Value |
+|---|---|
+| 31. Discovery Folder |  |
+| 32. Selected Source Branch or Tag |  |
+| 33. Source Commit SHA |  |
+| 34. Working Tree Clean |  |
+| 35. Detached HEAD |  |
 
 ## Solution and project inventory
 
@@ -213,7 +213,7 @@
 
 ### 55. Executed Command Evidence
 
-| Discovery Step | Command | Working Directory | Tool Version | Target or Configuration | Exit Code | Outcome | Output or Evidence |
+| Baseline Item | Command | Working Directory | Tool Version | Target or Configuration | Exit Code | Outcome | Output or Evidence |
 |---|---|---|---|---|---|---|---|
 |   |   |   |   |   |   |   |   |
 
@@ -223,9 +223,9 @@
 |---|---|---|---|
 |   |   |   |   |
 
-### 57. Discovery Step Status
+### 57. Discovery Item Status
 
-| Step ID | Status | Evidence or Missing Information |
+| Baseline Item | Status | Evidence or Missing Information |
 |---|---|---|
 |   |   |   |
 

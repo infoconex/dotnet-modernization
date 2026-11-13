@@ -34,22 +34,33 @@ This template is a **working record**, not an executable script. Create a row fo
 **Evidence method:** source-inspected / tool-evaluated / executed; several may apply but record them as **distinct observations**.  
 **Evidence outcome:** verified for stated scope / partially verified / blocked / failed / not executed / unresolved / not applicable. Work completion and verification are independent.
 
-## Tool checks — one command, one result
+## Tool checks — one snippet and one result per tool
 
-When checking prerequisites or recording a tool version, give **each tool its own code snippet** and put the actual result immediately below it. Repeat this small section for every tool checked.
+Use this format for every prerequisite. Give the **required minimum version**, where one is known. If there is no verified minimum, write **"minimum not established"** rather than guessing.
 
-### `<Tool name>`
+### `<Tool name>` — `<required or optional; minimum version or requirement>`
 
 ```powershell
-<one native command to identify the tool and version>
+<one native command to check the tool/version>
 ```
 
-**Result:** Not yet executed — replace with the actual version/output or error.
+**Result:** Not yet executed. Replace with the actual version, output or error.
 
-- **Executed by / date:** `<operator and local date>`
-- **Evidence:** `<output file or link, when available>`
+- **If missing or outdated:** `<link to the official download/install instructions and what to recheck>`
+- **Executed by / date:** `<operator and date>`
+- **Evidence:** `<file or link to captured output, if available>`
 
-Do not put several different tools in one snippet or combine their results into an unlabeled transcript. If a command wasn't run, leave its result as **Not yet executed**. The summary table can refer to these recorded results.
+**Example: Git — required; minimum version 2.23**
+
+```powershell
+git --version
+```
+
+**Result:** Not yet executed.
+
+- **If missing or older than 2.23:** [Install Git for Windows](https://git-scm.com/install/win), reopen PowerShell, and run the command again.
+
+Don't combine multiple tools into one snippet. The execution summary can link back to these individual results. For optional tools, record "not installed" without installing them until needed.
 
 ## Detailed step record — copy only when needed
 

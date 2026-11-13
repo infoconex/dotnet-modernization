@@ -123,9 +123,9 @@ One row per project when practical. Use Debug/Release values where declarations 
 
 ### 40. Project Metadata and Imports
 
-One row per project. Give each named metadata property a column and list distinct imports together. `Not declared` means absent from project source, not evaluated false. Preserve exceptional conditional/import scope.
+One row per project. Give each named metadata property a column and list distinct imports together. **Configuration Fallback** is a source-declared value used when `$(Configuration)` is empty, not a verified evaluated/build configuration; record its condition where relevant. `Not declared` means absent from project source, not evaluated false. Preserve exceptional conditional/import scope.
 
-| Project | Default Configuration | IsTestProject | FileAlignment | AppDesignerFolder | Imports | Additional Metadata / Conditions | Project Path |
+| Project | Configuration Fallback | IsTestProject | FileAlignment | AppDesignerFolder | Imports | Additional Metadata / Conditions | Project Path |
 |---|---|---|---|---|---|---|---|
 |   |   |   |   |   |   |   |   |
 

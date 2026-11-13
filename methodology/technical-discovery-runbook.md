@@ -284,29 +284,33 @@ git branch --show-current
 
 ### 36. Solutions
 
-Enumerate tracked solution files; inspect each solution header and project configuration mappings. For RecordSift `RecordSift.sln` declares format 12.00, Visual Studio 16 and Debug/Release × Any CPU. Use **one row per solution/configuration/platform combination**. `dotnet sln <path> list` is optional if a suitable SDK is installed; reading the solution source is always valid.
+Enumerate tracked `.sln`, `.slnx` and `.slnf` solution files. Inspect each solution's format/header, **actual** solution configuration/platform combinations, project membership, each project's active configuration mapping and the build/skip mappings. Prefer **one row per solution**, grouping configurations and platforms **only when the actual combinations and membership/build differences remain unambiguous**. Do **not** infer a Cartesian product from separate configuration and platform lists: for example, `Debug, Release` and `Any CPU, x64` do not by themselves establish that all four combinations exist. Record the exact valid pairs and project-specific exceptions in the **Membership / Build Exclusions** column, or retain separate scoped rows if that is clearer. Distinguish `Build.0` source declarations from successful actual builds.
+
+For RecordSift at the frozen SHA, `RecordSift.sln` declares solution format `12.00`, Visual Studio version `16.0.28701.123`, and only two solution configurations: `Debug|Any CPU` and `Release|Any CPU`. All ten projects are present and have `Build.0` mappings in both; these can safely share one row.
 
 ```powershell
 git ls-files "*.sln" "*.slnx" "*.slnf"
-# When a compatible .NET SDK is installed:
+# When a compatible .NET SDK is installed, list solution members (not build mappings):
 dotnet sln .\RecordSift.sln list
+# Inspect the tracked solution text for declared configuration/build mapping evidence:
+Get-Content -LiteralPath .\RecordSift.sln
 ```
 
 **How to populate each column (left to right):**
 
-- **Solution Path:** The repository-relative solution file.
-- **Format:** Solution format, such as .sln.
-- **Format Version:** Format version declared in file header.
-- **Declared IDE Version:** Visual Studio version declared in the solution header.
-- **Configuration:** Each solution configuration.
-- **Platform:** Each solution platform.
-- **Membership / Build Exclusions:** Relevant project membership or exclusions for this combination.
+- **Solution Path:** Repository-relative solution file path.
+- **Format:** Tracked solution format, such as `.sln`.
+- **Format Version:** Explicitly declared solution format version; `Not declared` if absent.
+- **Declared IDE Version:** Explicit IDE version in the solution header; `Not declared` if absent.
+- **Configurations:** Names of declared solution configurations, e.g. `Debug, Release`.
+- **Platforms:** Names of declared solution platforms, e.g. `Any CPU`; these are **solution** platform labels, not necessarily the same text as each project's MSBuild platform.
+- **Membership / Build Exclusions:** Verified project membership; explicit supported configuration/platform **pairs** if grouping separate lists would be ambiguous; project-specific active-configuration mappings, `Build.0` inclusion/exclusion and other exceptions by configuration. Record `Not checked` for mappings not inspected. Do not treat source mapping as execution evidence.
 
-**Illustrative example only; not a new observed finding:**
+**Illustrative source-derived RecordSift example (not a new local build):**
 
-| Solution Path | Format | Format Version | Declared IDE Version | Configuration | Platform | Membership / Build Exclusions |
+| Solution Path | Format | Format Version | Declared IDE Version | Configurations | Platforms | Membership / Build Exclusions |
 |---|---|---|---|---|---|---|
-| RecordSift.sln | .sln | 12.00 | 16.0.28701.123 | Release | Any CPU | 10 projects |
+| RecordSift.sln | .sln | 12.00 | 16.0.28701.123 | Debug, Release | Any CPU | All 10 projects mapped to build in both Debug and Release; no declared build exclusions |
 
 ### 37. Projects
 

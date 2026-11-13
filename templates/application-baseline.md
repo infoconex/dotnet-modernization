@@ -58,38 +58,52 @@ Only include entry points that are **documented or demonstrated as direct consum
 
 ## Discovery host and prerequisite tools
 
-| Field | Value |
-|---|---|
-| 20. Operating System Name |  |
-| 21. Operating System Version |  |
-| 22. Operating System Build |  |
-| 23. Operating System Architecture |  |
-| 24. PowerShell Version |  |
-| 25. Git Version |  |
+Record **Existing CI Runner** and **Operator Local** independently. CI values require logs from an executed job associated with the evaluated source SHA; identify the job, date and runner image/version. A runner label or current image inventory is not proof of the tool versions in a historical run. Use `Not checked` for unknown values; explain partial observations below their table. Do not substitute CI evidence for the operator's local environment.
+
+**CI evidence (run/job link, source SHA, execution date, runner image/version):**
+
+| Field | Existing CI Runner | Operator Local |
+|---|---|---|
+| 20. Operating System Name |  |  |
+| 21. Operating System Version |  |  |
+| 22. Operating System Build |  |  |
+| 23. Operating System Architecture |  |  |
+| 24. PowerShell Version |  |  |
+| 25. Git Version |  |  |
+
+**Partial CI observations or missing values:**
 
 ### 26. .NET SDK Inventory
 
-| SDK Version | Installation Path |
-|---|---|
-|   |   |
+| Environment | SDK Version | Installation Path |
+|---|---|---|
+|   |   |   |
+
+**Inventory completeness and limitations:** 
 
 ### 27. .NET Runtime Inventory
 
-| Runtime Name | Runtime Version | Installation Path |
-|---|---|---|
-|   |   |   |
+| Environment | Runtime Name | Runtime Version | Installation Path |
+|---|---|---|---|
+|   |   |   |   |
 
-| Field | Value |
-|---|---|
-| 28. MSBuild Version |  |
-| 29. MSBuild Installation Source |  |
-| 30. NuGet CLI Version |  |
+**Inventory completeness and limitations:**
+
+| Field | Existing CI Runner | Operator Local |
+|---|---|---|
+| 28. MSBuild Version |  |  |
+| 29. MSBuild Installation Source |  |  |
+| 30. NuGet CLI Version |  |  |
+
+**Partial CI observations or missing values:**
 
 ### 31. .NET Framework Targeting Pack Inventory
 
-| Framework Version | Installed | Location |
-|---|---|---|
-|   |   |   |
+| Environment | Framework Version | Installed | Location |
+|---|---|---|---|
+|   |   |   |   |
+
+**Targeting-pack verification scope:** A successful build does not establish the exact installed reference-assembly file or its location.
 
 ### 32. Test Runner Inventory
 
@@ -329,7 +343,7 @@ Git committer dates are not guaranteed source creation or push times, and neithe
 
 Create **one row for every numbered baseline item (1–65)** and track evidence channels independently. The dimensions below refer to what was actually inspected or executed; they do **not** imply that all required discovery work has been completed. Preserve the original evidence IDs, links, missing information, and unresolved checks in the last column.
 
-**Status meanings:** **Source Inspection:** `Verified` (exact source, external public metadata, repository metadata or documented discovery facts checked), `Partial` (source evidence available but material checks still open), `Not checked`, `Not applicable`. **Existing CI:** `Passed` (relevant checks completed successfully on a documented SHA), `Verified` (CI log/run evidence inspected), `Not checked`, `Not applicable`. **Operator Local:** `Passed` / `Failed` (actually executed by operator, with evidence), `Not executed` (check required but not run), `Not recorded` (operator-supplied information missing), `Not applicable` (no operator-local check is required for this particular item). For any relevant failure, record details in evidence; never relabel CI success as local success.
+**Status meanings:** **Source Inspection:** `Verified` (exact source, external public metadata, repository metadata or documented discovery facts checked), `Partial` (source evidence available but material checks still open), `Not checked`, `Not applicable`. **Existing CI:** `Passed` (relevant checks completed successfully on a documented SHA), `Verified` (CI log/run evidence inspected, including partial inventory evidence with unobserved fields explicitly recorded), `Not checked`, `Not applicable`. **Operator Local:** `Passed` / `Failed` (actually executed by operator, with evidence), `Not executed` (check required but not run), `Not recorded` (operator-supplied information missing), `Not applicable` (no operator-local check is required for this particular item). For any relevant failure, record details in evidence; never relabel CI success as local success.
 
 | Baseline Item | Source Inspection | Existing CI | Operator Local | Evidence or Missing Information |
 |---|---|---|---|---|

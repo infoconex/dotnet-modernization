@@ -391,55 +391,93 @@
 
 | Operation | Project or Solution | Configuration | Platform | Command or Workflow | Source |
 |---|---|---|---|---|---|
-|   |   |   |   |   |   |
+| Restore | RecordSift.sln | Not applicable | Not applicable | nuget restore RecordSift.sln -NonInteractive -PackagesDirectory packages -ConfigFile NuGet.Config | .github/workflows/windows-net48.yml |
+| Build | RecordSift.sln | Release | Any CPU | msbuild RecordSift.sln /m /t:Rebuild /p:Configuration=Release '/p:Platform=Any CPU' /verbosity:minimal | .github/workflows/windows-net48.yml |
+| Test | Five NUnit assemblies | Release | Any CPU | nunit3-console.exe <assembly> --result=<path>;format=nunit3 --noheader | .github/workflows/windows-net48.yml |
+| Test | Five NUnit assemblies | Release | Any CPU | .\scripts\run_tests.ps1 -Level All | .github/workflows/windows-net48.yml |
+| API verification | Production assemblies | Release | Any CPU | .\scripts\verify_public_api.ps1 | .github/workflows/windows-net48.yml |
+| XML documentation | Production assemblies | Release | Any CPU | .\scripts\verify_xml_documentation.ps1 | .github/workflows/windows-net48.yml |
+| IDE1006 style | RecordSift.sln | Not applicable | Not applicable | dotnet format style RecordSift.sln --no-restore --verify-no-changes --diagnostics IDE1006 --severity error --verbosity normal | .github/workflows/windows-net48.yml |
+| Package | RecordSift | Release | Any CPU | .\scripts\build_release_candidate.ps1 -OutputDirectory $feed | .github/workflows/verify-rc-consumer.yml |
+| Installed consumer | RecordSift | Release | Any CPU | .\scripts\verify_clean_consumer.ps1 -CandidateDirectory $feed | .github/workflows/verify-rc-consumer.yml |
 
 ### 47. Restore Outcomes
 
 | Source Revision | Target | Outcome | Error or Note | Evidence |
 |---|---|---|---|---|
-|   |   |   |   |   |
+| 1809d06c0fade59e4769d16e0f8eaf10fa426004 | RecordSift.sln | Passed | Not applicable | https://github.com/infoconex/RecordSift/actions/runs/43146607664 |
+| 1809d06c0fade59e4769d16e0f8eaf10fa426004 | RecordSift.sln | Passed | Not applicable | https://github.com/infoconex/RecordSift/actions/runs/43146607706 |
 
 ### 48. Build Outcomes
 
 | Source Revision | Target | Configuration | Platform | Outcome | Warning Count | Error Count | Output or Evidence |
 |---|---|---|---|---|---|---|---|
-|   |   |   |   |   |   |   |   |
+| 1809d06c0fade59e4769d16e0f8eaf10fa426004 | RecordSift.sln | Release | Any CPU | Passed | Not recorded | Not recorded | https://github.com/infoconex/RecordSift/actions/runs/43146607664 |
+| 1809d06c0fade59e4769d16e0f8eaf10fa426004 | RecordSift.sln | Release | Any CPU | Passed | Not recorded | Not recorded | https://github.com/infoconex/RecordSift/actions/runs/43146607706 |
 
 ### 49. Test Outcomes
 
 | Source Revision | Test Project or Assembly | Runner | Discovered | Passed | Failed | Skipped | Outcome | Evidence |
 |---|---|---|---|---|---|---|---|---|
-|   |   |   |   |   |   |   |   |   |
+| 1809d06c0fade59e4769d16e0f8eaf10fa426004 | RecordSift.Domain.Tests | NUnit ConsoleRunner 3.17.0 | 123 | 123 | 0 | 0 | Passed | https://github.com/infoconex/RecordSift/actions/runs/43146607664 |
+| 1809d06c0fade59e4769d16e0f8eaf10fa426004 | RecordSift.Application.Tests | NUnit ConsoleRunner 3.17.0 | 62 | 62 | 0 | 0 | Passed | https://github.com/infoconex/RecordSift/actions/runs/43146607664 |
+| 1809d06c0fade59e4769d16e0f8eaf10fa426004 | RecordSift.Infrastructure.Csv.Tests | NUnit ConsoleRunner 3.17.0 | 132 | 131 | 0 | 1 | Passed | https://github.com/infoconex/RecordSift/actions/runs/43146607664 |
+| 1809d06c0fade59e4769d16e0f8eaf10fa426004 | RecordSift.Infrastructure.Reporting.Tests | NUnit ConsoleRunner 3.17.0 | 54 | 54 | 0 | 0 | Passed | https://github.com/infoconex/RecordSift/actions/runs/43146607664 |
+| 1809d06c0fade59e4769d16e0f8eaf10fa426004 | RecordSift.Infrastructure.Xlsx.Tests | NUnit ConsoleRunner 3.17.0 | 48 | 48 | 0 | 0 | Passed | https://github.com/infoconex/RecordSift/actions/runs/43146607664 |
 
 ### 50. CI Workflows
 
 | Workflow Path | Trigger | Runner OS | Configured Command | Artifact or Deployment |
 |---|---|---|---|---|
-|   |   |   |   |   |
+| .github/workflows/windows-net48.yml | push | windows-2022 | nuget restore RecordSift.sln -NonInteractive -PackagesDirectory packages -ConfigFile NuGet.Config | Windows build and test |
+| .github/workflows/verify-rc-consumer.yml | push | windows-2022 | .\scripts\verify_clean_consumer.ps1 -CandidateDirectory $feed | Installed consumer verification |
+| .github/workflows/validate-docs.yml | push | ubuntu-latest | python3 scripts/validate_docs.py | Documentation checks |
+| .github/workflows/adversarial-extended.yml | workflow_dispatch | windows-2022 | nuget restore RecordSift.sln -NonInteractive -PackagesDirectory packages -ConfigFile NuGet.Config | Extended security validation |
+| .github/workflows/extended-adversarial.yml | workflow_dispatch | windows-2022 | .\scripts\run_adversarial_stress.ps1 | Resource validation |
+| .github/workflows/prepare-0.1-release.yml | workflow_dispatch | windows-2022 | .\scripts\build_release_candidate.ps1 | Prepare 0.1.0 artifact |
+| .github/workflows/publish-release.yml | workflow_dispatch | windows-2022 | Not reviewed at individual job level | Release preparation |
+| .github/workflows/publish-release.yml | workflow_dispatch | ubuntu-24.04 | Not reviewed at individual job level | Release publishing |
+| .github/workflows/recover-recordsift-0.1-release.yml | workflow_dispatch | windows-2022 | .\scripts\verify_clean_consumer.ps1 -FromNuGetOrg | Verify published package |
+| .github/workflows/recover-recordsift-0.1-release.yml | workflow_dispatch | ubuntu-24.04 | .\scripts\verify_clean_consumer.ps1 -FromNuGetOrg | Reconcile GitHub release |
 
 ### 51. CI Runs
 
 | Workflow | Run URL | Commit SHA | Outcome | Date |
 |---|---|---|---|---|
-|   |   |   |   |   |
+| Windows .NET Framework 4.8 build and test | https://github.com/infoconex/RecordSift/actions/runs/43146607664 | 1809d06c0fade59e4769d16e0f8eaf10fa426004 | Success | 2026-11-12 |
+| Verify internal release candidate in clean Windows consumer | https://github.com/infoconex/RecordSift/actions/runs/43146607706 | 1809d06c0fade59e4769d16e0f8eaf10fa426004 | Success | 2026-11-12 |
+| Validate engineering documentation | https://github.com/infoconex/RecordSift/actions/runs/43146607615 | 1809d06c0fade59e4769d16e0f8eaf10fa426004 | Success | 2026-11-12 |
 
 ### 52. Package and Release Artifacts
 
 | Artifact | Version | Attribute | Attribute Value | Release URL | Evidence |
 |---|---|---|---|---|---|
-|   |   |   |   |   |   |
+| RecordSift | 0.1.0 | Published package | NuGet.org | https://github.com/infoconex/RecordSift/releases/tag/v0.1.0 | https://www.nuget.org/packages/RecordSift/0.1.0 |
+| RecordSift | 0.1.0-rc.1 | Source nuspec version | 0.1.0-rc.1 | Not applicable | https://github.com/infoconex/RecordSift/blob/1809d06c0fade59e4769d16e0f8eaf10fa426004/packaging/RecordSift.nuspec |
+| RecordSift | 0.1.0-rc.1 | CI package build | Passed | Not published | https://github.com/infoconex/RecordSift/actions/runs/43146607706 |
+| RecordSift | 0.1.0 | CI local stable-package test | Passed | Not published | https://github.com/infoconex/RecordSift/actions/runs/43146607706 |
 
 ### 53. Runtime and Deployment Requirements
 
 | Requirement | Type | Target Environment | Source or Evidence |
 |---|---|---|---|
-|   |   |   |   |
+| Windows | Supported operating system | RecordSift consumer | https://github.com/infoconex/RecordSift/blob/1809d06c0fade59e4769d16e0f8eaf10fa426004/README.md |
+| .NET Framework 4.8 | Target framework | Consuming application | https://github.com/infoconex/RecordSift/blob/1809d06c0fade59e4769d16e0f8eaf10fa426004/docs/usage/getting-started.md |
+| No Excel installation required | Runtime constraint | XLSX reader | https://github.com/infoconex/RecordSift/blob/1809d06c0fade59e4769d16e0f8eaf10fa426004/docs/usage/getting-started.md |
 
 ### 54. Compatibility Checks
 
 | Check Type | Target | Method or Command | Outcome | Commit SHA | Evidence |
 |---|---|---|---|---|---|
-|   |   |   |   |   |   |
+| NuGet restore | RecordSift.sln | nuget restore | Passed | 1809d06c0fade59e4769d16e0f8eaf10fa426004 | https://github.com/infoconex/RecordSift/actions/runs/43146607664 |
+| Release build | RecordSift.sln | MSBuild Rebuild | Passed | 1809d06c0fade59e4769d16e0f8eaf10fa426004 | https://github.com/infoconex/RecordSift/actions/runs/43146607664 |
+| NUnit | Five test assemblies | NUnit 3.17.0 | Passed | 1809d06c0fade59e4769d16e0f8eaf10fa426004 | https://github.com/infoconex/RecordSift/actions/runs/43146607664 |
+| Public API | Five production DLLs | verify_public_api.ps1 | Passed | 1809d06c0fade59e4769d16e0f8eaf10fa426004 | https://github.com/infoconex/RecordSift/actions/runs/43146607664 |
+| XML documentation | Production XML | verify_xml_documentation.ps1 | Passed | 1809d06c0fade59e4769d16e0f8eaf10fa426004 | https://github.com/infoconex/RecordSift/actions/runs/43146607664 |
+| IDE1006 naming | RecordSift.sln | dotnet format style | Passed | 1809d06c0fade59e4769d16e0f8eaf10fa426004 | https://github.com/infoconex/RecordSift/actions/runs/43146607664 |
+| NuGet vulnerability audit | Pinned dependencies | NuGet audit | Passed | 1809d06c0fade59e4769d16e0f8eaf10fa426004 | https://github.com/infoconex/RecordSift/actions/runs/43146607664 |
+| Installed package consumer | Unpublished NuGet candidates | verify_clean_consumer.ps1 | Passed | 1809d06c0fade59e4769d16e0f8eaf10fa426004 | https://github.com/infoconex/RecordSift/actions/runs/43146607706 |
+| Documentation validation | Documentation | Python scripts | Passed | 1809d06c0fade59e4769d16e0f8eaf10fa426004 | https://github.com/infoconex/RecordSift/actions/runs/43146607615 |
 
 ## Evidence and completion
 

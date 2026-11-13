@@ -310,17 +310,30 @@ These are project-file metadata and **explicit** imports, not evaluated MSBuild 
 
 ### 45. Repository Directories
 
-**Operator-local tracked-directory group inventory (EV-044, 2026-11-13):** Using a read-only `git ls-files` listing in the pinned isolated checkout, the operator grouped tracked files by first directory component, except that `.github/workflows/` was kept separate. Results: `.github/` (6 files outside workflows), `.github/workflows/` (8), `docs/` (121), `packaging/` (2), `scripts/` (12), `src/` (69), `tests/` (66), totaling **284 tracked files under these top-level directory groups**. The grouping omits repository-root files and does not enumerate each nested directory. The six non-workflow `.github/` paths remain to be inspected before assigning specific purposes; the other directory purposes below are supported by existing source inspection. No restore, build or test was performed.
+**Operator-local tracked-directory group inventory (EV-044, 2026-11-13):** Using a read-only `git ls-files` listing in the pinned isolated checkout, the operator grouped tracked files by first directory component, except that `.github/workflows/` was kept separate. Results: `.github/` (6 files outside workflows), `.github/workflows/` (8), `docs/` (121), `packaging/` (2), `scripts/` (12), `src/` (69), `tests/` (66), totaling **284 tracked files under these top-level directory groups**. The grouping omits repository-root files and does not enumerate each nested directory. The six non-workflow `.github/` paths were subsequently listed in the operator's local checkout (EV-045) and each file's purpose was confirmed against its contents at the pinned source SHA. The seven-group counts from EV-044 remain unchanged; two of the six files live directly under `.github/`, two under `.github/ISSUE_TEMPLATE/`, and two under `.github/agents/`. The table below names the nested directories separately for useful, precise classification; their rows are **subgroups**, not additional files to add to the 284 total. The other directory purposes are supported by existing source inspection. No restore, build or test was performed.
 
 | Directory | Purpose |
 |---|---|
+| .github/ | Repository-level Copilot instructions and pull request template |
+| .github/ISSUE_TEMPLATE/ | Bug report and individual requirement issue templates |
+| .github/agents/ | Requirements review and TDD coaching agent definitions |
+| .github/workflows/ | CI and release automation |
+| docs/ | Requirements, specifications and guides |
+| packaging/ | Package manifests |
+| scripts/ | Build, test and validation utilities |
 | src/ | Production code |
 | tests/ | Automated tests and release consumer |
-| docs/ | Requirements, specifications and guides |
-| scripts/ | Build, test and validation utilities |
-| packaging/ | Package manifests |
-| .github/ | Six tracked files outside workflows; individual purposes not yet checked |
-| .github/workflows/ | CI and release automation |
+
+**Six non-workflow `.github/` files (EV-045):**
+
+| Tracked file | Verified purpose |
+|---|---|
+| `.github/ISSUE_TEMPLATE/bug_report.yml` | Defect report form requesting reproduction, expected/actual behavior, environment and sanitized diagnostics |
+| `.github/ISSUE_TEMPLATE/requirement.yml` | Single FR/NFR or engineering requirement with acceptance scenarios, verification and dependency fields |
+| `.github/agents/requirements-reviewer.agent.md` | Requirements and scenario-to-test traceability review guidance; read/search tools |
+| `.github/agents/tdd-coach.agent.md` | TDD red/green/refactor coaching with requirements and test evidence traceability |
+| `.github/copilot-instructions.md` | Repository-wide Copilot guidance on architecture, C# conventions, branches, TDD and validation |
+| `.github/pull_request_template.md` | Pull request scope, evidence, compatibility, risk, traceability and review checklist |
 
 ### 46. Repository Configuration
 
@@ -625,6 +638,8 @@ Each distribution has its own record. NuGet package upload acceptance was previo
 
 | 45 | git ls-files; group tracked paths by leading directory, separating .github/workflows from other .github files | Operator PowerShell session (`$HOME\source\discoveries\RecordSift-discovery-2026-11-13-145400`) | Git 2.56.0.windows.4 (previously observed, EV-019); PowerShell 7.7.0 (EV-018) | Top-level tracked directory groups and counts; repository-root files excluded | Not recorded separately | 7 groups: .github/ 6 (outside workflows), .github/workflows/ 8, docs/ 121, packaging/ 2, scripts/ 12, src/ 69, tests/ 66; 284 grouped tracked files | EV-044; operator-provided PowerShell result in discovery conversation, 2026-11-13 |
 
+| 45 | git ls-files; filter .github/ excluding .github/workflows/ | Operator PowerShell session (`$HOME\source\discoveries\RecordSift-discovery-2026-11-13-145400`) | Git 2.56.0.windows.4 (EV-019); PowerShell 7.7.0 (EV-018) | Six tracked non-workflow GitHub configuration files | Not recorded separately | Two issue templates, two agent definitions, one Copilot instruction file and one pull request template; all six source contents inspected at pinned SHA | EV-045; operator-provided Git paths and pinned GitHub file contents reviewed on 2026-11-13 |
+
 ### 59. Findings and Gaps
 
 | Finding | Impact | Evidence | Next Check |
@@ -632,9 +647,10 @@ Each distribution has its own record. NuGet package upload acceptance was previo
 | Operator Windows development-tool readiness incomplete | Local OS, PowerShell, Git, SDK/runtime inventories verified (EV-017–021); legacy .NET Framework MSBuild `4.8.10001.0` verified (EV-027), NuGet CLI `7.9.0.83` verified (EV-028), and NUnit ConsoleRunner `3.17.0` executable version verified (EV-030–031). Modern Visual Studio MSBuild is not verified after the Professional uninstall (EV-022–026); the v4.8 reference-assembly check returned `False` (EV-029). This prevents treating local .NET Framework 4.8 build prerequisites as satisfied | Items 20–32; EV-016–031 | Proceed to isolated checkout preparation (item 33) for source inspection; after Community/developer-pack installation verify modern MSBuild and repeat v4.8 reference-assembly check before local build |
 | Required .NET Framework 4.8 reference assembly missing at local checked path | Operator's direct `Test-Path` for `v4.8\mscorlib.dll` returned `False` versus `True` in CI; this is a confirmed local build-prerequisite gap at that path, not a RecordSift source-code failure or proof the runtime is missing | Item 31; EV-016, EV-029 | Install or restore the .NET Framework 4.8 developer/targeting pack as appropriate, then repeat the direct file check before attempting a local build |
 | NUnit executable verified; local tests not yet executed | Local `nunit3-console.exe --version` reported `3.17.0`, consistent with the declared package (EV-030–031); no operator-local tests or checkout SHA verification have occurred | Item 32; EV-030–031 | Record test execution only after isolated source checkout, build prerequisites and approved build/test execution |
-| Isolated checkout and source declarations through metadata/imports verified | Source metadata, conditional settings, and imports were corroborated locally through item 43 (EV-033–043); item 44 retains CI-only evaluation evidence (EV-015). The grouped local tracked-tree inventory (EV-044) returned seven directory groups and 284 files below those group paths, including six non-workflow `.github/` files whose individual purposes have not yet been inspected. The grouping excludes repository-root files and does not establish nested directory purposes | Items 33–45; EV-032–044, EV-015 | Identify the six tracked `.github/` files outside workflows to complete their purpose classification, then proceed in baseline order |
+| Isolated checkout and tracked directory purposes verified | Source metadata and imports were corroborated through item 43 (EV-033–043), with item 44 retaining separate CI property evaluation evidence (EV-015). The operator's top-level grouping identified seven directory categories and 284 tracked files beneath them (EV-044). The six non-workflow `.github/` paths were subsequently listed and their contents checked at the pinned source revision (EV-045): issue templates, agent definitions, Copilot instructions and PR template. Directory classification for item 45 is complete at this documented scope; root-level files and deeper nested directory inventories are outside the group-count output | Items 33–45; EV-032–045, EV-015 | Continue item 46 repository configuration inventory; retain provenance and separately verify effective user/machine NuGet settings if later required |
 | Operator-local MSBuild evaluation outstanding | CI evaluated 20 project/configuration scopes; local tool/import differences remain unverified | Item 44; EV-015 | Evaluate the same properties on an approved operator Windows checkout if local parity is required |
 | Build-policy properties not explicitly set in evaluated results | `Deterministic`, `TreatWarningsAsErrors` and `PlatformTarget` returned empty strings; the output alone does not establish compiler-switch behavior | Item 44; [CI evidence](https://github.com/infoconex/RecordSift/actions/runs/43501555831/job/132148357265) | Inspect actual compiler invocations and existing build gates before proposing policy changes |
+| Branch-policy references in AI and PR guidance | The pinned `.github/agents/tdd-coach.agent.md`, `.github/copilot-instructions.md` and `.github/pull_request_template.md` contain references to `release/0.1` as a working/PR base. These references are source-declared guidance; their current suitability is unverified and this discovery does not establish whether that branch currently exists | Item 45; EV-045 | Compare these instructions against current branch and release policy during modernization planning before changing any RecordSift guidance |
 | Production/test validation declaration difference | Source inspection and operator-local XML confirmation show `WarningsAsErrors=1591` and `DocumentationFile` for five production projects in both Debug/Release, but neither property is declared in the five test project groups. The difference may be intentional and is not evidence of disabled warnings or failed documentation generation | Item 42; EV-042 | Preserve the distinction; review the intended policy when assessing modernization improvements, without changing the frozen baseline |
 | CI outcomes are not local execution evidence | CI success cannot verify operator environment | Items 50–52 | Restore, build and run tests in the approved Windows checkout |
 

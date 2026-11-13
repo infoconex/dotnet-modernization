@@ -200,11 +200,11 @@ Columns:
 - `Output Type`: library, executable, etc.
 - `MSBuild Platform`: the MSBuild `Platform` value, distinct from processor target
 - `SDK or ToolsVersion`: whichever project mechanism is declared
-- `Project References`: direct references; use additional rows or a referenced-path list if necessary, without confusing direct and transitive dependencies
+- `Direct Project Reference`: one referenced project path per row; repeat the project row for multiple direct references, and do not confuse direct and transitive dependencies
 
 *Illustrative project row only—not a RecordSift finding:*
 
-| Project Path | Role | Project Format | Target Framework | Language Version | Output Type | MSBuild Platform | SDK or ToolsVersion | Project References |
+| Project Path | Role | Project Format | Target Framework | Language Version | Output Type | MSBuild Platform | SDK or ToolsVersion | Direct Project Reference |
 |---|---|---|---|---|---|---|---|---|
 | `src/Example.Core/Example.Core.csproj` | Library | Traditional | `net48` | 7.3 | Library | AnyCPU | ToolsVersion 15.0 | None |
 
@@ -332,11 +332,11 @@ Only report a test suite as fully passed when expected test projects were actual
 
 - Read existing CI/CD definitions and distinguish what they **configure** from actual runs. Do not trigger deployment or releases during discovery.
 
-**54. CI Workflows** — `Workflow Path` locates the definition; `Trigger` identifies push, pull request or manual triggers; `Runner OS` is the declared host; `Build or Test Commands` lists the configured steps; `Artifact or Deployment` describes produced outputs or destinations.
+**54. CI Workflows** — `Workflow Path` locates the definition; `Trigger` identifies push, pull request or manual triggers; `Runner OS` is the declared host; `Configured Command` records one configured invocation per row; repeat the workflow row for additional commands; `Artifact or Deployment` describes produced outputs or destinations.
 
 **55. CI Runs** — one row per checked run. `Workflow` identifies it; `Run URL` links the exact run; `Commit SHA` pins its source; `Outcome` records its actual result; `Date` is when it ran.
 
-**56. Package and Release Artifacts** — `Artifact` is the package/file; `Version` is the published version; `Contents or Metadata` describes observed package facts; `Release URL` links to it; `Evidence` supports the observation.
+**56. Package and Release Artifacts** — `Artifact` is the package/file; `Version` is the published version; `Attribute` names one observed package/content/metadata property and `Attribute Value` holds its value; repeat the artifact row for other attributes; `Release URL` links to it; `Evidence` supports the observation.
 
 **57. Runtime and Deployment Requirements** — `Requirement` describes the dependency or setting; `Type` classifies it (runtime, OS, service, installer, etc.); `Target Environment` identifies where required; `Source or Evidence` supports it. Use a separate row per requirement.
 

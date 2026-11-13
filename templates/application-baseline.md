@@ -1,4 +1,4 @@
-# `<Application>` — Application baseline
+# `<Application>` — Technical discovery report
 
 **Repository:** `<owner/repository browser link>`  
 **Baseline source ref:** `<branch, tag, or detached commit>`  
@@ -6,7 +6,58 @@
 **Source inventory date:** `<YYYY-MM-DD>` · **Verification date:** `<YYYY-MM-DD or not executed>`  
 **Evidence status:** `<verified / partial / blocked; identify gaps>`
 
-Record **observed facts once**, at their correct scope. Consult the [variation guide](../methodology/baseline-variation-guide.md) for alternatives before completing each section; do not copy unobserved possibilities into the application baseline. Distinguish declared, evaluated and executed values. The [evaluation process](../methodology/evaluation-process.md#2-establish-the-baseline) defines verification; modernization recommendations belong outside this document.
+This is the **single complete report** of what was found during discovery. An assistant fills it in from actual results shared by the person following the [step-by-step guide](../methodology/technical-discovery-runbook.md). Record facts once, include links to supporting output, and mark anything not yet checked. Use the [variation guide](../methodology/baseline-variation-guide.md) when a project has different configurations, frameworks or build systems. Modernization recommendations belong elsewhere.
+
+## Discovery details
+
+**Executed by:** `<name/role or operator label>`  
+**Execution date / time zone:** `<date and time zone or not executed>`  
+**Discovery folder:** `<dated folder or not yet created>`  
+**Local checkout status:** `<clean/changes observed/not checked>`
+
+### Prerequisites and tool versions
+
+Record the **actual** result for every tool checked. The commands, minimum versions and installation instructions live in the [guide](../methodology/technical-discovery-runbook.md), not here.
+
+| Tool or prerequisite | Version or result found | Status | Evidence |
+|---|---|---|---|
+| Operating system / architecture | `<version/build/architecture>` | `<checked/not checked>` | `<link or —>` |
+| PowerShell | `<version>` | `<checked/not checked>` | `<link or —>` |
+| Git | `<version>` | `<checked/not checked>` | `<link or —>` |
+| .NET SDK / runtimes | `<versions or not installed>` | `<checked/not applicable/not checked>` | `<link or —>` |
+| MSBuild / Visual Studio Build Tools | `<version / installation source>` | `<checked/not checked>` | `<link or —>` |
+| NuGet CLI | `<version>` | `<checked/not applicable/not checked>` | `<link or —>` |
+| Framework targeting pack(s) | `<pack/version or not found>` | `<checked/not applicable/not checked>` | `<link or —>` |
+| Test runner(s) | `<name/version>` | `<checked/not applicable/not checked>` | `<link or —>` |
+
+### What was checked
+
+Use the guide's DISC numbers to summarize the results. **Not executed** is a valid result.
+
+| Step | Result | Evidence / missing information |
+|---|---|---|
+| DISC-001 — Tools and checkout | `<result or not executed>` | `<link or missing item>` |
+| DISC-002 — Solutions and projects | `<result or not checked>` | `<link or missing item>` |
+| DISC-003 — Project types and targets | `<result or not checked>` | `<link or missing item>` |
+| DISC-004 — Build-tool versions | `<result or not checked>` | `<link or missing item>` |
+| DISC-005 — MSBuild settings | `<result or not checked>` | `<link or missing item>` |
+| DISC-006 — Shared configuration | `<result or not checked>` | `<link or missing item>` |
+| DISC-007 — Dependencies | `<result or not checked>` | `<link or missing item>` |
+| DISC-008 — Restore | `<result or not executed>` | `<link or missing item>` |
+| DISC-009 — Build | `<result or not executed>` | `<link or missing item>` |
+| DISC-010 — Tests | `<result or not executed>` | `<link or missing item>` |
+| DISC-011 — CI and packaging | `<result or not checked>` | `<link or missing item>` |
+| DISC-012 — Compatibility checks | `<result or not checked>` | `<link or missing item>` |
+| DISC-013 — Review results | `<result or not checked>` | `<link or missing item>` |
+| DISC-014 — Final review | `<result or not completed>` | `<link or missing item>` |
+
+### Collected command results
+
+For commands actually run, record the **exact command, what happened, and where the output was saved**. Add rows as needed. Use the full source SHA and relevant project/configuration when the scope changes.
+
+| Step | Command and scope | Actual result / exit code | Output or evidence link |
+|---|---|---|---|
+| `DISC-NNN` | `<command, project, configuration>` | `<result and code, or not captured>` | `<link or output excerpt>` |
 
 ## 1. Application overview
 
@@ -121,15 +172,7 @@ Use the [variation guide](../methodology/baseline-variation-guide.md#4-external-
 
 ### Build environment
 
-For materially different host/toolchains (local, CI, VM, SDK-only, Windows/Linux, architectures), record each separately; do not infer a single toolchain across every execution.
-
-| Attribute | Observed value |
-|---|---|
-| OS / runner | `<OS and version>` |
-| MSBuild version | `<observed version and tool provenance>` |
-| .NET SDK version | `<observed version or not applicable>` |
-| NuGet version | `<observed version or not applicable>` |
-| Test runner version | `<observed version>` |
+Tool versions for the operator's machine belong in **Discovery details** above. Add an additional environment table here only when CI, a VM, a container, or another host uses materially different tools or configurations. Record the host, relevant versions, and supporting evidence; do not copy the same local environment twice.
 
 ### Entry points
 

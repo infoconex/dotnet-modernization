@@ -476,7 +476,24 @@ The first command uses **only** the specified file; the second uses the applicab
 **RecordSift-specific scope:** The pinned repository `NuGet.Config` declares `packageSources` and `auditSources`, each with `<clear />` followed by a nuget.org URL. It does **not** declare `disabledPackageSources` or other optional NuGet configuration sections. This is source inspection, **not** proof of enabled feeds, tool defaults, authentication, local effective settings or feeds used during CI or a future local restore.
 ### 44. NuGet Package Declarations
 
-Inspect `packages.config`, `PackageReference` and central package versions. Prefer **one row per consuming project** and list every package as **ID — declared version — purpose** within its Packages cell (one line per package, separated by `<br>` in GitHub Markdown when needed). Do not collapse different declared versions of the same package or lose per-package conditions. The declaration/version source can be displayed once when shared; otherwise label the individual package's source or use separate scoped rows. The package feed is only the **configured** source, not proven actual download origin. Keep the canonical project path in item 37, and link the unique project name to the project source here.
+Inspect every tracked `packages.config`, project-level `PackageReference`, and applicable `Directory.Packages.props` or other central version declarations. Record **direct, source-declared** dependencies by consuming project and exact declared version; do not invent usage labels such as `Production`, `Testing` or generic `Purpose`. Do not combine versions, direct and transitive dependencies, or distinct conditional declarations as though they were equivalent. NuGet package restore or feed acquisition has **not** been established simply by finding a source declaration.
+
+**A. Packages by project — one row per consuming project.**
+
+- **Project:** Unique, linked project name referring to its exact source at the selected frozen commit; resolve its canonical `.csproj` path through item 37.
+- **Package Count:** Count of declared packages for that project in the inspected scope, with no duplicate counting across different version sources. Where conditions create variants, state the scope explicitly rather than reporting a misleading total.
+- **Declaration Source:** Direct links to the actual `packages.config`, project `PackageReference` and/or central package-version source. Preserve separate source/version links if different packages have distinct provenance.
+- **Configured Feed(s):** Eligible package sources declared in the relevant configuration files, or `Not checked`. Do not call these the observed origins of installed packages.
+
+**B. Package catalog — one row per distinct package ID and declared version.**
+
+- **Package ID:** The exact package identifier, without appended usage notes.
+- **Version:** The exact declared version, range or central-version expression where applicable; if a property or condition remains unevaluated, label that distinction. Separate rows when the same ID is declared with different versions.
+- **Referenced By:** **Every** consuming project as its own linked name, using line breaks within a cell when a version is shared. A count such as `Five test projects` is not a substitute for individually identifiable consumers.
+- **Declaration Source(s):** Direct source evidence for each consumer's declaration and version (including centrally managed versions). When many consumers share a version, maintain an unambiguous consumer-to-source mapping.
+- **Configured Feed(s):** Source-declared eligible feeds, or `Not checked`; preserve differences by consumer or scope rather than implying a single effective source.
+
+Preserve additional package declaration metadata such as `targetFramework`, `developmentDependency`, conditions, version overrides and applicable package-source mapping in an explicit metadata note or column if needed for fidelity. Do not infer package purpose solely from which project references it. A package already listed in item 44 should not also appear in item 45 as a separate non-NuGet dependency.
 
 To inspect repository-configured sources with a compatible .NET SDK:
 
@@ -484,20 +501,23 @@ To inspect repository-configured sources with a compatible .NET SDK:
 dotnet nuget list source --configfile .\NuGet.Config
 ```
 
-The `--configfile` option requires .NET 6 SDK or later. When only NuGet CLI is present, use `nuget sources List -ConfigFile NuGet.Config` as applicable. A configured feed does not establish acquisition origin.
+The `--configfile` option requires .NET 6 SDK or later. When only NuGet CLI is present, `nuget sources List -ConfigFile NuGet.Config` is a comparable file-scoped check. These commands identify **configured sources**, not the actual source of an acquired package. Step 43 separately inventories the configuration hierarchy and potential inherited/disabled settings; do not call effective source selection verified without runtime evidence.
 
-**How to populate each column (left to right):**
+**Illustrative RecordSift project summary (from pinned source, not a new restore):**
 
-- **Project:** Unique project name linked to its exact source project file, with its canonical path in item 37. Qualify duplicate names; for non-project consumers link the evidence source.
-- **Packages (ID — Version — Purpose):** Every package ID, its precise declared version and purpose, kept together per package.
-- **Declaration / Version Source:** Source file(s), including central versions and relevant conditions.
-- **Configured Feed(s):** Configured eligible sources (or `Not checked`), with package-specific distinctions where needed.
+| Project | Package Count | Declaration Source | Configured Feed(s) |
+|---|---:|---|---|
+| [RecordSift.Domain.Tests](https://github.com/infoconex/RecordSift/blob/1809d06c0fade59e4769d16e0f8eaf10fa426004/tests/RecordSift.Domain.Tests/RecordSift.Domain.Tests.csproj) | 2 | [packages.config](https://github.com/infoconex/RecordSift/blob/1809d06c0fade59e4769d16e0f8eaf10fa426004/tests/RecordSift.Domain.Tests/packages.config) | nuget.org |
 
-**Illustrative RecordSift grouping:**
+**Illustrative catalog rows:**
 
-| Project | Packages (ID — Version — Purpose) | Declaration / Version Source | Configured Feed(s) |
-|---|---|---|---|
-| [RecordSift.Domain.Tests](https://github.com/infoconex/RecordSift/blob/1809d06c0fade59e4769d16e0f8eaf10fa426004/tests/RecordSift.Domain.Tests/RecordSift.Domain.Tests.csproj) | NUnit — 3.14.0 — Test framework<br>NUnit.ConsoleRunner — 3.17.0 — Test runner | packages.config (within project directory) | nuget.org |
+| Package ID | Version | Referenced By | Declaration Source(s) | Configured Feed(s) |
+|---|---|---|---|---|
+| NUnit | 3.14.0 | [RecordSift.Domain.Tests](https://github.com/infoconex/RecordSift/blob/1809d06c0fade59e4769d16e0f8eaf10fa426004/tests/RecordSift.Domain.Tests/RecordSift.Domain.Tests.csproj) | [packages.config](https://github.com/infoconex/RecordSift/blob/1809d06c0fade59e4769d16e0f8eaf10fa426004/tests/RecordSift.Domain.Tests/packages.config) | nuget.org |
+| NUnit.ConsoleRunner | 3.17.0 | [RecordSift.Domain.Tests](https://github.com/infoconex/RecordSift/blob/1809d06c0fade59e4769d16e0f8eaf10fa426004/tests/RecordSift.Domain.Tests/RecordSift.Domain.Tests.csproj) | [packages.config](https://github.com/infoconex/RecordSift/blob/1809d06c0fade59e4769d16e0f8eaf10fa426004/tests/RecordSift.Domain.Tests/packages.config) | nuget.org |
+
+In the complete inventory, `NUnit` also identifies the other four consuming test projects individually. The pinned `NUnit.ConsoleRunner` declaration additionally sets `developmentDependency=true`; that is a source attribute, **not** an inferred package-purpose classification.
+
 
 ### 45. Non-NuGet Dependencies
 

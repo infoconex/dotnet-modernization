@@ -1,4 +1,4 @@
-# RecordSift — Technical baseline (in progress)
+# RecordSift — Technical discovery report (in progress)
 
 **Application repository:** [infoconex/RecordSift](https://github.com/infoconex/RecordSift)  
 **Source branch observed:** `main`  
@@ -9,7 +9,45 @@
 **Executed verification date:** **Not executed in this evaluation**  
 **Current disposition:** Partial source inspection only; no evaluated or executed application verification claimed.
 
-This is the actual **working** RecordSift technical baseline, not a copy of the reusable template's unobserved placeholder rows. As DISC steps complete, fill in applicable fields using the [full application baseline template](../../../../templates/application-baseline.md) and [variation guide](../../../../methodology/baseline-variation-guide.md). Record individual commands/results in the [execution log](execution-log.md) and refer to [evidence](evidence/manifest.md), not large pasted logs here. Do not import historical outcomes as new results.
+This is the **single RecordSift discovery report**. As the user works through the [step-by-step guide](../../../../methodology/technical-discovery-runbook.md), the assistant fills in actual results here using the [full report template](../../../../templates/application-baseline.md). Supporting source links and retained command output are tracked in [evidence](evidence/manifest.md). Previous evaluations are historical, not new results.
+
+## Discovery results
+
+**Executed by:** Not yet recorded — awaiting user-run Windows commands.  
+**Date/time:** Not yet recorded.  
+**Discovery folder:** Not yet created.  
+**Checkout source SHA/status:** Local checkout not yet verified.
+
+### Prerequisites
+
+| Tool / prerequisite | Version or result collected | Status |
+|---|---|---|
+| Windows version/build/architecture | Not yet recorded | Not checked |
+| PowerShell | Not yet recorded | Not checked |
+| Git | Not yet recorded | Not checked |
+| .NET SDK and runtimes | Not yet recorded | Not checked |
+| MSBuild / Visual Studio Build Tools | Not yet recorded | Not checked |
+| NuGet CLI | Not yet recorded | Not checked |
+| .NET Framework 4.8 targeting pack | Not yet recorded | Not checked |
+| Test runner | Not yet identified | Not checked |
+
+### Command results
+
+| Step | Command performed | Actual result | Evidence |
+|---|---|---|---|
+| DISC-001 | Not executed yet | Not yet verified | — |
+
+Add a row for each command after it is run. Include the output or error and exit code when captured. Do not duplicate the guide's command instructions here.
+
+### Discovery progress
+
+| Steps | Current result |
+|---|---|
+| DISC-001 | Pending Windows tool checks and fresh pinned checkout |
+| DISC-002–003 | Initial source tree inspected; local inventory pending |
+| DISC-004–010 | Not executed |
+| DISC-011–012 | Source paths only; verification pending |
+| DISC-013–014 | Pending review and full report completion |
 
 ## Application identity
 
@@ -70,6 +108,6 @@ A previous [pre-SDK modernization evaluation](../2026-11-pre-sdk/README.md) uses
 
 ## Verification gaps and next action
 
-**Gap:** the actual local checkout, host/toolchain, evaluated project settings and current execution evidence are unknown.
+**Gap:** the actual local checkout, prerequisite versions, evaluated project settings and current execution evidence are unknown.
 
 **Next:** perform DISC-001 manually; retain the original output, confirm whether the checkout matches the frozen SHA, then proceed one step at a time. Facts will be populated here after evidence is checked. Keep modernization assessment and suggestions in a separate evaluation record.

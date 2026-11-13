@@ -53,13 +53,15 @@
 
 | SDK Version | Installation Path |
 |---|---|
-|   |   |
+
+*Not checked — no operator-run Windows SDK inventory has been supplied.*
 
 ### 25. .NET Runtime Inventory
 
 | Runtime Name | Runtime Version | Installation Path |
 |---|---|---|
-|   |   |   |
+
+*Not checked — no operator-run Windows runtime inventory has been supplied.*
 
 | Field | Value |
 |---|---|
@@ -71,7 +73,8 @@
 
 | Framework Version | Installed | Location |
 |---|---|---|
-|   |   |   |
+
+*Not checked — the local .NET Framework 4.8 reference-assembly file has not been inspected.*
 
 ### 30. Test Runner Inventory
 
@@ -325,7 +328,8 @@
 
 | Project Path | Configuration | Framework | Property | Evaluated Value | Declared Value | Evidence |
 |---|---|---|---|---|---|---|
-|   |   |   |   |   |   |   |
+
+*Not checked — no local MSBuild property evaluation has been executed.*
 
 ## Repository structure and dependencies
 

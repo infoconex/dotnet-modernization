@@ -16,16 +16,16 @@ Don't change the application or publish anything as part of discovery.
 - Run each check separately. Enter its result **only in the numbered field of your copied [baseline](../templates/application-baseline.md)**. Do not write results in this guide.
 - Use a computer supported by the application. **RecordSift requires Windows.**
 
-**4. Windows — required for RecordSift; use a supported Windows version**
+**4–7. Windows — name, version, build, architecture (required for RecordSift)**
 
 ```powershell
 Get-CimInstance Win32_OperatingSystem | Select-Object Caption, Version, BuildNumber, OSArchitecture
 ```
 
 - If not running Windows, use a Windows computer before continuing.
-- Record the Windows version, build, and architecture.
+- Record the OS name (**4**), version (**5**), build (**6**) and architecture (**7**) separately.
 
-**5. PowerShell — required; Windows PowerShell 5.1 or PowerShell 7**
+**8. PowerShell Version — Windows PowerShell 5.1 or PowerShell 7 required**
 
 ```powershell
 $PSVersionTable.PSVersion
@@ -34,7 +34,7 @@ $PSVersionTable.PSVersion
 - If unavailable, use Windows PowerShell or [install PowerShell for Windows](https://learn.microsoft.com/en-us/powershell/scripting/install/installing-powershell-on-windows).
 - Record the version shown.
 
-**6. Git — required; minimum version 2.23**
+**9. Git Version — required; minimum version 2.23**
 
 ```powershell
 git --version
@@ -43,25 +43,25 @@ git --version
 - If missing or older than 2.23, [install Git for Windows](https://git-scm.com/install/win), reopen PowerShell, and run the command again.
 - Record the installed version. Git 2.23+ supports `git switch`, which we'll use below.
 
-**7. .NET SDK — optional for checkout; version depends on later commands**
+**10–11. .NET SDK Version and .NET Runtime Version — optional for checkout**
 
 ```powershell
 dotnet --info
 ```
 
 - If missing and needed for a later step, [install the appropriate .NET SDK](https://dotnet.microsoft.com/en-us/download).
-- Record installed SDK and runtime versions. An SDK alone doesn't provide .NET Framework targeting packs.
+- Record installed SDK versions (**10**) and runtime versions (**11**) separately. Repeat for each version. An SDK alone doesn't provide .NET Framework targeting packs.
 
-**8. MSBuild — needed for applicable builds; compatible version depends on the project**
+**12–13. MSBuild Version and MSBuild Installation Source — required for applicable builds**
 
 ```powershell
 msbuild -version -nologo
 ```
 
 - If not found, first try **Visual Studio Developer PowerShell**. If still unavailable and needed, [install Visual Studio Build Tools](https://visualstudio.microsoft.com/downloads/) with the required .NET components.
-- Record the installed version. The optional `-getProperty` command in DISC-005 requires MSBuild 17.8+.
+- Record MSBuild version (**12**) separately from its installation source (**13**). The optional `-getProperty` command in DISC-005 requires MSBuild 17.8+.
 
-**9. Standalone NuGet CLI — needed for some restores, including RecordSift**
+**14. NuGet CLI Version — required for some restores, including RecordSift**
 
 ```powershell
 nuget help
@@ -70,22 +70,22 @@ nuget help
 - If unavailable and needed for restore, [install the NuGet CLI](https://learn.microsoft.com/en-us/nuget/consume-packages/install-use-packages-nuget-cli).
 - Record the version shown. No universal minimum version is assumed here.
 
-**10. .NET Framework 4.8 targeting pack — needed to build RecordSift**
+**15–16. .NET Framework 4.8 Targeting Pack Version and Installed — required for RecordSift build**
 
 ```powershell
 Test-Path "${env:ProgramFiles(x86)}\Reference Assemblies\Microsoft\Framework\.NETFramework\v4.8"
 ```
 
 - If `False`, check the installed Visual Studio components or [install the .NET Framework 4.8 Developer Pack](https://dotnet.microsoft.com/en-us/download/dotnet-framework/net48).
-- Record `True` or `False`. A directory check doesn't prove that a build will succeed.
+- Set **15** to `.NET Framework 4.8` and **16** to the actual `True`/`False` directory result. A directory check doesn't prove the build succeeds.
 
 - **To start cloning:** Windows (for RecordSift), PowerShell, Git, internet access, and a writable folder are required.
 - **Before restore, build, or tests:** resolve any other tools the application needs. Don't install optional tools just to complete this checklist.
-- **11** (test runner) is completed later in DISC-010 if it isn't known now.
+- **17–18** (test runner) is completed later in DISC-010 if it isn't known now.
 
 ### Create a dated discovery folder
 
-**Baseline fields:** **3** (Discovery Folder), **12** (Selected Source Branch or Tag), **20** (HTTPS Clone URL). Complete fields **1** and **2** from the discovery information above.
+**Baseline fields:** **3** (Discovery Folder), **19** (Selected Source Branch or Tag), **29** (HTTPS Clone URL). Complete fields **1** and **2** from the discovery information above.
 
 - Use a **new folder** for each discovery run. The name includes the repository, `discovery`, and a local date/time stamp.
 - Replace `REPOSITORY` and the example URL with the real application details.
@@ -116,7 +116,7 @@ git switch --detach FULL_COMMIT_SHA
 
 ### Confirm the checkout
 
-**Fields to fill:** **13** (actual full source SHA), **14** (checkout status), **22** (default branch when known), **112–115** (actual command results when captured).
+**Fields to fill:** **20** (actual full source SHA), **21** (working-tree clean?), **22** (detached HEAD?), **31** (default branch when known), **160–167** (actual command results when captured).
 
 Run these from inside the repository:
 
@@ -152,9 +152,9 @@ dotnet sln .\path\to\solution.sln list
 - Replace the example path with a real solution path. If the SDK can't read the solution, open the solution file instead.
 - **Save:** solutions, projects inside each solution, and projects outside any solution. Note project roles such as application, library, or tests.
 - A solution filter may list only part of the solution; don't treat it as a complete inventory.
-- Fill **17–26** (application and repository details), **31–37** (one row per solution), and **38–39** (project paths and roles).
+- Fill **25–37** (application and repository details), **43–50** (one row per solution), and **51–52** (project paths and roles).
 
-- **Report fields:** 17–26, 31–37, 38–39. Add the findings directly to the copied baseline.
+- **Report fields:** 25–37, 43–50, 51–52. Add the findings directly to the copied baseline.
 
 ## DISC-003 — Check project types and target frameworks
 
@@ -164,9 +164,9 @@ dotnet sln .\path\to\solution.sln list
 - Note project references, output type, language version, and configuration-specific settings.
 - **Save:** each project's path, project type, declared framework(s), and important differences.
 - An SDK-style project can still target .NET Framework. Don't guess settings that aren't declared.
-- Fill **27–30** (versions and consumers), **40–46** (project details), and **47–51, 52–56, 57–62** (source-declared settings, only where applicable).
+- Fill **38–42** (versions and consumers), **53–60** (project details), and **47–51, 52–56, 57–62** (source-declared settings, only where applicable).
 
-- **Report fields:** 27–30, 40–46, 47–51, 52–56, 57–62. Add the findings directly to the copied baseline.
+- **Report fields:** 38–42, 53–60, 61–68, 69–74, 75–82. Add the findings directly to the copied baseline.
 
 ## DISC-004 — Record installed build tools
 
@@ -179,7 +179,7 @@ dotnet sln .\path\to\solution.sln list
 dotnet --list-sdks
 ```
 
-- Enter installed SDK versions and locations (or the error) in field **7**.
+- Record each installed SDK version in field **10**, repeating the value for each SDK; record any error or missing installation.
 
 **.NET runtimes:**
 
@@ -187,7 +187,7 @@ dotnet --list-sdks
 dotnet --list-runtimes
 ```
 
-- Enter runtime versions and locations (or the error) in field **7**.
+- Record each runtime version in field **11**, repeating it for each runtime.
 
 **MSBuild:**
 
@@ -195,7 +195,7 @@ dotnet --list-runtimes
 msbuild -version -nologo
 ```
 
-- Enter the version and installation source in field **8**. If unavailable in normal PowerShell, try Visual Studio Developer PowerShell.
+- Enter MSBuild version in field **12** and installation source in field **13**. If unavailable in normal PowerShell, try Visual Studio Developer PowerShell.
 
 **NuGet CLI:**
 
@@ -203,14 +203,14 @@ msbuild -version -nologo
 nuget help
 ```
 
-- Enter the version/path (or error) in field **9**.
+- Enter the NuGet CLI version (or command error) in field **14**.
 
 - Check any remaining framework targeting packs and test runners required by the project. Give each its own command and recorded result when identified.
 - **Save:** tool versions, paths, missing prerequisites, and any differences between PowerShell environments.
 - The .NET SDK does **not** guarantee a .NET Framework targeting pack is installed.
-- Update **7–11** with detailed versions, and **88** for any second host such as CI. Don't record a tool as installed unless verified.
+- Update **10–18** with detailed versions, and **124–126** for any second host such as CI. Don't record a tool as installed unless verified.
 
-- **Report fields:** 7–11, 88. Add the findings directly to the copied baseline.
+- **Report fields:** 10–18, 124–126. Add the findings directly to the copied baseline.
 
 ## DISC-005 — Check MSBuild settings
 
@@ -225,9 +225,9 @@ msbuild .\path\to\project.csproj -getProperty:TargetFramework -getProperty:Targe
 - Replace the path and configuration. Repeat where projects or configurations differ.
 - **Save:** settings found in files and settings returned by MSBuild. They may differ.
 - This command checks property values; it **doesn't build the project**. If your MSBuild version doesn't support it, record that and continue with file inspection.
-- Fill **63** with evaluated property values and relevant differences from declared values. Update **47–51, 52–56, 57–62** only when additional evidence changes them.
+- Fill **83–89** with evaluated property values and relevant differences from declared values. Update **47–51, 52–56, 57–62** only when additional evidence changes them.
 
-- **Report fields:** 63; 47–51, 52–56, 57–62 if needed. Add the findings directly to the copied baseline.
+- **Report fields:** 83–89; 61–68, 69–74, 75–82 if needed. Add the findings directly to the copied baseline.
 
 ## DISC-006 — Find shared configuration files
 
@@ -235,9 +235,9 @@ msbuild .\path\to\project.csproj -getProperty:TargetFramework -getProperty:Targe
 - Check nested directories, project imports, and relevant machine/user settings when they affect the build.
 - **Save:** file paths, key settings, and which projects they apply to.
 - A missing file isn't automatically a problem or a reason to create one.
-- Fill **64–65** (folders) and **66–69** (configuration paths, existence, settings, scope). Use one row per folder or file.
+- Fill **90–91** (folders) and **92–98** (configuration paths, existence, settings, scope). Use one row per folder or file.
 
-- **Report fields:** 64–65, 66–69. Add the findings directly to the copied baseline.
+- **Report fields:** 90–91, 92–98. Add the findings directly to the copied baseline.
 
 ## DISC-007 — List dependencies
 
@@ -251,9 +251,9 @@ dotnet nuget list source
 
 - **Save:** package names/versions, project references, other dependencies, and configured feeds. Review feed URLs for sensitive details before sharing.
 - **Don't restore packages yet.** A listed source or package declaration doesn't prove a package was downloaded.
-- Fill **70–75** for each NuGet package and **76–81** for other dependencies. Note packages and feeds not checked.
+- Fill **99–104** for each NuGet package and **105–114** for other dependencies. Note packages and feeds not checked.
 
-- **Report fields:** 70–75, 76–81. Add the findings directly to the copied baseline.
+- **Report fields:** 99–104, 105–114. Add the findings directly to the copied baseline.
 
 ## DISC-008 — Restore dependencies
 
@@ -262,9 +262,9 @@ dotnet nuget list source
 - **Before running:** confirm the selected command, package sources, credentials if needed, and where files will be written. Restore may update caches or generate files.
 - Run the appropriate native command **after the operator has approved the step**.
 - **Save:** exact command, tool version, result, errors, and any generated files. Don't change package versions or bypass missing feeds to make the restore pass.
-- Fill **82** (restore command), **99** (outcome) and **112–115** (actual command, exit code, evidence).
+- Fill **115** (restore command), **147** (outcome) and **160–167** (actual command, exit code, evidence).
 
-- **Report fields:** 82, 99, 112–115. Add the findings directly to the copied baseline.
+- **Report fields:** 115, 147, 160–167. Add the findings directly to the copied baseline.
 
 ## DISC-009 — Build the application
 
@@ -274,9 +274,9 @@ dotnet nuget list source
 - **Before running:** confirm the command and its side effects. A `Rebuild` can remove previous build outputs.
 - **Save:** command, configuration, success/failure, warnings/errors, and output files.
 - One successful project build doesn't prove every project or configuration builds.
-- Fill **83** (build command), **94** (outputs/warnings), **100** (outcome) and **112–115** (actual execution).
+- Fill **116–118** (build command), **133–135** (outputs/warnings), **148** (outcome) and **160–167** (actual execution).
 
-- **Report fields:** 83, 94, 100, 112–115. Add the findings directly to the copied baseline.
+- **Report fields:** 116–118, 133–135, 148, 160–167. Add the findings directly to the copied baseline.
 
 ## DISC-010 — Run the tests
 
@@ -286,9 +286,9 @@ dotnet nuget list source
 - **Before running:** confirm that the test command and environment are appropriate.
 - **Save:** tests found, passed, failed, skipped, runner version, and which test projects actually ran.
 - Don't report "all tests passed" if an expected test project wasn't executed.
-- Fill **11** (runner), **84** (command), **89–93** (test counts and included assemblies), **101** (outcome), and **112–115** (execution).
+- Fill **17–18** (runner), **119** (command), **127–132** (test counts and included assemblies), **149** (outcome), and **160–167** (execution).
 
-- **Report fields:** 11, 84, 89–93, 101, 112–115. Add the findings directly to the copied baseline.
+- **Report fields:** 17–18, 119, 127–132, 149, 160–167. Add the findings directly to the copied baseline.
 
 ## DISC-011 — Review CI, packaging, and deployment
 
@@ -297,9 +297,9 @@ dotnet nuget list source
 - Check existing workflow runs separately from the workflow files. Don't start releases or deployments.
 - **Save:** what the pipeline is configured to do and what existing runs actually completed.
 - A workflow file alone doesn't prove that it ran successfully.
-- Fill **85–88** (existing check/packaging/deployment commands and alternate hosts) and **95–98** (CI, runs, packaging, runtime requirements).
+- Fill **120–126** (existing check/packaging/deployment commands and alternate hosts) and **136–146** (CI, runs, packaging, runtime requirements).
 
-- **Report fields:** 85–88, 95–98. Add the findings directly to the copied baseline.
+- **Report fields:** 120–126, 136–146. Add the findings directly to the copied baseline.
 
 ## DISC-012 — Find existing compatibility checks
 
@@ -307,9 +307,9 @@ dotnet nuget list source
 - **Save:** the check's location, any existing results, and which source revision those results belong to.
 - Mark checks that have not been run against the selected commit.
 - Don't create extra checks just to fill out the list.
-- Fill applicable **102–111** check outcomes. Each must say passed, failed, not executed, not checked or not applicable; link existing results.
+- Fill applicable **150–159** check outcomes. Each must say passed, failed, not executed, not checked or not applicable; link existing results.
 
-- **Report fields:** 102–111. Add the findings directly to the copied baseline.
+- **Report fields:** 150–159. Add the findings directly to the copied baseline.
 
 ## DISC-013 — Review results and missing information
 
@@ -318,9 +318,9 @@ dotnet nuget list source
 - Note whether a problem came from the application, a missing tool, or the command itself.
 - **Save:** what's confirmed, what failed, what's still unknown, and what needs another check.
 - Keep old test results labeled as historical; don't present them as new runs.
-- Fill **116–118** for each gap or problem and **119–121** for per-step status and evidence.
+- Fill **168–171** for each gap or problem and **172–176** for per-step status and evidence.
 
-- **Report fields:** 116–118, 119–121. Add the findings directly to the copied baseline.
+- **Report fields:** 168–171, 172–176. Add the findings directly to the copied baseline.
 
 ## DISC-014 — Finish the technical baseline
 
@@ -329,9 +329,9 @@ dotnet nuget list source
 - Check that another engineer can find the same source, understand the setup, and repeat the steps.
 - List any missing results instead of guessing.
 - Save the final baseline with its source commit and discovery date. Modernization recommendations come afterward.
-- Fill **15–16** (verification date/status) and **122–124** (disposition, reviewer, next action). Finish **119–121** for all 14 steps.
+- Fill **23–24** (verification date/status) and **177–181** (disposition, reviewer, next action). Finish **172–176** for all 14 steps.
 
-- **Report fields:** 15–16, 119–121, 122–124. Add the findings directly to the copied baseline.
+- **Report fields:** 23–24, 172–176, 177–181. Add the findings directly to the copied baseline.
 
 ## Optional — Create scripts later
 

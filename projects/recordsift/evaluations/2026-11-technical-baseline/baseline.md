@@ -479,16 +479,7 @@ Each distribution has its own record. NuGet package upload acceptance was previo
 | CI host version and architecture evidence incomplete | Exact OS architecture, PowerShell version, NuGet CLI version and complete SDK/runtime inventories are unavailable | Items 23–30; [Windows CI job](https://github.com/infoconex/RecordSift/actions/runs/43146607664/job/130945777245) | Capture explicit version and inventory outputs in a future CI run |
 | .NET Framework targeting-pack installation not inspected | Successful net48 compilation does not identify the exact installed reference assemblies or their path | Item 31; [Windows CI job](https://github.com/infoconex/RecordSift/actions/runs/43146607664/job/130945777245) | Record the targeting-pack file and path in a future CI run |
 
-**Unresolved verification and review:** No operator-run Windows preflight, clean checkout, MSBuild property evaluation, restore, build or test has been captured in this evaluation. Existing CI at the frozen source SHA does not verify local tooling or deployment/runtime conditions. Items 61–62 are **Not reviewed**; the overall item 60 disposition remains **More verification needed**.
-
-| Field | Value |
-|---|---|
-| 60. Overall Baseline Disposition | More verification needed |
-| 61. Reviewed By | Not reviewed |
-| 62. Review Date | Not reviewed |
-| 63. Next Action | Verify Windows prerequisites and clean checkout (items 20–38) |
-
-### 64. Deferred Checks
+### 60. Deferred Checks
 
 | Check | Reason Deferred | Revisit When |
 |---|---|---|

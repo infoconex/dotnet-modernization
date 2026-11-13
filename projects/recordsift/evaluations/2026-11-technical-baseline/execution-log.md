@@ -9,27 +9,87 @@
 
 This is the authoritative operator progress record, separate from the final technical facts in `baseline.md`. **Nothing has been run in a local checkout as part of this new walkthrough.** Initial GitHub source inspection is recorded separately below.
 
-## Local execution and prerequisite versions
+## DISC-001 — Check each prerequisite and record its result
 
-**Executed by:** Not yet recorded — awaiting your Windows PowerShell results.  
+**Executed by:** Not yet recorded.  
 **Execution date/time:** Not yet recorded.  
-**Discovery folder:** Not yet created or verified.
+**Discovery folder:** Not yet created.
 
-| Prerequisite | When needed | Version / details recorded from your computer | Status |
-|---|---|---|---|
-| Windows OS and architecture | All RecordSift steps | Not yet recorded | Not checked |
-| PowerShell | Discovery commands | Not yet recorded | Not checked |
-| Git | Clone and source checks | Not yet recorded | Not checked |
-| .NET SDK / `dotnet` | Applicable later commands | Not yet recorded | Not checked |
-| MSBuild / Visual Studio Build Tools | Build evaluation and compilation | Not yet recorded | Not checked |
-| .NET Framework 4.8 targeting pack | Traditional net48 build | Not yet recorded | Not checked |
-| Standalone NuGet CLI | Existing `packages.config` restore | Not yet recorded | Not checked |
-| Test runner | Test execution | Not yet recorded | Not checked |
+Run each snippet **separately in Windows PowerShell**. Replace the pending result immediately below each command with the **actual version, output or error**. Do not fill in expected results.
 
-- Fill this table from your **actual command results**. Record unavailable tools as *not found on PATH* or *not installed*, as supported by the check; don't guess versions.
-- DISC-001 captures Windows, PowerShell, Git, and command availability. DISC-004 records the complete SDK, MSBuild, NuGet, targeting-pack, and test-runner versions before those tools are used.
-- For each completed discovery step, record **who ran it, when, the commands/results, and where the output is saved**. Use the detailed fields in the [execution-log template](../../../../templates/discovery-execution-log.md).
-- Keep expected outputs separate from observed results. No local execution has been verified yet.
+### Windows
+
+```powershell
+Get-CimInstance Win32_OperatingSystem | Select-Object Caption, Version, BuildNumber, OSArchitecture
+```
+
+**Result:** Not yet executed.
+
+- Record the Windows edition, version, build, and architecture. This walkthrough requires Windows, not WSL.
+
+### PowerShell
+
+```powershell
+$PSVersionTable.PSVersion
+```
+
+**Result:** Not yet executed.
+
+### Git
+
+```powershell
+git --version
+```
+
+**Result:** Not yet executed.
+
+- Git 2.23+ is needed for the planned `git switch --detach` command. Stop before cloning if unavailable.
+
+### .NET SDK
+
+```powershell
+dotnet --info
+```
+
+**Result:** Not yet executed.
+
+- Record the SDK/runtime details shown, or the error if the command is unavailable. We will use DISC-004 for further SDK details.
+
+### MSBuild
+
+```powershell
+msbuild -version -nologo
+```
+
+**Result:** Not yet executed.
+
+- If unavailable, record **not found on PATH**; we'll check Visual Studio Developer PowerShell before deciding whether anything is missing.
+
+### NuGet CLI
+
+```powershell
+nuget help
+```
+
+**Result:** Not yet executed.
+
+- Record the version shown, or **not found on PATH**. RecordSift's documented `packages.config` restore uses the standalone NuGet CLI.
+
+### .NET Framework 4.8 targeting pack
+
+```powershell
+Test-Path "\${env:ProgramFiles(x86)}\Reference Assemblies\Microsoft\Framework\.NETFramework\v4.8"
+```
+
+**Result:** Not yet executed.
+
+- `True` indicates the standard directory exists; it doesn't prove that an application builds successfully.
+
+**Test runner:** Check and record its command/version later, once the actual runner has been identified in DISC-010.
+
+- **Needed for cloning now:** Windows, PowerShell, Git, network access, and a writable folder.
+- **Needed for later steps:** an appropriate Windows MSBuild, targeting assemblies, NuGet, and test runner. Record gaps rather than installing or changing anything automatically.
+- Keep large outputs in evidence files or provide a faithful excerpt with a link; don't commit personal paths, credentials, or tokens.
 
 ## Step progress
 
@@ -58,26 +118,11 @@ This is the authoritative operator progress record, separate from the final tech
 
 **Objective:** **require a Windows host**, then verify tools and upcoming prerequisites; obtain a **new** RecordSift source checkout named `RecordSift-discovery-YYYY-MM-DD-HHmmss` at the frozen SHA. No local command has yet been reported as executed for this evaluation. Run the commands individually rather than as a custom discovery script.
 
-### 1. Confirm the discovery prerequisites (before cloning)
+### 1. Check the tools above
 
-In **PowerShell on Windows** (Windows PowerShell 5.1 or PowerShell 7; record which is used), run these commands individually:
-
-```powershell
-[System.Runtime.InteropServices.RuntimeInformation]::IsOSPlatform([System.Runtime.InteropServices.OSPlatform]::Windows)
-Get-CimInstance Win32_OperatingSystem | Select-Object Caption, Version, BuildNumber, OSArchitecture
-$PSVersionTable.PSVersion
-Get-Command git -ErrorAction SilentlyContinue
-git --version
-Get-Command dotnet -ErrorAction SilentlyContinue
-Get-Command msbuild -ErrorAction SilentlyContinue
-Get-Command nuget -ErrorAction SilentlyContinue
-```
-
-**Windows is a hard prerequisite for the RecordSift walkthrough, beginning with DISC-001.** The first command must return `True`. If it returns `False`, stop: do not use Linux, macOS or WSL as a substitute for this Windows-only case study. Record the actual Windows version/build and architecture. **For DISC-001:** PowerShell on Windows and Git are required; Git 2.23+ supports the pinned-commit `git switch --detach` step. Record a Git-not-found error and stop rather than proceeding.
-
-**For later RecordSift execution:** the application is a Windows-only .NET Framework 4.8 library using traditional project files and tracked `packages.config` files. We will need a **Windows-compatible build/test environment**, a suitable MSBuild installation, .NET Framework 4.8 targeting assemblies, and a standalone NuGet CLI for the documented restore path. Test runners and any SDK-dependent optional commands will be verified before use. `dotnet` is **not** automatically required for the source checkout or all traditional project builds. `Get-Command` searches PATH only; `msbuild`/`nuget` not found on PATH is a readiness question, not proof the tool is not installed. No software installation is authorized by this preflight.
-
-**Pause at the preflight** if required tools are unavailable or the environment is uncertain; report the results before proceeding with a build/test later. For source-only discovery, non-Git tooling gaps can be recorded and resolved before their steps.
+- Execute each tool's command separately and fill in its **Result**.
+- **Stop before cloning** if the Windows or Git prerequisite cannot be met.
+- If `dotnet`, `msbuild` or `nuget` is unavailable, note the result; we'll decide what is required before build and restore.
 
 ### 2. Create a timestamped discovery directory
 

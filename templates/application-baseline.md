@@ -147,9 +147,15 @@ One row per project when possible. Enter only observed evaluated values, labeled
 
 ### 43. Repository Configuration
 
+Record **declared source settings** in the table, including NuGet `clear` directives and explicitly disabled feeds. Summarize absent NuGet configuration sections once rather than adding empty rows. **Effective** user/machine/CLI settings are separate and remain `Not checked` until verified. Never record secrets; follow step 43 in the [runbook](../methodology/technical-discovery-runbook.md).
+
 | File or Mechanism | Present | Scope | Setting Name | Setting Value | Import or Precedence |
 |---|---|---|---|---|---|
 |   |   |   |   |   |   |
+
+**NuGet sections not declared in inspected source:** 
+
+**Effective NuGet configuration:** Not checked
 
 ### 44. NuGet Package Declarations
 

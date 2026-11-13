@@ -84,8 +84,11 @@
 | 31. Discovery Folder |  |
 | 32. Selected Source Branch or Tag |  |
 | 33. Source Commit SHA |  |
+| Source Committer Date (UTC) |  |
 | 34. Working Tree Clean |  |
 | 35. Detached HEAD |  |
+
+**Source Committer Date (UTC)** is an unnumbered field belonging to item 33: record the Git committer timestamp for the exact selected commit in UTC ISO 8601 (`YYYY-MM-DDTHH:MM:SSZ`), not the discovery date, checkout time, author date, push date or release publication date. Record evidence separately. Keep item 33's SHA value atomic and retain the same source provenance in item 52.
 
 ## Solution and project inventory
 

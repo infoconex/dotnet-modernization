@@ -13,7 +13,7 @@
 
 **Objective:** validate that a portable, documented discovery method can produce a traceable technical baseline using RecordSift as the worked example. This is **not** a new modernization assessment or application implementation.
 
-**Platform boundary:** perform the entire RecordSift discovery on Windows, starting with DISC-001 tool/OS preflight. Do not substitute Linux, macOS or WSL as equivalent verification. Cross-platform exploration would be a separate explicitly scoped assessment.
+**Platform boundary:** perform the entire RecordSift discovery on Windows, beginning with baseline application information (items 1–17), followed by the Windows toolchain preflight (items 18–30). Do not substitute Linux, macOS or WSL as equivalent verification. Cross-platform exploration would be a separate explicitly scoped assessment.
 
 **Proposed scope for owner-led manual execution:** source identity; solution/project and MSBuild configuration; central settings; NuGet dependencies; toolchain inventory; existing build/test entry points; approved manual restore/build/test verification; CI, runtime, package, and compatibility evidence; synthesis of a dated baseline.
 
@@ -40,4 +40,4 @@ This is not a claim that missing repository-wide files have no equivalents in pa
 
 **Research/implementation separation:** no change to RecordSift source, project files or its application main branch. This documentation remains on its own review PR until approved.
 
-**Next action:** operator follows **DISC-001** in the [step-by-step guide](../../../../methodology/technical-discovery-runbook.md): verify Windows/tool versions, then create a dated, clean RecordSift checkout at commit `1809d06c0fade59e4769d16e0f8eaf10fa426004`. **No local commands have been executed or verified.** The operator records the actual local answers in the numbered [baseline copy](baseline.md) after the required checks. Nothing is entered into the guide.
+**Next action:** after reviewing baseline application fields **1–17**, the operator follows items **18–30** (Windows/tool prerequisites) and **31–35** (clean timestamped clone and pinned checkout) in the [step-by-step guide](../../../../methodology/technical-discovery-runbook.md), using commit `1809d06c0fade59e4769d16e0f8eaf10fa426004`. **No local commands have been executed or verified.** The operator records the actual local answers in the numbered [baseline copy](baseline.md) after the required checks. Nothing is entered into the guide.

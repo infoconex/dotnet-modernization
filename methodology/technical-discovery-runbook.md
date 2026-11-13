@@ -1,6 +1,6 @@
 # .NET Technical Discovery — Step-by-Step Guide
 
-Follow this guide alongside the [blank baseline template](../templates/application-baseline.md). All **65 discovery items** are numbered in ascending order (1–65) throughout the baseline, template and runbook. Discovery information comes first, then application information and the remaining verification steps; no separate phase numbering is required. Record results in the application's copied baseline, not here.
+Follow this guide alongside the [blank baseline template](../templates/application-baseline.md). All **64 discovery items** are numbered in ascending order (1–64) throughout the baseline, template and runbook. Discovery information comes first, then application information and the remaining verification steps; no separate phase numbering is required. Record results in the application's copied baseline, not here.
 
 **Before recording item 1:** Replace `<Application Name>` in the copied baseline title with the actual application name. Immediately below it, replace `<Application description>` with a factual description of what the application does, its users/consumers, and core responsibilities; verify against the README, documentation and source. For RecordSift, the copy already has its name and description.
 
@@ -26,7 +26,7 @@ Use `Not started`, `In progress`, `Blocked`, `Completed`, or `Completed with gap
 
 Use `YYYY-MM-DD` only once discovery is finished **and reviewed**, with any accepted gaps documented. Otherwise use `Not completed`.
 
-**Consistency:** `Completed` requires item 61 (`Overall Baseline Disposition`) = `Complete` and review fields 62–63 populated. `Completed with gaps` requires disposition `Complete with gaps`, accepted gaps documented in items 59 and 65, and review recorded. If disposition is `More verification needed`, discovery is not completed.
+**Consistency:** `Completed` requires item 60 (`Overall Baseline Disposition`) = `Complete` and review fields 61–62 populated. `Completed with gaps` requires disposition `Complete with gaps`, accepted gaps documented in items 59 and 64, and review recorded. If disposition is `More verification needed`, discovery is not completed.
 
 ## Application information
 
@@ -832,54 +832,26 @@ Record each unresolved issue, source limitation, missing verification or cross-e
 - **Evidence:** Proof or precise gap source.
 - **Next Check:** Next verification action.
 
-### 60. Discovery Item Status
 
-Populate **one row for every numbered baseline item, 1–65**. Report what was checked through **three separate evidence channels**, rather than using an ambiguous single `Complete`/`Partial` status:
+**Evidence discipline:** Keep the verified value and its CI/local context in the numbered item, cite supporting source or run evidence in the evidence manifest, and record specific outstanding checks in this findings table or in item 64 (Deferred Checks). An unobserved value should be `Not checked` or `Not executed` as applicable. Do **not** create a parallel status row for every discovery item, infer a complete tool inventory from one version string, or treat CI success as local execution.
 
-- **Source Inspection:** Files at the selected frozen revision, repository host metadata, independent public artifact metadata and discovery documentation. `Verified` means the relevant source fact is corroborated, **not** that it was locally executed. `Partial` means only part of the relevant scope was inspected or effective behavior remains undetermined. Use `Not checked` when source verification was expected but not done; use `Not applicable` for items that are inherently local-only, CI-only or governance-only.
-- **Existing CI:** GitHub-hosted workflow runs and their specific logs for the correct commit. `Passed` means relevant executed checks passed, with linked run/commit evidence. `Verified` means relevant CI run/log records were inspected; for partial CI inventory observations, record explicitly which fields are **still not checked**. It never implies that an entire inventory is complete or that an operator performed local checks. Use `Not checked` for relevant CI evidence not reviewed and `Not applicable` for items that do not require CI evidence. CI success **never** resolves local environment or checkout uncertainty.
-- **Operator Local:** Checks executed on the discovery operator's actual machine. Use `Passed` or `Failed` only with the precise command, exit code, working directory, tool version and saved output; `Not executed` if a required operator command has not been performed; `Not recorded` for missing identity or other operator-supplied metadata; `Not applicable` where no operator-local check is required for that particular discovery item. `Not applicable` is **not** a global approval and does not eliminate the deferred local checks in item 65.
-- **Evidence or Missing Information:** Preserve every existing EV reference and specific unresolved limitation. Cite exact commit/run provenance, link verified evidence, and clarify missing local work. Do not overwrite `Not executed` with an inferred outcome merely because source-declared operations or CI workflow definitions exist.
-
-**Example:**
-
-| Baseline Item | Source Inspection | Existing CI | Operator Local | Evidence or Missing Information |
-|---|---|---|---|---|
-| 25 | Not applicable | Verified | Not executed | Exact CI Git version logged; operator Git not checked |
-| 26 | Not applicable | Verified | Not executed | One selected CI SDK observed; full SDK inventory and operator check outstanding |
-| 39 | Verified | Not applicable | Not applicable | Source-declared solution inventory; not a local build |
-| 44 | Not applicable | Not checked | Not executed | MSBuild `-getProperty` not evaluated |
-| 50 | Verified | Passed | Not executed | Existing CI restore passed at selected SHA; operator restore not run |
-| 52 | Verified | Passed | Not executed | Existing CI NUnit passed at selected SHA; operator tests not run |
-
-**How to use the status table:** A single item may be `Verified` under Source Inspection and `Not executed` under Operator Local without contradiction. When source declarations are sufficient, mark Operator Local `Not applicable`; when runtime or evaluated state is part of the item, retain `Not executed` until actual operator evidence is captured. For CI-only items, Source Inspection may be `Not applicable` while CI shows `Verified`. Preserve overall unresolved verification, review state (items 62–63), next action (61), and deferred checks (62).
-
-**How to populate each column (left to right):**
-
-- **Baseline Item:** Number of the *existing* baseline item, without inventing a separate execution-phase sequence.
-- **Source Inspection:** `Verified`, `Partial`, `Not checked` or `Not applicable`, based on pinned source and metadata evidence.
-- **Existing CI:** `Passed`, `Verified`, `Not checked` or `Not applicable` based on independent existing CI evidence.
-- **Operator Local:** `Passed`, `Failed`, `Not executed`, `Not recorded` or `Not applicable`, without conflating local and hosted execution.
-- **Evidence or Missing Information:** Existing evidence IDs/links and exact outstanding checks, including whether any result was only CI-observed.
-
-
-### 61. Overall Baseline Disposition
+### 60. Overall Baseline Disposition
 
 Set one overall state such as `Complete`, `Complete with gaps` or `More verification needed` based on what has and has not actually been checked. Do not claim completion while required Windows preflight and checkout verification are outstanding.
 
-### 62. Reviewed By
+### 61. Reviewed By
 
 Record the reviewer who actually checked the baseline, or `Not reviewed`. This is not automatically the same person as the discovery operator.
 
-### 63. Review Date
+### 62. Review Date
 
 Record the actual baseline **review date** (`YYYY-MM-DD`), or `Not reviewed`. This is a governance date; it does not require evidence dates on every row.
 
-### 64. Next Action
+### 63. Next Action
 
 Name one concrete next action, for example `Run Windows preflight and verify source checkout`. Avoid a generic instruction such as `Continue`.
 
-### 65. Deferred Checks
+### 64. Deferred Checks
 
 Document intentionally omitted checks with reason and trigger for revisit, one row per check. For example: `Local Release build | Windows host not inventoried | After DISC host/checkout checks`; use baseline item numbers instead of outdated DISC phase identifiers.
 
@@ -891,7 +863,7 @@ Document intentionally omitted checks with reason and trigger for revisit, one r
 
 ## Completion and validation
 
-1. Confirm every baseline number 1–65 has either an observed value, applicable dataset rows, or a documented `Not checked`/`Not executed`/`Not applicable` disposition.
+1. Confirm every baseline number 1–64 has either an observed value, applicable dataset rows, or a documented `Not checked`/`Not executed`/`Not applicable` disposition. Use the field values, environment-specific evidence and item 59 gaps; no duplicate item-by-item status matrix is required.
 2. Verify the source revision, host, configuration, and provenance of every build/test/compatibility claim. A CI result must not be relabeled as a local run.
 3. Keep raw tool output and relevant CI links in the evidence manifest without copying secrets; don't add evidence dates to every entry.
 4. Review the recorded gaps and deferred checks. Leave modernization recommendations outside this factual baseline.

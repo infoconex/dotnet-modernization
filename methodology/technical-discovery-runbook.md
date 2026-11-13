@@ -244,7 +244,7 @@ Record the exact branch or tag **chosen as the source**, for example `main`. Thi
 
 ### 33. Source Commit SHA
 
-Choose and record a **full immutable commit SHA** for the selected source ref (item 32) before cloning. Obtain it from the repository host or a read-only remote-ref query; confirm that the SHA belongs to the intended repository/ref. For RecordSift, the previously selected source SHA is `1809d06c0fade59e4769d16e0f8eaf10fa426004`.
+Choose and record a **full immutable commit SHA** for the selected source ref (item 32) before cloning. Obtain it from the repository host or a read-only remote-ref query; confirm that the SHA belongs to the intended repository/ref. For RecordSift, the previously selected source SHA is `1809d06c0fade59e4769d16e0f8eaf10fa426004`. Keep this field **SHA only**; capture the commit's UTC committer timestamp in item 52's separate source-provenance table (not appended to the SHA).
 
 With the unique destination prepared in item 31, use `git clone --no-checkout` and detach at that exact SHA. The selected SHA must be available in the new clone. Execute these commands **in the same PowerShell session** as item 31:
 
@@ -634,17 +634,38 @@ The run date is an intrinsic part of the external workflow record; it is **not**
 
 ### 52. Package and Release Artifacts
 
-Read published registry/release metadata separately from source `.nuspec` and generated CI-local packages. One row per artifact/attribute. Do not call a locally created release candidate a published package. Retain the artifact's source/evidence URL.
+Inspect the **published package registry**, GitHub release/tag metadata, source manifests and existing CI-produced artifacts as **separate sources of evidence**. Keep the original artifact table (one row per artifact/attribute), without treating a CI-local package as a publicly published package. Then populate the two small provenance tables in the baseline to make source history and publication dates explicit; use the **same full SHAs** and avoid putting timestamps inside atomic value fields 8–14 or 33.
 
-**How to populate each column (left to right):**
+**Source revision provenance (one row per distinct source context):**
+
+1. **Frozen discovery source:** Item 33's full selected SHA, and its Git **committer timestamp** in UTC. Source-inspected facts must not be described as an operator's local checkout.
+2. **Published release tag:** Resolve the actual Git tag object, dereferencing an annotated tag if needed, to its target **commit**. Capture the full commit SHA and its Git **committer timestamp** in UTC; do not assume the GitHub release target/ref and current repository default branch are identical.
+3. **Published package source:** Verify the package's source SHA from **independent provenance** when possible (e.g., embedded source/repository metadata, source-commit manifest, signed release checksums, and/or an exact-artifact published-feed verification run). If the package SHA is not independently supported, use `Not verified` — **never** infer it solely from the release tag or discovery SHA. If verified, record the source commit's committer timestamp; distinguish existing CI verification from a new download or operator execution.
+
+Use `YYYY-MM-DDTHH:MM:SSZ` for all UTC timestamps and the full 40-character commit SHA for Git. A commit's **committer date** and **author date** may differ, and neither is a guaranteed timestamp for the SHA's first creation, first push, or release publication. Prefer the committer date here, explicitly labeled; note author dates separately if material. Git can show both for a locally available revision without a build:
+
+```powershell
+git show -s --format='%H%n%cI%n%aI' HEAD
+```
+
+The output order is full SHA, committer date (ISO 8601 with its Git offset), and author date; **convert** any non-UTC offset to UTC before recording. Validate the SHA against the selected revision. For a remote release/tag or pre-checkout inventory, obtain equivalent Git host commit and tag metadata read-only.
+
+**Publication timestamps (one row per published artifact):** Record the **actual GitHub release publication** timestamp separately from source commit dates. Record the **NuGet package publication** timestamp only when verified from reliable registry/metadata; do not copy the GitHub release timestamp into it. If no reliable timestamp is checked, use `Not checked`. Distinguish initial publication from edit/update timestamps when both exist.
+
+**How to populate the existing artifact table (left to right):**
 
 - **Artifact:** Package or release artifact name.
 - **Version:** Published or source-declared version.
 - **Attribute:** One artifact property, such as nuspec version or included DLL.
 - **Attribute Value:** Value of that property.
-- **Release URL:** Actual public release URL or Not published.
-- **Evidence:** Source/CI proof of that exact property.
+- **Release URL:** Actual public release URL or `Not published`.
+- **Evidence:** Source, registry or CI proof of that specific property.
 
+**How to populate the provenance table:** Source Context; full Source Commit SHA; Committer Date (UTC); Verification (linked to the exact evidence and qualified as source metadata, CI or independent package inspection).
+
+**How to populate the publication table:** Published Artifact; Published At (UTC); Evidence (official metadata or other explicitly described provenance).
+
+**RecordSift example and limit:** The published `v0.1.0` release tag resolves to `2db5c86bc26010afcb83c2e455d2471d8c9340d6`, whereas this discovery inspects `1809d06c0fade59e4769d16e0f8eaf10fa426004`. Existing [recovery workflow](https://github.com/infoconex/RecordSift/actions/runs/41355904536) checked package source provenance and the original release assets and verified the published-feed consumer. That **existing CI** supports the published package source claim; it is not a new local run or newly downloaded package. The official GitHub release metadata supplies the release publication timestamp. Do not infer the NuGet registry publication timestamp from it.
 ### 53. Runtime and Deployment Requirements
 
 Read consumer guidance, architecture and package manifests for OS, target frameworks, runtimes, dependencies and deployment constraints. One requirement per row with the environment where it applies; do not assume a requirement is installed on the operator's machine.

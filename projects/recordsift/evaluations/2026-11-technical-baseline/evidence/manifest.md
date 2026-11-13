@@ -33,7 +33,7 @@
 ## Baseline value provenance
 
 - Keep values in the baseline's **Value** column atomic (for example, `Library`, `Public`, `MIT`, `Windows`, a version, SHA, or exact URL). Do not append citation titles, provenance prose, or execution caveats to those values.
-- Source links and qualifications belong in this manifest. Fields **5–11** are supported by EV-003/EV-004; **8–11** by EV-005; **12** by EV-006; **13–14** by EV-007. Local machine fields **20–32** remain unverified until the operator supplies tool output.
+- Source links and qualifications belong in this manifest. Fields **5–11** are supported by EV-003/EV-004; **12–15** by EV-005; **16** by EV-006; **17–18** by EV-007. Local machine fields **20–32** remain unverified until the operator supplies tool output.
 
 ## Command review against source and tool documentation
 

@@ -1,72 +1,92 @@
 # .NET Technical Discovery — Step-by-Step Guide
 
-Follow this guide alongside the [blank baseline template](../templates/application-baseline.md). All **62 existing numbered item identifiers are preserved** and the collection instructions remain in numeric order (1–62); no separate DISC phase numbering is required. The copied baseline **displays Discovery information first** as a document-level summary, followed by application information, even though discovery operator/start-date instructions retain their established item identifiers **16 and 17**. Record results in the application's copied baseline, not here.
+Follow this guide alongside the [blank baseline template](../templates/application-baseline.md). All **62 existing numbered item identifiers are preserved** and the collection instructions remain in numeric order (1–65); no separate DISC phase numbering is required. The copied baseline **displays Discovery information first** as a document-level summary, followed by application information, even though discovery operator/start-date instructions retain their established item identifiers **16 and 17**. Record results in the application's copied baseline, not here.
 
-**Before item 1:** Replace `<Application Name>` in the copied baseline title with the actual application name. Immediately below it, replace `<Application description>` with a factual description of what the application does, its users/consumers, and core responsibilities; verify against the README, documentation and source. For RecordSift, the copy already has its name and description.
+**Before recording item 1:** Replace `<Application Name>` in the copied baseline title with the actual application name. Immediately below it, replace `<Application description>` with a factual description of what the application does, its users/consumers, and core responsibilities; verify against the README, documentation and source. For RecordSift, the copy already has its name and description.
 
-**Recording rules:** A single-value field contains only one value (for example `Library`, `Public`, `MIT`, a precise version, `True`, a path, or a URL). Keep citations, assumptions, and explanations in the evidence manifest or a specifically designated table evidence column. For a numbered table, the number identifies **the entire dataset**, never its columns or rows. Prefer one row per project for project-scoped inventories, with unique linked project names first; item 37 records the canonical project path once, and later project tables reference it without repeating path columns; group multiple references, packages or properties without losing their distinct values. Keep separate rows when different scopes or evidence cannot be combined accurately. Mark unavailable checks `Not checked`, `Not executed` or `Not applicable` accurately.
+**Recording rules:** A single-value field contains only one value (for example `Library`, `Public`, `MIT`, a precise version, `True`, a path, or a URL). Keep citations, assumptions, and explanations in the evidence manifest or a specifically designated table evidence column. For a numbered table, the number identifies **the entire dataset**, never its columns or rows. Prefer one row per project for project-scoped inventories, with unique linked project names first; item 40 records the canonical project path once, and later project tables reference it without repeating path columns; group multiple references, packages or properties without losing their distinct values. Keep separate rows when different scopes or evidence cannot be combined accurately. Mark unavailable checks `Not checked`, `Not executed` or `Not applicable` accurately.
 
 **Environment boundary:** RecordSift itself is Windows-only. Perform its operator-run host, restore, build and test checks on **Windows**, not on Linux, macOS or WSL. Existing GitHub Actions results are separate from local operator execution. Start with native Git, PowerShell, .NET SDK, NuGet and MSBuild commands; use custom scripts only after their necessity and portability are understood. Do not reset worktrees, modify source, publish packages or deploy as part of discovery. Confirm explicit approval before restore/build/test operations.
 
+## Discovery information
+
+### 1. Discovery By
+
+Record the actual discovery operator. Never infer identity from the repository owner or commit author. Use `Not recorded` until supplied.
+
+### 2. Discovery Date
+
+Record the discovery start date (`YYYY-MM-DD`). Do not confuse it with a commit date, release date, CI run or discovery completion date.
+
+### 3. Discovery Status
+
+Use `Not started`, `In progress`, `Blocked`, `Completed`, or `Completed with gaps`, based on actual work. RecordSift is `In progress` while operator Windows checks or review are missing. A completed CI run is not an operator-local check.
+
+### 4. Discovery Completed Date
+
+Use `YYYY-MM-DD` only once discovery is finished **and reviewed**, with any accepted gaps documented. Otherwise use `Not completed`.
+
+**Consistency:** `Completed` requires item 61 (`Overall Baseline Disposition`) = `Complete` and review fields 62–63 populated. `Completed with gaps` requires disposition `Complete with gaps`, accepted gaps documented in items 59 and 65, and review recorded. If disposition is `More verification needed`, discovery is not completed.
+
 ## Application information
 
-### 1. Application Type
+### 5. Application Type
 
 Inspect the README, project file and architecture documentation. Classify the application with **one concise value** such as `Library`, `Console application`, `Desktop application`, `Service` or `Web application`. For RecordSift, the type is `Library`. Put implementation details in the description below the title, not this field.
 
-### 2. Repository Visibility
+### 6. Repository Visibility
 
 Inspect repository visibility in the hosting service. Record `Public` or `Private`. A locally available clone does not prove a repository is public.
 
-### 3. License
+### 7. License
 
 Read the repository's actual `LICENSE` and any package licensing metadata. Record an SPDX identifier such as `MIT` where appropriate. Keep the source link in the evidence manifest.
 
-### 4. Supported Operating Systems
+### 8. Supported Operating Systems
 
 Read the supported-platform statement in README and release/consumer guidance, not the operating system of the discovery machine. Record one supported OS per repeat entry or a concise list. For RecordSift record `Windows`; its .NET Framework target belongs in the project inventory.
 
-### 5. HTTPS Clone URL
+### 9. HTTPS Clone URL
 
 Use the hosting service's **Clone → HTTPS** address. Record the exact URL, such as `https://github.com/infoconex/RecordSift.git`, without a citation suffix. Do not run a clone merely to collect this address.
 
-### 6. SSH Clone URL
+### 10. SSH Clone URL
 
 Use the hosting service's **Clone → SSH** address. This is metadata, **not** an SSH authentication test. For GitHub a conventional value is `git@github.com:infoconex/RecordSift.git`.
 
-### 7. Repository Default Branch
+### 11. Repository Default Branch
 
 Read the repository host's **default branch** designation. Record one branch name, such as `main`, not the currently checked out detached HEAD.
 
-### 8. Published Application Version
+### 12. Published Application Version
 
 Identify the published application version, if one exists. If the project distributes only a library package rather than a standalone application, record `Not applicable` or the publisher-documented application version only when explicitly supported. Do not confuse source manifest, assembly and package versions.
 
-### 9. Published Package Version
+### 13. Published Package Version
 
-Check the official package registry/release listing. For RecordSift, NuGet.org lists `0.1.0`. Enter only the version number; put the URL in item 11.
+Check the official package registry/release listing. For RecordSift, NuGet.org lists `0.1.0`. Enter only the version number; put the URL in item 15.
 
-### 10. Published Release URL
+### 14. Published Release URL
 
 Copy the full official published release URL, not a short link label. For RecordSift: `https://github.com/infoconex/RecordSift/releases/tag/v0.1.0`.
 
-### 11. Published Package URL
+### 15. Published Package URL
 
 Copy the full registry package URL, e.g. `https://www.nuget.org/packages/RecordSift/0.1.0`. Keep package and release URLs distinct.
 
-### 12. Source Manifest Version
+### 16. Source Manifest Version
 
 Read the tracked package manifest, such as `packaging/RecordSift.nuspec`. Record its version **as declared**, even if it differs from a published version. RecordSift declares `0.1.0-rc.1` in this source file.
 
-### 13. Assembly Version
+### 17. Assembly Version
 
 Read `AssemblyVersion` in the applicable `Properties/AssemblyInfo.cs` (or generated assembly metadata for SDK-style projects). Record the declared value; if assemblies differ, explain the scope and use a per-assembly table rather than implying one universal value. Do not claim the binaries have been inspected.
 
-### 14. File Version
+### 18. File Version
 
 Read `AssemblyFileVersion` separately from `AssemblyVersion` in the relevant assembly metadata. Record only its version, e.g. `0.1.0.0`; do not append an `AssemblyInfo` citation in the value.
 
-### 15. Consumers and Entry Points
+### 19. Consumers and Entry Points
 
 Inspect public entry-point documentation, production project output types, exported APIs and known consumer examples. **One row per distinct consumer/entry point**, with supporting documentation or source. Example: `Consuming .NET Framework app | Library consumer | docs/usage/getting-started.md`. Do not assert that a test consumer is a deployed application.
 
@@ -82,53 +102,38 @@ Inspect public entry-point documentation, production project output types, expor
 |---|---|---|
 | RecordSift library consumer | Library API | docs/usage/getting-started.md |
 
-## Discovery information
-
-### 16. Discovery By
-
-Record the actual person performing this discovery; do not infer the name from repository ownership or an illustrative example. If not provided, use `Not recorded` rather than inventing an operator.
-
-### 17. Discovery Date
-
-Record the single date this discovery began in `YYYY-MM-DD` format. Do **not** add evidence-collection dates to each item. External CI run dates remain intrinsic to CI records in item 51.
-
-**Discovery status and completion date (unnumbered fields in the first table):** The opening `Discovery information` table is a **document summary**, displayed above application information in the copied baseline. Keep item 16 (`Discovery By`) and item 17 (`Discovery Date`) in that top table with their original identifiers; these instructions remain here to preserve ordered numbering and evidence references.
-
-- **Discovery Status:** Set `Not started`, `In progress`, `Blocked`, `Completed`, or `Completed with gaps` based on actual discovery progress. When source facts/CI evidence are collected but required operator Windows checks and review are missing, use `In progress` (RecordSift's current status). `Blocked` is for work that cannot currently progress due to a concrete blocking condition. Do not treat successful CI runs as operator-local verification.
-- **Discovery Completed Date:** Enter `YYYY-MM-DD` **only when discovery is finished and reviewed**, including accepted and documented gaps when its final status is `Completed with gaps`. Otherwise enter `Not completed`. This is the date the discovery was completed, **not** the commit date, first data collection date, CI run date or release publication date.
-- **Cross-check:** `Completed` requires an overall disposition (item 58) of `Complete` and actual review by/date values (items 59–60). `Completed with gaps` requires item 58 = `Complete with gaps`, outstanding gaps documented in items 56/62 and a completed review. `Not started`, `In progress` and `Blocked` must leave the completed date as `Not completed`; if item 58 says `More verification needed`, discovery status cannot be `Completed` or `Completed with gaps`. Never record the current clock time merely because the document was edited.
 
 ## Discovery host and prerequisite tools
 
-### 18. Operating System Name
+### 20. Operating System Name
 
-Use Windows (required for RecordSift); record the **Caption** output from the command below. This is the discovery host, not the application's supported OS (item 4).
+Use Windows (required for RecordSift); record the **Caption** output from the command below. This is the discovery host, not the application's supported OS (item 8).
 
 ```powershell
 Get-CimInstance Win32_OperatingSystem | Select-Object Caption, Version, BuildNumber, OSArchitecture
 ```
 
-**One OS command populates items 18–21.** Run it once, record four separate values, and do not repeat it for each heading.
+**One OS command populates items 20–23.** Run it once, record four separate values, and do not repeat it for each heading.
 
-### 19. Operating System Version
+### 21. Operating System Version
 
 From the same Windows OS command, record **Version** and nothing else.
 
-Use the output from the command in item 18.
+Use the output from the command in item 20.
 
-### 20. Operating System Build
+### 22. Operating System Build
 
 From the same Windows OS command, record **BuildNumber** only.
 
-Use the output from the command in item 18.
+Use the output from the command in item 20.
 
-### 21. Operating System Architecture
+### 23. Operating System Architecture
 
 From the same Windows OS command, record **OSArchitecture** only.
 
-Use the output from the command in item 18.
+Use the output from the command in item 20.
 
-### 22. PowerShell Version
+### 24. PowerShell Version
 
 Run the PowerShell version command below. Record only the complete version (e.g. `7.4.7`), not your username or environment details. Windows PowerShell 5.1 or modern PowerShell 7 may be used; if unavailable, follow [Microsoft's Windows installation guide](https://learn.microsoft.com/en-us/powershell/scripting/install/installing-powershell-on-windows).
 
@@ -136,7 +141,7 @@ Run the PowerShell version command below. Record only the complete version (e.g.
 $PSVersionTable.PSVersion.ToString()
 ```
 
-### 23. Git Version
+### 25. Git Version
 
 Run the Git version command below and record only the version number. `git switch` requires Git 2.23 or later. If missing, install [Git for Windows](https://git-scm.com/install/win) before cloning.
 
@@ -144,7 +149,7 @@ Run the Git version command below and record only the version number. `git switc
 git --version
 ```
 
-### 24. .NET SDK Inventory
+### 26. .NET SDK Inventory
 
 Run `dotnet --list-sdks` and add **one row for each installed SDK** with its version and installation path. If no `dotnet` CLI is installed, record the check as blocked; do not fabricate SDK rows. The .NET SDK is not necessarily required just to clone traditional projects. Install only a needed SDK from [Microsoft .NET downloads](https://dotnet.microsoft.com/en-us/download).
 
@@ -157,7 +162,7 @@ dotnet --list-sdks
 - **SDK Version:** One installed SDK version per row.
 - **Installation Path:** The installation directory returned by the SDK command.
 
-### 25. .NET Runtime Inventory
+### 27. .NET Runtime Inventory
 
 Run `dotnet --list-runtimes` and add one row per reported runtime family, version and installation path. The list of modern .NET runtimes does **not** establish installation of the .NET Framework 4.8 targeting pack.
 
@@ -171,7 +176,7 @@ dotnet --list-runtimes
 - **Runtime Version:** Its exact installed version.
 - **Installation Path:** The directory reported by the runtime command.
 
-### 26. MSBuild Version
+### 28. MSBuild Version
 
 Run `msbuild -version -nologo` from Visual Studio Developer PowerShell, or another command environment with MSBuild on PATH. Record the reported version. A missing PATH entry is not proof MSBuild is uninstalled; use Visual Studio's Developer PowerShell or `vswhere`. [Build Tools installation](https://visualstudio.microsoft.com/downloads/).
 
@@ -179,7 +184,7 @@ Run `msbuild -version -nologo` from Visual Studio Developer PowerShell, or anoth
 msbuild -version -nologo
 ```
 
-### 27. MSBuild Installation Source
+### 29. MSBuild Installation Source
 
 Identify the MSBuild installation source separately, such as `Visual Studio 2022 Enterprise` or the verified location of MSBuild.exe. If using `Get-Command msbuild`, the `Source` property identifies the executable path. Do not use the version number in this field.
 
@@ -187,7 +192,7 @@ Identify the MSBuild installation source separately, such as `Visual Studio 2022
 Get-Command msbuild -ErrorAction SilentlyContinue | Select-Object Source
 ```
 
-### 28. NuGet CLI Version
+### 30. NuGet CLI Version
 
 Run `nuget help` and record the version that the CLI prints. If NuGet is missing, follow [Microsoft's NuGet CLI installation guide](https://learn.microsoft.com/en-us/nuget/consume-packages/install-use-packages-nuget-cli). This is not the version of a NuGet package referenced by the application.
 
@@ -195,7 +200,7 @@ Run `nuget help` and record the version that the CLI prints. If NuGet is missing
 nuget help
 ```
 
-### 29. .NET Framework Targeting Pack Inventory
+### 31. .NET Framework Targeting Pack Inventory
 
 For traditional .NET Framework projects, check the applicable **reference assemblies / targeting pack**, not merely the presence of a runtime. For RecordSift check that the .NET Framework 4.8 reference assembly `mscorlib.dll` is present, rather than checking for an empty directory. Use the printed pack path as the table `Location` and the file-check result as `Installed`. Add one row per framework actually checked. If missing, see the [.NET Framework Developer Pack](https://dotnet.microsoft.com/en-us/download/dotnet-framework/net48).
 
@@ -213,7 +218,7 @@ Test-Path -LiteralPath $referenceAssembly
 - **Installed:** True or False based on the reference-assembly file check; this does not verify a working compiler or build.
 - **Location:** The exact path checked.
 
-### 30. Test Runner Inventory
+### 32. Test Runner Inventory
 
 Identify the actual test runner from test project manifests or CI definitions, then check its installed version when possible. Record one runner per row; the package's declared version is not necessarily the locally installed runner. For RecordSift the declared runner is `NUnit.ConsoleRunner 3.17.0` in the test `packages.config`.
 
@@ -225,11 +230,11 @@ Identify the actual test runner from test project manifests or CI definitions, t
 
 ## Source revision and checkout
 
-### 31. Discovery Folder
+### 33. Discovery Folder
 
-Choose an existing **parent directory** for the isolated discovery checkout and prepare a unique timestamped destination. Do **not** clone yet: select the source branch/tag (item 32) and pin its immutable commit SHA (item 33) **before** downloading or checking out source.
+Choose an existing **parent directory** for the isolated discovery checkout and prepare a unique timestamped destination. Do **not** clone yet: select the source branch/tag (item 34) and pin its immutable commit SHA (item 35) **before** downloading or checking out source.
 
-Run the following in a Windows PowerShell session that you will continue using for item 33:
+Run the following in a Windows PowerShell session that you will continue using for item 35:
 
 ```powershell
 $repository = 'RecordSift'
@@ -242,17 +247,17 @@ if (Test-Path -LiteralPath $destination) { throw 'Discovery destination already 
 $destination
 ```
 
-**Safety gate:** This creates only the parent folder. It does not overwrite, delete, reset or clone an existing repository. Record the destination in item 31; if it exists, choose a new unused name. Keep `$remoteUrl` and `$destination` in the same PowerShell session for item 33.
+**Safety gate:** This creates only the parent folder. It does not overwrite, delete, reset or clone an existing repository. Record the destination in item 33; if it exists, choose a new unused name. Keep `$remoteUrl` and `$destination` in the same PowerShell session for item 35.
 
-### 32. Selected Source Branch or Tag
+### 34. Selected Source Branch or Tag
 
-Record the exact branch or tag **chosen as the source**, for example `main`. This is a selected remote ref, not proof the final local checkout remains attached to that branch (see item 35). Confirm it against repository metadata before pinning the SHA.
+Record the exact branch or tag **chosen as the source**, for example `main`. This is a selected remote ref, not proof the final local checkout remains attached to that branch (see item 38). Confirm it against repository metadata before pinning the SHA.
 
-### 33. Source Commit SHA
+### 35. Source Commit SHA
 
-Choose and record a **full immutable commit SHA** for the selected source ref (item 32) before cloning. Obtain it from the repository host or a read-only remote-ref query; confirm that the SHA belongs to the intended repository/ref. For RecordSift, the previously selected source SHA is `1809d06c0fade59e4769d16e0f8eaf10fa426004`. Keep item 33 **SHA only**. In the adjacent, unnumbered **Source Committer Date (UTC)** field, record the pinned commit's Git *committer date* in UTC ISO 8601 (`YYYY-MM-DDTHH:MM:SSZ`). Read it from the **same exact SHA** through GitHub's commit metadata (before cloning) or the read-only Git command below (after checkout); retain the same evidence in item 52's separate source-provenance table. This timestamp is **not** the discovery date (item 17), author date, clone/checkout time, GitHub push time or release publication time. A Git committer date does not reliably establish when the revision was first created or pushed.
+Choose and record a **full immutable commit SHA** for the selected source ref (item 34) before cloning. Obtain it from the repository host or a read-only remote-ref query; confirm that the SHA belongs to the intended repository/ref. For RecordSift, the previously selected source SHA is `1809d06c0fade59e4769d16e0f8eaf10fa426004`. Keep item 35 **SHA only**. In the adjacent, unnumbered **Source Committer Date (UTC)** field, record the pinned commit's Git *committer date* in UTC ISO 8601 (`YYYY-MM-DDTHH:MM:SSZ`). Read it from the **same exact SHA** through GitHub's commit metadata (before cloning) or the read-only Git command below (after checkout); retain the same evidence in item 55's separate source-provenance table. This timestamp is **not** the discovery date (item 2), author date, clone/checkout time, GitHub push time or release publication time. A Git committer date does not reliably establish when the revision was first created or pushed.
 
-With the unique destination prepared in item 31, use `git clone --no-checkout` and detach at that exact SHA. The selected SHA must be available in the new clone. Execute these commands **in the same PowerShell session** as item 31:
+With the unique destination prepared in item 33, use `git clone --no-checkout` and detach at that exact SHA. The selected SHA must be available in the new clone. Execute these commands **in the same PowerShell session** as item 33:
 
 ```powershell
 $selectedCommit = '1809d06c0fade59e4769d16e0f8eaf10fa426004'
@@ -274,9 +279,13 @@ $sourceCommitterDateUtc = [DateTimeOffset]::Parse($rawCommitterDate).ToUniversal
 $sourceCommitterDateUtc
 ```
 
-**Safety gate:** Cloning creates a new folder and uses network access, but never modifies an existing checkout. On any failure, stop and inspect the partial destination without deleting or resetting it automatically. A successful detached checkout intentionally leaves item 35 = `True`. The read-only `git show` reports **commit metadata**, not the time the checkout happened; compare its SHA to the pinned source. If item 33 was populated from remote Git metadata before checkout, the UTC committer date may be recorded even while items 34–35 remain `Not checked`.
+**Safety gate:** Cloning creates a new folder and uses network access, but never modifies an existing checkout. On any failure, stop and inspect the partial destination without deleting or resetting it automatically. A successful detached checkout intentionally leaves item 38 = `True`. The read-only `git show` reports **commit metadata**, not the time the checkout happened; compare its SHA to the pinned source. If item 35 was populated from remote Git metadata before checkout, the UTC committer date may be recorded even while items 37–38 remain `Not checked`.
 
-### 34. Working Tree Clean
+### 36. Source Committer Date (UTC)
+
+Record the **Git committer timestamp** for the exact selected SHA from item 35, in UTC ISO 8601 (`YYYY-MM-DDTHH:MM:SSZ`). It can be retrieved from immutable commit metadata before cloning or from the read-only `git show -s --format='%cI' HEAD` in the preceding checkout procedure. Use `Not checked` if unavailable, and never present a commit's committer date as a first push, discovery start, checkout timestamp or release publication. Item 55 retains the source provenance.
+
+### 37. Working Tree Clean
 
 Run `git status --porcelain=v1 --untracked-files=all` **inside the cloned repository**. An empty result supports `True` for a clean working tree (tracked and untracked, excluding ignored files); any lines require review. Record only `True` or `False`. Do not run `git clean` or `git reset --hard`.
 
@@ -284,9 +293,9 @@ Run `git status --porcelain=v1 --untracked-files=all` **inside the cloned reposi
 git status --porcelain=v1 --untracked-files=all
 ```
 
-### 35. Detached HEAD
+### 38. Detached HEAD
 
-Run `git branch --show-current` in the selected checkout. A blank branch name after `git switch --detach` indicates a detached HEAD; record `True`. An attached branch name indicates `False`. The actual SHA from item 33 is still authoritative.
+Run `git branch --show-current` in the selected checkout. A blank branch name after `git switch --detach` indicates a detached HEAD; record `True`. An attached branch name indicates `False`. The actual SHA from item 35 is still authoritative.
 
 ```powershell
 git branch --show-current
@@ -294,7 +303,7 @@ git branch --show-current
 
 ## Solution and project inventory
 
-### 36. Solutions
+### 39. Solutions
 
 Enumerate tracked `.sln`, `.slnx` and `.slnf` solution files. Inspect each solution's format/header, **actual** solution configuration/platform combinations, project membership, each project's active configuration mapping and the build/skip mappings. Prefer **one row per solution**, grouping configurations and platforms **only when the actual combinations and membership/build differences remain unambiguous**. Do **not** infer a Cartesian product from separate configuration and platform lists: for example, `Debug, Release` and `Any CPU, x64` do not by themselves establish that all four combinations exist. Record the exact valid pairs and project-specific exceptions in the **Membership / Build Exclusions** column, or retain separate scoped rows if that is clearer. Distinguish `Build.0` source declarations from successful actual builds.
 
@@ -324,7 +333,7 @@ Get-Content -LiteralPath .\RecordSift.sln
 |---|---|---|---|---|---|---|
 | RecordSift.sln | .sln | 12.00 | 16.0.28701.123 | Debug, Release | Any CPU | All 10 projects mapped to build in both Debug and Release; no declared build exclusions |
 
-### 37. Projects
+### 40. Projects
 
 Enumerate tracked projects, including those outside the solution. Read each project XML to identify format, framework(s), output type, language version, platform, tools version/SDK, and **all** direct project references. Prefer **one row per project**. Use the short, unique project name in the first column, optionally linked to its project file; keep the repository-relative `.csproj` path in the last column. List multiple direct references together by project name, rather than duplicating every other property. Preserve conditional target frameworks, platforms, or other exceptions explicitly; split a project into multiple scoped rows only if a single row would lose a real distinction.
 
@@ -353,7 +362,7 @@ git ls-files "*.csproj" "*.fsproj" "*.vbproj"
 
 ## Project settings and evaluated values
 
-### 38. Compiler Settings
+### 41. Compiler Settings
 
 Inspect project XML `PropertyGroup` declarations. Pivot declared compiler properties into columns so **one project generally occupies one row**. Avoid one row per property/configuration. D/R means **Debug then Release**; use a single value only when the declaration is identical in both. `Not declared` is different from `false` or a tool-evaluated default. For other configurations/frameworks or exceptional property conditions, add clearly labeled columns/scoped values or rows without discarding differences.
 
@@ -365,7 +374,7 @@ For the current RecordSift projects, shared conditions are `'$(Configuration)|$(
 
 **How to populate each column (left to right):**
 
-- **Project:** Unique project name linked to its exact source project file, with its canonical path in item 37. Qualify duplicate names; for non-project consumers link the evidence source.
+- **Project:** Unique project name linked to its exact source project file, with its canonical path in item 40. Qualify duplicate names; for non-project consumers link the evidence source.
 - **Framework(s):** Target framework(s) within which the declarations apply.
 - **LangVersion:** Unconditional language-version declaration, or separately scoped values.
 - **DebugSymbols (D/R):** Exact declarations per configuration; `Not declared` if absent.
@@ -380,13 +389,13 @@ For the current RecordSift projects, shared conditions are `'$(Configuration)|$(
 |---|---|---|---|---|---|---|---|
 | [RecordSift.Domain](https://github.com/infoconex/RecordSift/blob/1809d06c0fade59e4769d16e0f8eaf10fa426004/src/RecordSift.Domain/RecordSift.Domain.csproj) | v4.8 | 7.3 | true / Not declared | full / pdbonly | false / true | DEBUG;TRACE / TRACE | None |
 
-### 39. Output and Validation Settings
+### 42. Output and Validation Settings
 
-Read source XML declarations for `OutputPath`, `WarningLevel`, `WarningsAsErrors`, `DocumentationFile` and additional validation settings. Represent **one project per row** using separate property columns. Use D/R pairs when declared values differ and **one value** when the same value is declared for both configurations. Keep exact paths, not assumed defaults. If a setting is absent, record `Not declared` rather than infer its evaluated value. Reuse the shared Debug/Release condition definitions from item 38; label exceptions explicitly.
+Read source XML declarations for `OutputPath`, `WarningLevel`, `WarningsAsErrors`, `DocumentationFile` and additional validation settings. Represent **one project per row** using separate property columns. Use D/R pairs when declared values differ and **one value** when the same value is declared for both configurations. Keep exact paths, not assumed defaults. If a setting is absent, record `Not declared` rather than infer its evaluated value. Reuse the shared Debug/Release condition definitions from item 41; label exceptions explicitly.
 
 **How to populate each column (left to right):**
 
-- **Project:** Unique project name linked to its exact source project file, with its canonical path in item 37. Qualify duplicate names; for non-project consumers link the evidence source.
+- **Project:** Unique project name linked to its exact source project file, with its canonical path in item 40. Qualify duplicate names; for non-project consumers link the evidence source.
 - **OutputPath (D/R):** Output directories for both configurations, in Debug/Release order.
 - **WarningLevel (D/R):** One value if identical, or an ordered pair.
 - **WarningsAsErrors (D/R):** Exact compiler warning identifiers or `Not declared`.
@@ -399,13 +408,13 @@ Read source XML declarations for `OutputPath`, `WarningLevel`, `WarningsAsErrors
 |---|---|---|---|---|---|
 | [RecordSift.Domain](https://github.com/infoconex/RecordSift/blob/1809d06c0fade59e4769d16e0f8eaf10fa426004/src/RecordSift.Domain/RecordSift.Domain.csproj) | `bin\Debug\` / `bin\Release\` | 4 | 1591 | `bin\Debug\RecordSift.Domain.xml` / `bin\Release\RecordSift.Domain.xml` | None |
 
-### 40. Project Metadata and Imports
+### 43. Project Metadata and Imports
 
-Inspect project-wide metadata (such as `Configuration`, `IsTestProject`, `FileAlignment` and `AppDesignerFolder`) and `Import` declarations. Use **one row per project**, with named metadata **as columns**, and link the project name to the canonical path recorded in item 37. Multiple imports can share one cell; preserve the actual paths and conditional scopes. Missing properties must be `Not declared`, not an assumed value. For `Configuration`, record the **declared fallback** only when the project source specifies a default for an otherwise empty `$(Configuration)`. Record the associated condition; do **not** claim it is the actual selected or evaluated configuration. For example, `<Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>` means **Configuration Fallback = `Debug`**, not an observed Debug build. Actual evaluated configurations belong in item 41, and executed build configurations in items 46–49. If imports declare properties or conditions beyond project XML, keep them distinct from source-local metadata.
+Inspect project-wide metadata (such as `Configuration`, `IsTestProject`, `FileAlignment` and `AppDesignerFolder`) and `Import` declarations. Use **one row per project**, with named metadata **as columns**, and link the project name to the canonical path recorded in item 40. Multiple imports can share one cell; preserve the actual paths and conditional scopes. Missing properties must be `Not declared`, not an assumed value. For `Configuration`, record the **declared fallback** only when the project source specifies a default for an otherwise empty `$(Configuration)`. Record the associated condition; do **not** claim it is the actual selected or evaluated configuration. For example, `<Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>` means **Configuration Fallback = `Debug`**, not an observed Debug build. Actual evaluated configurations belong in item 44, and executed build configurations in items 49–52. If imports declare properties or conditions beyond project XML, keep them distinct from source-local metadata.
 
 **How to populate each column (left to right):**
 
-- **Project:** Unique project name linked to its exact source project file, with its canonical path in item 37. Qualify duplicate names; for non-project consumers link the evidence source.
+- **Project:** Unique project name linked to its exact source project file, with its canonical path in item 40. Qualify duplicate names; for non-project consumers link the evidence source.
 - **Configuration Fallback:** Conditional fallback value from project source (for example `Debug` when `$(Configuration)` is empty), or `Not declared`. It is **not** the evaluated MSBuild `Configuration` or proof of a Debug build.
 - **IsTestProject:** Declared value, or `Not declared`.
 - **FileAlignment:** Declared value, or `Not declared`.
@@ -413,7 +422,7 @@ Inspect project-wide metadata (such as `Configuration`, `IsTestProject`, `FileAl
 - **Imports:** All relevant explicit imports; no invented implicit imports.
 - **Additional Metadata / Conditions:** Other observed declarations or exceptional scope.
 
-### 41. Evaluated MSBuild Properties
+### 44. Evaluated MSBuild Properties
 
 Read declared properties first. With **MSBuild 17.8 or later**, run the documented `-getProperty` query for each configuration/framework/platform that matters ([Microsoft documentation](https://learn.microsoft.com/en-us/visualstudio/msbuild/evaluate-items-and-properties)). Multiple property names can be included in one query. Use **one row per project** where possible, with property `name=value` pairs grouped under **explicit** configuration/framework/platform scopes. Retain a separate column for declared values, and cite the **actual command/output**. Split rows for different scopes only if grouping would obscure real value differences; never fabricate a value from source XML or a passing CI build.
 
@@ -426,7 +435,7 @@ The property-query option requires an appropriate MSBuild version. These are **e
 
 **How to populate each column (left to right):**
 
-- **Project:** Unique project name linked to its exact source project file, with its canonical path in item 37. Qualify duplicate names; for non-project consumers link the evidence source.
+- **Project:** Unique project name linked to its exact source project file, with its canonical path in item 40. Qualify duplicate names; for non-project consumers link the evidence source.
 - **Configuration / Framework / Platform:** Exact combination(s) actually evaluated; label each when grouped.
 - **Evaluated Properties (name=value):** Exact MSBuild output, scoped to its corresponding combination.
 - **Declared Properties for Comparison:** Exact source declarations, separately identified.
@@ -434,7 +443,7 @@ The property-query option requires an appropriate MSBuild version. These are **e
 
 ## Repository structure and dependencies
 
-### 42. Repository Directories
+### 45. Repository Directories
 
 Use `git ls-files` or an equivalent tracked-tree listing to identify meaningful source, test, documentation, script, packaging and workflow directories. One row per directory and its evidenced purpose. Do not invent directories.
 
@@ -447,7 +456,7 @@ git ls-files
 - **Directory:** Tracked directory path.
 - **Purpose:** Its demonstrated role.
 
-### 43. Repository Configuration
+### 46. Repository Configuration
 
 Inspect tracked `NuGet.Config` / `nuget.config`, `.editorconfig`, `global.json`, `Directory.Build.props/targets`, `Directory.Packages.props`, `.gitignore` and nested equivalents. Use **one row per observed setting** with its precise source and scope; distinguish a repository declaration from an **effective value** returned by tooling. Absence from the tracked tree does not rule out inherited user/machine settings, additional settings outside the checkout or implicit MSBuild imports.
 
@@ -486,13 +495,13 @@ The first command uses **only** the specified file; the second uses the applicab
 - **Import or Precedence:** Source context, `clear` effect, conditional version applicability, inherited precedence or `Not checked` when effective behavior is unverified.
 
 **RecordSift-specific scope:** The pinned repository `NuGet.Config` declares `packageSources` and `auditSources`, each with `<clear />` followed by a nuget.org URL. It does **not** declare `disabledPackageSources` or other optional NuGet configuration sections. This is source inspection, **not** proof of enabled feeds, tool defaults, authentication, local effective settings or feeds used during CI or a future local restore.
-### 44. NuGet Package Declarations
+### 47. NuGet Package Declarations
 
 Inspect every tracked `packages.config`, project-level `PackageReference`, and applicable `Directory.Packages.props` or other central version declarations. Record **direct, source-declared** dependencies by consuming project and exact declared version; do not invent package classifications. Do not combine versions, direct and transitive dependencies, or distinct conditional declarations as though they were equivalent. NuGet package restore or feed acquisition has **not** been established simply by finding a source declaration.
 
 **A. Packages by project — one row per consuming project.**
 
-- **Project:** Unique, linked project name referring to its exact source at the selected frozen commit; resolve its canonical `.csproj` path through item 37.
+- **Project:** Unique, linked project name referring to its exact source at the selected frozen commit; resolve its canonical `.csproj` path through item 40.
 - **Package Count:** Count of declared packages for that project in the inspected scope, with no duplicate counting across different version sources. Where conditions create variants, state the scope explicitly rather than reporting a misleading total.
 - **Declaration Source:** Direct links to the actual `packages.config`, project `PackageReference` and/or central package-version source. Preserve separate source/version links if different packages have distinct provenance.
 - **Configured Feed(s):** Eligible package sources declared in the relevant configuration files, or `Not checked`. Do not call these the observed origins of installed packages.
@@ -505,7 +514,7 @@ Inspect every tracked `packages.config`, project-level `PackageReference`, and a
 - **Declaration Source(s):** Direct source evidence for each consumer's declaration and version (including centrally managed versions). When many consumers share a version, maintain an unambiguous consumer-to-source mapping.
 - **Configured Feed(s):** Source-declared eligible feeds, or `Not checked`; preserve differences by consumer or scope rather than implying a single effective source.
 
-Preserve additional package declaration metadata such as `targetFramework`, `developmentDependency`, conditions, version overrides and applicable package-source mapping in an explicit metadata note or column if needed for fidelity. Do not infer package classifications solely from the consuming project. A package already listed in item 44 should not also appear in item 45 as a separate non-NuGet dependency.
+Preserve additional package declaration metadata such as `targetFramework`, `developmentDependency`, conditions, version overrides and applicable package-source mapping in an explicit metadata note or column if needed for fidelity. Do not infer package classifications solely from the consuming project. A package already listed in item 47 should not also appear in item 48 as a separate non-NuGet dependency.
 
 To inspect repository-configured sources with a compatible .NET SDK:
 
@@ -531,9 +540,9 @@ The `--configfile` option requires .NET 6 SDK or later. When only NuGet CLI is p
 In the complete inventory, `NUnit` also identifies the other four consuming test projects individually. The pinned `NUnit.ConsoleRunner` declaration additionally sets `developmentDependency=true`; that is a source attribute, **not** an inferred package-purpose classification.
 
 
-### 45. Non-NuGet Dependencies
+### 48. Non-NuGet Dependencies
 
-Identify source-declared dependencies **not managed as NuGet packages**, but distinguish ordinary .NET **framework assembly references** from **other non-NuGet dependencies**. Inspect project `Reference` / `HintPath`, `COMReference` / `COMFileReference`, imported project files, source-level native loading (`DllImport`, `LibraryImport`, and dynamic loads), configuration-driven integrations, externally hosted services and documented deployment/runtime prerequisites. Do not repeat project references from item 37 or NuGet dependencies from item 44 (even if a NuGet package is also represented by a `Reference` / `HintPath` in traditional project files).
+Identify source-declared dependencies **not managed as NuGet packages**, but distinguish ordinary .NET **framework assembly references** from **other non-NuGet dependencies**. Inspect project `Reference` / `HintPath`, `COMReference` / `COMFileReference`, imported project files, source-level native loading (`DllImport`, `LibraryImport`, and dynamic loads), configuration-driven integrations, externally hosted services and documented deployment/runtime prerequisites. Do not repeat project references from item 40 or NuGet dependencies from item 47 (even if a NuGet package is also represented by a `Reference` / `HintPath` in traditional project files).
 
 **A. Framework Assembly References**
 
@@ -545,7 +554,7 @@ Record native DLLs, COM components, locally supplied third-party DLLs, file- or 
 
 **How to populate the columns (left to right) in both tables:**
 
-- **Project:** Unique project name linked to its exact source project file, with its canonical path in item 37. Qualify duplicate names; for non-project consumers link the evidence source.
+- **Project:** Unique project name linked to its exact source project file, with its canonical path in item 40. Qualify duplicate names; for non-project consumers link the evidence source.
 - **Framework References / Dependencies:** Each distinct assembly/dependency name, grouped only without losing associated attributes.
 - **Type / Mechanism:** `Framework assembly reference` for A; the specific native, COM, file, service or other mechanism for B.
 - **Version / Identity:** Exact source-declared version/identity if any; otherwise `Not declared`.
@@ -565,7 +574,7 @@ Record native DLLs, COM components, locally supplied third-party DLLs, file- or 
 
 ## Restore, build, tests and delivery
 
-### 46. Operation Commands
+### 49. Operation Commands
 
 Inspect existing documentation, build scripts and CI workflows first. Record exact **configured** native commands and their affected project/configuration. For RecordSift these include `nuget restore`, `msbuild ... /t:Rebuild`, NUnit and existing compatibility scripts. Prefer manual execution of existing tools before creating wrappers. List a command here **before** choosing whether it is safe to execute.
 
@@ -578,9 +587,9 @@ Inspect existing documentation, build scripts and CI workflows first. Record exa
 - **Command or Workflow:** Exact existing command or CI workflow entry point.
 - **Source:** Source file documenting the command.
 
-### 47. Restore Outcomes
+### 50. Restore Outcomes
 
-Determine the appropriate native restore path based on project format: traditional `packages.config` may require `nuget restore`, while PackageReference projects may use SDK/MSBuild restore. Record the proposed exact command in item 46, inspect feeds/credentials/network/write effects, and get operator approval before execution. Report actual results only; cite existing CI runs separately from local checks.
+Determine the appropriate native restore path based on project format: traditional `packages.config` may require `nuget restore`, while PackageReference projects may use SDK/MSBuild restore. Record the proposed exact command in item 49, inspect feeds/credentials/network/write effects, and get operator approval before execution. Report actual results only; cite existing CI runs separately from local checks.
 
 ```powershell
 nuget restore .\RecordSift.sln -NonInteractive -PackagesDirectory packages -ConfigFile NuGet.Config
@@ -596,7 +605,7 @@ nuget restore .\RecordSift.sln -NonInteractive -PackagesDirectory packages -Conf
 - **Error or Note:** Observed diagnostic or Not applicable.
 - **Evidence:** Exact output or CI run proving the result.
 
-### 48. Build Outcomes
+### 51. Build Outcomes
 
 Review current build instructions and configured CI invocation. For RecordSift use Windows MSBuild with the same Release and Any CPU settings as CI. Builds write outputs; confirm the intended workspace and side effects with the operator first. Capture the actual build result and diagnostic counts if present, rather than claiming success from source declarations.
 
@@ -617,7 +626,7 @@ msbuild .\RecordSift.sln /m /t:Rebuild /p:Configuration=Release '/p:Platform=Any
 - **Error Count:** Observed error count or Not recorded.
 - **Output or Evidence:** Build output and/or CI evidence.
 
-### 49. Test Outcomes
+### 52. Test Outcomes
 
 Identify the test runner and **all intended test assemblies**. On RecordSift, a full suite spans five NUnit assemblies. After a successful appropriate build and operator approval, use the existing `scripts/run_tests.ps1` (or CI's runner command) and read the NUnit XML report. One row per executed assembly; do not substitute a previous run at another SHA.
 
@@ -645,7 +654,7 @@ Identify the test runner and **all intended test assemblies**. On RecordSift, a 
 |---|---|---|---|---|---|---|---|---|
 | <exact SHA> | RecordSift.Infrastructure.Csv.Tests | NUnit | 132 | 131 | 0 | 1 | Passed | <CI log or report URL> |
 
-### 50. CI Workflows
+### 53. CI Workflows
 
 Inspect all tracked `.github/workflows/*.yml` and `.yaml` files, including jobs, stages/steps, event triggers, branch/path filters, job `if` conditions, runner labels, matrix choices, `needs` dependencies, environment approvals and artifact/deployment actions. **Prefer one row per unique workflow + job/stage + command + runner + output/gate**, grouping event triggers only when the remaining attributes (including applicable conditions) are genuinely identical. Do **not** fold different jobs, runner operating systems, deployment steps, outputs or conditional execution into one row. In particular, `workflow_dispatch` is manual, and permission to trigger a workflow does not mean all jobs execute for every event.
 
@@ -666,7 +675,7 @@ Inspect the YAML source to establish the exact events and job/stage placement. T
 
 **Additional notes below the table:** List significant job `needs` dependencies, branch restrictions, conditional job/step execution, environment reviewer/approval requirements, provenance checks and publication stages. Do not infer a deployment from a `gh release view` command alone; verify if the same step includes `gh release create` and whether it is guarded by upstream successful jobs. Treat a one-time release-recovery workflow separately from the ordinary publication workflow; recovery may validate an already-published package without pushing another package.
 
-**Source versus observed execution:** A configured command, trigger, artifact upload or deployment step is **source-inspected configuration**, not proof of a successful run. Record actual workflow runs in item 51 and the evidence manifest with exact run ID, commit SHA, status and relevant logs; only those observations establish what ran.
+**Source versus observed execution:** A configured command, trigger, artifact upload or deployment step is **source-inspected configuration**, not proof of a successful run. Record actual workflow runs in item 54 and the evidence manifest with exact run ID, commit SHA, status and relevant logs; only those observations establish what ran.
 
 **Illustrative RecordSift examples from pinned source:**
 
@@ -678,7 +687,7 @@ Inspect the YAML source to establish the exact events and job/stage placement. T
 For the first example, the trigger list has branch filters in the workflow source. For the second, the `prepare` job requires `main`; the `publish` job needs `prepare`, and the protected environment requires owner approval before NuGet publication. Neither example, by itself, establishes that the workflow actually ran.
 
 
-### 51. CI Runs
+### 54. CI Runs
 
 Read actual GitHub Actions run records, including their full source SHA, conclusion, run URL and run date. One row per run. For the selected RecordSift SHA there are existing successful build/test, consumer and documentation workflows. Their outcomes are **CI evidence**, not evidence that the operator's Windows host is configured.
 
@@ -692,7 +701,7 @@ The run date is an intrinsic part of the external workflow record; it is **not**
 - **Outcome:** Recorded conclusion/status.
 - **Date:** Run date as part of the external CI record.
 
-### 52. Package and Release Artifacts
+### 55. Package and Release Artifacts
 
 Inspect the tracked package manifest, existing CI build and consumer verification evidence, the official NuGet registry and GitHub release/tag metadata **separately**. Never confuse a version declaration, an unpublished local CI package, and a publicly distributed artifact. Collect **one meaningful completion or snapshot date for each record**, not each internal phase of the release pipeline. Source, CI and published artifact evidence are distinct from operator-local commands; do not claim a new operator execution on the basis of existing GitHub Actions logs.
 
@@ -743,7 +752,7 @@ The output gives full SHA, committer ISO timestamp (potentially offset from UTC)
 - The published release tag and independently verified published package source refer to `2db5c86bc26010afcb83c2e455d2471d8c9340d6`, with committer date `2026-11-01T21:13:46Z`. Existing [reconciliation and public-feed CI](https://github.com/infoconex/RecordSift/actions/runs/41355904536) provide the package provenance evidence; this discovery has **not** independently downloaded the original package.
 
 The baseline's three artifact tables and the separate source-revision provenance table preserve these distinctions. Keep sensitive source/package credentials out of the evidence.
-### 53. Runtime and Deployment Requirements
+### 56. Runtime and Deployment Requirements
 
 Read consumer guidance, architecture and package manifests for OS, target frameworks, runtimes, dependencies and deployment constraints. One requirement per row with the environment where it applies; do not assume a requirement is installed on the operator's machine.
 
@@ -754,7 +763,7 @@ Read consumer guidance, architecture and package manifests for OS, target framew
 - **Target Environment:** Where the requirement applies.
 - **Source or Evidence:** Source that establishes the requirement.
 
-### 54. Compatibility Checks
+### 57. Compatibility Checks
 
 Identify existing compatibility gates (public API, assembly identity, XML documentation, package contents, vulnerability audit, consumer tests, resource identity, expected negative controls). A check is passed only when there is an actual result and matching source revision; unexecuted checks remain Not executed.
 
@@ -769,7 +778,7 @@ Identify existing compatibility gates (public API, assembly identity, XML docume
 
 ## Evidence and completion
 
-### 55. Executed Command Evidence
+### 58. Executed Command Evidence
 
 After executing a command, record its exact invocation, working directory, tool version, exit code, outcome and saved output in a row tied to a **baseline item number**. Use actual logs where available, redact secrets and retain failed output too. Do not present a planned command or an inspected CI YAML line as a locally executed command.
 
@@ -792,7 +801,7 @@ Do not claim the discovery operator executed CI commands when only GitHub workfl
 |---|---|---|---|---|---|---|---|
 | 34 | git status --porcelain=v1 --untracked-files=all | <checkout> | Git 2.47.0 | Repository | 0 | Passed | <saved console output> |
 
-### 56. Findings and Gaps
+### 59. Findings and Gaps
 
 Record each unresolved issue, source limitation, missing verification or cross-environment difference on its own row. Link its evidence and state one next check, rather than contaminating a simple value field with commentary.
 
@@ -803,13 +812,13 @@ Record each unresolved issue, source limitation, missing verification or cross-e
 - **Evidence:** Proof or precise gap source.
 - **Next Check:** Next verification action.
 
-### 57. Discovery Item Status
+### 60. Discovery Item Status
 
-Populate **one row for every numbered baseline item, 1–62**. Report what was checked through **three separate evidence channels**, rather than using an ambiguous single `Complete`/`Partial` status:
+Populate **one row for every numbered baseline item, 1–65**. Report what was checked through **three separate evidence channels**, rather than using an ambiguous single `Complete`/`Partial` status:
 
 - **Source Inspection:** Files at the selected frozen revision, repository host metadata, independent public artifact metadata and discovery documentation. `Verified` means the relevant source fact is corroborated, **not** that it was locally executed. `Partial` means only part of the relevant scope was inspected or effective behavior remains undetermined. Use `Not checked` when source verification was expected but not done; use `Not applicable` for items that are inherently local-only, CI-only or governance-only.
 - **Existing CI:** GitHub-hosted workflow runs and their specific logs for the correct commit. `Passed` means relevant executed checks passed, with linked run/commit evidence. `Verified` means CI records or provenance were inspected, without treating this as new operator execution. Use `Not checked` for relevant CI evidence not reviewed and `Not applicable` for items that do not require CI evidence. CI success **never** resolves local environment or checkout uncertainty.
-- **Operator Local:** Checks executed on the discovery operator's actual machine. Use `Passed` or `Failed` only with the precise command, exit code, working directory, tool version and saved output; `Not executed` if a required operator command has not been performed; `Not recorded` for missing identity or other operator-supplied metadata; `Not applicable` where no operator-local check is required for that particular discovery item. `Not applicable` is **not** a global approval and does not eliminate the deferred local checks in item 62.
+- **Operator Local:** Checks executed on the discovery operator's actual machine. Use `Passed` or `Failed` only with the precise command, exit code, working directory, tool version and saved output; `Not executed` if a required operator command has not been performed; `Not recorded` for missing identity or other operator-supplied metadata; `Not applicable` where no operator-local check is required for that particular discovery item. `Not applicable` is **not** a global approval and does not eliminate the deferred local checks in item 65.
 - **Evidence or Missing Information:** Preserve every existing EV reference and specific unresolved limitation. Cite exact commit/run provenance, link verified evidence, and clarify missing local work. Do not overwrite `Not executed` with an inferred outcome merely because source-declared operations or CI workflow definitions exist.
 
 **Example:**
@@ -821,7 +830,7 @@ Populate **one row for every numbered baseline item, 1–62**. Report what was c
 | 47 | Verified | Passed | Not executed | Existing CI restore passed at selected SHA; operator restore not run |
 | 49 | Verified | Passed | Not executed | Existing CI NUnit passed at selected SHA; operator tests not run |
 
-**How to use the status table:** A single item may be `Verified` under Source Inspection and `Not executed` under Operator Local without contradiction. When source declarations are sufficient, mark Operator Local `Not applicable`; when runtime or evaluated state is part of the item, retain `Not executed` until actual operator evidence is captured. For CI-only items, Source Inspection may be `Not applicable` while CI shows `Verified`. Preserve overall unresolved verification, review state (items 59–60), next action (61), and deferred checks (62).
+**How to use the status table:** A single item may be `Verified` under Source Inspection and `Not executed` under Operator Local without contradiction. When source declarations are sufficient, mark Operator Local `Not applicable`; when runtime or evaluated state is part of the item, retain `Not executed` until actual operator evidence is captured. For CI-only items, Source Inspection may be `Not applicable` while CI shows `Verified`. Preserve overall unresolved verification, review state (items 62–63), next action (61), and deferred checks (62).
 
 **How to populate each column (left to right):**
 
@@ -832,23 +841,23 @@ Populate **one row for every numbered baseline item, 1–62**. Report what was c
 - **Evidence or Missing Information:** Existing evidence IDs/links and exact outstanding checks, including whether any result was only CI-observed.
 
 
-### 58. Overall Baseline Disposition
+### 61. Overall Baseline Disposition
 
 Set one overall state such as `Complete`, `Complete with gaps` or `More verification needed` based on what has and has not actually been checked. Do not claim completion while required Windows preflight and checkout verification are outstanding.
 
-### 59. Reviewed By
+### 62. Reviewed By
 
 Record the reviewer who actually checked the baseline, or `Not reviewed`. This is not automatically the same person as the discovery operator.
 
-### 60. Review Date
+### 63. Review Date
 
 Record the actual baseline **review date** (`YYYY-MM-DD`), or `Not reviewed`. This is a governance date; it does not require evidence dates on every row.
 
-### 61. Next Action
+### 64. Next Action
 
 Name one concrete next action, for example `Run Windows preflight and verify source checkout`. Avoid a generic instruction such as `Continue`.
 
-### 62. Deferred Checks
+### 65. Deferred Checks
 
 Document intentionally omitted checks with reason and trigger for revisit, one row per check. For example: `Local Release build | Windows host not inventoried | After DISC host/checkout checks`; use baseline item numbers instead of outdated DISC phase identifiers.
 
@@ -860,7 +869,7 @@ Document intentionally omitted checks with reason and trigger for revisit, one r
 
 ## Completion and validation
 
-1. Confirm every baseline number 1–62 has either an observed value, applicable dataset rows, or a documented `Not checked`/`Not executed`/`Not applicable` disposition.
+1. Confirm every baseline number 1–65 has either an observed value, applicable dataset rows, or a documented `Not checked`/`Not executed`/`Not applicable` disposition.
 2. Verify the source revision, host, configuration, and provenance of every build/test/compatibility claim. A CI result must not be relabeled as a local run.
 3. Keep raw tool output and relevant CI links in the evidence manifest without copying secrets; don't add evidence dates to every entry.
 4. Review the recorded gaps and deferred checks. Leave modernization recommendations outside this factual baseline.

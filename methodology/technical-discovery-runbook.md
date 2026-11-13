@@ -1,6 +1,6 @@
 # .NET Technical Discovery — Step-by-Step Guide
 
-Follow these steps in order to document an existing .NET application.
+Copy the blank [baseline template](../templates/application-baseline.md) for the application you are evaluating. Use the steps below to determine each numbered field's value. **Write answers only in the copy, never in this guide or the original template.**
 
 Don't change the application or publish anything as part of discovery.
 

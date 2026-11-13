@@ -213,10 +213,23 @@ One row per project when possible. Group non-NuGet dependencies, preserving each
 
 ### 52. Package and Release Artifacts
 
+Record separately the source used for **discovery**, the source targeted by the **published Git tag**, and the source actually verified for the **published package**. Git committer timestamps are not source creation/push dates; publication timestamps are separate. Use full SHAs and UTC `YYYY-MM-DDTHH:MM:SSZ`; never infer package source from a release tag without package-specific evidence.
+
 | Artifact | Version | Attribute | Attribute Value | Release URL | Evidence |
 |---|---|---|---|---|---|
 |   |   |   |   |   |   |
 
+**Source revision provenance**
+
+| Source Context | Source Commit SHA | Committer Date (UTC) | Verification |
+|---|---|---|---|
+|   |   |   |   |
+
+**Publication timestamps**
+
+| Published Artifact | Published At (UTC) | Evidence |
+|---|---|---|
+|   |   |   |
 ### 53. Runtime and Deployment Requirements
 
 | Requirement | Type | Target Environment | Source or Evidence |

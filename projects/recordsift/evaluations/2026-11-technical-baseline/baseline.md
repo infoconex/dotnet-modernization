@@ -333,25 +333,57 @@
 
 | Directory | Purpose |
 |---|---|
-|   |   |
+| src/ | Production code |
+| tests/ | Automated tests and release consumer |
+| docs/ | Requirements, specifications and guides |
+| scripts/ | Build, test and validation utilities |
+| packaging/ | Package manifests |
+| .github/workflows/ | CI and release automation |
 
 ### 43. Repository Configuration
 
 | File or Mechanism | Present | Scope | Setting Name | Setting Value | Import or Precedence |
 |---|---|---|---|---|---|
-|   |   |   |   |   |   |
+| NuGet.Config | True | Repository | packageSources.nuget.org | https://api.nuget.org/v3/index.json | Repository override |
+| NuGet.Config | True | Repository | auditSources.nuget.org-audit | https://api.nuget.org/v3/index.json | Repository override |
+| .editorconfig | True | Repository | EditorConfig rules | See source file | Root |
+| .gitignore | True | Repository | Ignore rules | See source file | Root |
+| AGENTS.md | True | Repository | Agent instructions | See source file | Root |
+| .github/copilot-instructions.md | True | Repository | AI instructions | See source file | .github/ |
+| Directory.Build.props | False | Tracked source | Not applicable | Not applicable | Not evaluated |
+| Directory.Build.targets | False | Tracked source | Not applicable | Not applicable | Not evaluated |
+| Directory.Packages.props | False | Tracked source | Not applicable | Not applicable | Not evaluated |
+| global.json | False | Tracked source | Not applicable | Not applicable | Not evaluated |
 
 ### 44. NuGet Package Declarations
 
 | Project Path | Package ID | Declared Version | Declaration File | Configured Feed | Purpose |
 |---|---|---|---|---|---|
-|   |   |   |   |   |   |
+| src/RecordSift.Infrastructure.Csv | CsvHelper | 33.1.0 | src/RecordSift.Infrastructure.Csv/packages.config | nuget.org | Production |
+| src/RecordSift.Infrastructure.Csv | Microsoft.Bcl.AsyncInterfaces | 8.0.0 | src/RecordSift.Infrastructure.Csv/packages.config | nuget.org | Production |
+| src/RecordSift.Infrastructure.Csv | Microsoft.Bcl.HashCode | 1.1.1 | src/RecordSift.Infrastructure.Csv/packages.config | nuget.org | Production |
+| src/RecordSift.Infrastructure.Csv | Microsoft.CSharp | 4.7.0 | src/RecordSift.Infrastructure.Csv/packages.config | nuget.org | Production |
+| src/RecordSift.Infrastructure.Csv | System.Memory | 4.5.5 | src/RecordSift.Infrastructure.Csv/packages.config | nuget.org | Production |
+| src/RecordSift.Infrastructure.Csv | System.Buffers | 4.5.1 | src/RecordSift.Infrastructure.Csv/packages.config | nuget.org | Production |
+| src/RecordSift.Infrastructure.Csv | System.Numerics.Vectors | 4.5.0 | src/RecordSift.Infrastructure.Csv/packages.config | nuget.org | Production |
+| src/RecordSift.Infrastructure.Csv | System.Runtime.CompilerServices.Unsafe | 6.0.0 | src/RecordSift.Infrastructure.Csv/packages.config | nuget.org | Production |
+| src/RecordSift.Infrastructure.Csv | System.Threading.Tasks.Extensions | 4.5.4 | src/RecordSift.Infrastructure.Csv/packages.config | nuget.org | Production |
+| src/RecordSift.Infrastructure.Xlsx | ExcelDataReader | 3.9.0 | src/RecordSift.Infrastructure.Xlsx/packages.config | nuget.org | Production |
+| src/RecordSift.Infrastructure.Xlsx | System.ValueTuple | 4.5.0 | src/RecordSift.Infrastructure.Xlsx/packages.config | nuget.org | Production |
+| tests/RecordSift.Application.Tests | NUnit | 3.14.0 | tests/RecordSift.Application.Tests/packages.config | nuget.org | Test framework |
+| tests/RecordSift.Domain.Tests | NUnit | 3.14.0 | tests/RecordSift.Domain.Tests/packages.config | nuget.org | Test framework |
+| tests/RecordSift.Domain.Tests | NUnit.ConsoleRunner | 3.17.0 | tests/RecordSift.Domain.Tests/packages.config | nuget.org | Test runner |
+| tests/RecordSift.Infrastructure.Csv.Tests | NUnit | 3.14.0 | tests/RecordSift.Infrastructure.Csv.Tests/packages.config | nuget.org | Test framework |
+| tests/RecordSift.Infrastructure.Reporting.Tests | NUnit | 3.14.0 | tests/RecordSift.Infrastructure.Reporting.Tests/packages.config | nuget.org | Test framework |
+| tests/RecordSift.Infrastructure.Xlsx.Tests | NUnit | 3.14.0 | tests/RecordSift.Infrastructure.Xlsx.Tests/packages.config | nuget.org | Test framework |
 
 ### 45. Other External Dependencies
 
 | Consumer | Dependency | Type or Mechanism | Declaration Source | Version or Identity | Resolution or Location |
 |---|---|---|---|---|---|
-|   |   |   |   |   |   |
+| RecordSift production projects | .NET Framework assemblies | Framework Reference | 10 project files | net48 | Framework resolved by MSBuild (CI) |
+| RecordSift.Infrastructure.Xlsx | System.IO.Compression | Framework Reference | src/RecordSift.Infrastructure.Xlsx/RecordSift.Infrastructure.Xlsx.csproj | net48 | Framework resolved by MSBuild (CI) |
+| RecordSift.Infrastructure.Xlsx | System.Data | Framework Reference | src/RecordSift.Infrastructure.Xlsx/RecordSift.Infrastructure.Xlsx.csproj | net48 | Framework resolved by MSBuild (CI) |
 
 ## Restore, build, tests and delivery
 

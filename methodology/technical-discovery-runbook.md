@@ -469,7 +469,7 @@ The property-query option requires an appropriate MSBuild version. These are **e
 
 ### 45. Repository Directories
 
-Use `git ls-files` or an equivalent tracked-tree listing to identify meaningful source, test, documentation, script, packaging and workflow directories. One row per directory and its evidenced purpose. Do not invent directories.
+Use `git ls-files` or an equivalent tracked-tree listing to identify meaningful source, test, documentation, script, packaging and workflow directories. One row per directory and its evidenced purpose. Do not invent directories. A top-level file-count grouping is a useful first pass but does not enumerate nested directories or root-level files if those are filtered out. If `.github/workflows/` is grouped separately, retain other `.github/` files as their own category, then inspect their paths before stating a specific purpose; do not label every `.github/` file as a workflow.
 
 ```powershell
 git ls-files

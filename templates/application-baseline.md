@@ -161,7 +161,7 @@ Record **declared source settings** in the table, including NuGet `clear` direct
 
 ### 44. NuGet Package Declarations
 
-Capture each declared package **ID and exact version** and all consuming projects without adding generic usage/purpose classifications. Use the project inventory in item 37 for canonical project paths; link each unique project name to its source here. Keep project-level counts in A and one row per distinct package ID/version in B. Preserve package-specific declaration attributes (for example `developmentDependency`, target framework or conditions) in a short note or additional evidence column if material. Separate source-declared eligible feeds from effective package acquisition, which requires independent verification.
+Capture each declared package **ID and exact version** and all consuming projects without adding inferred package classifications. Use the project inventory in item 37 for canonical project paths; link each unique project name to its source here. Keep project-level counts in A and one row per distinct package ID/version in B. Preserve package-specific declaration attributes (for example `developmentDependency`, target framework or conditions) in a short note or additional evidence column if material. Separate source-declared eligible feeds from effective package acquisition, which requires independent verification.
 
 **A. Packages by project**
 

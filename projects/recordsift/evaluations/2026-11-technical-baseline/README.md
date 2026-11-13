@@ -5,7 +5,7 @@
 **Selected source ref:** `main`, observed 2026-11-12  
 **Frozen source commit:** [`1809d06c0fade59e4769d16e0f8eaf10fa426004`](https://github.com/infoconex/RecordSift/tree/1809d06c0fade59e4769d16e0f8eaf10fa426004)  
 **Discovery opened:** 2026-11-12  
-**Required evaluation host:** **Windows** (RecordSift is Windows-only; host version/build and architecture not yet verified)  
+**Required operator evaluation host:** **Windows** (RecordSift is Windows-only; operator-local OS/version/architecture remain unverified; separate Windows CI host inventory is recorded under EV-016)  
 **Runbook:** [Technical discovery](../../../../methodology/technical-discovery-runbook.md)  
 **Verification approach:** User executes supported native commands one at a time; assistant records facts, limitations, results and article-relevant findings.
 
@@ -17,7 +17,9 @@
 
 **Proposed scope for owner-led manual execution:** source identity; solution/project and MSBuild configuration; central settings; NuGet dependencies; toolchain inventory; existing build/test entry points; approved manual restore/build/test verification; CI, runtime, package, and compatibility evidence; synthesis of a dated baseline.
 
-**Authorized preparation:** documentation drafting and read-only inspection of publicly available repository contents. The user requested a hands-on, native-command-first walkthrough and will operate local commands. **Before state-changing execution** (restore/build/test, CI triggers, package operations), confirm the specific environment, side effects and current step with the operator. No new experiment, workflow, application edit, release, deployment, branch merge or publication is authorized by this document.
+**Authorized preparation:** documentation drafting and read-only inspection of publicly available repository contents. The user requested a hands-on, native-command-first walkthrough and will operate local commands. **Before state-changing execution** (restore/build/test, CI triggers, package operations), confirm the specific environment, side effects and current step with the operator. No application edit, release, deployment, branch merge or publication is authorized by this document. The separately approved read-only research workflow is limited to CI environment inspection; it does not authorize restore, build or test execution on the operator's machine.
+
+**New CI-only host evidence:** A [2026-11-13 Windows research inventory](https://github.com/infoconex/RecordSift/actions/runs/43514868868) at the selected immutable application SHA inspected the runner's OS, PowerShell, Git, complete .NET SDK/runtime listings, MSBuild, NuGet CLI and .NET Framework 4.8 targeting reference files. Item 20–31 values and EV-016 in the evidence manifest are **CI observations**, not operator-local verification. The isolated research workflow remains in an unmerged draft PR and the discovery is still `In progress`.
 
 **Existing evidence:** The [2026-11 pre-SDK evaluation](../2026-11-pre-sdk/README.md) covers an earlier immutable RecordSift commit and a different modernization question. It may guide discovery, but old test/build outcomes cannot be relabeled as results from this frozen source revision.
 

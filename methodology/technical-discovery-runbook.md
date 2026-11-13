@@ -229,14 +229,15 @@ $discoveryRoot = Join-Path (Join-Path $HOME 'source') 'discoveries'
 New-Item -ItemType Directory -Path $discoveryRoot -Force | Out-Null
 $discoveryFolder = "$repository-discovery-$(Get-Date -Format 'yyyy-MM-dd-HHmmss')"
 $destination = Join-Path $discoveryRoot $discoveryFolder
-Test-Path -LiteralPath $destination
-# Continue only if False. Do not overwrite an existing destination.
+$alreadyExists = Test-Path -LiteralPath $destination
+$alreadyExists
+if ($alreadyExists) { throw 'Discovery destination already exists; generate a new timestamp and stop.' }
 git clone --no-checkout $remoteUrl $destination
 if ($LASTEXITCODE -ne 0) { throw 'Git clone failed. Stop before proceeding.' }
 Set-Location -LiteralPath $destination
 ```
 
-**Safety gate:** If `Test-Path` returns `True`, stop and generate a different timestamp; never clean/delete an existing folder. This clone creates files and requires network access. On failure, stop before items 33–35.
+**Safety gate:** The command now **throws before cloning** if the destination exists. Generate a different timestamp rather than cleaning/deleting an existing folder. This clone creates files and requires network access. On failure, stop before items 33–35.
 
 ### 32. Selected Source Branch or Tag
 

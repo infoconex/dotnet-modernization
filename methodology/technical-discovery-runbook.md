@@ -1,352 +1,395 @@
 # .NET Technical Discovery — Step-by-Step Guide
 
-Copy the blank [baseline template](../templates/application-baseline.md) for the application you are evaluating. Use the steps below to determine each numbered field's value. **Write answers only in the copy, never in this guide or the original template.**
+**Purpose:** Explain how to evaluate each numbered field in the [blank discovery baseline](../templates/application-baseline.md). Copy that baseline before starting, then enter actual findings **only in the copy**. Never record results in this guide.
 
-Don't change the application or publish anything as part of discovery.
+A number identifies a **single field** or a **dataset/table**. For a numbered table, its headings define the columns and **each row is one record**. Add rows when a project has multiple frameworks, configurations, references, or other instances. Keep source-declared values separate from observed, evaluated and executed results. Use `Not checked`, `Not executed` or `Not applicable` when warranted; don't guess. Retain evidence and redact personal paths, tokens and credentials.
 
-## DISC-001 — Check tools and get a clean copy of the source
+These commands are Windows PowerShell examples. Use the host appropriate to the application. **RecordSift requires a Windows host, not WSL, Linux or macOS.** Do not change application source or publish anything during discovery.
 
-### Record discovery details
+## DISC-001 — Record discovery details, check tools, and create a clean source checkout
 
-1. **Discovery By:** Enter the name of the person performing the discovery (field 1).
-2. **Discovery Date:** Enter the date discovery is being performed (`YYYY-MM-DD`) (field 2).
+### Identify the discovery
 
-### Check prerequisites
+- **1. Discovery By:** Enter the name of the person doing the discovery.
+- **2. Discovery Date:** Enter the local date of the discovery in `YYYY-MM-DD` format.
+- **3. Discovery Folder:** Record the actual timestamped checkout folder created below, not a planned path.
 
-- Run each check separately. Enter its result **only in the numbered field of your copied [baseline](../templates/application-baseline.md)**. Do not write results in this guide.
-- Use a computer supported by the application. **RecordSift requires Windows.**
+### Check the Windows host
 
-**4–7. Windows — name, version, build, architecture (required for RecordSift)**
+**4. Operating System Name; 5. Operating System Version; 6. Operating System Build; 7. Operating System Architecture**
+
+Run this built-in Windows command:
 
 ```powershell
 Get-CimInstance Win32_OperatingSystem | Select-Object Caption, Version, BuildNumber, OSArchitecture
 ```
 
-- If not running Windows, use a Windows computer before continuing.
-- Record the OS name (**4**), version (**5**), build (**6**) and architecture (**7**) separately.
+- Set **4** from `Caption`, **5** from `Version`, **6** from `BuildNumber`, and **7** from `OSArchitecture`. Each field gets only its own value.
+- If the application requires Windows and you're not on Windows, switch to a supported Windows host before proceeding.
 
-**8. PowerShell Version — Windows PowerShell 5.1 or PowerShell 7 required**
+**8. PowerShell Version — Windows PowerShell 5.1 or PowerShell 7**
 
 ```powershell
 $PSVersionTable.PSVersion
 ```
 
-- If unavailable, use Windows PowerShell or [install PowerShell for Windows](https://learn.microsoft.com/en-us/powershell/scripting/install/installing-powershell-on-windows).
-- Record the version shown.
+- Enter the version in **8**. If PowerShell isn't available, see [Microsoft's installation instructions](https://learn.microsoft.com/en-us/powershell/scripting/install/installing-powershell-on-windows).
 
-**9. Git Version — required; minimum version 2.23**
+**9. Git Version — required; minimum 2.23 for `git switch`**
 
 ```powershell
 git --version
 ```
 
-- If missing or older than 2.23, [install Git for Windows](https://git-scm.com/install/win), reopen PowerShell, and run the command again.
-- Record the installed version. Git 2.23+ supports `git switch`, which we'll use below.
+- Enter the reported version in **9**. If missing or too old, [install Git for Windows](https://git-scm.com/install/win), reopen PowerShell and repeat this check. Stop before cloning if Git is unavailable.
 
-**10–11. .NET SDK Version and .NET Runtime Version — optional for checkout**
+**10. .NET SDK Inventory; 11. .NET Runtime Inventory — not required merely to clone**
 
 ```powershell
 dotnet --info
 ```
 
-- If missing and needed for a later step, [install the appropriate .NET SDK](https://dotnet.microsoft.com/en-us/download).
-- Record installed SDK versions (**10**) and runtime versions (**11**) separately. Repeat for each version. An SDK alone doesn't provide .NET Framework targeting packs.
+- Check whether the SDK is available. DISC-004 uses dedicated commands to fill the **10** and **11** tables. If absent and needed later, [install the appropriate .NET SDK](https://dotnet.microsoft.com/en-us/download). No particular modern SDK version is assumed for all legacy projects.
 
-**12–13. MSBuild Version and MSBuild Installation Source — required for applicable builds**
+**12. MSBuild Version; 13. MSBuild Installation Source — needed for supported builds**
 
 ```powershell
 msbuild -version -nologo
 ```
 
-- If not found, first try **Visual Studio Developer PowerShell**. If still unavailable and needed, [install Visual Studio Build Tools](https://visualstudio.microsoft.com/downloads/) with the required .NET components.
-- Record MSBuild version (**12**) separately from its installation source (**13**). The optional `-getProperty` command in DISC-005 requires MSBuild 17.8+.
+- Enter the version in **12** and the location/product supplying MSBuild in **13**. If not found on PATH, try Visual Studio Developer PowerShell before concluding it is uninstalled. If required, obtain [Visual Studio Build Tools](https://visualstudio.microsoft.com/downloads/) with the appropriate .NET Framework components.
 
-**14. NuGet CLI Version — required for some restores, including RecordSift**
+**14. NuGet CLI Version — needed for some restores, including RecordSift**
 
 ```powershell
 nuget help
 ```
 
-- If unavailable and needed for restore, [install the NuGet CLI](https://learn.microsoft.com/en-us/nuget/consume-packages/install-use-packages-nuget-cli).
-- Record the version shown. No universal minimum version is assumed here.
+- Enter the reported version in **14**. If not found and needed, follow the [NuGet CLI installation guide](https://learn.microsoft.com/en-us/nuget/consume-packages/install-use-packages-nuget-cli).
 
-**15–16. .NET Framework 4.8 Targeting Pack Version and Installed — required for RecordSift build**
+**15. .NET Framework Targeting Pack Inventory — applicable to traditional .NET Framework builds**
 
 ```powershell
 Test-Path "${env:ProgramFiles(x86)}\Reference Assemblies\Microsoft\Framework\.NETFramework\v4.8"
 ```
 
-- If `False`, check the installed Visual Studio components or [install the .NET Framework 4.8 Developer Pack](https://dotnet.microsoft.com/en-us/download/dotnet-framework/net48).
-- Set **15** to `.NET Framework 4.8` and **16** to the actual `True`/`False` directory result. A directory check doesn't prove the build succeeds.
+- For RecordSift, add a row with `Framework Version` = `.NET Framework 4.8`, `Installed` = the actual `True` or `False` result, and `Location` = the path checked. Repeat for any other required targeting packs.
+- If missing, check Visual Studio components or the [.NET Framework 4.8 Developer Pack](https://dotnet.microsoft.com/en-us/download/dotnet-framework/net48).
+- A directory existing does not prove that an application builds.
 
-- **To start cloning:** Windows (for RecordSift), PowerShell, Git, internet access, and a writable folder are required.
-- **Before restore, build, or tests:** resolve any other tools the application needs. Don't install optional tools just to complete this checklist.
-- **17–18** (test runner) is completed later in DISC-010 if it isn't known now.
+**16. Test Runner Inventory** is populated after identifying the actual runners at DISC-010. Its columns are `Runner Name`, `Runner Version` and `Source or Location`; create one row per runner.
 
-### Create a dated discovery folder
+### Select and isolate the source
 
-**Baseline fields:** **3** (Discovery Folder), **19** (Selected Source Branch or Tag), **29** (HTTPS Clone URL). Complete fields **1** and **2** from the discovery information above.
+- **17. HTTPS Clone URL:** Record the repository's actual HTTPS clone address.
+- **18. Selected Source Branch or Tag:** Record the branch/tag used when choosing the snapshot, if applicable.
+- **19. Source Commit SHA:** Record the full immutable SHA you actually checked out.
+- **20. Working Tree Clean:** Record whether `git status` shows tracked or untracked changes.
+- **21. Detached HEAD:** Record whether the checkout is detached.
+- **22. Repository Default Branch:** Record the default branch shown by the repository host, not an assumption based on your checkout.
 
-- Use a **new folder** for each discovery run. The name includes the repository, `discovery`, and a local date/time stamp.
-- Replace `REPOSITORY` and the example URL with the real application details.
-- Run these PowerShell commands one at a time:
+Create a **new timestamped folder** with `discovery` in the name, avoiding any existing directory. Replace the example repository and URL first. Run each command individually:
 
 ```powershell
 $repository = 'REPOSITORY'
+```
+
+```powershell
 $remoteUrl = 'https://github.com/OWNER/REPOSITORY.git'
+```
+
+```powershell
 $discoveryRoot = Join-Path (Join-Path $HOME 'source') 'discoveries'
+```
+
+```powershell
 New-Item -ItemType Directory -Path $discoveryRoot -Force
+```
+
+```powershell
 $discoveryFolder = "$($repository)-discovery-$(Get-Date -Format 'yyyy-MM-dd-HHmmss')"
+```
+
+```powershell
 $destination = Join-Path $discoveryRoot $discoveryFolder
+```
+
+```powershell
 Test-Path -LiteralPath $destination
 ```
 
-- **Continue only if `Test-Path` returns `False`.** If the folder exists, choose a new timestamp. Never delete an existing checkout to make room.
-- Clone the repository and select the **exact commit** chosen for discovery, not a moving branch:
+**Continue only if the result is `False`**. Choose a new timestamp if the destination already exists; never delete, reset or overwrite another checkout.
 
 ```powershell
 git clone --no-checkout $remoteUrl $destination
+```
+
+```powershell
 Set-Location -LiteralPath $destination
+```
+
+```powershell
 git switch --detach FULL_COMMIT_SHA
 ```
 
-- Run each command separately. Stop if the clone or checkout fails.
-- The download creates a new local repository and the checkout creates its source files. Neither changes the remote repository.
-- If you're using an existing checkout instead, inspect it before changing branches. Don't reset or clean it.
+Replace `FULL_COMMIT_SHA` with the selected immutable commit. Stop on errors. A fresh checkout does not mean SDK installations or caches are clean.
 
-### Confirm the checkout
+### Verify what was actually checked out
 
-**Fields to fill:** **20** (actual full source SHA), **21** (working-tree clean?), **22** (detached HEAD?), **31** (default branch when known), **160–167** (actual command results when captured).
-
-Run these from inside the repository:
+Run each command from inside the checkout:
 
 ```powershell
 git rev-parse --show-toplevel
+```
+
+```powershell
 git rev-parse HEAD
+```
+
+```powershell
 git branch --show-current
+```
+
+```powershell
 git status --porcelain=v1 --untracked-files=all
+```
+
+```powershell
 git remote get-url origin
 ```
 
-- Check that `HEAD` matches the intended full commit SHA.
-- A blank branch name is normal for a detached checkout.
-- A blank status means no tracked changes or untracked files were reported. It doesn't check ignored build outputs.
-- Record actual values in the report using their field numbers. Do not share passwords, tokens or private paths.
-- If the commit differs or files are unexpectedly changed, stop and investigate.
-- A clean checkout doesn't mean the computer's SDKs, NuGet cache, or build tools are clean; we'll check those later.
+- Confirm that `HEAD` matches **19**. A blank branch name indicates a detached checkout for **21**; blank porcelain status supports a clean working tree for **20** (but does not cover ignored files).
+- Use the actual folder for **3** and remote URL for **17**. Record failures or nonstandard states rather than assuming success.
+- If working in an existing checkout instead, inspect it first; do **not** reset or clean it.
 
-## DISC-002 — List solutions and projects
+## DISC-002 — Inventory the application, solutions and projects
 
-- From the repository root, list the tracked solution and project files:
+- Fill application identity fields: **25. Application Name**, **26. Application Purpose**, **27. Application Type**, **28. Repository Visibility**, **29. SSH Clone URL** (if used), **30. License**, and **31. Supported Operating Systems**. Use the README, repository metadata and source—not guesses.
+- For application version concepts, keep **32. Published Application Version**, **33. Published Package Version**, **34. Published Release URL**, **35. Published Package URL**, **36. Source Manifest Version**, **37. Assembly Version**, and **38. File Version** separate. Record the source of each.
+- **39. Consumers and Entry Points** is a table: `Consumer or Entry Point` names the executable, library API, service or consumer; `Type` classifies it; `Source or Evidence` links to the declaration, documentation or observed usage. One row per identified entry point/consumer.
+
+List tracked solution and project files:
 
 ```powershell
 git ls-files "*.sln" "*.slnx" "*.slnf" "*.csproj" "*.fsproj" "*.vbproj"
 ```
 
-- For each solution, use the .NET SDK **if available and compatible**:
+Where an installed SDK supports the solution, list its members:
 
 ```powershell
 dotnet sln .\path\to\solution.sln list
 ```
 
-- Replace the example path with a real solution path. If the SDK can't read the solution, open the solution file instead.
-- **Save:** solutions, projects inside each solution, and projects outside any solution. Note project roles such as application, library, or tests.
-- A solution filter may list only part of the solution; don't treat it as a complete inventory.
-- Fill **25–37** (application and repository details), **43–50** (one row per solution), and **51–52** (project paths and roles).
+**40. Solutions — one row per solution and meaningful configuration/platform combination.**
 
-- **Report fields:** 25–37, 43–50, 51–52. Add the findings directly to the copied baseline.
+Columns:
+- `Solution Path`: tracked relative path to the solution
+- `Format`: `.sln`, `.slnx` or relevant filter format
+- `Format Version` and `Declared IDE Version`: values declared by the solution, not locally installed IDE versions
+- `Configuration` and `Platform`: solution-level choices, e.g. Debug and Any CPU
+- `Membership / Build Exclusions`: projects included, excluded, or mapped differently by that combination
 
-## DISC-003 — Check project types and target frameworks
+**41. Projects — one row per project and applicable target framework.**
 
-- Open each project file (`.csproj`, `.fsproj`, or `.vbproj`).
-- Check whether it uses an SDK declaration or traditional MSBuild imports.
-- Look for `TargetFramework`, `TargetFrameworks`, or `TargetFrameworkVersion`.
-- Note project references, output type, language version, and configuration-specific settings.
-- **Save:** each project's path, project type, declared framework(s), and important differences.
-- An SDK-style project can still target .NET Framework. Don't guess settings that aren't declared.
-- Fill **38–42** (versions and consumers), **53–60** (project details), and **61–68, 69–74, 75–82** (source-declared settings, only where applicable).
+Columns:
+- `Project Path`: repository-relative project file, including projects outside solutions
+- `Role`: production, test, tool or other evidenced purpose
+- `Project Format`: SDK-style or traditional
+- `Target Framework`: declared framework or one framework per row for multitargeting
+- `Language Version`: declared language version, or note that it is not declared
+- `Output Type`: library, executable, etc.
+- `MSBuild Platform`: the MSBuild `Platform` value, distinct from processor target
+- `SDK or ToolsVersion`: whichever project mechanism is declared
+- `Project References`: direct references; use additional rows or a referenced-path list if necessary, without confusing direct and transitive dependencies
 
-- **Report fields:** 38–42, 53–60, 61–68, 69–74, 75–82. Add the findings directly to the copied baseline.
+*Illustrative project row only—not a RecordSift finding:*
 
-## DISC-004 — Record installed build tools
+| Project Path | Role | Project Format | Target Framework | Language Version | Output Type | MSBuild Platform | SDK or ToolsVersion | Project References |
+|---|---|---|---|---|---|---|---|---|
+| `src/Example.Core/Example.Core.csproj` | Library | Traditional | `net48` | 7.3 | Library | AnyCPU | ToolsVersion 15.0 | None |
 
-- Use the results from DISC-001. Check any tool that wasn't fully identified.
-- Run each command separately and enter the output in the indicated baseline field.
+A solution listing is not proof that every project was built, and source paths alone do not establish the effective target framework.
 
-**.NET SDKs:**
+## DISC-003 — Read project declarations and conditional settings
+
+- Inspect each `.csproj`, `.fsproj` or `.vbproj`. Determine SDK-style versus traditional imports, `TargetFramework` / `TargetFrameworks` / `TargetFrameworkVersion`, project references and conditional values.
+- Complete and refine **41. Projects** based on actual declarations. An SDK-style project can still target .NET Framework.
+
+**42. Compiler Settings** — one row per project, configuration, framework, and property. `Project Path` identifies the file; `Configuration` and `Framework` identify the context; `Property` could be `DebugType`, `Optimize` or `DefineConstants`; `Declared Value` gives the source declaration; `Condition` records the MSBuild condition.
+
+**43. Output and Validation Settings** — `Project Path` and `Configuration` identify the scope; `Property` names settings such as `OutputPath`, `WarningLevel`, `TreatWarningsAsErrors` or `DocumentationFile`; `Declared Value` and `Condition` identify the declaration and when it applies.
+
+**44. Project Metadata and Imports** — `Project Path` identifies the project; `Metadata or Import Name` names `IsTestProject`, `FileAlignment`, `AppDesignerFolder` or an imported props/targets file; `Declared Value` records the value/path; `Source File` shows where it was declared.
+
+Use one record per property rather than packing several unrelated settings into a cell. Keep source declarations distinct from the evaluated values in DISC-005.
+
+## DISC-004 — Complete the toolchain inventory
+
+Run one native command at a time. Use earlier prerequisite results rather than repeating checks needlessly.
+
+**10. .NET SDK Inventory**
 
 ```powershell
 dotnet --list-sdks
 ```
 
-- Record each installed SDK version in field **10**, repeating the value for each SDK; record any error or missing installation.
+For **each installed SDK**, record one row. `SDK Version` is its version; `Installation Path` is the location shown. If the command fails, record that as a check failure rather than an SDK row.
 
-**.NET runtimes:**
+**11. .NET Runtime Inventory**
 
 ```powershell
 dotnet --list-runtimes
 ```
 
-- Record each runtime version in field **11**, repeating it for each runtime.
+For **each runtime**, record `Runtime Name` (e.g. runtime family), `Runtime Version` and `Installation Path`.
 
-**MSBuild:**
+For MSBuild (**12**, **13**) and NuGet (**14**), use the individual checks from DISC-001 and note which installation supplied the tool. Recheck in Visual Studio Developer PowerShell when needed. For **15. .NET Framework Targeting Pack Inventory**, add a row per pack actually checked; do not infer the installed state from the SDK list.
 
-```powershell
-msbuild -version -nologo
-```
+**16. Test Runner Inventory** is completed when the project's actual runner is identified. `Runner Name` and `Runner Version` come from its native version output or verified package/runner installation; `Source or Location` identifies that origin.
 
-- Enter MSBuild version in field **12** and installation source in field **13**. If unavailable in normal PowerShell, try Visual Studio Developer PowerShell.
+## DISC-005 — Evaluate MSBuild settings without building
 
-**NuGet CLI:**
-
-```powershell
-nuget help
-```
-
-- Enter the NuGet CLI version (or command error) in field **14**.
-
-- Check other targeting packs or test runners only when needed; record their version and installation separately in fields **15–18** using the applicable native tool checks.
-- **Save:** tool versions, paths, missing prerequisites, and any differences between PowerShell environments.
-- The .NET SDK does **not** guarantee a .NET Framework targeting pack is installed.
-- Update **10–18** with detailed versions, and **124–126** for any second host such as CI. Don't record a tool as installed unless verified.
-
-- **Report fields:** 10–18, 124–126. Add the findings directly to the copied baseline.
-
-## DISC-005 — Check MSBuild settings
-
-- Read the project files and their imported `.props` and `.targets` files.
-- Look for shared settings, conditions, compiler options, and imports.
-- With **MSBuild 17.8 or later**, try this on a compatible project:
+- Read project files and applicable imported `.props` and `.targets` files first.
+- If MSBuild **17.8 or later** is available and compatible, try the native property query:
 
 ```powershell
 msbuild .\path\to\project.csproj -getProperty:TargetFramework -getProperty:TargetFrameworkVersion -p:Configuration=Release
 ```
 
-- Replace the path and configuration. Repeat where projects or configurations differ.
-- **Save:** settings found in files and settings returned by MSBuild. They may differ.
-- This command checks property values; it **doesn't build the project**. If your MSBuild version doesn't support it, record that and continue with file inspection.
-- Fill **83–89** with evaluated property values and relevant differences from declared values. Update **61–68, 69–74, 75–82** only when additional evidence changes them.
+**45. Evaluated MSBuild Properties** — one row per property and evaluated configuration. `Project Path` identifies the evaluated project; `Configuration` and `Framework` identify the context; `Property` names the evaluated setting; `Evaluated Value` is actual output; `Declared Value` is the relevant source declaration (when known); `Evidence` points to the command/output.
 
-- **Report fields:** 83–89; 61–68, 69–74, 75–82 if needed. Add the findings directly to the copied baseline.
+If this MSBuild version cannot evaluate those properties, record the limitation instead of reporting source declarations as evaluated results.
 
-## DISC-006 — Find shared configuration files
+## DISC-006 — Inspect directories and shared configuration
 
-- Look for `global.json`, `Directory.Build.props`, `Directory.Build.targets`, `Directory.Packages.props`, `NuGet.Config` / `nuget.config`, and `.editorconfig`.
-- Check nested directories, project imports, and relevant machine/user settings when they affect the build.
-- **Save:** file paths, key settings, and which projects they apply to.
-- A missing file isn't automatically a problem or a reason to create one.
-- Fill **90–91** (folders) and **92–98** (configuration paths, existence, settings, scope). Use one row per folder or file.
+- Look for `global.json`, `Directory.Build.props`, `Directory.Build.targets`, `Directory.Packages.props`, NuGet configuration, `.editorconfig`, nested files and conditional imports.
 
-- **Report fields:** 90–91, 92–98. Add the findings directly to the copied baseline.
+**46. Repository Directories** — `Directory` is a relative path and `Purpose` is its evidenced role. One row per meaningful directory.
 
-## DISC-007 — List dependencies
+**47. Repository Configuration** — `File or Mechanism` is a path or inherited mechanism; `Present` is a checked yes/no (not an assumption); `Scope` identifies the directory, project or environment affected; `Setting Name` and `Setting Value` represent **one setting per row**; `Import or Precedence` describes how the setting applies. Repeat rows for multiple settings in one file.
 
-- Read `ProjectReference`, `Reference`, `HintPath`, `packages.config`, `PackageReference`, and any central package versions.
-- Look for local DLLs, native components, COM references, and external services when applicable.
-- If the .NET SDK is available, view configured NuGet sources:
+A missing tracked file does not establish that no machine-level, imported, user-level or generated configuration applies.
+
+## DISC-007 — Inventory dependencies without restoring
+
+- Read `ProjectReference`, `Reference`, `HintPath`, `packages.config`, `PackageReference`, central package versions, and evidenced non-NuGet dependencies.
+- List configured feeds when the SDK is available:
 
 ```powershell
 dotnet nuget list source
 ```
 
-- **Save:** package names/versions, project references, other dependencies, and configured feeds. Review feed URLs for sensitive details before sharing.
-- **Don't restore packages yet.** A listed source or package declaration doesn't prove a package was downloaded.
-- Fill **99–104** for each NuGet package and **105–114** for other dependencies. Note packages and feeds not checked.
+**48. NuGet Package Declarations** — one row per package **per consuming project**. `Project Path` is its consumer; `Package ID` and `Declared Version` come from the declaration; `Declaration File` identifies `packages.config`, the project, or central source; `Configured Feed` is the configured source where relevant, **not proven acquisition origin**; `Purpose` is an evidenced production, test or tool role.
 
-- **Report fields:** 99–104, 105–114. Add the findings directly to the copied baseline.
+*Illustrative declaration row only:*
 
-## DISC-008 — Restore dependencies
+| Project Path | Package ID | Declared Version | Declaration File | Configured Feed | Purpose |
+|---|---|---|---|---|---|
+| `tests/Example.Tests/Example.Tests.csproj` | `Example.Testing` | 1.2.3 | `packages.config` | `nuget.org` | Test |
 
-- Find the application's existing restore instructions first.
-- Check which tool and dependency format it uses: some `packages.config` projects use `nuget restore`; many `PackageReference` projects use `dotnet restore`.
-- **Before running:** confirm the selected command, package sources, credentials if needed, and where files will be written. Restore may update caches or generate files.
-- Run the appropriate native command **after the operator has approved the step**.
-- **Save:** exact command, tool version, result, errors, and any generated files. Don't change package versions or bypass missing feeds to make the restore pass.
-- Fill **115** (restore command), **147** (outcome) and **160–167** (actual command, exit code, evidence).
+**49. Other External Dependencies** — `Consumer` identifies the project or component; `Dependency` names the item; `Type or Mechanism` distinguishes managed assembly, native DLL, COM, service/API, etc.; `Declaration Source` locates the relevant reference; `Version or Identity` records what is known; `Resolution or Location` records verified resolution or explicitly unknown.
 
-- **Report fields:** 115, 147, 160–167. Add the findings directly to the copied baseline.
+Do not restore yet. A declared package or configured feed is not evidence of a successful restore.
 
-## DISC-009 — Build the application
+## DISC-008 — Restore dependencies only after reviewing side effects
 
-- Find the existing build instructions or CI commands.
-- Confirm the solution/projects, Debug or Release, platform, framework, and required tools.
-- Use the matching native build command. For example, SDK-style projects may use `dotnet build`; traditional Windows projects may use `MSBuild.exe`.
-- **Before running:** confirm the command and its side effects. A `Rebuild` can remove previous build outputs.
-- **Save:** command, configuration, success/failure, warnings/errors, and output files.
-- One successful project build doesn't prove every project or configuration builds.
-- Fill **116–118** (build command), **133–135** (outputs/warnings), **148** (outcome) and **160–167** (actual execution).
+- Find existing application/CI restore instructions. Determine whether traditional `packages.config` projects use `nuget restore`, or PackageReference projects use `dotnet restore` or an MSBuild restore.
+- Review credentials, feeds, caches, generated files and other writes **with the operator** before running the command.
 
-- **Report fields:** 116–118, 133–135, 148, 160–167. Add the findings directly to the copied baseline.
+**50. Operation Commands** — add a row for the discovered restore command: `Operation` = restore; `Project or Solution` is the target; `Configuration` and `Platform` describe applicable scope; `Command or Workflow` is the exact native invocation; `Source` is documentation or CI identifying it.
 
-## DISC-010 — Run the tests
+**51. Restore Outcomes** — one row per attempted restore. `Source Revision` is the checked-out SHA; `Target` is the solution/project; `Outcome` is passed, failed or blocked; `Error or Note` captures relevant diagnostic; `Evidence` links to the command output. If not run, mark not executed in the copied baseline.
 
-- List every test project and the test runner it uses.
-- Find the existing test commands in documentation or CI.
-- Use `dotnet test` only when supported; other projects may need NUnit, VSTest, or another runner.
-- **Before running:** confirm that the test command and environment are appropriate.
-- **Save:** tests found, passed, failed, skipped, runner version, and which test projects actually ran.
-- Don't report "all tests passed" if an expected test project wasn't executed.
-- Fill **17–18** (runner), **119** (command), **127–132** (test counts and included assemblies), **149** (outcome), and **160–167** (execution).
+**59. Executed Command Evidence** is the shared audit table for restore, build, tests and other actual commands. Its columns are explained at DISC-013. Never mark a planned command as executed.
 
-- **Report fields:** 17–18, 119, 127–132, 149, 160–167. Add the findings directly to the copied baseline.
+## DISC-009 — Build the application in the observed configuration
 
-## DISC-011 — Review CI, packaging, and deployment
+- Identify existing build commands and the intended project/solution, configuration, platform and framework. Choose `msbuild` or `dotnet build` according to the actual project.
+- Review write side effects before execution. Do not substitute Rebuild for Build without approval.
 
-- Read the existing GitHub Actions or other CI/CD configuration.
-- Note build/test commands, runner OS, SDK/tool versions, artifacts, packaging, and deployment requirements.
-- Check existing workflow runs separately from the workflow files. Don't start releases or deployments.
-- **Save:** what the pipeline is configured to do and what existing runs actually completed.
-- A workflow file alone doesn't prove that it ran successfully.
-- Fill **120–126** (existing check/packaging/deployment commands and alternate hosts) and **136–146** (CI, runs, packaging, runtime requirements).
+In **50. Operation Commands**, add a build row with the exact command and scope.
 
-- **Report fields:** 120–126, 136–146. Add the findings directly to the copied baseline.
+**52. Build Outcomes** — one row per revision, build target, configuration and platform. `Source Revision` pins the commit; `Target` is the solution or project; `Configuration` and `Platform` identify build settings; `Outcome` is pass/fail/blocked/not executed; `Warning Count` and `Error Count` are observed diagnostics, not estimates; `Output or Evidence` links to logs or generated outputs.
 
-## DISC-012 — Find existing compatibility checks
+Repeat for distinct build combinations. Record actual execution in **59**.
 
-- Look for tests or reports covering public APIs, assembly versions, resources, XML documentation, packages, consumers, and application-specific behavior.
-- **Save:** the check's location, any existing results, and which source revision those results belong to.
-- Mark checks that have not been run against the selected commit.
-- Don't create extra checks just to fill out the list.
-- Fill applicable **150–159** check outcomes. Each must say passed, failed, not executed, not checked or not applicable; link existing results.
+## DISC-010 — Run the application's existing tests
 
-- **Report fields:** 150–159. Add the findings directly to the copied baseline.
+- Identify test projects and the actual runner. The appropriate command may be `dotnet test`, VSTest, NUnit or a project-specific runner. Confirm environment and side effects before executing.
+- Populate **16. Test Runner Inventory** with one row per runner. Add the test command to **50. Operation Commands**.
 
-## DISC-013 — Review results and missing information
+**53. Test Outcomes** — one row per test project/assembly and execution scope. `Source Revision` pins the tested commit; `Test Project or Assembly` identifies what actually ran; `Runner` names the tool; `Discovered`, `Passed`, `Failed` and `Skipped` are individual counts; `Outcome` states the check result; `Evidence` points to runner output.
 
-- Go through the discovery notes, command outputs, and failures.
-- Check that results match the **same commit, project, configuration, and environment** before comparing them.
-- Note whether a problem came from the application, a missing tool, or the command itself.
-- **Save:** what's confirmed, what failed, what's still unknown, and what needs another check.
-- Keep old test results labeled as historical; don't present them as new runs.
-- Fill **168–171** for each gap or problem and **172–176** for per-step status and evidence.
+*Illustrative test row only—not an observed execution:*
 
-- **Report fields:** 168–171, 172–176. Add the findings directly to the copied baseline.
+| Source Revision | Test Project or Assembly | Runner | Discovered | Passed | Failed | Skipped | Outcome | Evidence |
+|---|---|---|---|---|---|---|---|---|
+| `<commit SHA>` | `Example.Tests` | VSTest | 12 | 11 | 0 | 1 | Passed | `<report path>` |
 
-## DISC-014 — Finish the technical baseline
+Only report a test suite as fully passed when expected test projects were actually included. Capture actual executions in **59**.
 
-- Fill the **copied baseline** with the facts that have actually been collected.
-- Record actual commands, results and evidence links in the baseline fields. Do not enter answers in this guide.
-- Check that another engineer can find the same source, understand the setup, and repeat the steps.
-- List any missing results instead of guessing.
-- Save the final baseline with its source commit and discovery date. Modernization recommendations come afterward.
-- Fill **23–24** (verification date/status) and **177–181** (disposition, reviewer, next action). Finish **172–176** for all 14 steps.
+## DISC-011 — Review CI, packages and deployment
 
-- **Report fields:** 23–24, 172–176, 177–181. Add the findings directly to the copied baseline.
+- Read existing CI/CD definitions and distinguish what they **configure** from actual runs. Do not trigger deployment or releases during discovery.
 
-## Optional — Create scripts later
+**54. CI Workflows** — `Workflow Path` locates the definition; `Trigger` identifies push, pull request or manual triggers; `Runner OS` is the declared host; `Build or Test Commands` lists the configured steps; `Artifact or Deployment` describes produced outputs or destinations.
 
-- **Start with manual native commands.** Add a script only when it makes repeated work or reporting easier.
-- Make repository paths, projects, frameworks, configurations, and output locations configurable.
-- State **where it works**: SDK-style or traditional projects, .NET Framework or modern .NET, Windows or other supported hosts.
-- Separate combinations **you've tested** from those you haven't.
-- Keep original command outputs and errors; don't let a summary hide failures.
-- Make file changes and other side effects clear. Don't publish or modify application source as part of discovery.
-- Keep RecordSift-only helpers in the project area unless they've been tested for broader reuse.
+**55. CI Runs** — one row per checked run. `Workflow` identifies it; `Run URL` links the exact run; `Commit SHA` pins its source; `Outcome` records its actual result; `Date` is when it ran.
+
+**56. Package and Release Artifacts** — `Artifact` is the package/file; `Version` is the published version; `Contents or Metadata` describes observed package facts; `Release URL` links to it; `Evidence` supports the observation.
+
+**57. Runtime and Deployment Requirements** — `Requirement` describes the dependency or setting; `Type` classifies it (runtime, OS, service, installer, etc.); `Target Environment` identifies where required; `Source or Evidence` supports it. Use a separate row per requirement.
+
+Add any applicable packaging, compatibility, consumer or deployment commands to **50**. Record alternate CI toolchains in the relevant tool inventory with their host identified.
+
+## DISC-012 — Identify existing compatibility checks
+
+- Look for checks of public APIs, assembly identity, embedded resources, XML documentation, package contents/metadata, dependency validation, vulnerability audits, installed consumers and application behavior.
+
+**58. Compatibility Checks** — one row per distinct check. `Check Type` names the compatibility concern; `Target` identifies the application/component; `Method or Command` records how it is checked; `Outcome` states passed/failed/not executed/not applicable; `Commit SHA` identifies the source revision; `Evidence` links to actual results.
+
+Do not invent new checks just to fill the table, and do not apply results from a different commit without labeling them historical.
+
+## DISC-013 — Reconcile results and gaps
+
+**59. Executed Command Evidence** — one row for every actual command that matters to reproducing a finding. `Discovery Step` identifies the `DISC-###` section; `Command` is the exact invocation; `Working Directory` is where it ran; `Tool Version` records its environment; `Target or Configuration` clarifies scope; `Exit Code` is observed when available; `Outcome` says passed/failed/blocked; `Output or Evidence` points to the captured output.
+
+*Illustrative evidence row only—not an actual result:*
+
+| Discovery Step | Command | Working Directory | Tool Version | Target or Configuration | Exit Code | Outcome | Output or Evidence |
+|---|---|---|---|---|---|---|---|
+| `DISC-002` | `git ls-files "*.csproj"` | `<checkout root>` | Git 2.45.0 | Repository | 0 | Passed | `<saved output path>` |
+
+**60. Findings and Gaps** — one row per gap. `Finding` describes the verified issue or missing information; `Impact` explains why it matters; `Evidence` points to a source; `Next Check` names the next concrete verification step.
+
+**61. Discovery Step Status** — one row per `DISC-001` through `DISC-014`. `Step ID` identifies it; `Status` is done/partial/blocked/not executed; `Evidence or Missing Information` makes that assessment traceable.
+
+Check that results refer to the correct commit, host, project, framework and configuration. Distinguish a missing tool from an application failure.
+
+## DISC-014 — Review and finish the baseline
+
+- **23. Verification Date:** Enter the date actual verification occurred, if different from the discovery date.
+- **24. Evidence Status:** State verified, partial or blocked based on the collected evidence.
+- **62. Overall Baseline Disposition:** Record complete, complete with gaps, or more verification needed.
+- **63. Reviewed By:** Enter the reviewer.
+- **64. Review Date:** Enter the date reviewed.
+- **65. Next Action:** Record one concrete next action.
+
+**66. Deferred Checks** — one row per intentional deferral. `Check` identifies it; `Reason Deferred` explains why it could not or should not run; `Revisit When` specifies the trigger for revisiting it.
+
+Make sure the copied baseline contains the observed answers, applicable repeated rows, evidence links and clearly identified gaps. Keep modernization proposals separate.
+
+## Optional — Create scripts only after manual discovery
+
+- Start with individual native Git, SDK, NuGet, MSBuild and test commands. Consider wrappers only to improve repeatability or output formatting after manual results are understood.
+- Make paths, project formats, frameworks, configurations, operating systems and output destinations configurable.
+- Clearly label what was tested on Windows/traditional .NET Framework projects versus what is portable to other applications; do not imply a RecordSift-specific script works everywhere.
+- Preserve raw outputs and errors. Do not publish or modify application source as part of discovery.
 
 ## Where to keep the results
 
-- **Instructions:** `methodology/technical-discovery-runbook.md`.
-- **Blank baseline template:** [templates/application-baseline.md](../templates/application-baseline.md). Copy this for each discovery and fill the copy, not the template.
-- **Completed baseline and supporting evidence:** `projects/<app>/evaluations/<dated-discovery>/` in this repository.
-- **Application source and build workflows:** the application's own repository.
-- **Blog article:** `infoconex/coding-blog`; use selected results and link back to the complete discovery records.
+- **Guide:** `methodology/technical-discovery-runbook.md` (instructions, definitions and illustrative rows, never findings).
+- **Blank template:** [`templates/application-baseline.md`](../templates/application-baseline.md) (copy before each discovery).
+- **Filled application baseline and evidence:** `projects/<app>/evaluations/<dated-discovery>/`.
+- **Case study:** the [blank RecordSift baseline](../projects/recordsift/evaluations/2026-11-technical-baseline/baseline.md) is ready for user-run Windows discovery.
+- **Blog:** publish selected observations and evidence separately in `infoconex/coding-blog` only when authorized.

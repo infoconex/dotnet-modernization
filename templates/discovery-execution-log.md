@@ -9,7 +9,7 @@
 **Baseline record:** `<path to baseline.md>`  
 **Evidence manifest:** `<path to evidence/manifest.md when evidence exists>`
 
-This template is a **working record**, not an executable script. Create a row for each applicable step and a detailed record only when the step is attempted or a material gap needs documenting. The project baseline holds facts; the execution log holds **how they were established**. Link raw evidence instead of duplicating it.
+This template is for **results**, not instructions. Follow the [step-by-step guide](../methodology/technical-discovery-runbook.md) for commands. Record what was actually run, the outcome, and links to supporting evidence. Put the technical findings in the application baseline.
 
 ## Execution summary
 
@@ -34,33 +34,17 @@ This template is a **working record**, not an executable script. Create a row fo
 **Evidence method:** source-inspected / tool-evaluated / executed; several may apply but record them as **distinct observations**.  
 **Evidence outcome:** verified for stated scope / partially verified / blocked / failed / not executed / unresolved / not applicable. Work completion and verification are independent.
 
-## Tool checks — one snippet and one result per tool
+## Prerequisite results
 
-Use this format for every prerequisite. Give the **required minimum version**, where one is known. If there is no verified minimum, write **"minimum not established"** rather than guessing.
+Record actual versions and outcomes here; keep the commands, minimum versions, and installation links **only in the [step-by-step guide](../methodology/technical-discovery-runbook.md)**.
 
-### `<Tool name>` — `<required or optional; minimum version or requirement>`
+| Tool | Actual version / result | Status | Evidence link |
+|---|---|---|---|
+| `<tool>` | Not yet recorded | Not checked | — |
 
-```powershell
-<one native command to check the tool/version>
-```
-
-**Result:** Not yet executed. Replace with the actual version, output or error.
-
-- **If missing or outdated:** `<link to the official download/install instructions and what to recheck>`
-- **Executed by / date:** `<operator and date>`
-- **Evidence:** `<file or link to captured output, if available>`
-
-**Example: Git — required; minimum version 2.23**
-
-```powershell
-git --version
-```
-
-**Result:** Not yet executed.
-
-- **If missing or older than 2.23:** [Install Git for Windows](https://git-scm.com/install/win), reopen PowerShell, and run the command again.
-
-Don't combine multiple tools into one snippet. The execution summary can link back to these individual results. For optional tools, record "not installed" without installing them until needed.
+- Add one row per applicable tool; include Windows/OS, PowerShell, Git, SDK, MSBuild, NuGet, targeting packs, and test runners as needed.
+- Use **Not checked** until the operator runs the command. Record missing tools and errors instead of guessing versions.
+- Keep the original command/output in a linked evidence artifact when it is collected. Don't duplicate command instructions in the execution log.
 
 ## Detailed step record — copy only when needed
 

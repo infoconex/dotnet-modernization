@@ -16,79 +16,79 @@ Don't change the application or publish anything as part of discovery.
 - Run each check separately. Its number tells you which field to complete in the application discovery report. Share the actual output so the report can be updated.
 - Use a computer supported by the application. **RecordSift requires Windows.**
 
-**Windows — required for RecordSift; use a supported Windows version**
+**4. Windows — required for RecordSift; use a supported Windows version**
 
 ```powershell
 Get-CimInstance Win32_OperatingSystem | Select-Object Caption, Version, BuildNumber, OSArchitecture
 ```
 
-**4 — Result:** ____________________
+**Result:** ____________________
 
 - If not running Windows, use a Windows computer before continuing.
 - Record the Windows version, build, and architecture.
 
-**PowerShell — required; Windows PowerShell 5.1 or PowerShell 7**
+**5. PowerShell — required; Windows PowerShell 5.1 or PowerShell 7**
 
 ```powershell
 $PSVersionTable.PSVersion
 ```
 
-**5 — Result:** ____________________
+**Result:** ____________________
 
 - If unavailable, use Windows PowerShell or [install PowerShell for Windows](https://learn.microsoft.com/en-us/powershell/scripting/install/installing-powershell-on-windows).
 - Record the version shown.
 
-**Git — required; minimum version 2.23**
+**6. Git — required; minimum version 2.23**
 
 ```powershell
 git --version
 ```
 
-**6 — Result:** ____________________
+**Result:** ____________________
 
 - If missing or older than 2.23, [install Git for Windows](https://git-scm.com/install/win), reopen PowerShell, and run the command again.
 - Record the installed version. Git 2.23+ supports `git switch`, which we'll use below.
 
-**.NET SDK — optional for checkout; version depends on later commands**
+**7. .NET SDK — optional for checkout; version depends on later commands**
 
 ```powershell
 dotnet --info
 ```
 
-**7 — Result:** ____________________
+**Result:** ____________________
 
 - If missing and needed for a later step, [install the appropriate .NET SDK](https://dotnet.microsoft.com/en-us/download).
 - Record installed SDK and runtime versions. An SDK alone doesn't provide .NET Framework targeting packs.
 
-**MSBuild — needed for applicable builds; compatible version depends on the project**
+**8. MSBuild — needed for applicable builds; compatible version depends on the project**
 
 ```powershell
 msbuild -version -nologo
 ```
 
-**8 — Result:** ____________________
+**Result:** ____________________
 
 - If not found, first try **Visual Studio Developer PowerShell**. If still unavailable and needed, [install Visual Studio Build Tools](https://visualstudio.microsoft.com/downloads/) with the required .NET components.
 - Record the installed version. The optional `-getProperty` command in DISC-005 requires MSBuild 17.8+.
 
-**Standalone NuGet CLI — needed for some restores, including RecordSift**
+**9. Standalone NuGet CLI — needed for some restores, including RecordSift**
 
 ```powershell
 nuget help
 ```
 
-**9 — Result:** ____________________
+**Result:** ____________________
 
 - If unavailable and needed for restore, [install the NuGet CLI](https://learn.microsoft.com/en-us/nuget/consume-packages/install-use-packages-nuget-cli).
 - Record the version shown. No universal minimum version is assumed here.
 
-**.NET Framework 4.8 targeting pack — needed to build RecordSift**
+**10. .NET Framework 4.8 targeting pack — needed to build RecordSift**
 
 ```powershell
 Test-Path "${env:ProgramFiles(x86)}\Reference Assemblies\Microsoft\Framework\.NETFramework\v4.8"
 ```
 
-**10 — Result:** ____________________
+**Result:** ____________________
 
 - If `False`, check the installed Visual Studio components or [install the .NET Framework 4.8 Developer Pack](https://dotnet.microsoft.com/en-us/download/dotnet-framework/net48).
 - Record `True` or `False`. A directory check doesn't prove that a build will succeed.

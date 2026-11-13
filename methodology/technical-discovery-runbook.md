@@ -8,8 +8,8 @@ Don't change the application or publish anything as part of discovery.
 
 ### Record discovery details
 
-1. **Recorder:** Enter the person performing the discovery.
-2. **Recorded Date:** Enter the date discovery is being performed (`YYYY-MM-DD`).
+1. **Discovery By:** Enter the name of the person performing the discovery (field 1).
+2. **Discovery Date:** Enter the date discovery is being performed (`YYYY-MM-DD`) (field 2).
 
 ### Check prerequisites
 
@@ -85,7 +85,7 @@ Test-Path "${env:ProgramFiles(x86)}\Reference Assemblies\Microsoft\Framework\.NE
 
 ### Create a dated discovery folder
 
-**Report fields:** **3** (dated folder), **12** (source branch/tag), **20** (HTTPS clone URL). Fields **1** and **2** were collected above.
+**Baseline fields:** **3** (Discovery Folder), **12** (Selected Source Branch or Tag), **20** (HTTPS Clone URL). Complete fields **1** and **2** from the discovery information above.
 
 - Use a **new folder** for each discovery run. The name includes the repository, `discovery`, and a local date/time stamp.
 - Replace `REPOSITORY` and the example URL with the real application details.

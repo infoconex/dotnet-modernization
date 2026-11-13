@@ -13,7 +13,7 @@
 
 **Objective:** validate that a portable, documented discovery method can produce a traceable technical baseline using RecordSift as the worked example. This is **not** a new modernization assessment or application implementation.
 
-**Platform boundary:** perform the entire RecordSift discovery on Windows, beginning with baseline application information (items 1–17), followed by the Windows toolchain preflight (items 18–30). Do not substitute Linux, macOS or WSL as equivalent verification. Cross-platform exploration would be a separate explicitly scoped assessment.
+**Platform boundary:** perform RecordSift operator-run discovery on Windows. Begin with discovery information (items 1–4) and application information (items 5–19), followed by Windows toolchain preflight (items 20–32). Do not substitute Linux, macOS or WSL as equivalent verification. Cross-platform exploration would be a separate explicitly scoped assessment.
 
 **Proposed scope for owner-led manual execution:** source identity; solution/project and MSBuild configuration; central settings; NuGet dependencies; toolchain inventory; existing build/test entry points; approved manual restore/build/test verification; CI, runtime, package, and compatibility evidence; synthesis of a dated baseline.
 
@@ -23,9 +23,9 @@
 
 ## Working documents
 
-- [RecordSift baseline](baseline.md) — a copy of the numbered [template](../../../../templates/application-baseline.md), partially populated from previously verified source information. Item 37 maps short, linked project names to authoritative repository-relative paths. Project-scoped inventories (items 38–41, 44–45) reuse these linked names without repeating project paths, with one row per project where unambiguous. Debug/Release and per-package values retain their individual scope. Enter new Windows results **only after** collecting them with the guide.
+- [RecordSift baseline](baseline.md) — a copy of the numbered [template](../../../../templates/application-baseline.md), partially populated from previously verified source information. Item 37 maps short, linked project names to authoritative repository-relative paths. Project-scoped inventories (items 41–44, 47–48) reuse these linked names without repeating project paths, with one row per project where unambiguous. Debug/Release and per-package values retain their individual scope. Enter new Windows results **only after** collecting them with the guide.
 - [Evidence manifest](evidence/manifest.md) — source links, exact-commit existing CI execution evidence, and command-review boundaries; future operator-run evidence is added only when collected.
-- [Step-by-step guide](../../../../methodology/technical-discovery-runbook.md) — all 62 numbered items in baseline order, with Windows command examples, table-column definitions and applicability/side-effect conditions.
+- [Step-by-step guide](../../../../methodology/technical-discovery-runbook.md) — all 65 numbered items in baseline order, with Windows command examples, table-column definitions and applicability/side-effect conditions.
 - [Article evidence map](../../../../articles/recordsift-technical-discovery-outline.md) — candidate narrative, not proof or publication-ready copy.
 
 ## Source inventory and existing exact-commit CI — 2026-11-12
@@ -40,4 +40,4 @@ This is not a claim that missing repository-wide files have no equivalents in pa
 
 **Research/implementation separation:** no change to RecordSift source, project files or its application main branch. This documentation remains on its own review PR until approved.
 
-**Next action:** after reviewing baseline application fields **1–17**, the operator follows items **18–30** (Windows/tool prerequisites) and **31–35** (clean timestamped clone and pinned checkout) in the [step-by-step guide](../../../../methodology/technical-discovery-runbook.md), using commit `1809d06c0fade59e4769d16e0f8eaf10fa426004`. **No local commands have been executed or verified.** The operator records the actual local answers in the numbered [baseline copy](baseline.md) after the required checks. Nothing is entered into the guide.
+**Next action:** after reviewing discovery and application fields **1–19**, the operator follows items **20–32** (Windows/tool prerequisites) and **31–35** (clean timestamped clone and pinned checkout) in the [step-by-step guide](../../../../methodology/technical-discovery-runbook.md), using commit `1809d06c0fade59e4769d16e0f8eaf10fa426004`. **No local commands have been executed or verified.** The operator records the actual local answers in the numbered [baseline copy](baseline.md) after the required checks. Nothing is entered into the guide.

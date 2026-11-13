@@ -161,9 +161,11 @@ The [getting-started guide](https://github.com/infoconex/RecordSift/blob/1809d06
 | Environment | Framework Version | Installed | Location |
 |---|---|---|---|
 | Existing CI runner | `v4.8` | True | `C:\Program Files (x86)\Reference Assemblies\Microsoft\Framework\.NETFramework\v4.8` |
-| Operator local | `v4.8` | Not checked | Not checked |
+| Operator local | `v4.8` | False | `C:\Program Files (x86)\Reference Assemblies\Microsoft\Framework\.NETFramework\v4.8` |
 
 **Direct CI file verification:** The [research job](https://github.com/infoconex/RecordSift/actions/runs/43514868868/job/132194144480) confirmed `C:\Program Files (x86)\Reference Assemblies\Microsoft\Framework\.NETFramework\v4.8\mscorlib.dll` and `C:\Program Files (x86)\Reference Assemblies\Microsoft\Framework\.NETFramework\v4.8\RedistList\FrameworkList.xml` both exist. This establishes reference-assembly availability **on that runner**, rather than inferring it from a successful build. The runner's .NET Framework Full registry values were `Release=533509` and `Version=4.8.09221`; these are observed product-registration values, not a new minimum requirement for RecordSift.
+
+**Operator-local targeting pack check (EV-029, 2026-11-13):** At `PS D:\RecordSift>`, the operator printed the computed local v4.8 reference-assembly directory `C:\Program Files (x86)\Reference Assemblies\Microsoft\Framework\.NETFramework\v4.8`. The direct `Test-Path -LiteralPath $referenceAssembly` check for `mscorlib.dll` returned **`False`**. The required v4.8 reference-assembly file is not present at that location on the operator's Windows desktop; this does **not** establish the presence or absence of the runtime, other pack files, or the cause. CI independently verified the corresponding file exists there (EV-016). This is a local build-prerequisite gap to revisit after installing the .NET Framework 4.8 developer/targeting pack, potentially alongside Visual Studio Community.
 
 ### 32. Test Runner Inventory
 
@@ -569,11 +571,14 @@ Each distribution has its own record. NuGet package upload acceptance was previo
 
 | 30 | nuget help | Operator PowerShell session (`D:\RecordSift`) | NuGet 7.9.0.83 (reported by CLI) | NuGet CLI version and available commands | Not recorded | Printed NuGet version 7.9.0.83 and command usage | EV-028; operator-provided console output in discovery conversation, 2026-11-13 |
 
+| 31 | $pack; Test-Path -LiteralPath $referenceAssembly | Operator PowerShell session (`D:\RecordSift`) | PowerShell 7.7.0 | .NET Framework v4.8 `mscorlib.dll` at `C:\Program Files (x86)\Reference Assemblies\Microsoft\Framework\.NETFramework\v4.8` | Not recorded | False (required reference assembly not present at checked path) | EV-029; operator-provided console output in discovery conversation, 2026-11-13 |
+
 ### 59. Findings and Gaps
 
 | Finding | Impact | Evidence | Next Check |
 |---|---|---|---|
-| Operator Windows toolchain inventory incomplete | Operator-local OS, PowerShell, Git, SDK/runtime inventory verified (EV-017–021), legacy Windows .NET Framework MSBuild `4.8.10001.0` verified (EV-027), and NuGet CLI `7.9.0.83` verified (EV-028). A modern Visual Studio MSBuild installation remains unverified following the Professional uninstall (EV-022–026), and the local .NET Framework 4.8 targeting-pack inventory is still outstanding | Items 20–31; EV-016–028 | Check local .NET Framework 4.8 reference assemblies (item 31); revisit modern VS MSBuild after Community installation |
+| Operator Windows development-tool readiness incomplete | Local OS, PowerShell, Git, SDK/runtime inventory verified (EV-017–021), legacy .NET Framework MSBuild `4.8.10001.0` verified (EV-027), and NuGet CLI `7.9.0.83` verified (EV-028). Modern Visual Studio MSBuild is still unverified following the Professional uninstall (EV-022–026), and the direct v4.8 reference-assembly check returned `False` for `mscorlib.dll` at the expected path (EV-029). Do not infer that local .NET Framework 4.8 build prerequisites are satisfied | Items 20–31; EV-016–029 | Verify modern MSBuild and repeat item 31 after Visual Studio Community / .NET Framework 4.8 developer tooling installation; proceed with item 32 test runner inventory |
+| Required .NET Framework 4.8 reference assembly missing at local checked path | Operator's direct `Test-Path` for `v4.8\mscorlib.dll` returned `False` versus `True` in CI; this is a confirmed local build-prerequisite gap at that path, not a RecordSift source-code failure or proof the runtime is missing | Item 31; EV-016, EV-029 | Install or restore the .NET Framework 4.8 developer/targeting pack as appropriate, then repeat the direct file check before attempting a local build |
 | Clean local checkout not verified | Local filesystem and Git state remain unknown | Items 33–38 | Clone selected SHA into unique discovery folder |
 | Operator-local MSBuild evaluation outstanding | CI evaluated 20 project/configuration scopes; local tool/import differences remain unverified | Item 44; EV-015 | Evaluate the same properties on an approved operator Windows checkout if local parity is required |
 | Build-policy properties not explicitly set in evaluated results | `Deterministic`, `TreatWarningsAsErrors` and `PlatformTarget` returned empty strings; the output alone does not establish compiler-switch behavior | Item 44; [CI evidence](https://github.com/infoconex/RecordSift/actions/runs/43501555831/job/132148357265) | Inspect actual compiler invocations and existing build gates before proposing policy changes |
@@ -584,6 +589,7 @@ Each distribution has its own record. NuGet package upload acceptance was previo
 | Check | Reason Deferred | Revisit When |
 |---|---|---|
 | Modern Visual Studio MSBuild verification | Local legacy Windows .NET Framework MSBuild `4.8.10001.0` (items 28–29, EV-027) and NuGet CLI `7.9.0.83` (item 30, EV-028) verified; modern Visual Studio MSBuild corresponding to CI has not been observed since Professional was uninstalled | After Visual Studio Community installation, verify modern MSBuild executable version and path; proceed now with item 31 targeting-pack checks |
+| .NET Framework 4.8 targeting-pack remediation | The required v4.8 reference assembly `mscorlib.dll` is absent at the checked desktop location (EV-029), unlike the CI runner (EV-016) | After developer/targeting pack installation, rerun item 31 direct file check before local build |
 | Local checkout verification | No isolated Windows discovery folder created | After host prerequisite checks |
 | Operator-local MSBuild property parity | Existing CI evaluated the frozen source (EV-015); local tool/import parity remains unverified | If local parity is required, after host preflight and checkout |
 | Local restore/build/test | Operator approval and environment verification required | After source checkout and side-effect review |

@@ -1,15 +1,13 @@
 # RecordSift — Discovery baseline (blank copy)
 
-**Unfilled RecordSift copy.** Complete this only after performing discovery. Use the [step-by-step guide](../../../../methodology/technical-discovery-runbook.md) to evaluate each numbered item and explain the columns of repeatable tables. Write results **only in the copy**.
-
-A numbered **field** captures one value; a numbered **table** captures a repeatable kind of data (such as project inventory). Each table column is unnumbered and each row represents one actual record. **Discovery Date** is recorded once for the assessment. Dates that are intrinsic to external records, such as a CI run date, remain part of those records. The values here are deliberately blank. Use `Not checked`, `Not executed`, or `Not applicable` in completed copies when accurate, and retain appropriate evidence without secrets.
+[Step-by-Step Instructions](../../../../methodology/technical-discovery-runbook.md)
 
 ## Application information
 
 | Field | Value |
 |---|---|
-| 1. Application Name |  |
-| 2. Application Purpose |  |
+| 1. Description |  |
+| 2. Application Name |  |
 | 3. Application Type |  |
 | 4. Repository Visibility |  |
 | 5. License |  |

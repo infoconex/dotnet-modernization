@@ -8,7 +8,7 @@ Don't change the application or publish anything as part of discovery.
 
 ### 1. Check required tools
 
-- Check each tool **one at a time**. Record the actual version or error in your application's [execution log](../templates/discovery-execution-log.md).
+- Run each check separately. Write the version or error on the **Result** line. I'll add the collected information to the [discovery report](../templates/application-baseline.md).
 - Use a computer supported by the application. **RecordSift requires Windows.**
 
 **Windows — required for RecordSift; use a supported Windows version**
@@ -17,7 +17,7 @@ Don't change the application or publish anything as part of discovery.
 Get-CimInstance Win32_OperatingSystem | Select-Object Caption, Version, BuildNumber, OSArchitecture
 ```
 
-**Result:** Record the actual version or error in the execution log.
+**Result:** ____________________
 
 - If not running Windows, use a Windows computer before continuing.
 - Record the Windows version, build, and architecture.
@@ -28,7 +28,7 @@ Get-CimInstance Win32_OperatingSystem | Select-Object Caption, Version, BuildNum
 $PSVersionTable.PSVersion
 ```
 
-**Result:** Record the actual version or error in the execution log.
+**Result:** ____________________
 
 - If unavailable, use Windows PowerShell or [install PowerShell for Windows](https://learn.microsoft.com/en-us/powershell/scripting/install/installing-powershell-on-windows).
 - Record the version shown.
@@ -39,7 +39,7 @@ $PSVersionTable.PSVersion
 git --version
 ```
 
-**Result:** Record the actual version or error in the execution log.
+**Result:** ____________________
 
 - If missing or older than 2.23, [install Git for Windows](https://git-scm.com/install/win), reopen PowerShell, and run the command again.
 - Record the installed version. Git 2.23+ supports `git switch`, which we'll use below.
@@ -50,7 +50,7 @@ git --version
 dotnet --info
 ```
 
-**Result:** Record the actual version or error in the execution log.
+**Result:** ____________________
 
 - If missing and needed for a later step, [install the appropriate .NET SDK](https://dotnet.microsoft.com/en-us/download).
 - Record installed SDK and runtime versions. An SDK alone doesn't provide .NET Framework targeting packs.
@@ -61,7 +61,7 @@ dotnet --info
 msbuild -version -nologo
 ```
 
-**Result:** Record the actual version or error in the execution log.
+**Result:** ____________________
 
 - If not found, first try **Visual Studio Developer PowerShell**. If still unavailable and needed, [install Visual Studio Build Tools](https://visualstudio.microsoft.com/downloads/) with the required .NET components.
 - Record the installed version. The optional `-getProperty` command in DISC-005 requires MSBuild 17.8+.
@@ -72,7 +72,7 @@ msbuild -version -nologo
 nuget help
 ```
 
-**Result:** Record the actual version or error in the execution log.
+**Result:** ____________________
 
 - If unavailable and needed for restore, [install the NuGet CLI](https://learn.microsoft.com/en-us/nuget/consume-packages/install-use-packages-nuget-cli).
 - Record the version shown. No universal minimum version is assumed here.
@@ -83,7 +83,7 @@ nuget help
 Test-Path "${env:ProgramFiles(x86)}\Reference Assemblies\Microsoft\Framework\.NETFramework\v4.8"
 ```
 
-**Result:** Record the actual version or error in the execution log.
+**Result:** ____________________
 
 - If `False`, check the installed Visual Studio components or [install the .NET Framework 4.8 Developer Pack](https://dotnet.microsoft.com/en-us/download/dotnet-framework/net48).
 - Record `True` or `False`. A directory check doesn't prove that a build will succeed.
@@ -157,6 +157,8 @@ dotnet sln .\path\to\solution.sln list
 - **Save:** solutions, projects inside each solution, and projects outside any solution. Note project roles such as application, library, or tests.
 - A solution filter may list only part of the solution; don't treat it as a complete inventory.
 
+**Result:** ____________________
+
 ## DISC-003 — Check project types and target frameworks
 
 - Open each project file (`.csproj`, `.fsproj`, or `.vbproj`).
@@ -165,6 +167,8 @@ dotnet sln .\path\to\solution.sln list
 - Note project references, output type, language version, and configuration-specific settings.
 - **Save:** each project's path, project type, declared framework(s), and important differences.
 - An SDK-style project can still target .NET Framework. Don't guess settings that aren't declared.
+
+**Result:** ____________________
 
 ## DISC-004 — Record installed build tools
 
@@ -207,6 +211,8 @@ nuget help
 - **Save:** tool versions, paths, missing prerequisites, and any differences between PowerShell environments.
 - The .NET SDK does **not** guarantee a .NET Framework targeting pack is installed.
 
+**Result:** ____________________
+
 ## DISC-005 — Check MSBuild settings
 
 - Read the project files and their imported `.props` and `.targets` files.
@@ -221,12 +227,16 @@ msbuild .\path\to\project.csproj -getProperty:TargetFramework -getProperty:Targe
 - **Save:** settings found in files and settings returned by MSBuild. They may differ.
 - This command checks property values; it **doesn't build the project**. If your MSBuild version doesn't support it, record that and continue with file inspection.
 
+**Result:** ____________________
+
 ## DISC-006 — Find shared configuration files
 
 - Look for `global.json`, `Directory.Build.props`, `Directory.Build.targets`, `Directory.Packages.props`, `NuGet.Config` / `nuget.config`, and `.editorconfig`.
 - Check nested directories, project imports, and relevant machine/user settings when they affect the build.
 - **Save:** file paths, key settings, and which projects they apply to.
 - A missing file isn't automatically a problem or a reason to create one.
+
+**Result:** ____________________
 
 ## DISC-007 — List dependencies
 
@@ -241,6 +251,8 @@ dotnet nuget list source
 - **Save:** package names/versions, project references, other dependencies, and configured feeds. Review feed URLs for sensitive details before sharing.
 - **Don't restore packages yet.** A listed source or package declaration doesn't prove a package was downloaded.
 
+**Result:** ____________________
+
 ## DISC-008 — Restore dependencies
 
 - Find the application's existing restore instructions first.
@@ -248,6 +260,8 @@ dotnet nuget list source
 - **Before running:** confirm the selected command, package sources, credentials if needed, and where files will be written. Restore may update caches or generate files.
 - Run the appropriate native command **after the operator has approved the step**.
 - **Save:** exact command, tool version, result, errors, and any generated files. Don't change package versions or bypass missing feeds to make the restore pass.
+
+**Result:** ____________________
 
 ## DISC-009 — Build the application
 
@@ -258,6 +272,8 @@ dotnet nuget list source
 - **Save:** command, configuration, success/failure, warnings/errors, and output files.
 - One successful project build doesn't prove every project or configuration builds.
 
+**Result:** ____________________
+
 ## DISC-010 — Run the tests
 
 - List every test project and the test runner it uses.
@@ -267,6 +283,8 @@ dotnet nuget list source
 - **Save:** tests found, passed, failed, skipped, runner version, and which test projects actually ran.
 - Don't report "all tests passed" if an expected test project wasn't executed.
 
+**Result:** ____________________
+
 ## DISC-011 — Review CI, packaging, and deployment
 
 - Read the existing GitHub Actions or other CI/CD configuration.
@@ -275,12 +293,16 @@ dotnet nuget list source
 - **Save:** what the pipeline is configured to do and what existing runs actually completed.
 - A workflow file alone doesn't prove that it ran successfully.
 
+**Result:** ____________________
+
 ## DISC-012 — Find existing compatibility checks
 
 - Look for tests or reports covering public APIs, assembly versions, resources, XML documentation, packages, consumers, and application-specific behavior.
 - **Save:** the check's location, any existing results, and which source revision those results belong to.
 - Mark checks that have not been run against the selected commit.
 - Don't create extra checks just to fill out the list.
+
+**Result:** ____________________
 
 ## DISC-013 — Review results and missing information
 
@@ -290,13 +312,17 @@ dotnet nuget list source
 - **Save:** what's confirmed, what failed, what's still unknown, and what needs another check.
 - Keep old test results labeled as historical; don't present them as new runs.
 
+**Result:** ____________________
+
 ## DISC-014 — Finish the technical baseline
 
 - Fill in the [application baseline template](../templates/application-baseline.md) using what you actually found.
-- Link to the commands and outputs in the [execution log](../templates/discovery-execution-log.md) and your project's evidence files.
+- Add the actual commands, results and evidence links to the [discovery report](../templates/application-baseline.md).
 - Check that another engineer can find the same source, understand the setup, and repeat the steps.
 - List any missing results instead of guessing.
 - Save the final baseline with its source commit and discovery date. Modernization recommendations come afterward.
+
+**Result:** ____________________
 
 ## Optional — Create scripts later
 
@@ -311,7 +337,7 @@ dotnet nuget list source
 ## Where to keep the results
 
 - **Instructions:** `methodology/technical-discovery-runbook.md`.
-- **Reusable templates:** `templates/discovery-execution-log.md` and `templates/application-baseline.md`.
-- **Application results:** `projects/<app>/evaluations/<dated-discovery>/` in this repository.
+- **Full report template:** `templates/application-baseline.md`.
+- **Completed application report and supporting evidence:** `projects/<app>/evaluations/<dated-discovery>/` in this repository.
 - **Application source and build workflows:** the application's own repository.
 - **Blog article:** `infoconex/coding-blog`; use selected results and link back to the complete discovery records.

@@ -500,25 +500,38 @@ The `--configfile` option requires .NET 6 SDK or later. When only NuGet CLI is p
 |---|---|---|---|---|
 | RecordSift.Domain.Tests | NUnit — 3.14.0 — Test framework<br>NUnit.ConsoleRunner — 3.17.0 — Test runner | packages.config (within project directory) | nuget.org | tests/RecordSift.Domain.Tests/RecordSift.Domain.Tests.csproj |
 
-### 45. Other External Dependencies
+### 45. Non-NuGet Dependencies
 
-Inspect project `Reference`/`HintPath`, `COMReference`/`COMFileReference`, native libraries, services, and other non-NuGet dependencies. Prefer **one row per consumer/project**, listing all distinct dependencies together. If they share type, declared identity and resolution, those fields can be represented once. When attributes differ, annotate the affected dependency (or use separate scoped rows) to avoid losing per-dependency metadata. Do not repeat direct project references from item 37 or NuGet packages from item 44. Project-file declarations cannot rule out runtime dynamic loading.
+Identify source-declared dependencies **not managed as NuGet packages**, but distinguish ordinary .NET **framework assembly references** from **other non-NuGet dependencies**. Inspect project `Reference` / `HintPath`, `COMReference` / `COMFileReference`, imported project files, source-level native loading (`DllImport`, `LibraryImport`, and dynamic loads), configuration-driven integrations, externally hosted services and documented deployment/runtime prerequisites. Do not repeat project references from item 37 or NuGet dependencies from item 44 (even if a NuGet package is also represented by a `Reference` / `HintPath` in traditional project files).
 
-**How to populate each column (left to right):**
+**A. Framework Assembly References**
 
-- **Project:** Unique consuming project/component name or link.
-- **Dependencies:** All distinct non-NuGet dependency names.
-- **Type / Mechanism:** Source-declared reference mechanism(s), with mappings if mixed.
-- **Version / Identity:** Exact version or identity, or `Not declared`.
-- **Resolution / Location:** Verified resolution, or `Not checked`, not assumed availability.
-- **Declaration Source:** Source(s) of these declarations.
-- **Project Path:** Repository-relative project file path, last.
+Inventory standard target-framework assembly references declared in the project's XML (for example `System`, `System.Core` and `System.Xml`). One project per row when the values have common source/type/version/resolution. Retain all distinct assembly identities and any source-declared versions, conditions, aliases or reference-specific overrides. Record `Not declared` for absent reference version metadata and `Not checked locally` for resolution unless supported by independent build/evaluation evidence. Do **not** infer a resolved assembly version merely from `TargetFrameworkVersion`; the .NET Framework targeting pack and actual project imports must still be checked.
 
-**Illustrative RecordSift source references:**
+**B. Other Non-NuGet Dependencies**
 
-| Project | Dependencies | Type / Mechanism | Version / Identity | Resolution / Location | Declaration Source | Project Path |
+Record native DLLs, COM components, locally supplied third-party DLLs, file- or registry-based components, external service dependencies and similar dependencies **separately**. Prefer one row per consuming project/component if the dependencies have identical attributes; split rows when versions, source conditions, location or resolution differ. For each dependency, preserve names, type/mechanism, declared version or identity, resolved/expected location, original declaration/evidence source, and the project path.
+
+**How to populate the columns (left to right) in both tables:**
+
+- **Project:** Unique consuming project/component name, preferably linked to its frozen source, or a verified non-project consumer.
+- **Framework References / Dependencies:** Each distinct assembly/dependency name, grouped only without losing associated attributes.
+- **Type / Mechanism:** `Framework assembly reference` for A; the specific native, COM, file, service or other mechanism for B.
+- **Version / Identity:** Exact source-declared version/identity if any; otherwise `Not declared`.
+- **Resolution / Location:** Verified runtime/tool resolution or location; otherwise `Not checked locally`, not an assumed installation.
+- **Declaration Source:** Exact source file, inspected import, documented runtime evidence or test/CI source.
+- **Project Path:** Repository-relative project file path, last, where applicable.
+
+**If nothing was declared:** Leave B's data rows empty and state **“No additional non-NuGet dependency declarations identified in the inspected [files/scope]”** below the table. Separately state `Not checked` for runtime/dynamic-loading and deployed-environment dependencies if those were not inspected. Do not assert `None` or imply absence of dependencies from a static project-file search alone. Likewise, source-level import or service evidence is not proof of actual runtime resolution.
+
+**Illustrative RecordSift framework references (A):**
+
+| Project | Framework References | Type / Mechanism | Version / Identity | Resolution / Location | Declaration Source | Project Path |
 |---|---|---|---|---|---|---|
 | RecordSift.Domain | System; System.Core | Framework assembly reference | Not declared | Not checked locally | RecordSift.Domain.csproj | src/RecordSift.Domain/RecordSift.Domain.csproj |
+
+**RecordSift other non-NuGet dependencies (B):** No additional non-NuGet declarations were identified in the ten inspected `.csproj` files at the pinned SHA. Source inspection does **not** establish the absence of native or dynamic runtime dependencies or external services, and those runtime checks remain outstanding.
+
 
 ## Restore, build, tests and delivery
 

@@ -17,7 +17,7 @@ Don't change the application or publish anything as part of discovery.
 Get-CimInstance Win32_OperatingSystem | Select-Object Caption, Version, BuildNumber, OSArchitecture
 ```
 
-**Result:** Not yet executed.
+**Result:** Record the actual version or error in the [RecordSift execution log](../projects/recordsift/evaluations/2026-11-technical-baseline/execution-log.md), or your application's equivalent log.
 
 - If not running Windows, use a Windows computer before continuing.
 - Record the Windows version, build, and architecture.
@@ -28,7 +28,7 @@ Get-CimInstance Win32_OperatingSystem | Select-Object Caption, Version, BuildNum
 $PSVersionTable.PSVersion
 ```
 
-**Result:** Not yet executed.
+**Result:** Record the actual version or error in the [RecordSift execution log](../projects/recordsift/evaluations/2026-11-technical-baseline/execution-log.md), or your application's equivalent log.
 
 - If unavailable, use Windows PowerShell or [install PowerShell for Windows](https://learn.microsoft.com/en-us/powershell/scripting/install/installing-powershell-on-windows).
 - Record the version shown.
@@ -39,7 +39,7 @@ $PSVersionTable.PSVersion
 git --version
 ```
 
-**Result:** Not yet executed.
+**Result:** Record the actual version or error in the [RecordSift execution log](../projects/recordsift/evaluations/2026-11-technical-baseline/execution-log.md), or your application's equivalent log.
 
 - If missing or older than 2.23, [install Git for Windows](https://git-scm.com/install/win), reopen PowerShell, and run the command again.
 - Record the installed version. Git 2.23+ supports `git switch`, which we'll use below.
@@ -50,7 +50,7 @@ git --version
 dotnet --info
 ```
 
-**Result:** Not yet executed.
+**Result:** Record the actual version or error in the [RecordSift execution log](../projects/recordsift/evaluations/2026-11-technical-baseline/execution-log.md), or your application's equivalent log.
 
 - If missing and needed for a later step, [install the appropriate .NET SDK](https://dotnet.microsoft.com/en-us/download).
 - Record installed SDK and runtime versions. An SDK alone doesn't provide .NET Framework targeting packs.
@@ -61,7 +61,7 @@ dotnet --info
 msbuild -version -nologo
 ```
 
-**Result:** Not yet executed.
+**Result:** Record the actual version or error in the [RecordSift execution log](../projects/recordsift/evaluations/2026-11-technical-baseline/execution-log.md), or your application's equivalent log.
 
 - If not found, first try **Visual Studio Developer PowerShell**. If still unavailable and needed, [install Visual Studio Build Tools](https://visualstudio.microsoft.com/downloads/) with the required .NET components.
 - Record the installed version. The optional `-getProperty` command in DISC-005 requires MSBuild 17.8+.
@@ -72,7 +72,7 @@ msbuild -version -nologo
 nuget help
 ```
 
-**Result:** Not yet executed.
+**Result:** Record the actual version or error in the [RecordSift execution log](../projects/recordsift/evaluations/2026-11-technical-baseline/execution-log.md), or your application's equivalent log.
 
 - If unavailable and needed for restore, [install the NuGet CLI](https://learn.microsoft.com/en-us/nuget/consume-packages/install-use-packages-nuget-cli).
 - Record the version shown. No universal minimum version is assumed here.
@@ -83,7 +83,7 @@ nuget help
 Test-Path "${env:ProgramFiles(x86)}\Reference Assemblies\Microsoft\Framework\.NETFramework\v4.8"
 ```
 
-**Result:** Not yet executed.
+**Result:** Record the actual version or error in the [RecordSift execution log](../projects/recordsift/evaluations/2026-11-technical-baseline/execution-log.md), or your application's equivalent log.
 
 - If `False`, check the installed Visual Studio components or [install the .NET Framework 4.8 Developer Pack](https://dotnet.microsoft.com/en-us/download/dotnet-framework/net48).
 - Record `True` or `False`. A directory check doesn't prove that a build will succeed.

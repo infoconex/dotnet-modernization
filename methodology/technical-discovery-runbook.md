@@ -116,6 +116,12 @@ Select only operations with **positive documentation or demonstration that a con
 
 Do not mistake a test consumer for a deployed application, assume undiscovered consumer integrations are absent, or use a list of all exported symbols as a substitute for documented direct consumer operations.
 
+## Discovery host and prerequisite tools
+
+**Two environments:** For items 20–31 record **Existing CI Runner** and **Operator Local** independently. Cite the CI job/run, evaluated source SHA, execution date and runner image/version. A workflow's `runs-on` declaration identifies only a requested runner label, not installed tool versions; a present-day runner-image inventory does not prove a historical job's environment. Populate CI values only from **actual job logs or output**, keep unknown values `Not checked`, and describe partial observations separately. Operator values require separate operator-executed commands; do not copy CI values into the local column. The baseline tables use separate CI/local columns for scalar items 20–25 and 28–30, and environment-scoped rows for inventories 26, 27 and 31.
+
+**Verified RecordSift CI example:** The [Windows restore, MSBuild and NUnit job](https://github.com/infoconex/RecordSift/actions/runs/43146607664/job/130945777245), for commit `1809d06c0fade59e4769d16e0f8eaf10fa426004`, ran on `windows-2022` image `20261101.353.1` on 2026-11-12 UTC. Its logs report Windows Server 2022 (`10.0.20348`), Git `2.56.0.windows.4`, MSBuild `17.14.60.43110` (Visual Studio 2022 Enterprise) and selected SDK `10.0.403`. PowerShell 7 was invoked without recording its exact version, and NuGet restore succeeded without recording its CLI version. NUnit reported the .NET Framework CLR version `v4.0.30319.42000`; a successful `net48` build does not prove an individually inventoried targeting pack. These observations are **CI evidence only**, not operator-local results.
+
 ### 20. Operating System Name
 
 Use Windows (required for RecordSift); record the **Caption** output from the command below. This is the discovery host, not the application's supported OS (item 8).
@@ -124,7 +130,7 @@ Use Windows (required for RecordSift); record the **Caption** output from the co
 Get-CimInstance Win32_OperatingSystem | Select-Object Caption, Version, BuildNumber, OSArchitecture
 ```
 
-**One OS command populates items 20–23.** Run it once, record four separate values, and do not repeat it for each heading.
+**One OS command populates operator-local items 20–23.** Run it once, record four separate values, and do not repeat it for each heading. For CI, use recorded job OS metadata where available, and never infer the architecture from an operating-system name or build number.
 
 ### 21. Operating System Version
 
@@ -146,7 +152,7 @@ Use the output from the command in item 20.
 
 ### 24. PowerShell Version
 
-Run the PowerShell version command below. Record only the complete version (e.g. `7.4.7`), not your username or environment details. Windows PowerShell 5.1 or modern PowerShell 7 may be used; if unavailable, follow [Microsoft's Windows installation guide](https://learn.microsoft.com/en-us/powershell/scripting/install/installing-powershell-on-windows).
+For **operator local**, run the PowerShell version command below. Record only the complete version (e.g. `7.4.7`), not your username or environment details. Windows PowerShell 5.1 or modern PowerShell 7 may be used; if unavailable, follow [Microsoft's Windows installation guide](https://learn.microsoft.com/en-us/powershell/scripting/install/installing-powershell-on-windows).
 
 ```powershell
 $PSVersionTable.PSVersion.ToString()
@@ -154,7 +160,7 @@ $PSVersionTable.PSVersion.ToString()
 
 ### 25. Git Version
 
-Run the Git version command below and record only the version number. `git switch` requires Git 2.23 or later. If missing, install [Git for Windows](https://git-scm.com/install/win) before cloning.
+For **operator local**, run the Git version command below and record only the version number. `git switch` requires Git 2.23 or later. If missing, install [Git for Windows](https://git-scm.com/install/win) before cloning.
 
 ```powershell
 git --version
@@ -162,7 +168,7 @@ git --version
 
 ### 26. .NET SDK Inventory
 
-Run `dotnet --list-sdks` and add **one row for each installed SDK** with its version and installation path. If no `dotnet` CLI is installed, record the check as blocked; do not fabricate SDK rows. The .NET SDK is not necessarily required just to clone traditional projects. Install only a needed SDK from [Microsoft .NET downloads](https://dotnet.microsoft.com/en-us/download).
+Record SDKs separately for each environment. A CI `dotnet --version` log only proves **one selected SDK version**, not a complete SDK inventory or installation path. For **operator local**, run `dotnet --list-sdks` and add **one row for each installed SDK** with its version and installation path. If no `dotnet` CLI is installed, record the check as blocked; do not fabricate SDK rows. The .NET SDK is not necessarily required just to clone traditional projects. Install only a needed SDK from [Microsoft .NET downloads](https://dotnet.microsoft.com/en-us/download).
 
 ```powershell
 dotnet --list-sdks
@@ -170,12 +176,13 @@ dotnet --list-sdks
 
 **How to populate each column (left to right):**
 
-- **SDK Version:** One installed SDK version per row.
-- **Installation Path:** The installation directory returned by the SDK command.
+- **Environment:** `Existing CI runner` or `Operator local`.
+- **SDK Version:** The observed SDK version; label any single-version CI evidence as partial when a complete inventory was not recorded.
+- **Installation Path:** The actual observed installation directory, or `Not checked`.
 
 ### 27. .NET Runtime Inventory
 
-Run `dotnet --list-runtimes` and add one row per reported runtime family, version and installation path. The list of modern .NET runtimes does **not** establish installation of the .NET Framework 4.8 targeting pack.
+Capture runtimes separately by environment. A CI NUnit log showing `.NET Framework CLR v4.0.30319.42000` is a **CLR observation**, not a complete modern .NET runtime inventory or exact .NET Framework product version. For **operator local**, run `dotnet --list-runtimes` and add one row per reported runtime family, version and installation path. The list of modern .NET runtimes does **not** establish installation of the .NET Framework 4.8 targeting pack.
 
 ```powershell
 dotnet --list-runtimes
@@ -183,13 +190,14 @@ dotnet --list-runtimes
 
 **How to populate each column (left to right):**
 
-- **Runtime Name:** Runtime family or host, such as Microsoft.NETCore.App.
-- **Runtime Version:** Its exact installed version.
-- **Installation Path:** The directory reported by the runtime command.
+- **Environment:** `Existing CI runner` or `Operator local`.
+- **Runtime Name:** The observed runtime family or host, such as `Microsoft.NETCore.App` or `.NET Framework CLR`.
+- **Runtime Version:** The exact observed version (do not infer the framework product version from CLR information).
+- **Installation Path:** The directory reported in that environment, or `Not checked`.
 
 ### 28. MSBuild Version
 
-Run `msbuild -version -nologo` from Visual Studio Developer PowerShell, or another command environment with MSBuild on PATH. Record the reported version. A missing PATH entry is not proof MSBuild is uninstalled; use Visual Studio's Developer PowerShell or `vswhere`. [Build Tools installation](https://visualstudio.microsoft.com/downloads/).
+For **operator local**, run `msbuild -version -nologo` from Visual Studio Developer PowerShell, or another command environment with MSBuild on PATH. Record the reported version. A missing PATH entry is not proof MSBuild is uninstalled; use Visual Studio's Developer PowerShell or `vswhere`. [Build Tools installation](https://visualstudio.microsoft.com/downloads/).
 
 ```powershell
 msbuild -version -nologo
@@ -197,7 +205,7 @@ msbuild -version -nologo
 
 ### 29. MSBuild Installation Source
 
-Identify the MSBuild installation source separately, such as `Visual Studio 2022 Enterprise` or the verified location of MSBuild.exe. If using `Get-Command msbuild`, the `Source` property identifies the executable path. Do not use the version number in this field.
+Identify the MSBuild installation source separately in **each environment**, such as `Visual Studio 2022 Enterprise` or the verified location of MSBuild.exe. If using `Get-Command msbuild`, the `Source` property identifies the executable path. Do not use the version number in this field.
 
 ```powershell
 Get-Command msbuild -ErrorAction SilentlyContinue | Select-Object Source
@@ -205,7 +213,7 @@ Get-Command msbuild -ErrorAction SilentlyContinue | Select-Object Source
 
 ### 30. NuGet CLI Version
 
-Run `nuget help` and record the version that the CLI prints. If NuGet is missing, follow [Microsoft's NuGet CLI installation guide](https://learn.microsoft.com/en-us/nuget/consume-packages/install-use-packages-nuget-cli). This is not the version of a NuGet package referenced by the application.
+For **operator local**, run `nuget help` and record the version that the CLI prints. Do not infer a CI NuGet CLI version merely because a restore succeeded. If NuGet is missing, follow [Microsoft's NuGet CLI installation guide](https://learn.microsoft.com/en-us/nuget/consume-packages/install-use-packages-nuget-cli). This is not the version of a NuGet package referenced by the application.
 
 ```powershell
 nuget help
@@ -213,7 +221,7 @@ nuget help
 
 ### 31. .NET Framework Targeting Pack Inventory
 
-For traditional .NET Framework projects, check the applicable **reference assemblies / targeting pack**, not merely the presence of a runtime. For RecordSift check that the .NET Framework 4.8 reference assembly `mscorlib.dll` is present, rather than checking for an empty directory. Use the printed pack path as the table `Location` and the file-check result as `Installed`. Add one row per framework actually checked. If missing, see the [.NET Framework Developer Pack](https://dotnet.microsoft.com/en-us/download/dotnet-framework/net48).
+For each environment, record the actual **reference-assembly / targeting-pack** check. A successful CI build targeting .NET Framework 4.8 shows build capability but **does not verify** the targeting-pack file or path; use `Not checked` for `Installed` and `Location` unless a direct file check was performed. For traditional .NET Framework projects, check the applicable **reference assemblies / targeting pack**, not merely the presence of a runtime. For RecordSift check that the .NET Framework 4.8 reference assembly `mscorlib.dll` is present, rather than checking for an empty directory. Use the printed pack path as the table `Location` and the file-check result as `Installed`. Add one row per framework actually checked. If missing, see the [.NET Framework Developer Pack](https://dotnet.microsoft.com/en-us/download/dotnet-framework/net48).
 
 ```powershell
 $pack = Join-Path $env:ProgramFiles 'Reference Assemblies\Microsoft\Framework\.NETFramework\v4.8'
@@ -225,9 +233,10 @@ Test-Path -LiteralPath $referenceAssembly
 
 **How to populate each column (left to right):**
 
+- **Environment:** `Existing CI runner` or `Operator local`.
 - **Framework Version:** The framework and version being checked.
-- **Installed:** True or False based on the reference-assembly file check; this does not verify a working compiler or build.
-- **Location:** The exact path checked.
+- **Installed:** `True` or `False` only from the actual reference-assembly file check, otherwise `Not checked`.
+- **Location:** The actual path checked, or `Not checked`.
 
 ### 32. Test Runner Inventory
 
@@ -828,7 +837,7 @@ Record each unresolved issue, source limitation, missing verification or cross-e
 Populate **one row for every numbered baseline item, 1–65**. Report what was checked through **three separate evidence channels**, rather than using an ambiguous single `Complete`/`Partial` status:
 
 - **Source Inspection:** Files at the selected frozen revision, repository host metadata, independent public artifact metadata and discovery documentation. `Verified` means the relevant source fact is corroborated, **not** that it was locally executed. `Partial` means only part of the relevant scope was inspected or effective behavior remains undetermined. Use `Not checked` when source verification was expected but not done; use `Not applicable` for items that are inherently local-only, CI-only or governance-only.
-- **Existing CI:** GitHub-hosted workflow runs and their specific logs for the correct commit. `Passed` means relevant executed checks passed, with linked run/commit evidence. `Verified` means CI records or provenance were inspected, without treating this as new operator execution. Use `Not checked` for relevant CI evidence not reviewed and `Not applicable` for items that do not require CI evidence. CI success **never** resolves local environment or checkout uncertainty.
+- **Existing CI:** GitHub-hosted workflow runs and their specific logs for the correct commit. `Passed` means relevant executed checks passed, with linked run/commit evidence. `Verified` means relevant CI run/log records were inspected; for partial CI inventory observations, record explicitly which fields are **still not checked**. It never implies that an entire inventory is complete or that an operator performed local checks. Use `Not checked` for relevant CI evidence not reviewed and `Not applicable` for items that do not require CI evidence. CI success **never** resolves local environment or checkout uncertainty.
 - **Operator Local:** Checks executed on the discovery operator's actual machine. Use `Passed` or `Failed` only with the precise command, exit code, working directory, tool version and saved output; `Not executed` if a required operator command has not been performed; `Not recorded` for missing identity or other operator-supplied metadata; `Not applicable` where no operator-local check is required for that particular discovery item. `Not applicable` is **not** a global approval and does not eliminate the deferred local checks in item 65.
 - **Evidence or Missing Information:** Preserve every existing EV reference and specific unresolved limitation. Cite exact commit/run provenance, link verified evidence, and clarify missing local work. Do not overwrite `Not executed` with an inferred outcome merely because source-declared operations or CI workflow definitions exist.
 
@@ -836,10 +845,12 @@ Populate **one row for every numbered baseline item, 1–65**. Report what was c
 
 | Baseline Item | Source Inspection | Existing CI | Operator Local | Evidence or Missing Information |
 |---|---|---|---|---|
-| 36 | Verified | Not applicable | Not applicable | EV-011; solution declarations inspected, not a local build |
-| 41 | Not applicable | Not checked | Not executed | MSBuild `-getProperty` not evaluated |
-| 47 | Verified | Passed | Not executed | Existing CI restore passed at selected SHA; operator restore not run |
-| 49 | Verified | Passed | Not executed | Existing CI NUnit passed at selected SHA; operator tests not run |
+| 25 | Not applicable | Verified | Not executed | Exact CI Git version logged; operator Git not checked |
+| 26 | Not applicable | Verified | Not executed | One selected CI SDK observed; full SDK inventory and operator check outstanding |
+| 39 | Verified | Not applicable | Not applicable | Source-declared solution inventory; not a local build |
+| 44 | Not applicable | Not checked | Not executed | MSBuild `-getProperty` not evaluated |
+| 50 | Verified | Passed | Not executed | Existing CI restore passed at selected SHA; operator restore not run |
+| 52 | Verified | Passed | Not executed | Existing CI NUnit passed at selected SHA; operator tests not run |
 
 **How to use the status table:** A single item may be `Verified` under Source Inspection and `Not executed` under Operator Local without contradiction. When source declarations are sufficient, mark Operator Local `Not applicable`; when runtime or evaluated state is part of the item, retain `Not executed` until actual operator evidence is captured. For CI-only items, Source Inspection may be `Not applicable` while CI shows `Verified`. Preserve overall unresolved verification, review state (items 62–63), next action (61), and deferred checks (62).
 

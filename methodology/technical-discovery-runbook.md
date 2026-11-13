@@ -327,7 +327,7 @@ git ls-files "*.csproj" "*.fsproj" "*.vbproj"
 
 | Project Path | Role | Project Format | Target Framework | Language Version | Output Type | MSBuild Platform | SDK or ToolsVersion | Direct Project Reference |
 |---|---|---|---|---|---|---|---|---|
-| src/RecordSift.Domain/RecordSift.Domain.csproj | Production | Traditional | net48 | 7.3 | Library | AnyCPU | ToolsVersion 15.0 | None |
+| src/RecordSift.Domain/RecordSift.Domain.csproj | Production | Traditional | v4.8 | 7.3 | Library | AnyCPU | ToolsVersion 15.0 | None |
 
 ## Project settings and evaluated values
 

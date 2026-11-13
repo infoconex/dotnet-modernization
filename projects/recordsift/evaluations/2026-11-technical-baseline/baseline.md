@@ -171,7 +171,10 @@ The [getting-started guide](https://github.com/infoconex/RecordSift/blob/1809d06
 
 | Runner Name | Runner Version | Source or Location |
 |---|---|---|
-| NUnit ConsoleRunner | 3.17.0 | tests/RecordSift.Domain.Tests/packages.config |
+| NUnit ConsoleRunner (declared) | 3.17.0 | tests/RecordSift.Domain.Tests/packages.config |
+| NUnit ConsoleRunner (operator local) | Not checked | `D:\RecordSift\packages\NUnit.ConsoleRunner.3.17.0\tools\nunit3-console.exe` |
+
+**Operator-local runner location (EV-030, 2026-11-13):** From `D:\RecordSift`, the operator searched for `nunit3-console.exe` on PATH and recursively within `.\packages`. The search returned `D:\RecordSift\packages\NUnit.ConsoleRunner.3.17.0\tools\nunit3-console.exe`. This confirms a locally discoverable executable in a `NUnit.ConsoleRunner.3.17.0` package directory; the **3.17.0 value is the package-directory/declaration version, not yet the executable's self-reported version**. The local test runner has not been executed against any test assembly, and this does not establish the existing checkout matches the frozen discovery SHA.
 
 ## Source revision and checkout
 
@@ -573,12 +576,15 @@ Each distribution has its own record. NuGet package upload acceptance was previo
 
 | 31 | $pack; Test-Path -LiteralPath $referenceAssembly | Operator PowerShell session (`D:\RecordSift`) | PowerShell 7.7.0 | .NET Framework v4.8 `mscorlib.dll` at `C:\Program Files (x86)\Reference Assemblies\Microsoft\Framework\.NETFramework\v4.8` | Not recorded | False (required reference assembly not present at checked path) | EV-029; operator-provided console output in discovery conversation, 2026-11-13 |
 
+| 32 | Get-Command nunit3-console.exe; Get-ChildItem .\packages -Filter nunit3-console.exe -File -Recurse | Operator PowerShell session (`D:\RecordSift`) | PowerShell 7.7.0 | Locate local NUnit ConsoleRunner executable | Not recorded | One executable path found under NUnit.ConsoleRunner.3.17.0 package directory | EV-030; operator-provided PowerShell output in discovery conversation, 2026-11-13 |
+
 ### 59. Findings and Gaps
 
 | Finding | Impact | Evidence | Next Check |
 |---|---|---|---|
-| Operator Windows development-tool readiness incomplete | Local OS, PowerShell, Git, SDK/runtime inventory verified (EV-017–021), legacy .NET Framework MSBuild `4.8.10001.0` verified (EV-027), and NuGet CLI `7.9.0.83` verified (EV-028). Modern Visual Studio MSBuild is still unverified following the Professional uninstall (EV-022–026), and the direct v4.8 reference-assembly check returned `False` for `mscorlib.dll` at the expected path (EV-029). Do not infer that local .NET Framework 4.8 build prerequisites are satisfied | Items 20–31; EV-016–029 | Verify modern MSBuild and repeat item 31 after Visual Studio Community / .NET Framework 4.8 developer tooling installation; proceed with item 32 test runner inventory |
+| Operator Windows development-tool readiness incomplete | Local OS, PowerShell, Git, SDK/runtime inventory verified (EV-017–021), legacy .NET Framework MSBuild `4.8.10001.0` verified (EV-027), and NuGet CLI `7.9.0.83` verified (EV-028). Modern Visual Studio MSBuild is not verified after Professional uninstall (EV-022–026); v4.8 reference assembly check returned `False` (EV-029). The NUnit ConsoleRunner executable was found in the existing local packages folder (EV-030), but its self-reported version and execution remain unverified | Items 20–32; EV-016–030 | Check NUnit executable version read-only; later verify modern MSBuild and v4.8 targeting pack after Community/developer pack installation |
 | Required .NET Framework 4.8 reference assembly missing at local checked path | Operator's direct `Test-Path` for `v4.8\mscorlib.dll` returned `False` versus `True` in CI; this is a confirmed local build-prerequisite gap at that path, not a RecordSift source-code failure or proof the runtime is missing | Item 31; EV-016, EV-029 | Install or restore the .NET Framework 4.8 developer/targeting pack as appropriate, then repeat the direct file check before attempting a local build |
+| Local NUnit runner executable version not verified | Local search located an executable within the `NUnit.ConsoleRunner.3.17.0` package directory, but no executable version output or NUnit test execution has been supplied | Item 32; EV-030 | Invoke the discovered executable's read-only `--version` option; keep tests deferred until approved checkout/build |
 | Clean local checkout not verified | Local filesystem and Git state remain unknown | Items 33–38 | Clone selected SHA into unique discovery folder |
 | Operator-local MSBuild evaluation outstanding | CI evaluated 20 project/configuration scopes; local tool/import differences remain unverified | Item 44; EV-015 | Evaluate the same properties on an approved operator Windows checkout if local parity is required |
 | Build-policy properties not explicitly set in evaluated results | `Deterministic`, `TreatWarningsAsErrors` and `PlatformTarget` returned empty strings; the output alone does not establish compiler-switch behavior | Item 44; [CI evidence](https://github.com/infoconex/RecordSift/actions/runs/43501555831/job/132148357265) | Inspect actual compiler invocations and existing build gates before proposing policy changes |

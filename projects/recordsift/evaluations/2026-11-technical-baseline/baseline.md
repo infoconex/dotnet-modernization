@@ -195,10 +195,14 @@ No independent local MSBuild `-getProperty` evaluation has been executed for thi
 
 ### 43. Repository Configuration
 
+NuGet entries below are **declared in the frozen repository source**, not an inventory of effective settings on a Windows machine. The `clear` entries remove previously inherited entries **within their respective source collections**; later configuration layers or command-line choices can still affect effective behavior. The declared feeds are not verified download or audit origins.
+
 | File or Mechanism | Present | Scope | Setting Name | Setting Value | Import or Precedence |
 |---|---|---|---|---|---|
-| NuGet.Config | True | Repository | packageSources.nuget.org | https://api.nuget.org/v3/index.json | NuGet.Config |
-| NuGet.Config | True | Repository | auditSources.nuget.org-audit | https://api.nuget.org/v3/index.json | NuGet.Config |
+| NuGet.Config | True | Repository | packageSources.clear | True | Clears previously inherited package source entries in this collection |
+| NuGet.Config | True | Repository | packageSources.nuget.org | https://api.nuget.org/v3/index.json | Declared package source following clear |
+| NuGet.Config | True | Repository | auditSources.clear | True | Clears previously inherited audit source entries in this collection |
+| NuGet.Config | True | Repository | auditSources.nuget.org-audit | https://api.nuget.org/v3/index.json | Declared audit source following clear |
 | .editorconfig | True | Repository | root | true | Root-level EditorConfig |
 | .editorconfig | True | Repository | charset | utf-8 | [*] |
 | .editorconfig | True | Repository | indent_style | space | [*] |
@@ -211,6 +215,9 @@ No independent local MSBuild `-getProperty` evaluation has been executed for thi
 | Directory.Packages.props | False | Tracked repository | Not applicable | Not applicable | Not evaluated |
 | global.json | False | Tracked repository | Not applicable | Not applicable | Not evaluated |
 
+**NuGet sections not declared in this source file:** `disabledPackageSources`, `packageSourceMapping`, `trustedSigners`, `packageSourceCredentials`, `clientCertificates`, `apikeys`, `config` (including signature policy, storage paths, proxy, request limits and push defaults), `packageRestore`, `packageManagement`, `bindingRedirects`, `solution`, `activePackageSource` (legacy), and version-dependent sections such as `minPublishAgeExceptions`. No additional NuGet configuration sections are declared in the inspected file. This is **not** a claim that any such settings are absent from the operator's machine.
+
+**Effective NuGet configuration:** Not checked. No operator-run Windows inspection of the configuration hierarchy, enabled/disabled sources, credentials/policies, package-source mapping, audit behavior, or command-line/environment overrides has been provided. Do not infer effective defaults or the feeds actually used during restore from source XML alone.
 ### 44. NuGet Package Declarations
 
 One row per package-consuming project. Each line of the Packages cell preserves the individual **package ID, declared version and usage**; the linked `packages.config` is in that project's directory. Configured `nuget.org` is an eligible feed, **not** verified package acquisition provenance.

@@ -88,22 +88,33 @@ Read `AssemblyFileVersion` separately from `AssemblyVersion` in the relevant ass
 
 ### 19. Consumers and Entry Points
 
-Inspect public entry-point documentation, production project output types, exported APIs and known consumer examples. **One row per distinct consumer/entry point**, with supporting documentation or source. Example: `Consuming .NET Framework app | Library consumer | docs/usage/getting-started.md`. Do not assert that a test consumer is a deployed application.
+Inspect the application's README, actual usage guides, public interface definitions and **demonstrated consumer calls** at the pinned source revision. Record two distinct inventories under this **one numbered discovery item**. Distinguish what the product exposes from what other software is actually known to consume. A publicly visible symbol alone does **not** establish that it is a recommended, supported or directly invoked integration point.
 
-**How to populate each column (left to right):**
+**A. Known Consumers**
 
-- **Consumer or Entry Point:** Identify the consuming application or exposed entry point.
-- **Type:** Classify it, such as library API or consumer.
-- **Source or Evidence:** Link to source, API documentation, or usage evidence.
+- **Consumer:** Name a specific application/system or executable example supported by evidence. An example consumer is a test or sample, **not** a production deployment.
+- **Type:** A concise evidence-based classification, such as `Production application`, `Test application`, `Sample application` or `External system`. Do not infer installed or deployed consumers from the intended audience or package-download availability.
+- **Evidence:** An exact consumer project, usage source, configuration/dependency reference, or recorded integration validation linked to its revision. For external deployments, identify evidence limits.
+- **External production consumers:** If none can be verified, record `Not identified` outside the table rather than inventing rows. A general getting-started tutorial describes **potential** consumers, not known deployed ones.
 
-**Illustrative example only; not a new observed finding:**
-
-| Consumer or Entry Point | Type | Source or Evidence |
+| Consumer | Type | Evidence |
 |---|---|---|
-| RecordSift library consumer | Library API | docs/usage/getting-started.md |
+| `tests/ReleaseConsumer` | Test application | `tests/ReleaseConsumer/Program.cs` (illustrative RecordSift source path) |
 
+**B. Public Entry Points**
 
-## Discovery host and prerequisite tools
+Select only operations with **positive documentation or demonstration that a consumer directly invokes them**. These may be application APIs, explicit commands, HTTP routes, or other declared external integration surfaces appropriate to the application type.
+
+- **Entry Point:** Identify the specific directly invoked operation, such as `CsvImporter<T>.Import`; do not list a class merely because it is public.
+- **Purpose:** Brief description of the observable consumer-facing capability.
+- **Evidence:** Link the exact source definition **and/or** consumer invocation or official usage guidance at the pinned revision. Prefer evidence of an actual direct call over visibility alone.
+- **Exclusions:** Avoid private/internal helpers, public implementation classes without consumer-facing invocation evidence, and methods passed as delegates/callbacks rather than directly called. For example, RecordSift consumer code passes `PrimitivePropertyMapper<T>.Map` to its importer; that **does not** make `Map` a direct-call entry point in this inventory. Public API compatibility inventories belong in their own evidence and should not be copied wholesale into item 19.
+
+| Entry Point | Purpose | Evidence |
+|---|---|---|
+| `CsvImporter<T>.Import` | Import CSV records | `docs/usage/getting-started.md` and `src/RecordSift.Application/Importing/Csv/CsvImporter.cs` (illustrative RecordSift paths) |
+
+Do not mistake a test consumer for a deployed application, assume undiscovered consumer integrations are absent, or use a list of all exported symbols as a substitute for documented direct consumer operations.
 
 ### 20. Operating System Name
 

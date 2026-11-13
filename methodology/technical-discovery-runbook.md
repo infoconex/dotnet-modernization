@@ -793,13 +793,32 @@ Record each unresolved issue, source limitation, missing verification or cross-e
 
 ### 57. Discovery Item Status
 
-For each numbered baseline item, record whether it is `Complete`, `Partial`, `Blocked` or `Not checked`. Point to evidence or the exact missing information. This is a tracking table, **not a second execution-phase numbering system**.
+Populate **one row for every numbered baseline item, 1–62**. Report what was checked through **three separate evidence channels**, rather than using an ambiguous single `Complete`/`Partial` status:
+
+- **Source Inspection:** Files at the selected frozen revision, repository host metadata, independent public artifact metadata and discovery documentation. `Verified` means the relevant source fact is corroborated, **not** that it was locally executed. `Partial` means only part of the relevant scope was inspected or effective behavior remains undetermined. Use `Not checked` when source verification was expected but not done; use `Not applicable` for items that are inherently local-only, CI-only or governance-only.
+- **Existing CI:** GitHub-hosted workflow runs and their specific logs for the correct commit. `Passed` means relevant executed checks passed, with linked run/commit evidence. `Verified` means CI records or provenance were inspected, without treating this as new operator execution. Use `Not checked` for relevant CI evidence not reviewed and `Not applicable` for items that do not require CI evidence. CI success **never** resolves local environment or checkout uncertainty.
+- **Operator Local:** Checks executed on the discovery operator's actual machine. Use `Passed` or `Failed` only with the precise command, exit code, working directory, tool version and saved output; `Not executed` if a required operator command has not been performed; `Not recorded` for missing identity or other operator-supplied metadata; `Not applicable` where no operator-local check is required for that particular discovery item. `Not applicable` is **not** a global approval and does not eliminate the deferred local checks in item 62.
+- **Evidence or Missing Information:** Preserve every existing EV reference and specific unresolved limitation. Cite exact commit/run provenance, link verified evidence, and clarify missing local work. Do not overwrite `Not executed` with an inferred outcome merely because source-declared operations or CI workflow definitions exist.
+
+**Example:**
+
+| Baseline Item | Source Inspection | Existing CI | Operator Local | Evidence or Missing Information |
+|---|---|---|---|---|
+| 36 | Verified | Not applicable | Not applicable | EV-011; solution declarations inspected, not a local build |
+| 41 | Not applicable | Not checked | Not executed | MSBuild `-getProperty` not evaluated |
+| 47 | Verified | Passed | Not executed | Existing CI restore passed at selected SHA; operator restore not run |
+| 49 | Verified | Passed | Not executed | Existing CI NUnit passed at selected SHA; operator tests not run |
+
+**How to use the status table:** A single item may be `Verified` under Source Inspection and `Not executed` under Operator Local without contradiction. When source declarations are sufficient, mark Operator Local `Not applicable`; when runtime or evaluated state is part of the item, retain `Not executed` until actual operator evidence is captured. For CI-only items, Source Inspection may be `Not applicable` while CI shows `Verified`. Preserve overall unresolved verification, review state (items 59–60), next action (61), and deferred checks (62).
 
 **How to populate each column (left to right):**
 
-- **Baseline Item:** Baseline item number, for example 18 or 48.
-- **Status:** Complete, Partial, Blocked or Not checked.
-- **Evidence or Missing Information:** Source supporting status or missing evidence.
+- **Baseline Item:** Number of the *existing* baseline item, without inventing a separate execution-phase sequence.
+- **Source Inspection:** `Verified`, `Partial`, `Not checked` or `Not applicable`, based on pinned source and metadata evidence.
+- **Existing CI:** `Passed`, `Verified`, `Not checked` or `Not applicable` based on independent existing CI evidence.
+- **Operator Local:** `Passed`, `Failed`, `Not executed`, `Not recorded` or `Not applicable`, without conflating local and hosted execution.
+- **Evidence or Missing Information:** Existing evidence IDs/links and exact outstanding checks, including whether any result was only CI-observed.
+
 
 ### 58. Overall Baseline Disposition
 

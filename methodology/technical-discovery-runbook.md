@@ -1,6 +1,6 @@
 # .NET Technical Discovery — Step-by-Step Guide
 
-Follow this guide alongside the [blank baseline template](../templates/application-baseline.md). All **64 discovery items** are numbered in ascending order (1–64) throughout the baseline, template and runbook. Discovery information comes first, then application information and the remaining verification steps; no separate phase numbering is required. Record results in the application's copied baseline, not here.
+Follow this guide alongside the [blank baseline template](../templates/application-baseline.md). All **60 discovery items** are numbered in ascending order (1–60) throughout the baseline, template and runbook. Discovery information comes first, then application information and the remaining verification steps; no separate phase numbering is required. Record results in the application's copied baseline, not here.
 
 **Before recording item 1:** Replace `<Application Name>` in the copied baseline title with the actual application name. Immediately below it, replace `<Application description>` with a factual description of what the application does, its users/consumers, and core responsibilities; verify against the README, documentation and source. For RecordSift, the copy already has its name and description.
 
@@ -20,13 +20,13 @@ Record the discovery start date (`YYYY-MM-DD`). Do not confuse it with a commit 
 
 ### 3. Discovery Status
 
-Use `Not started`, `In progress`, `Blocked`, `Completed`, or `Completed with gaps`, based on actual work. RecordSift is `In progress` while operator Windows checks or review are missing. A completed CI run is not an operator-local check.
+Use `Not started`, `In progress`, `Blocked`, `Completed`, or `Completed with gaps`, based on actual work. RecordSift remains `In progress` while required operator Windows verification is outstanding. A completed CI run is not an operator-local check.
 
 ### 4. Discovery Completed Date
 
-Use `YYYY-MM-DD` only once discovery is finished **and reviewed**, with any accepted gaps documented. Otherwise use `Not completed`.
+Use `YYYY-MM-DD` only when discovery is actually completed. For `Completed with gaps`, document every unresolved or deferred check and its explicitly accepted limitation in items 59–60; record acceptance evidence in the evidence manifest where available. Otherwise use `Not completed`.
 
-**Consistency:** `Completed` requires item 60 (`Overall Baseline Disposition`) = `Complete` and review fields 61–62 populated. `Completed with gaps` requires disposition `Complete with gaps`, accepted gaps documented in items 59 and 64, and review recorded. If disposition is `More verification needed`, discovery is not completed.
+**Consistency:** `Completed` means all required applicable discovery checks are verified and no material gaps remain unresolved. `Completed with gaps` means required verification has been performed to the agreed scope and remaining gaps have been documented and explicitly accepted; do not infer acceptance from silence. If required work is still pending without accepted deferral, keep item 3 as `In progress` or `Blocked` and item 4 as `Not completed`. Do not require a separate disposition, reviewer or review-date field.
 
 ## Application information
 
@@ -833,25 +833,9 @@ Record each unresolved issue, source limitation, missing verification or cross-e
 - **Next Check:** Next verification action.
 
 
-**Evidence discipline:** Keep the verified value and its CI/local context in the numbered item, cite supporting source or run evidence in the evidence manifest, and record specific outstanding checks in this findings table or in item 64 (Deferred Checks). An unobserved value should be `Not checked` or `Not executed` as applicable. Do **not** create a parallel status row for every discovery item, infer a complete tool inventory from one version string, or treat CI success as local execution.
+**Evidence discipline:** Keep the verified value and its CI/local context in the numbered item, cite supporting source or run evidence in the evidence manifest, and record specific outstanding checks in this findings table or in item 60 (Deferred Checks). An unobserved value should be `Not checked` or `Not executed` as applicable. Do **not** create a parallel status row for every discovery item, infer a complete tool inventory from one version string, or treat CI success as local execution.
 
-### 60. Overall Baseline Disposition
-
-Set one overall state such as `Complete`, `Complete with gaps` or `More verification needed` based on what has and has not actually been checked. Do not claim completion while required Windows preflight and checkout verification are outstanding.
-
-### 61. Reviewed By
-
-Record the reviewer who actually checked the baseline, or `Not reviewed`. This is not automatically the same person as the discovery operator.
-
-### 62. Review Date
-
-Record the actual baseline **review date** (`YYYY-MM-DD`), or `Not reviewed`. This is a governance date; it does not require evidence dates on every row.
-
-### 63. Next Action
-
-Name one concrete next action, for example `Run Windows preflight and verify source checkout`. Avoid a generic instruction such as `Continue`.
-
-### 64. Deferred Checks
+### 60. Deferred Checks
 
 Document intentionally omitted checks with reason and trigger for revisit, one row per check. For example: `Local Release build | Windows host not inventoried | After DISC host/checkout checks`; use baseline item numbers instead of outdated DISC phase identifiers.
 
@@ -863,9 +847,9 @@ Document intentionally omitted checks with reason and trigger for revisit, one r
 
 ## Completion and validation
 
-1. Confirm every baseline number 1–64 has either an observed value, applicable dataset rows, or a documented `Not checked`/`Not executed`/`Not applicable` disposition. Use the field values, environment-specific evidence and item 59 gaps; no duplicate item-by-item status matrix is required.
+1. Confirm every baseline number 1–60 has either an observed value, applicable dataset rows, or a documented `Not checked`/`Not executed`/`Not applicable` disposition. Use the field values, environment-specific evidence and item 59 gaps; no duplicate item-by-item status matrix is required.
 2. Verify the source revision, host, configuration, and provenance of every build/test/compatibility claim. A CI result must not be relabeled as a local run.
 3. Keep raw tool output and relevant CI links in the evidence manifest without copying secrets; don't add evidence dates to every entry.
-4. Review the recorded gaps and deferred checks. Leave modernization recommendations outside this factual baseline.
+4. Check that items 3–4 reflect the true discovery progress and that outstanding gaps and deferred checks appear in items 59–60. Keep discovery `In progress` or `Blocked` until mandatory checks are completed or remaining exceptions are explicitly accepted. Leave modernization recommendations outside this factual baseline.
 
 The [RecordSift baseline](../projects/recordsift/evaluations/2026-11-technical-baseline/baseline.md) is a worked, partially populated example. Its checked source and existing CI records must be distinguished from operator-run Windows commands still outstanding.

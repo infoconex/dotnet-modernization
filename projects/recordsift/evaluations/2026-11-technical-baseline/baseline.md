@@ -34,12 +34,28 @@
 
 ### 19. Consumers and Entry Points
 
-| Consumer or Entry Point | Type | Source or Evidence |
-|---|---|---|
-| `RecordSift.Application.Importing.Csv.CsvImporter<T>` | Library API | https://github.com/infoconex/RecordSift/blob/1809d06c0fade59e4769d16e0f8eaf10fa426004/src/RecordSift.Application/Importing/Csv/CsvImporter.cs |
-| `RecordSift.Application.Importing.Xlsx.XlsxImporter<T>` | Library API | https://github.com/infoconex/RecordSift/blob/1809d06c0fade59e4769d16e0f8eaf10fa426004/src/RecordSift.Application/Importing/Xlsx/XlsxImporter.cs |
-| tests/ReleaseConsumer | Test consumer | https://github.com/infoconex/RecordSift/blob/1809d06c0fade59e4769d16e0f8eaf10fa426004/tests/ReleaseConsumer/Program.cs |
+**A. Known Consumers**
 
+| Consumer | Type | Evidence |
+|---|---|---|
+| `tests/ReleaseConsumer` | Test application | [Clean NuGet consumer source](https://github.com/infoconex/RecordSift/blob/1809d06c0fade59e4769d16e0f8eaf10fa426004/tests/ReleaseConsumer/Program.cs) |
+
+**External production consumers:** Not identified in the inspected source or consumer documentation. A test consumer is not evidence of a deployed production application.
+
+**B. Public Entry Points**
+
+Only operations documented or demonstrated for **direct invocation by a consumer** are listed. Public supporting classes and delegate callbacks are not automatically consumer entry points.
+
+| Entry Point | Purpose | Evidence |
+|---|---|---|
+| `CsvImporter<T>.Import` | Import CSV records | [CSV importer source](https://github.com/infoconex/RecordSift/blob/1809d06c0fade59e4769d16e0f8eaf10fa426004/src/RecordSift.Application/Importing/Csv/CsvImporter.cs) |
+| `CsvStreamImporterAdapter<T>.Import` | Import CSV from a byte stream | [CSV stream adapter source](https://github.com/infoconex/RecordSift/blob/1809d06c0fade59e4769d16e0f8eaf10fa426004/src/RecordSift.Infrastructure.Csv/CsvStreamImporterAdapter.cs) |
+| `XlsxImporter<T>.Import` | Import XLSX records | [XLSX importer source](https://github.com/infoconex/RecordSift/blob/1809d06c0fade59e4769d16e0f8eaf10fa426004/src/RecordSift.Application/Importing/Xlsx/XlsxImporter.cs) |
+| `JsonImportResultSerializerAdapter.Serialize` | Generate JSON diagnostic reports | [JSON serializer source](https://github.com/infoconex/RecordSift/blob/1809d06c0fade59e4769d16e0f8eaf10fa426004/src/RecordSift.Infrastructure.Reporting/JsonImportResultSerializerAdapter.cs) |
+| `ReadableImportResultFormatterAdapter.Format` | Generate readable reports | [Readable formatter source](https://github.com/infoconex/RecordSift/blob/1809d06c0fade59e4769d16e0f8eaf10fa426004/src/RecordSift.Infrastructure.Reporting/ReadableImportResultFormatterAdapter.cs) |
+| `CsvImportResultSerializerAdapter.Serialize` | Generate diagnostic CSV reports | [Diagnostic CSV serializer source](https://github.com/infoconex/RecordSift/blob/1809d06c0fade59e4769d16e0f8eaf10fa426004/src/RecordSift.Infrastructure.Reporting/CsvImportResultSerializerAdapter.cs) |
+
+The [getting-started guide](https://github.com/infoconex/RecordSift/blob/1809d06c0fade59e4769d16e0f8eaf10fa426004/docs/usage/getting-started.md) and [clean consumer example](https://github.com/infoconex/RecordSift/blob/1809d06c0fade59e4769d16e0f8eaf10fa426004/tests/ReleaseConsumer/Program.cs) demonstrate or document these direct-call operations. `PrimitivePropertyMapper<T>.Map` is deliberately **not** listed: consumers supply it as an importer callback, rather than calling it directly in the documented import workflow.
 
 ## Discovery host and prerequisite tools
 

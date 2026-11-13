@@ -128,9 +128,21 @@ The [getting-started guide](https://github.com/infoconex/RecordSift/blob/1809d06
 | Existing CI runner | `Microsoft.WindowsDesktop.App` | `10.0.15` | `C:\Program Files\dotnet\shared\Microsoft.WindowsDesktop.App` |
 | Existing CI runner | `Microsoft.WindowsDesktop.App` | `11.0.0` | `C:\Program Files\dotnet\shared\Microsoft.WindowsDesktop.App` |
 | Earlier CI runner (NUnit, 2026-11-12) | .NET Framework CLR | `v4.0.30319.42000` | Not checked |
-| Operator local | Not checked | Not checked | Not checked |
+| Operator local | `Microsoft.AspNetCore.App` | `8.0.34` | `C:\Program Files\dotnet\shared\Microsoft.AspNetCore.App` |
+| Operator local | `Microsoft.AspNetCore.App` | `9.0.23` | `C:\Program Files\dotnet\shared\Microsoft.AspNetCore.App` |
+| Operator local | `Microsoft.AspNetCore.App` | `10.0.15` | `C:\Program Files\dotnet\shared\Microsoft.AspNetCore.App` |
+| Operator local | `Microsoft.NETCore.App` | `6.0.36` | `C:\Program Files\dotnet\shared\Microsoft.NETCore.App` |
+| Operator local | `Microsoft.NETCore.App` | `7.0.20` | `C:\Program Files\dotnet\shared\Microsoft.NETCore.App` |
+| Operator local | `Microsoft.NETCore.App` | `8.0.34` | `C:\Program Files\dotnet\shared\Microsoft.NETCore.App` |
+| Operator local | `Microsoft.NETCore.App` | `9.0.23` | `C:\Program Files\dotnet\shared\Microsoft.NETCore.App` |
+| Operator local | `Microsoft.NETCore.App` | `10.0.15` | `C:\Program Files\dotnet\shared\Microsoft.NETCore.App` |
+| Operator local | `Microsoft.WindowsDesktop.App` | `6.0.36` | `C:\Program Files\dotnet\shared\Microsoft.WindowsDesktop.App` |
+| Operator local | `Microsoft.WindowsDesktop.App` | `7.0.20` | `C:\Program Files\dotnet\shared\Microsoft.WindowsDesktop.App` |
+| Operator local | `Microsoft.WindowsDesktop.App` | `8.0.34` | `C:\Program Files\dotnet\shared\Microsoft.WindowsDesktop.App` |
+| Operator local | `Microsoft.WindowsDesktop.App` | `9.0.23` | `C:\Program Files\dotnet\shared\Microsoft.WindowsDesktop.App` |
+| Operator local | `Microsoft.WindowsDesktop.App` | `10.0.15` | `C:\Program Files\dotnet\shared\Microsoft.WindowsDesktop.App` |
 
-**Scope:** The 29 .NET runtime rows above were captured by `dotnet --list-runtimes` on the 2026-11-13 research runner. The separately labeled .NET Framework CLR observation comes from the earlier NUnit run, not from that command; its CLR version does not independently identify the .NET Framework product version. The research runner also recorded .NET Framework 4.x registry values and a direct v4.8 reference-assembly check (item 31).
+**Scope:** The 29 .NET runtime rows above were captured by `dotnet --list-runtimes` on the 2026-11-13 research runner. The separately labeled .NET Framework CLR observation comes from the earlier NUnit run, not from that command; its CLR version does not independently identify the .NET Framework product version. The research runner also recorded .NET Framework 4.x registry values and a direct v4.8 reference-assembly check (item 31). **Operator-local evidence (EV-021, 2026-11-13):** The operator reported 13 installed modern .NET runtime entries from `dotnet --list-runtimes` in `D:\RecordSift`. Nine exact name/version pairs also appear in the independent 29-entry CI inventory; four additional local entries are `Microsoft.NETCore.App` and `Microsoft.WindowsDesktop.App` at `6.0.36` and `7.0.20`. The inventory difference alone does not establish a RecordSift compatibility failure. Neither CLI command enumerates .NET Framework 4.8, which is separately checked in item 31.
 
 | Field | Existing CI Runner | Operator Local |
 |---|---|---|
@@ -539,11 +551,13 @@ Each distribution has its own record. NuGet package upload acceptance was previo
 
 | 26 | dotnet --list-sdks | Operator PowerShell session (`D:\RecordSift`) | .NET CLI (selected SDK version not separately queried) | Three installed SDKs: 8.0.428, 9.0.321, 10.0.404 | Not recorded | Output supplied | EV-020; operator-provided output in discovery conversation, 2026-11-13 |
 
+| 27 | dotnet --list-runtimes | Operator PowerShell session (`D:\RecordSift`) | .NET CLI (selected SDK version not separately queried) | Thirteen installed modern .NET runtime name/version/path entries | Not recorded | Output supplied | EV-021; operator-provided output in discovery conversation, 2026-11-13 |
+
 ### 59. Findings and Gaps
 
 | Finding | Impact | Evidence | Next Check |
 |---|---|---|---|
-| Operator Windows toolchain inventory incomplete | Operator supplied Windows 11 Pro/version/build/architecture (items 20–23, EV-017), PowerShell 7.7.0 (item 24, EV-018), and Git 2.56.0.windows.4 (item 25, EV-019); local SDK inventory was supplied for item 26 (EV-020); runtime, MSBuild, NuGet and targeting-pack inventories remain unchecked | Items 20–31; EV-016–020 | Continue read-only local prerequisite inventory at item 27 |
+| Operator Windows toolchain inventory incomplete | Operator supplied Windows 11 Pro/version/build/architecture (items 20–23, EV-017), PowerShell 7.7.0 (item 24, EV-018), and Git 2.56.0.windows.4 (item 25, EV-019); local SDK (item 26, EV-020) and runtime inventories (item 27, EV-021) were supplied; MSBuild, NuGet and targeting-pack inventories remain unchecked | Items 20–31; EV-016–021 | Continue read-only local prerequisite inventory at item 28 |
 | Clean local checkout not verified | Local filesystem and Git state remain unknown | Items 33–38 | Clone selected SHA into unique discovery folder |
 | Operator-local MSBuild evaluation outstanding | CI evaluated 20 project/configuration scopes; local tool/import differences remain unverified | Item 44; EV-015 | Evaluate the same properties on an approved operator Windows checkout if local parity is required |
 | Build-policy properties not explicitly set in evaluated results | `Deterministic`, `TreatWarningsAsErrors` and `PlatformTarget` returned empty strings; the output alone does not establish compiler-switch behavior | Item 44; [CI evidence](https://github.com/infoconex/RecordSift/actions/runs/43501555831/job/132148357265) | Inspect actual compiler invocations and existing build gates before proposing policy changes |
@@ -553,7 +567,7 @@ Each distribution has its own record. NuGet package upload acceptance was previo
 
 | Check | Reason Deferred | Revisit When |
 |---|---|---|
-| Windows toolchain preflight (remaining items 27–31) | Operator provided OS items 20–23, PowerShell version (item 24), Git version (item 25), and three installed .NET SDKs (item 26); local runtime and build tools still need checking | Continue read-only local prerequisite inventory |
+| Windows toolchain preflight (remaining items 28–31) | Operator provided OS items 20–23, PowerShell version (item 24), Git version (item 25), three installed .NET SDKs (item 26), and 13 runtime entries (item 27); local MSBuild, NuGet and targeting-pack checks remain | Continue read-only local prerequisite inventory |
 | Local checkout verification | No isolated Windows discovery folder created | After host prerequisite checks |
 | Operator-local MSBuild property parity | Existing CI evaluated the frozen source (EV-015); local tool/import parity remains unverified | If local parity is required, after host preflight and checkout |
 | Local restore/build/test | Operator approval and environment verification required | After source checkout and side-effect review |

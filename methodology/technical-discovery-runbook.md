@@ -173,9 +173,9 @@ dotnet sln .\path\to\solution.sln list
 - Note project references, output type, language version, and configuration-specific settings.
 - **Save:** each project's path, project type, declared framework(s), and important differences.
 - An SDK-style project can still target .NET Framework. Don't guess settings that aren't declared.
-- Fill **F-111–F-114** (versions and consumers), **F-213–F-219** (project details), and **F-301–F-326** (source-declared settings, only where applicable).
+- Fill **F-111–F-114** (versions and consumers), **F-213–F-219** (project details), and **F-301–F-305, F-311–F-315, F-321–F-326** (source-declared settings, only where applicable).
 
-**Fields F-111–F-114, F-213–F-219, F-301–F-326 — Result:** ____________________
+**Fields F-111–F-114, F-213–F-219, F-301–F-305, F-311–F-315, F-321–F-326 — Result:** ____________________
 
 ## DISC-004 — Record installed build tools
 
@@ -234,9 +234,9 @@ msbuild .\path\to\project.csproj -getProperty:TargetFramework -getProperty:Targe
 - Replace the path and configuration. Repeat where projects or configurations differ.
 - **Save:** settings found in files and settings returned by MSBuild. They may differ.
 - This command checks property values; it **doesn't build the project**. If your MSBuild version doesn't support it, record that and continue with file inspection.
-- Fill **F-327** with evaluated property values and relevant differences from declared values. Update **F-301–F-326** only when additional evidence changes them.
+- Fill **F-327** with evaluated property values and relevant differences from declared values. Update **F-301–F-305, F-311–F-315, F-321–F-326** only when additional evidence changes them.
 
-**Fields F-327; F-301–F-326 if needed — Result:** ____________________
+**Fields F-327; F-301–F-305, F-311–F-315, F-321–F-326 if needed — Result:** ____________________
 
 ## DISC-006 — Find shared configuration files
 

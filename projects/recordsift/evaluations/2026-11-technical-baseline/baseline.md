@@ -89,8 +89,11 @@
 | 31. Discovery Folder | Not recorded |
 | 32. Selected Source Branch or Tag | `main` |
 | 33. Source Commit SHA | `1809d06c0fade59e4769d16e0f8eaf10fa426004` |
+| Source Committer Date (UTC) | `2026-11-12T03:12:18Z` |
 | 34. Working Tree Clean | Not checked |
 | 35. Detached HEAD | Not checked |
+
+The unnumbered **Source Committer Date (UTC)** field belongs to item 33 and records the timestamp of the exact commit being evaluated. It comes from the pinned [Git commit metadata](https://github.com/infoconex/RecordSift/commit/1809d06c0fade59e4769d16e0f8eaf10fa426004); it is **not** the discovery date, checkout time, first push, or release publication time. No local checkout has been performed for this evaluation.
 
 ## Solution and project inventory
 

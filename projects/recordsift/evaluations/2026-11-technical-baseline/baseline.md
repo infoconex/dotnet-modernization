@@ -2,7 +2,7 @@
 
 **Unfilled RecordSift copy.** Complete this only after performing discovery. Use the [step-by-step guide](../../../../methodology/technical-discovery-runbook.md) to evaluate each numbered item and explain the columns of repeatable tables. Write results **only in the copy**.
 
-A numbered **field** captures one value; a numbered **table** captures a repeatable kind of data (such as project inventory). Each table column is unnumbered and each row represents one actual record. **Discovery Date** is recorded once; **Evidence Date** belongs to each collected evidence record and may differ across discovery days. The dates of original external CI runs are separate from evidence collection dates. The values here are deliberately blank. Use `Not checked`, `Not executed`, or `Not applicable` in completed copies when accurate, and retain appropriate evidence without secrets.
+A numbered **field** captures one value; a numbered **table** captures a repeatable kind of data (such as project inventory). Each table column is unnumbered and each row represents one actual record. **Discovery Date** is recorded once for the assessment. Dates that are intrinsic to external records, such as a CI run date, remain part of those records. The values here are deliberately blank. Use `Not checked`, `Not executed`, or `Not applicable` in completed copies when accurate, and retain appropriate evidence without secrets.
 
 ## Application information
 
@@ -215,9 +215,9 @@ A numbered **field** captures one value; a numbered **table** captures a repeata
 
 ### 57. Executed Command Evidence
 
-| Discovery Step | Evidence Date (UTC) | Command | Working Directory | Tool Version | Target or Configuration | Exit Code | Outcome | Output or Evidence |
-|---|---|---|---|---|---|---|---|---|
-|   |   |   |   |   |   |   |   |   |
+| Discovery Step | Command | Working Directory | Tool Version | Target or Configuration | Exit Code | Outcome | Output or Evidence |
+|---|---|---|---|---|---|---|---|
+|   |   |   |   |   |   |   |   |
 
 ### 58. Findings and Gaps
 

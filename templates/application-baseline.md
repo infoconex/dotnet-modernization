@@ -161,11 +161,22 @@ Record **declared source settings** in the table, including NuGet `clear` direct
 
 ### 44. NuGet Package Declarations
 
-One row per consuming project where unambiguous. List **each package ID, declared version and purpose** together, one per line, alongside version source and configured feed(s). Qualify any differing per-package conditions or feeds rather than merging incompatible details. Configured feed is not proven acquisition origin.
+Capture each declared package **ID and exact version** and all consuming projects without adding generic usage/purpose classifications. Use the project inventory in item 37 for canonical project paths; link each unique project name to its source here. Keep project-level counts in A and one row per distinct package ID/version in B. Preserve package-specific declaration attributes (for example `developmentDependency`, target framework or conditions) in a short note or additional evidence column if material. Separate source-declared eligible feeds from effective package acquisition, which requires independent verification.
 
-| Project | Packages (ID — Version — Purpose) | Declaration / Version Source | Configured Feed(s) |
-|---|---|---|---|
+**A. Packages by project**
+
+| Project | Package Count | Declaration Source | Configured Feed(s) |
+|---|---:|---|---|
 |   |   |   |   |
+
+**B. Package catalog**
+
+| Package ID | Version | Referenced By | Declaration Source(s) | Configured Feed(s) |
+|---|---|---|---|---|
+|   |   |   |   |   |
+
+**Additional declared package metadata and unresolved restore verification:**
+
 
 ### 45. Non-NuGet Dependencies
 

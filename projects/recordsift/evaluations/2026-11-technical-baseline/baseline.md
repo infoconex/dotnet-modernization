@@ -4,6 +4,17 @@
 
 [Step-by-Step Instructions](../../../../methodology/technical-discovery-runbook.md)
 
+## Discovery information
+
+| Field | Value |
+|---|---|
+| 16. Discovery By | Not recorded |
+| 17. Discovery Date | `2026-11-12` |
+| Discovery Status | In progress |
+| Discovery Completed Date | Not completed |
+
+**Status:** Windows host verification, local checkout, evaluated MSBuild properties, local restore/build/test and final review remain outstanding. This status describes discovery progress, not the status of the repository or published release. The completed date is populated only when the discovery is signed off (or formally completed with documented and accepted gaps).
+
 ## Application information
 
 | Field | Value |
@@ -31,12 +42,6 @@
 | `RecordSift.Application.Importing.Xlsx.XlsxImporter<T>` | Library API | https://github.com/infoconex/RecordSift/blob/1809d06c0fade59e4769d16e0f8eaf10fa426004/src/RecordSift.Application/Importing/Xlsx/XlsxImporter.cs |
 | tests/ReleaseConsumer | Test consumer | https://github.com/infoconex/RecordSift/blob/1809d06c0fade59e4769d16e0f8eaf10fa426004/tests/ReleaseConsumer/Program.cs |
 
-## Discovery information
-
-| Field | Value |
-|---|---|
-| 16. Discovery By | Not recorded |
-| 17. Discovery Date | `2026-11-12` |
 
 ## Discovery host and prerequisite tools
 

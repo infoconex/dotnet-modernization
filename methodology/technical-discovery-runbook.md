@@ -1,34 +1,10 @@
-# Native-first .NET technical discovery runbook
+# .NET Technical Discovery — Step-by-Step Guide
 
-This is the **reusable how-to** for collecting an evidence-backed technical baseline. Use it with the [application baseline template](../templates/application-baseline.md), [discovery execution log](../templates/discovery-execution-log.md), and [baseline variation guide](baseline-variation-guide.md). It supplements the [evaluation lifecycle](evaluation-process.md); it does **not** authorize new experiments, application changes, modernization assessment, or publication.
+Follow these steps in order to document an existing .NET application. Start with **DISC-001** to check your tools and get a clean copy of the source.
 
-**Operating rule:** run an applicable built-in Git, .NET SDK, MSBuild, NuGet, test-runner, or CI command **manually first**. Inspect the original output, record the command's true outcome, and only later decide whether a portable reporting script would help. A source-inspection-only pass is valid when commands cannot safely run.
+Run the built-in commands manually, review their output, and record what you find. Use the [execution log template](../templates/discovery-execution-log.md) for commands and results and the [application baseline template](../templates/application-baseline.md) for the finished documentation.
 
-## Before starting
-
-1. Review existing documentation/evaluations and the [evaluation lifecycle's scope gate](evaluation-process.md#start-here-first-contact-protocol). For a new evaluation, agree and record the scope before new experiments; read-only source inspection can precede approval. Do not assume that a previous pilot authorized a new evaluation or a publishing action.
-2. Freeze the **exact source commit SHA**; record checkout branch/tag, working-tree modifications, local or external inputs, discovery date, and who performs each command. A branch name is not immutable.
-3. Identify application roles and the actual available toolchains before choosing commands. A .NET Framework project, SDK-style project, SDK-installed host, and Visual Studio installation are not interchangeable.
-4. Record each step in the [execution log template](../templates/discovery-execution-log.md). Store the summarized technical facts **once** in the [application baseline](../templates/application-baseline.md); link its findings to durable evidence via the evaluation's evidence manifest.
-5. Do not include credentials, tokens, private feed URLs containing secrets, user profile paths, personally identifiable data, or raw environment dumps in committed records. Redact sensitive content **in a copy**, noting the redaction. Preserve raw material securely only where permitted.
-
-### Two independent classifications
-
-**Evidence method:** **source-inspected** (file/definition at a known revision), **tool-evaluated** (resolved configuration/graph under stated inputs), or **executed** (an operation actually ran, with outcome). A failed operation is still executed evidence of that failure. An evaluated setting is not proof of a successful build. Separately record **provenance** (collected now vs historical and its original scope).
-
-**Applicability:** describe separately the *project system* (SDK-style / traditional MSBuild / mixed / unknown), *target framework(s)* (.NET Framework, modern .NET, .NET Standard library contract, etc.), *host/toolchain* (Windows/other OS, Visual Studio MSBuild, `dotnet msbuild`, NuGet CLI), and *tool versions*. Do not label a procedure "all .NET" based on one RecordSift run. Use "tested on", "documented to support but not tested here", "not applicable", or "not established" explicitly.
-
-### Command safety and records
-
-| Activity | Default behavior | Permission |
-|---|---|---|
-| Git identity/status, tracked-file listing, read-only project/CI inspection, tool version queries | No repository modification expected | Suitable for source discovery |
-| MSBuild `-getProperty` / `-getItem` queries (on compatible MSBuild) | Evaluation rather than compilation; imports/tasks may still load and some custom project evaluation may have side effects | Inspect inputs before use |
-| NuGet restore, `dotnet restore`, or lock-mode restore | Writes package caches, `obj`/assets/lock-related files and possibly repository files depending on configuration | Require explicit execution scope and record side effects |
-| MSBuild build/rebuild, `dotnet build`, `dotnet test`, runners, packaging, CI triggers | Can create/remove outputs or run custom build/test actions | Execute only within approved environment/scope |
-| Package publish, release, deployment, migrations, source edit, `dotnet new` | Alters applications or external state | **Not part of discovery**; separate approval required |
-
-Run commands individually. Capture the **exact command**, working directory, full output or durable excerpt, exit code, date, tool version, environment, and source SHA. A green workflow does not establish that every expected check ran. Never replace a failed command with a different one and report the original as successful.
+The steps explain when a command applies and when to stop. Don't change the application or publish anything as part of discovery.
 
 ## DISC-001 — Check prerequisites, acquire clean source and identify the exact revision
 

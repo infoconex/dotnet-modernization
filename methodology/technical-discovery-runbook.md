@@ -682,38 +682,55 @@ The run date is an intrinsic part of the external workflow record; it is **not**
 
 ### 52. Package and Release Artifacts
 
-Inspect the **published package registry**, GitHub release/tag metadata, source manifests and existing CI-produced artifacts as **separate sources of evidence**. Keep the original artifact table (one row per artifact/attribute), without treating a CI-local package as a publicly published package. Then populate the two small provenance tables in the baseline to make source history and publication dates explicit; use the **same full SHAs** and avoid putting timestamps inside atomic value fields 8–14 or 33.
+Inspect the tracked package manifest, existing CI build and consumer verification evidence, the official NuGet registry and GitHub release/tag metadata **separately**. Never confuse a version declaration, an unpublished local CI package, and a publicly distributed artifact. Collect **one meaningful completion or snapshot date for each record**, not each internal phase of the release pipeline. Source, CI and published artifact evidence are distinct from operator-local commands; do not claim a new operator execution on the basis of existing GitHub Actions logs.
 
-**Source revision provenance (one row per distinct source context):**
+**A. Source package declarations**
 
-1. **Frozen discovery source:** Item 33's full selected SHA, and its Git **committer timestamp** in UTC. Source-inspected facts must not be described as an operator's local checkout.
-2. **Published release tag:** Resolve the actual Git tag object, dereferencing an annotated tag if needed, to its target **commit**. Capture the full commit SHA and its Git **committer timestamp** in UTC; do not assume the GitHub release target/ref and current repository default branch are identical.
-3. **Published package source:** Verify the package's source SHA from **independent provenance** when possible (e.g., embedded source/repository metadata, source-commit manifest, signed release checksums, and/or an exact-artifact published-feed verification run). If the package SHA is not independently supported, use `Not verified` — **never** infer it solely from the release tag or discovery SHA. If verified, record the source commit's committer timestamp; distinguish existing CI verification from a new download or operator execution.
+- **Declaration:** Exact source manifest path (for example `packaging/RecordSift.nuspec`) linked to the frozen discovery source SHA.
+- **Declared Version:** The version **in source at the frozen commit**, not a previously published version unless separately proven.
+- **Source Committer Date (UTC):** The frozen source commit's Git committer timestamp, `YYYY-MM-DDTHH:MM:SSZ`. This date describes the **source snapshot**, not when the manifest first acquired that version.
+- **Evidence:** Linked exact manifest and the Git commit object, not a release download inferred from version equality.
 
-Use `YYYY-MM-DDTHH:MM:SSZ` for all UTC timestamps and the full 40-character commit SHA for Git. A commit's **committer date** and **author date** may differ, and neither is a guaranteed timestamp for the SHA's first creation, first push, or release publication. Prefer the committer date here, explicitly labeled; note author dates separately if material. Git can show both for a locally available revision without a build:
+**B. CI package artifacts and verification**
+
+- **Artifact:** Identify the CI-created package or candidate and whether it was published. A locally built `0.1.0` stable-version package is **not** automatically the NuGet.org `0.1.0` package.
+- **Version:** Exact CI artifact's declared package version.
+- **Verification Result:** Explicit observed result and validation type (for example local-feed clean consumer `Passed`); distinguish **unpublished** CI artifacts from published releases and distinguish source-defined steps from verified execution.
+- **Verification Completed (UTC):** One UTC timestamp for the final successful verification of **that candidate**. Prefer a result-specific log PASS timestamp; if only overall job completion is available, label it as such. Do not confuse the workflow's start time, package creation, later uploads or a CI job on a different SHA with verification completion.
+- **Evidence:** Exact CI run/job and, when available, specific verification logs. Leave results/dates `Not checked` or `Not executed` when appropriate.
+
+**C. Published artifacts**
+
+Use **one row per independently published distribution** (for example one NuGet.org package and a separate GitHub Release) even if names/versions match.
+
+- **Artifact:** Distribution and artifact identity (e.g., `RecordSift NuGet.org package` versus `GitHub Release v0.1.0`).
+- **Version:** Exact public version or tag, without combining distribution channels.
+- **Status:** Verified public availability/registry listing, not inferred solely from a configured release workflow.
+- **Publication Date (UTC):** One verified publication date/time per independently published artifact. Use `YYYY-MM-DDTHH:MM:SSZ` for an exact official publication timestamp. Use `YYYY-MM-DD` **with an explicit day-only qualification** when reliable publication/availability evidence proves the day but not the exact publication time. If even the day is not verified, use `Not checked`. **Do not** substitute an upload-accepted time, artifact creation date, Git commit date, GitHub Release publication date for NuGet, or a date from a different artifact.
+- **Evidence:** Official registry/package page or metadata, direct GitHub Release link, and supporting successful **public-feed** verification, with source limitations stated. Store detailed publishing-stage evidence in the manifest, not as intermediate timestamp rows in the baseline.
+
+**Source revision provenance (one row per distinct source context)**
+
+1. **Frozen discovery source:** Item 33's full selected SHA and Git **committer timestamp** in UTC. Do not imply the operator performed a local checkout if only the remote source was inspected.
+2. **Published release tag:** Resolve the tag's target **commit** (dereference annotated tags when needed); capture the full Git SHA and the target commit's UTC committer timestamp. Do not assume the release source matches frozen discovery source or current default branch.
+3. **Published package source:** Verify its source SHA from package-specific provenance, such as embedded metadata, an exact `SOURCE_COMMIT.txt` manifest/checksum or a public-feed consumer verification. If unsupported, record `Not verified` — never assume it equals the tag. Link the precise evidence, distinguishing an existing CI result from a new package download.
+
+For all exact timestamps use `YYYY-MM-DDTHH:MM:SSZ`, and full 40-character Git SHAs. Commit author/committer dates may differ; neither guarantees original SHA creation, first push or publication date. For local commits, the following is a read-only source metadata query:
 
 ```powershell
 git show -s --format='%H%n%cI%n%aI' HEAD
 ```
 
-The output order is full SHA, committer date (ISO 8601 with its Git offset), and author date; **convert** any non-UTC offset to UTC before recording. Validate the SHA against the selected revision. For a remote release/tag or pre-checkout inventory, obtain equivalent Git host commit and tag metadata read-only.
+The output gives full SHA, committer ISO timestamp (potentially offset from UTC), and author ISO timestamp. **Convert any offset to UTC**, check the selected revision and label committer date explicitly. For pre-clone inventory and public releases, inspect the Git host's commit/tag metadata read-only.
 
-**Publication timestamps (one row per published artifact):** Record the **actual GitHub release publication** timestamp separately from source commit dates. Record the **NuGet package publication** timestamp only when verified from reliable registry/metadata; do not copy the GitHub release timestamp into it. If no reliable timestamp is checked, use `Not checked`. Distinguish initial publication from edit/update timestamps when both exist.
+**RecordSift example (frozen source versus distribution):**
 
-**How to populate the existing artifact table (left to right):**
+- `packaging/RecordSift.nuspec` at `1809d06c0fade59e4769d16e0f8eaf10fa426004` declares `0.1.0-rc.1`; source committer timestamp is `2026-11-12T03:12:18Z`.
+- Existing [Windows consumer CI run](https://github.com/infoconex/RecordSift/actions/runs/43146607706) recorded successful **unpublished** local-feed consumer verification for `0.1.0-rc.1` at `2026-11-12T03:13:13Z` and a separately constructed `0.1.0` candidate at `2026-11-12T03:13:19Z`. These are existing log PASS timestamps, not new local runs.
+- Published `RecordSift 0.1.0` on NuGet.org is a **separate distribution** from [GitHub Release v0.1.0](https://github.com/infoconex/RecordSift/releases/tag/v0.1.0). The package was independently verified available from the public feed on `2026-11-01`, but its exact official NuGet listing/publication time has not been checked. GitHub Release metadata reports `published_at=2026-11-01T22:12:43Z`. Do not copy the latter timestamp to NuGet.
+- The published release tag and independently verified published package source refer to `2db5c86bc26010afcb83c2e455d2471d8c9340d6`, with committer date `2026-11-01T21:13:46Z`. Existing [reconciliation and public-feed CI](https://github.com/infoconex/RecordSift/actions/runs/41355904536) provide the package provenance evidence; this discovery has **not** independently downloaded the original package.
 
-- **Artifact:** Package or release artifact name.
-- **Version:** Published or source-declared version.
-- **Attribute:** One artifact property, such as nuspec version or included DLL.
-- **Attribute Value:** Value of that property.
-- **Release URL:** Actual public release URL or `Not published`.
-- **Evidence:** Source, registry or CI proof of that specific property.
-
-**How to populate the provenance table:** Source Context; full Source Commit SHA; Committer Date (UTC); Verification (linked to the exact evidence and qualified as source metadata, CI or independent package inspection).
-
-**How to populate the publication table:** Published Artifact; Published At (UTC); Evidence (official metadata or other explicitly described provenance).
-
-**RecordSift example and limit:** The published `v0.1.0` release tag resolves to `2db5c86bc26010afcb83c2e455d2471d8c9340d6`, whereas this discovery inspects `1809d06c0fade59e4769d16e0f8eaf10fa426004`. Existing [recovery workflow](https://github.com/infoconex/RecordSift/actions/runs/41355904536) checked package source provenance and the original release assets and verified the published-feed consumer. That **existing CI** supports the published package source claim; it is not a new local run or newly downloaded package. The official GitHub release metadata supplies the release publication timestamp. Do not infer the NuGet registry publication timestamp from it.
+The baseline's three artifact tables and the separate source-revision provenance table preserve these distinctions. Keep sensitive source/package credentials out of the evidence.
 ### 53. Runtime and Deployment Requirements
 
 Read consumer guidance, architecture and package manifests for OS, target frameworks, runtimes, dependencies and deployment constraints. One requirement per row with the environment where it applies; do not assume a requirement is installed on the operator's machine.

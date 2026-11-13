@@ -383,7 +383,7 @@ Read source XML declarations for `OutputPath`, `WarningLevel`, `WarningsAsErrors
 
 | Project | OutputPath (D/R) | WarningLevel (D/R) | WarningsAsErrors (D/R) | DocumentationFile (D/R) | Conditions / Exceptions | Project Path |
 |---|---|---|---|---|---|---|
-| RecordSift.Domain | bin\\Debug\\ / bin\\Release\\ | 4 | 1591 | bin\\Debug\\RecordSift.Domain.xml / bin\\Release\\RecordSift.Domain.xml | None | src/RecordSift.Domain/RecordSift.Domain.csproj |
+| RecordSift.Domain | `bin\Debug\` / `bin\Release\` | 4 | 1591 | `bin\Debug\RecordSift.Domain.xml` / `bin\Release\RecordSift.Domain.xml` | None | src/RecordSift.Domain/RecordSift.Domain.csproj |
 
 ### 40. Project Metadata and Imports
 

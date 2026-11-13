@@ -373,10 +373,10 @@ Inspect project-wide properties (`IsTestProject`, `FileAlignment`, `AppDesignerF
 
 ### 41. Evaluated MSBuild Properties
 
-Read declared properties first. When compatible **MSBuild 17.8 or later** is available, query individual evaluated properties with `-getProperty` using explicit configuration and framework. Record only actual MSBuild output under `Evaluated Value`; leave as Not checked if the operator hasn't executed it. A successful CI build alone doesn't establish this inventory.
+Read declared properties first. When compatible **MSBuild 17.8 or later** is available, query evaluated properties with `-getProperty` using explicit configuration and framework. Multiple property names may be comma-separated in a single switch ([Microsoft documentation](https://learn.microsoft.com/en-us/visualstudio/msbuild/evaluate-items-and-properties)). Record only actual MSBuild output under `Evaluated Value`; leave as Not checked if the operator hasn't executed it. A successful CI build alone doesn't establish this inventory.
 
 ```powershell
-msbuild .\src\RecordSift.Domain\RecordSift.Domain.csproj -getProperty:TargetFrameworkVersion -getProperty:LangVersion -p:Configuration=Release
+msbuild .\src\RecordSift.Domain\RecordSift.Domain.csproj -getProperty:TargetFrameworkVersion,LangVersion -p:Configuration=Release
 ```
 
 The property-query option depends on MSBuild version. On older installations, record `Not checked` and note the incompatibility, rather than calling source XML an evaluated property. Do not build just to satisfy this query.
@@ -425,13 +425,13 @@ git ls-files "NuGet.Config" "*NuGet.Config" ".editorconfig" "*.editorconfig" ".g
 
 ### 44. NuGet Package Declarations
 
-Read `packages.config`, `PackageReference` and central versions as appropriate. Add one row per **package declaration per consuming project**. The feed column is configured source information and must **not** be described as proven download origin. Inspect sources via `dotnet nuget list source` if the SDK is present or the corresponding NuGet CLI command.
+Read `packages.config`, `PackageReference` and central versions as appropriate. Add one row per **package declaration per consuming project**. The repository-specific source command below follows [Microsoft's documented `--configfile` option](https://learn.microsoft.com/en-us/dotnet/core/tools/dotnet-nuget-list-source). The feed column is configured source information and must **not** be described as proven download origin. Inspect sources via `dotnet nuget list source` if the SDK is present or the corresponding NuGet CLI command.
 
 ```powershell
 dotnet nuget list source --configfile .\NuGet.Config
 ```
 
-This command requires the .NET CLI. If only NuGet CLI is available, use an equivalent `nuget sources List -ConfigFile NuGet.Config` command, without asserting the configured feed is the actual download origin.
+The `--configfile` option is supported in .NET 6 SDK and later. This command requires the .NET CLI. If only NuGet CLI is available, use an equivalent `nuget sources List -ConfigFile NuGet.Config` command, without asserting the configured feed is the actual download origin.
 
 **How to populate each column (left to right):**
 

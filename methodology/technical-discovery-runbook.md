@@ -387,12 +387,12 @@ Read source XML declarations for `OutputPath`, `WarningLevel`, `WarningsAsErrors
 
 ### 40. Project Metadata and Imports
 
-Inspect project-wide metadata (such as `Configuration`, `IsTestProject`, `FileAlignment` and `AppDesignerFolder`) and `Import` declarations. Use **one row per project**, with named metadata **as columns**, and put the project path last. Multiple imports can share one cell; preserve the actual paths and conditional scopes. Missing properties must be `Not declared`, not an assumed value. If imports declare properties or conditions beyond project XML, keep them distinct from source-local metadata.
+Inspect project-wide metadata (such as `Configuration`, `IsTestProject`, `FileAlignment` and `AppDesignerFolder`) and `Import` declarations. Use **one row per project**, with named metadata **as columns**, and put the project path last. Multiple imports can share one cell; preserve the actual paths and conditional scopes. Missing properties must be `Not declared`, not an assumed value. For `Configuration`, record the **declared fallback** only when the project source specifies a default for an otherwise empty `$(Configuration)`. Record the associated condition; do **not** claim it is the actual selected or evaluated configuration. For example, `<Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>` means **Configuration Fallback = `Debug`**, not an observed Debug build. Actual evaluated configurations belong in item 41, and executed build configurations in items 46–49. If imports declare properties or conditions beyond project XML, keep them distinct from source-local metadata.
 
 **How to populate each column (left to right):**
 
 - **Project:** Unique project name or link.
-- **Default Configuration:** Explicit configuration declaration, or `Not declared`.
+- **Configuration Fallback:** Conditional fallback value from project source (for example `Debug` when `$(Configuration)` is empty), or `Not declared`. It is **not** the evaluated MSBuild `Configuration` or proof of a Debug build.
 - **IsTestProject:** Declared value, or `Not declared`.
 - **FileAlignment:** Declared value, or `Not declared`.
 - **AppDesignerFolder:** Declared value, or `Not declared`.

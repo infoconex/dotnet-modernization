@@ -445,70 +445,76 @@ Each distribution has its own record. NuGet package upload acceptance was previo
 
 ### 57. Discovery Item Status
 
-| Baseline Item | Status | Evidence or Missing Information |
-|---|---|---|
-| 1 | Complete | EV-003–EV-007 |
-| 2 | Complete | EV-003–EV-007 |
-| 3 | Complete | EV-003–EV-007 |
-| 4 | Complete | EV-003–EV-007 |
-| 5 | Complete | EV-003–EV-007 |
-| 6 | Complete | EV-003–EV-007 |
-| 7 | Complete | EV-003–EV-007 |
-| 8 | Complete | EV-003–EV-007 |
-| 9 | Complete | EV-003–EV-007 |
-| 10 | Complete | EV-003–EV-007 |
-| 11 | Complete | EV-003–EV-007 |
-| 12 | Complete | EV-003–EV-007 |
-| 13 | Complete | EV-003–EV-007 |
-| 14 | Complete | EV-003–EV-007 |
-| 15 | Complete | EV-003–EV-007 |
-| 16 | Not checked | Operator identity not supplied |
-| 17 | Complete | Evaluation README |
-| 18 | Not checked | Operator Windows host output missing |
-| 19 | Not checked | Operator Windows host output missing |
-| 20 | Not checked | Operator Windows host output missing |
-| 21 | Not checked | Operator Windows host output missing |
-| 22 | Not checked | Operator Windows host output missing |
-| 23 | Not checked | Operator Windows host output missing |
-| 24 | Not checked | Operator Windows host output missing |
-| 25 | Not checked | Operator Windows host output missing |
-| 26 | Not checked | Operator Windows host output missing |
-| 27 | Not checked | Operator Windows host output missing |
-| 28 | Not checked | Operator Windows host output missing |
-| 29 | Not checked | Operator Windows host output missing |
-| 30 | Partial | Declared runner; local installation not checked |
-| 31 | Not checked | No local discovery folder recorded |
-| 32 | Complete | EV-004 |
-| 33 | Partial | Selected SHA; no local checkout verified |
-| 34 | Not checked | Local Git verification pending |
-| 35 | Not checked | Local Git verification pending |
-| 36 | Complete | EV-011 |
-| 37 | Complete | EV-011 |
-| 38 | Complete | EV-011 |
-| 39 | Complete | EV-011 |
-| 40 | Complete | EV-011 |
-| 41 | Not checked | MSBuild evaluated-property query not executed |
-| 42 | Complete | EV-002 |
-| 43 | Partial | Tracked settings checked; effective precedence not evaluated |
-| 44 | Complete | EV-012 |
-| 45 | Partial | Static dependency inspection only |
-| 46 | Complete | EV-013 |
-| 47 | Partial | CI restore passed; local restore not executed |
-| 48 | Partial | CI build passed; local build not executed |
-| 49 | Partial | CI NUnit passed; local suite not executed |
-| 50 | Complete | EV-013 |
-| 51 | Complete | EV-008–EV-010 |
-| 52 | Complete | EV-006, EV-009 |
-| 53 | Complete | EV-003 |
-| 54 | Complete | EV-008–EV-010 |
-| 55 | Partial | CI command evidence; no operator execution |
-| 56 | Partial | Known gaps documented |
-| 57 | Partial | Status table populated; operator checks outstanding |
-| 58 | Partial | Assessment remains incomplete |
-| 59 | Not checked | Review not performed |
-| 60 | Not checked | Review not performed |
-| 61 | Partial | Operator action pending |
-| 62 | Partial | Pending checks documented |
+Track three independent evidence dimensions for all 62 baseline items. **Source Inspection** means pinned source files, repository metadata, external public artifact metadata or discovery documentation were inspected; it does **not** mean a command ran. **Existing CI** refers only to reviewed GitHub-hosted runs or their logs. **Operator Local** refers only to actual work on the operator's machine, not CI runner execution. A populated item is not automatically locally verified.
+
+**Status definitions:** Source Inspection uses `Verified` (source/metadata documented), `Partial` (source-only view leaves relevant verification gaps), `Not checked`, or `Not applicable`. Existing CI uses `Passed` (relevant completed CI checks succeeded), `Verified` (run/log/evidence inspected without claiming a new local execution), `Not checked`, or `Not applicable`. Operator Local uses `Passed`/`Failed` only for observed operator-executed checks, `Not executed` for required operations not performed, `Not recorded` for missing operator-supplied information, and `Not applicable` when that item does not require an operator-local check. These status dimensions are **not** substitutes for the final disposition or review approval.
+
+| Baseline Item | Source Inspection | Existing CI | Operator Local | Evidence or Missing Information |
+|---|---|---|---|---|
+| 1 | Verified | Not applicable | Not applicable | EV-003–EV-007 |
+| 2 | Verified | Not applicable | Not applicable | EV-003–EV-007 |
+| 3 | Verified | Not applicable | Not applicable | EV-003–EV-007 |
+| 4 | Verified | Not applicable | Not applicable | EV-003–EV-007 |
+| 5 | Verified | Not applicable | Not applicable | EV-003–EV-007 |
+| 6 | Verified | Not applicable | Not applicable | EV-003–EV-007 |
+| 7 | Verified | Not applicable | Not applicable | EV-003–EV-007 |
+| 8 | Verified | Not applicable | Not applicable | EV-003–EV-007 |
+| 9 | Verified | Not applicable | Not applicable | EV-003–EV-007 |
+| 10 | Verified | Not applicable | Not applicable | EV-003–EV-007 |
+| 11 | Verified | Not applicable | Not applicable | EV-003–EV-007 |
+| 12 | Verified | Not applicable | Not applicable | EV-003–EV-007 |
+| 13 | Verified | Not applicable | Not applicable | EV-003–EV-007 |
+| 14 | Verified | Not applicable | Not applicable | EV-003–EV-007 |
+| 15 | Verified | Not applicable | Not applicable | EV-003–EV-007 |
+| 16 | Not applicable | Not applicable | Not recorded | Operator identity not supplied |
+| 17 | Verified | Not applicable | Not applicable | Evaluation README |
+| 18 | Not applicable | Not applicable | Not executed | Operator Windows host output missing |
+| 19 | Not applicable | Not applicable | Not executed | Operator Windows host output missing |
+| 20 | Not applicable | Not applicable | Not executed | Operator Windows host output missing |
+| 21 | Not applicable | Not applicable | Not executed | Operator Windows host output missing |
+| 22 | Not applicable | Not applicable | Not executed | Operator Windows host output missing |
+| 23 | Not applicable | Not applicable | Not executed | Operator Windows host output missing |
+| 24 | Not applicable | Not applicable | Not executed | Operator Windows host output missing |
+| 25 | Not applicable | Not applicable | Not executed | Operator Windows host output missing |
+| 26 | Not applicable | Not applicable | Not executed | Operator Windows host output missing |
+| 27 | Not applicable | Not applicable | Not executed | Operator Windows host output missing |
+| 28 | Not applicable | Not applicable | Not executed | Operator Windows host output missing |
+| 29 | Not applicable | Not applicable | Not executed | Operator Windows host output missing |
+| 30 | Verified | Passed | Not executed | Declared runner; local installation not checked |
+| 31 | Not applicable | Not applicable | Not executed | No local discovery folder recorded |
+| 32 | Verified | Not applicable | Not applicable | EV-004 |
+| 33 | Verified | Verified | Not executed | Selected SHA; no local checkout verified |
+| 34 | Not applicable | Not applicable | Not executed | Local Git verification pending |
+| 35 | Not applicable | Not applicable | Not executed | Local Git verification pending |
+| 36 | Verified | Not applicable | Not applicable | EV-011 |
+| 37 | Verified | Not applicable | Not applicable | EV-011 |
+| 38 | Verified | Not applicable | Not applicable | EV-011 |
+| 39 | Verified | Not applicable | Not applicable | EV-011 |
+| 40 | Verified | Not applicable | Not applicable | EV-011 |
+| 41 | Not applicable | Not checked | Not executed | MSBuild evaluated-property query not executed |
+| 42 | Verified | Not applicable | Not applicable | EV-002 |
+| 43 | Partial | Not checked | Not executed | Tracked settings checked; effective precedence not evaluated |
+| 44 | Verified | Not applicable | Not applicable | EV-012 |
+| 45 | Partial | Not checked | Not executed | Static dependency inspection only |
+| 46 | Verified | Not applicable | Not applicable | EV-013 |
+| 47 | Verified | Passed | Not executed | CI restore passed; local restore not executed |
+| 48 | Verified | Passed | Not executed | CI build passed; local build not executed |
+| 49 | Verified | Passed | Not executed | CI NUnit passed; local suite not executed |
+| 50 | Verified | Not applicable | Not applicable | EV-013 |
+| 51 | Not applicable | Verified | Not applicable | EV-008–EV-010 |
+| 52 | Verified | Passed | Not executed | EV-006, EV-009; EV-005 (published artifacts); exact NuGet registry publication time not checked |
+| 53 | Verified | Not applicable | Not applicable | EV-003 |
+| 54 | Verified | Passed | Not executed | EV-008–EV-010 |
+| 55 | Not applicable | Verified | Not executed | CI command evidence; no operator execution |
+| 56 | Verified | Not applicable | Not applicable | Known gaps documented |
+| 57 | Verified | Not applicable | Not applicable | Status table populated; operator checks outstanding |
+| 58 | Verified | Not applicable | Not applicable | Assessment remains incomplete |
+| 59 | Not applicable | Not applicable | Not applicable | Review not performed |
+| 60 | Not applicable | Not applicable | Not applicable | Review not performed |
+| 61 | Verified | Not applicable | Not applicable | Operator action pending |
+| 62 | Verified | Not applicable | Not executed | Pending checks documented |
+
+**Unresolved verification and review:** No operator-run Windows preflight, clean checkout, MSBuild property evaluation, restore, build or test has been captured in this evaluation. Existing CI at the frozen source SHA does not verify local tooling or deployment/runtime conditions. Items 59–60 are **Not reviewed**; the overall item 58 disposition remains **More verification needed**. A `Not applicable` cell means that particular evidence channel is not required for that item, **not** that the full discovery is approved.
 
 | Field | Value |
 |---|---|

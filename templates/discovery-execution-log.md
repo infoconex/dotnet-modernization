@@ -15,7 +15,7 @@ This template is a **working record**, not an executable script. Create a row fo
 
 | Step | Work status | Evidence method | Evidence outcome | Result/evidence link |
 |---|---|---|---|---|
-| DISC-001 — Source identity | Not started | — | Not executed | — |
+| DISC-001 — Prerequisites and source | Not started | — | Not executed | — |
 | DISC-002 — Solutions/projects | Not started | — | Not executed | — |
 | DISC-003 — Declared project configuration | Not started | — | Not executed | — |
 | DISC-004 — Toolchain inventory | Not started | — | Not executed | — |
@@ -33,6 +33,23 @@ This template is a **working record**, not an executable script. Create a row fo
 **Work status:** not started / in progress / complete / blocked / deferred / not applicable.  
 **Evidence method:** source-inspected / tool-evaluated / executed; several may apply but record them as **distinct observations**.  
 **Evidence outcome:** verified for stated scope / partially verified / blocked / failed / not executed / unresolved / not applicable. Work completion and verification are independent.
+
+## Tool checks — one command, one result
+
+When checking prerequisites or recording a tool version, give **each tool its own code snippet** and put the actual result immediately below it. Repeat this small section for every tool checked.
+
+### `<Tool name>`
+
+```powershell
+<one native command to identify the tool and version>
+```
+
+**Result:** Not yet executed — replace with the actual version/output or error.
+
+- **Executed by / date:** `<operator and local date>`
+- **Evidence:** `<output file or link, when available>`
+
+Do not put several different tools in one snippet or combine their results into an unlabeled transcript. If a command wasn't run, leave its result as **Not yet executed**. The summary table can refer to these recorded results.
 
 ## Detailed step record — copy only when needed
 

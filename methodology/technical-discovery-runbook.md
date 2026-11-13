@@ -1,6 +1,6 @@
 # .NET Technical Discovery — Step-by-Step Guide
 
-Follow this guide alongside the [blank baseline template](../templates/application-baseline.md). Its **62 numbered headings match the baseline exactly, in the same order**, and no separate DISC phase numbering is required. Record results in the application's **copied baseline**, not here.
+Follow this guide alongside the [blank baseline template](../templates/application-baseline.md). All **62 existing numbered item identifiers are preserved** and the collection instructions remain in numeric order (1–62); no separate DISC phase numbering is required. The copied baseline **displays Discovery information first** as a document-level summary, followed by application information, even though discovery operator/start-date instructions retain their established item identifiers **16 and 17**. Record results in the application's copied baseline, not here.
 
 **Before item 1:** Replace `<Application Name>` in the copied baseline title with the actual application name. Immediately below it, replace `<Application description>` with a factual description of what the application does, its users/consumers, and core responsibilities; verify against the README, documentation and source. For RecordSift, the copy already has its name and description.
 
@@ -91,6 +91,12 @@ Record the actual person performing this discovery; do not infer the name from r
 ### 17. Discovery Date
 
 Record the single date this discovery began in `YYYY-MM-DD` format. Do **not** add evidence-collection dates to each item. External CI run dates remain intrinsic to CI records in item 51.
+
+**Discovery status and completion date (unnumbered fields in the first table):** The opening `Discovery information` table is a **document summary**, displayed above application information in the copied baseline. Keep item 16 (`Discovery By`) and item 17 (`Discovery Date`) in that top table with their original identifiers; these instructions remain here to preserve ordered numbering and evidence references.
+
+- **Discovery Status:** Set `Not started`, `In progress`, `Blocked`, `Completed`, or `Completed with gaps` based on actual discovery progress. When source facts/CI evidence are collected but required operator Windows checks and review are missing, use `In progress` (RecordSift's current status). `Blocked` is for work that cannot currently progress due to a concrete blocking condition. Do not treat successful CI runs as operator-local verification.
+- **Discovery Completed Date:** Enter `YYYY-MM-DD` **only when discovery is finished and reviewed**, including accepted and documented gaps when its final status is `Completed with gaps`. Otherwise enter `Not completed`. This is the date the discovery was completed, **not** the commit date, first data collection date, CI run date or release publication date.
+- **Cross-check:** `Completed` requires an overall disposition (item 58) of `Complete` and actual review by/date values (items 59–60). `Completed with gaps` requires item 58 = `Complete with gaps`, outstanding gaps documented in items 56/62 and a completed review. `Not started`, `In progress` and `Blocked` must leave the completed date as `Not completed`; if item 58 says `More verification needed`, discovery status cannot be `Completed` or `Completed with gaps`. Never record the current clock time merely because the document was edited.
 
 ## Discovery host and prerequisite tools
 

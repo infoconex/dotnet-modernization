@@ -1,6 +1,6 @@
 # `<Application Name>` — Discovery baseline
 
-`<Application description>`
+**Description:** `<Application description>`
 
 [Step-by-Step Instructions](../methodology/technical-discovery-runbook.md)
 

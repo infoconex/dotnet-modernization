@@ -9,7 +9,7 @@
 
 ## Intended article promise
 
-Show a real .NET application's technical discovery **as it happened**: the native commands chosen, why they apply, captured output, mistakes/limitations, and the resulting technical baseline. Keep the article engaging and readable; the full runbook and evidence logs remain in `dotnet-modernization`.
+Show a real .NET application's technical discovery **as it happened**: the native commands chosen, why they apply, captured output, mistakes/limitations, and the resulting technical baseline. Keep the article engaging and readable; the full instructions, completed discovery report and supporting evidence remain in `dotnet-modernization`.
 
 **Suggested working title:** "Documenting a .NET Application: A Step-by-Step Technical Discovery of RecordSift"
 

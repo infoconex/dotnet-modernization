@@ -4,7 +4,7 @@ Follow this guide alongside the [blank baseline template](../templates/applicati
 
 **Before item 1:** Replace `<Application Name>` in the copied baseline title with the actual application name. Immediately below it, replace `<Application description>` with a factual description of what the application does, its users/consumers, and core responsibilities; verify against the README, documentation and source. For RecordSift, the copy already has its name and description.
 
-**Recording rules:** A single-value field contains only one value (for example `Library`, `Public`, `MIT`, a precise version, `True`, a path, or a URL). Keep citations, assumptions, and explanations in the evidence manifest or a specifically designated table evidence column. For a numbered table, the number identifies **the entire dataset**, never its columns or rows. Add one record per applicable item. Mark unavailable checks `Not checked`, `Not executed` or `Not applicable` accurately.
+**Recording rules:** A single-value field contains only one value (for example `Library`, `Public`, `MIT`, a precise version, `True`, a path, or a URL). Keep citations, assumptions, and explanations in the evidence manifest or a specifically designated table evidence column. For a numbered table, the number identifies **the entire dataset**, never its columns or rows. Prefer one row per project for project-scoped inventories, with unique project name first and the relative project path last; group multiple references, packages or properties without losing their distinct values. Keep separate rows when different scopes or evidence cannot be combined accurately. Mark unavailable checks `Not checked`, `Not executed` or `Not applicable` accurately.
 
 **Environment boundary:** RecordSift itself is Windows-only. Perform its operator-run host, restore, build and test checks on **Windows**, not on Linux, macOS or WSL. Existing GitHub Actions results are separate from local operator execution. Start with native Git, PowerShell, .NET SDK, NuGet and MSBuild commands; use custom scripts only after their necessity and portability are understood. Do not reset worktrees, modify source, publish packages or deploy as part of discovery. Confirm explicit approval before restore/build/test operations.
 
@@ -310,7 +310,7 @@ dotnet sln .\RecordSift.sln list
 
 ### 37. Projects
 
-Enumerate tracked projects, including projects not listed in the solution. Inspect each project XML for its project type, target framework, output, language version, platform and direct references. **Repeat the project row for multiple target frameworks or direct project references**. For RecordSift the current baseline has ten traditional `.csproj` projects (five production, five tests) that target `v4.8` and declare `LangVersion=7.3`.
+Enumerate tracked projects, including those outside the solution. Read each project XML to identify format, framework(s), output type, language version, platform, tools version/SDK, and **all** direct project references. Prefer **one row per project**. Use the short, unique project name in the first column, optionally linked to its project file; keep the repository-relative `.csproj` path in the last column. List multiple direct references together by project name, rather than duplicating every other property. Preserve conditional target frameworks, platforms, or other exceptions explicitly; split a project into multiple scoped rows only if a single row would lose a real distinction.
 
 ```powershell
 git ls-files "*.csproj" "*.fsproj" "*.vbproj"
@@ -318,83 +318,107 @@ git ls-files "*.csproj" "*.fsproj" "*.vbproj"
 
 **How to populate each column (left to right):**
 
-- **Project Path:** Relative path of the project file.
-- **Role:** Production, test, tool, or other evidenced role.
-- **Project Format:** Traditional vs SDK-style.
-- **Target Framework:** One target framework for this row.
-- **Language Version:** Declared language version or Not declared.
-- **Output Type:** Library, Exe, WinExe, or other declared output.
-- **MSBuild Platform:** Declared MSBuild Platform value.
-- **SDK or ToolsVersion:** The declared SDK or ToolsVersion.
-- **Direct Project Reference:** One direct referenced project path; repeat the row for more references.
+- **Project:** Unique project name (link to pinned source project file when available).
+- **Role:** Production, Test, Tool or another observed role.
+- **Format:** Traditional or SDK-style, as declared.
+- **Target Framework(s):** Every declared framework; label any conditional scope.
+- **Language Version:** Source declaration or `Not declared`; qualify per-target differences.
+- **Output Type:** Library, Exe, WinExe or other declared value.
+- **MSBuild Platform(s):** Declared Platform value(s); do not confuse with PlatformTarget.
+- **SDK or ToolsVersion:** SDK identifier or ToolsVersion, as actually declared.
+- **Direct Project References:** All direct referenced project names, or `None`.
+- **Project Path:** Full repository-relative project file path, **last**.
 
-**Illustrative example only; not a new observed finding:**
+**Illustrative source-based example (all references on one row):**
 
-| Project Path | Role | Project Format | Target Framework | Language Version | Output Type | MSBuild Platform | SDK or ToolsVersion | Direct Project Reference |
-|---|---|---|---|---|---|---|---|---|
-| src/RecordSift.Domain/RecordSift.Domain.csproj | Production | Traditional | v4.8 | 7.3 | Library | AnyCPU | ToolsVersion 15.0 | None |
+| Project | Role | Format | Target Framework(s) | Language Version | Output Type | MSBuild Platform(s) | SDK or ToolsVersion | Direct Project References | Project Path |
+|---|---|---|---|---|---|---|---|---|---|
+| RecordSift.Infrastructure.Csv | Production | Traditional | v4.8 | 7.3 | Library | AnyCPU | 15.0 | RecordSift.Application; RecordSift.Domain | src/RecordSift.Infrastructure.Csv/RecordSift.Infrastructure.Csv.csproj |
 
 ## Project settings and evaluated values
 
 ### 38. Compiler Settings
 
-Read project XML under each unconditional or conditional `PropertyGroup`. Enter **one row per project, configuration, framework and compiler property** (e.g. `LangVersion`, `DebugType`, `Optimize`, `DefineConstants`). Preserve the actual condition and whether the value was merely declared in XML.
+Inspect project XML `PropertyGroup` declarations. Pivot declared compiler properties into columns so **one project generally occupies one row**. Avoid one row per property/configuration. D/R means **Debug then Release**; use a single value only when the declaration is identical in both. `Not declared` is different from `false` or a tool-evaluated default. For other configurations/frameworks or exceptional property conditions, add clearly labeled columns/scoped values or rows without discarding differences.
 
 ```powershell
 Get-Content .\src\RecordSift.Domain\RecordSift.Domain.csproj
 ```
 
+For the current RecordSift projects, shared conditions are `'$(Configuration)|$(Platform)' == 'Debug|AnyCPU'` for D and `'$(Configuration)|$(Platform)' == 'Release|AnyCPU'` for R; `LangVersion` is unconditional. Document these exact conditions **once above the table**, then note exceptions per project if any. These conditions are source declarations, not evidence of effective MSBuild values.
+
 **How to populate each column (left to right):**
 
-- **Project Path:** Source project path.
-- **Configuration:** Configuration scope of this declaration.
-- **Framework:** Target framework context.
-- **Property:** One compiler property, such as LangVersion or Optimize.
-- **Declared Value:** Its source-declared value.
-- **Condition:** The condition that controls it or Unconditional.
+- **Project:** Unique project name or link.
+- **Framework(s):** Target framework(s) within which the declarations apply.
+- **LangVersion:** Unconditional language-version declaration, or separately scoped values.
+- **DebugSymbols (D/R):** Exact declarations per configuration; `Not declared` if absent.
+- **DebugType (D/R):** Debug and Release source values.
+- **Optimize (D/R):** Debug and Release source values.
+- **DefineConstants (D/R):** Exact per-configuration constants.
+- **Conditions / Exceptions:** Deviations from the shared conditions, additional configurations, or `None`.
+- **Project Path:** Repository-relative project file path, last.
+
+**Illustrative RecordSift declaration (not evaluated compiler output):**
+
+| Project | Framework(s) | LangVersion | DebugSymbols (D/R) | DebugType (D/R) | Optimize (D/R) | DefineConstants (D/R) | Conditions / Exceptions | Project Path |
+|---|---|---|---|---|---|---|---|---|
+| RecordSift.Domain | v4.8 | 7.3 | true / Not declared | full / pdbonly | false / true | DEBUG;TRACE / TRACE | None | src/RecordSift.Domain/RecordSift.Domain.csproj |
 
 ### 39. Output and Validation Settings
 
-Read project XML for `OutputPath`, `WarningLevel`, `WarningsAsErrors`, `DocumentationFile` and related properties. Enter one property per project/configuration row. A missing declaration is **not** proof of a particular evaluated default.
+Read source XML declarations for `OutputPath`, `WarningLevel`, `WarningsAsErrors`, `DocumentationFile` and additional validation settings. Represent **one project per row** using separate property columns. Use D/R pairs when declared values differ and **one value** when the same value is declared for both configurations. Keep exact paths, not assumed defaults. If a setting is absent, record `Not declared` rather than infer its evaluated value. Reuse the shared Debug/Release condition definitions from item 38; label exceptions explicitly.
 
 **How to populate each column (left to right):**
 
-- **Project Path:** Source project path.
-- **Configuration:** Applicable configuration.
-- **Property:** One output/validation property.
-- **Declared Value:** Declared value.
-- **Condition:** Condition controlling that value.
+- **Project:** Unique project name or link.
+- **OutputPath (D/R):** Output directories for both configurations, in Debug/Release order.
+- **WarningLevel (D/R):** One value if identical, or an ordered pair.
+- **WarningsAsErrors (D/R):** Exact compiler warning identifiers or `Not declared`.
+- **DocumentationFile (D/R):** Exact generated-documentation paths or `Not declared`.
+- **Conditions / Exceptions:** Additional source conditions or nonstandard settings.
+- **Project Path:** Repository-relative project file path, last.
+
+**Illustrative RecordSift source declarations:**
+
+| Project | OutputPath (D/R) | WarningLevel (D/R) | WarningsAsErrors (D/R) | DocumentationFile (D/R) | Conditions / Exceptions | Project Path |
+|---|---|---|---|---|---|---|
+| RecordSift.Domain | bin\\Debug\\ / bin\\Release\\ | 4 | 1591 | bin\\Debug\\RecordSift.Domain.xml / bin\\Release\\RecordSift.Domain.xml | None | src/RecordSift.Domain/RecordSift.Domain.csproj |
 
 ### 40. Project Metadata and Imports
 
-Inspect project-wide properties (`IsTestProject`, `FileAlignment`, `AppDesignerFolder`) and imported `.props`/`.targets` files. Record one metadata/import item per row and its source file; don't combine metadata names in a value cell.
+Inspect project-wide metadata (such as `Configuration`, `IsTestProject`, `FileAlignment` and `AppDesignerFolder`) and `Import` declarations. Use **one row per project**, with named metadata **as columns**, and put the project path last. Multiple imports can share one cell; preserve the actual paths and conditional scopes. Missing properties must be `Not declared`, not an assumed value. If imports declare properties or conditions beyond project XML, keep them distinct from source-local metadata.
 
 **How to populate each column (left to right):**
 
-- **Project Path:** Source project path.
-- **Metadata or Import Name:** One metadata item or import name.
-- **Declared Value:** Value or import path, as declared.
-- **Source File:** File in which that declaration occurs.
+- **Project:** Unique project name or link.
+- **Default Configuration:** Explicit configuration declaration, or `Not declared`.
+- **IsTestProject:** Declared value, or `Not declared`.
+- **FileAlignment:** Declared value, or `Not declared`.
+- **AppDesignerFolder:** Declared value, or `Not declared`.
+- **Imports:** All relevant explicit imports; no invented implicit imports.
+- **Additional Metadata / Conditions:** Other observed declarations or exceptional scope.
+- **Project Path:** Repository-relative project file path, last.
 
 ### 41. Evaluated MSBuild Properties
 
-Read declared properties first. When compatible **MSBuild 17.8 or later** is available, query evaluated properties with `-getProperty` using explicit configuration and platform (plus target framework where multi-targeting applies). Multiple property names may be comma-separated in a single switch ([Microsoft documentation](https://learn.microsoft.com/en-us/visualstudio/msbuild/evaluate-items-and-properties)). Record only actual MSBuild output under `Evaluated Value`; leave as Not checked if the operator hasn't executed it. A successful CI build alone doesn't establish this inventory.
+Read declared properties first. With **MSBuild 17.8 or later**, run the documented `-getProperty` query for each configuration/framework/platform that matters ([Microsoft documentation](https://learn.microsoft.com/en-us/visualstudio/msbuild/evaluate-items-and-properties)). Multiple property names can be included in one query. Use **one row per project** where possible, with property `name=value` pairs grouped under **explicit** configuration/framework/platform scopes. Retain a separate column for declared values, and cite the **actual command/output**. Split rows for different scopes only if grouping would obscure real value differences; never fabricate a value from source XML or a passing CI build.
 
 ```powershell
+msbuild .\src\RecordSift.Domain\RecordSift.Domain.csproj -getProperty:TargetFrameworkVersion,LangVersion -p:Configuration=Debug -p:Platform=AnyCPU
 msbuild .\src\RecordSift.Domain\RecordSift.Domain.csproj -getProperty:TargetFrameworkVersion,LangVersion -p:Configuration=Release -p:Platform=AnyCPU
 ```
 
-The property-query option depends on MSBuild version. On older installations, record `Not checked` and note the incompatibility, rather than calling source XML an evaluated property. Do not build just to satisfy this query.
+The property-query option requires an appropriate MSBuild version. These are **evaluation-only** commands; do not add build targets. On an older installation record `Not checked` and note the tooling limitation.
 
 **How to populate each column (left to right):**
 
-- **Project Path:** Source project path.
-- **Configuration:** Configuration evaluated.
-- **Framework:** Target framework or framework context.
-- **Property:** One property queried.
-- **Evaluated Value:** Value actually emitted by MSBuild.
-- **Declared Value:** Source-declared value if relevant.
-- **Evidence:** Captured command/output location; not a presumed default.
+- **Project:** Unique project name or link.
+- **Configuration / Framework / Platform:** Exact combination(s) actually evaluated; label each when grouped.
+- **Evaluated Properties (name=value):** Exact MSBuild output, scoped to its corresponding combination.
+- **Declared Properties for Comparison:** Exact source declarations, separately identified.
+- **Evidence:** Saved command/output or exact other execution evidence.
+- **Project Path:** Repository-relative project file path, last.
 
 ## Repository structure and dependencies
 
@@ -430,41 +454,49 @@ git ls-files "NuGet.Config" "*NuGet.Config" ".editorconfig" "*.editorconfig" ".g
 
 ### 44. NuGet Package Declarations
 
-Read `packages.config`, `PackageReference` and central versions as appropriate. Add one row per **package declaration per consuming project**. The repository-specific source command below follows [Microsoft's documented `--configfile` option](https://learn.microsoft.com/en-us/dotnet/core/tools/dotnet-nuget-list-source). The feed column is configured source information and must **not** be described as proven download origin. Inspect sources via `dotnet nuget list source` if the SDK is present or the corresponding NuGet CLI command.
+Inspect `packages.config`, `PackageReference` and central package versions. Prefer **one row per consuming project** and list every package as **ID — declared version — purpose** within its Packages cell (one line per package, separated by `<br>` in GitHub Markdown when needed). Do not collapse different declared versions of the same package or lose per-package conditions. The declaration/version source can be displayed once when shared; otherwise label the individual package's source or use separate scoped rows. The package feed is only the **configured** source, not proven actual download origin. Record complete project path last.
+
+To inspect repository-configured sources with a compatible .NET SDK:
 
 ```powershell
 dotnet nuget list source --configfile .\NuGet.Config
 ```
 
-The `--configfile` option is supported in .NET 6 SDK and later. This command requires the .NET CLI. If only NuGet CLI is available, use an equivalent `nuget sources List -ConfigFile NuGet.Config` command, without asserting the configured feed is the actual download origin.
+The `--configfile` option requires .NET 6 SDK or later. When only NuGet CLI is present, use `nuget sources List -ConfigFile NuGet.Config` as applicable. A configured feed does not establish acquisition origin.
 
 **How to populate each column (left to right):**
 
-- **Project Path:** Consuming project path.
-- **Package ID:** Package identifier as declared.
-- **Declared Version:** Exact declared version.
-- **Declaration File:** Project, packages.config, or central declaration file.
-- **Configured Feed:** Configured eligible feed, not asserted download origin.
-- **Purpose:** Production, test framework, tool, or other purpose.
+- **Project:** Unique consuming project name or link.
+- **Packages (ID — Version — Purpose):** Every package ID, its precise declared version and purpose, kept together per package.
+- **Declaration / Version Source:** Source file(s), including central versions and relevant conditions.
+- **Configured Feed(s):** Configured eligible sources (or `Not checked`), with package-specific distinctions where needed.
+- **Project Path:** Repository-relative consuming project file path, last.
 
-**Illustrative example only; not a new observed finding:**
+**Illustrative RecordSift grouping:**
 
-| Project Path | Package ID | Declared Version | Declaration File | Configured Feed | Purpose |
-|---|---|---|---|---|---|
-| src/RecordSift.Infrastructure.Csv | CsvHelper | 33.1.0 | src/RecordSift.Infrastructure.Csv/packages.config | nuget.org | Production |
+| Project | Packages (ID — Version — Purpose) | Declaration / Version Source | Configured Feed(s) | Project Path |
+|---|---|---|---|---|
+| RecordSift.Domain.Tests | NUnit — 3.14.0 — Test framework<br>NUnit.ConsoleRunner — 3.17.0 — Test runner | packages.config (within project directory) | nuget.org | tests/RecordSift.Domain.Tests/RecordSift.Domain.Tests.csproj |
 
 ### 45. Other External Dependencies
 
-Inspect project `Reference`/`HintPath`, `COMReference`/`COMFileReference`, native dependencies, executables, services and other external systems. One row per consumer/dependency; record unknown resolution explicitly. Project XML inspection alone cannot rule out dynamic runtime loading.
+Inspect project `Reference`/`HintPath`, `COMReference`/`COMFileReference`, native libraries, services, and other non-NuGet dependencies. Prefer **one row per consumer/project**, listing all distinct dependencies together. If they share type, declared identity and resolution, those fields can be represented once. When attributes differ, annotate the affected dependency (or use separate scoped rows) to avoid losing per-dependency metadata. Do not repeat direct project references from item 37 or NuGet packages from item 44. Project-file declarations cannot rule out runtime dynamic loading.
 
 **How to populate each column (left to right):**
 
-- **Consumer:** Project or component consuming the dependency.
-- **Dependency:** Non-NuGet assembly, COM, native library, service or other dependency.
-- **Type or Mechanism:** Declared dependency mechanism.
-- **Declaration Source:** Source of the declaration.
-- **Version or Identity:** Declared identity or version.
-- **Resolution or Location:** Whether/how it was actually resolved, or Not checked.
+- **Project:** Unique consuming project/component name or link.
+- **Dependencies:** All distinct non-NuGet dependency names.
+- **Type / Mechanism:** Source-declared reference mechanism(s), with mappings if mixed.
+- **Version / Identity:** Exact version or identity, or `Not declared`.
+- **Resolution / Location:** Verified resolution, or `Not checked`, not assumed availability.
+- **Declaration Source:** Source(s) of these declarations.
+- **Project Path:** Repository-relative project file path, last.
+
+**Illustrative RecordSift source references:**
+
+| Project | Dependencies | Type / Mechanism | Version / Identity | Resolution / Location | Declaration Source | Project Path |
+|---|---|---|---|---|---|---|
+| RecordSift.Domain | System; System.Core | Framework assembly reference | Not declared | Not checked locally | RecordSift.Domain.csproj | src/RecordSift.Domain/RecordSift.Domain.csproj |
 
 ## Restore, build, tests and delivery
 

@@ -1,6 +1,6 @@
 # RecordSift — Technical discovery report
 
-This is the working RecordSift discovery report for **source commit `1809d06c0fade59e4769d16e0f8eaf10fa426004`**. The operator follows the [step-by-step guide](../../../../../methodology/technical-discovery-runbook.md) on Windows and shares results. The assistant fills this form using those results.
+This is the working RecordSift discovery report for **source commit `1809d06c0fade59e4769d16e0f8eaf10fa426004`**. The operator follows the [step-by-step guide](../../../../methodology/technical-discovery-runbook.md) on Windows and shares results. The assistant fills this form using those results.
 
 **Current status:** GitHub source-only inspection (November 12, 2026); **no user-run local commands, tool-version checks, restore, build or tests have been received**. Historical evaluations use different source revisions.
 

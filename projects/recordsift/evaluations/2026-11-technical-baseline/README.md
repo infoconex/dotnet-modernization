@@ -23,14 +23,14 @@
 
 ## Working documents
 
-- [Discovery report](baseline.md) — numbered answers and observed findings, added only when collected; not a duplicate blank template.
+- [Blank baseline copy](baseline.md) — an unfilled copy of the numbered [template](../../../../templates/application-baseline.md); enter values here **only after** collecting results with the guide.
 - [Evidence manifest](evidence/manifest.md) — immutable GitHub source links now; local/CI outputs to be added **only when collected**.
 - [Reusable runbook](../../../../methodology/technical-discovery-runbook.md) — exact portable procedures and their applicability/side-effect conditions.
 - [Article evidence map](../../../../articles/recordsift-technical-discovery-outline.md) — candidate narrative, not proof or publication-ready copy.
 
 ## Initial source-only preflight — 2026-11-12
 
-The application repository's `main` HEAD was inspected through GitHub at the frozen SHA. The tracked tree contains `RecordSift.sln`, **ten project files** (five under `src/` and five under `tests/`), a root `NuGet.Config`, root `.editorconfig`, seven tracked `packages.config` files, and eight `.github/workflows/` definitions. These are **source-inspection findings**; they do not establish a local checkout state, tool versions, successful restore, MSBuild-evaluated properties, or current test outcomes. Detailed paths appear in [the baseline](baseline.md); [EV-001 and EV-002](evidence/manifest.md) identify provenance.
+The application repository's `main` HEAD was inspected through GitHub at the frozen SHA. The tracked tree contains `RecordSift.sln`, **ten project files** (five under `src/` and five under `tests/`), a root `NuGet.Config`, root `.editorconfig`, seven tracked `packages.config` files, and eight `.github/workflows/` definitions. These are **source-inspection findings**; they do not establish a local checkout state, tool versions, successful restore, MSBuild-evaluated properties, or current test outcomes. Initial inspection facts are noted here and in [EV-001 and EV-002](evidence/manifest.md). They have **not** been entered into the blank baseline.
 
 This is not a claim that missing repository-wide files have no equivalents in parent directories, user-level configuration, installed tools or SDK defaults.
 
@@ -40,4 +40,4 @@ This is not a claim that missing repository-wide files have no equivalents in pa
 
 **Research/implementation separation:** no change to RecordSift source, project files or its application main branch. This documentation remains on its own review PR until approved.
 
-**Next action:** operator follows **DISC-001** in the [step-by-step guide](../../../../methodology/technical-discovery-runbook.md): verify Windows/tool versions, then create a dated, clean RecordSift checkout at commit `1809d06c0fade59e4769d16e0f8eaf10fa426004`. **No local commands have been executed or verified.** The assistant adds the actual answers to the numbered [discovery report](baseline.md) before moving to DISC-002.
+**Next action:** operator follows **DISC-001** in the [step-by-step guide](../../../../methodology/technical-discovery-runbook.md): verify Windows/tool versions, then create a dated, clean RecordSift checkout at commit `1809d06c0fade59e4769d16e0f8eaf10fa426004`. **No local commands have been executed or verified.** The operator records the actual answers in the numbered [baseline copy](baseline.md) before moving to DISC-002. Nothing is entered into the guide.

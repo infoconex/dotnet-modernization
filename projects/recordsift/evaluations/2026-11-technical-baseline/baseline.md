@@ -363,12 +363,33 @@ These are **configured source definitions**, not proof that every job ran. Group
 
 ### 52. Package and Release Artifacts
 
-| Artifact | Version | Attribute | Attribute Value | Release URL | Evidence |
-|---|---|---|---|---|---|
-| RecordSift | 0.1.0 | Published package | NuGet.org | https://github.com/infoconex/RecordSift/releases/tag/v0.1.0 | https://www.nuget.org/packages/RecordSift/0.1.0 |
-| RecordSift | 0.1.0-rc.1 | Source nuspec version | 0.1.0-rc.1 | Not applicable | https://github.com/infoconex/RecordSift/blob/1809d06c0fade59e4769d16e0f8eaf10fa426004/packaging/RecordSift.nuspec |
-| RecordSift | 0.1.0-rc.1 | CI package build | Passed | Not published | https://github.com/infoconex/RecordSift/actions/runs/43146607706 |
-| RecordSift | 0.1.0 | CI local stable-package test | Passed | Not published | https://github.com/infoconex/RecordSift/actions/runs/43146607706 |
+Source declarations, **unpublished CI artifacts**, and **published distributions** are recorded separately. The dates below identify the source snapshot, a CI verification result, or a publication event; they are not interchangeable. Dates/times use UTC, with day-only precision where an exact time is unverified.
+
+**A. Source package declarations**
+
+| Declaration | Declared Version | Source Committer Date (UTC) | Evidence |
+|---|---|---|---|
+| [packaging/RecordSift.nuspec](https://github.com/infoconex/RecordSift/blob/1809d06c0fade59e4769d16e0f8eaf10fa426004/packaging/RecordSift.nuspec) | `0.1.0-rc.1` | `2026-11-12T03:12:18Z` | [Frozen source commit](https://github.com/infoconex/RecordSift/commit/1809d06c0fade59e4769d16e0f8eaf10fa426004) |
+
+The source timestamp is the frozen Git **committer date**; it does not establish when the nuspec's version was first introduced.
+
+**B. CI package artifacts and verification**
+
+| Artifact | Version | Verification Result | Verification Completed (UTC) | Evidence |
+|---|---|---|---|---|
+| Unpublished CI package | `0.1.0-rc.1` | Passed (local-feed consumer; not published) | `2026-11-12T03:13:13Z` | [Windows package/consumer CI](https://github.com/infoconex/RecordSift/actions/runs/43146607706/job/130945777078) |
+| Unpublished CI stable-package candidate | `0.1.0` | Passed (local-feed consumer; not published) | `2026-11-12T03:13:19Z` | [Windows package/consumer CI](https://github.com/infoconex/RecordSift/actions/runs/43146607706/job/130945777078) |
+
+Completion times above are the timestamps of the final **PASS** messages in existing CI logs, not a new operator execution or timestamps for GitHub-hosted downloadable workflow artifacts.
+
+**C. Published artifacts**
+
+| Artifact | Version | Status | Publication Date (UTC) | Evidence |
+|---|---|---|---|---|
+| RecordSift NuGet.org package | `0.1.0` | Published | `2026-11-01` (date verified; exact registry publication time not checked) | [NuGet.org package](https://www.nuget.org/packages/RecordSift/0.1.0) · [Public-feed consumer verification](https://github.com/infoconex/RecordSift/actions/runs/41355904536/job/124995742204) |
+| GitHub Release `v0.1.0` | `v0.1.0` | Published | `2026-11-01T22:12:43Z` | [GitHub Release](https://github.com/infoconex/RecordSift/releases/tag/v0.1.0) |
+
+Each distribution has its own record. NuGet package upload acceptance was previously observed, but that timestamp is **not** used as the registry publication time. Public-feed consumer CI confirms the package was available on **2026-11-01**; the precise initial listing/publication time on NuGet.org has **not** been independently verified. GitHub Release `published_at` is official release metadata. The NuGet.org publication date and the GitHub Release publication timestamp must not be inferred from each other.
 
 **Source revision provenance** — the UTC timestamps below are Git *committer dates*, not guaranteed SHA creation or GitHub push times. The discovery checkout revision is different from the published release/package source.
 
@@ -377,13 +398,6 @@ These are **configured source definitions**, not proof that every job ran. Group
 | Frozen discovery source (`main`) | [`1809d06c0fade59e4769d16e0f8eaf10fa426004`](https://github.com/infoconex/RecordSift/commit/1809d06c0fade59e4769d16e0f8eaf10fa426004) | `2026-11-12T03:12:18Z` | Commit metadata inspected; local checkout not verified |
 | Published GitHub release tag (`v0.1.0`) | [`2db5c86bc26010afcb83c2e455d2471d8c9340d6`](https://github.com/infoconex/RecordSift/commit/2db5c86bc26010afcb83c2e455d2471d8c9340d6) | `2026-11-01T21:13:46Z` | Git tag and release metadata verified |
 | Published NuGet package (`RecordSift 0.1.0`) | [`2db5c86bc26010afcb83c2e455d2471d8c9340d6`](https://github.com/infoconex/RecordSift/commit/2db5c86bc26010afcb83c2e455d2471d8c9340d6) | `2026-11-01T21:13:46Z` | Existing [public-feed verification CI](https://github.com/infoconex/RecordSift/actions/runs/41355904536/job/124995742204) confirmed package source; this is not an independently repeated download in this discovery |
-
-**Publication timestamps** — separate publication events from Git commit dates.
-
-| Published Artifact | Published At (UTC) | Evidence |
-|---|---|---|
-| GitHub release `v0.1.0` | `2026-11-01T22:12:43Z` | [GitHub release](https://github.com/infoconex/RecordSift/releases/tag/v0.1.0) |
-| NuGet package `RecordSift 0.1.0` | Not checked | [NuGet listing](https://www.nuget.org/packages/RecordSift/0.1.0); precise registry publication timestamp not independently checked |
 
 **Package provenance boundary:** Existing [recovery CI](https://github.com/infoconex/RecordSift/actions/runs/41355904536/job/124995909555) verified the original package SHA-256 `c6e96f76693358125346d31829bc8a016c75af13aab3261566a6e6033f7c052a` and `SOURCE_COMMIT.txt` against `2db5c86bc26010afcb83c2e455d2471d8c9340d6` before creating the release. The actual public-feed consumer verification reported that same source SHA. The discovery has **not** independently downloaded the NuGet package or its GitHub release assets; this is existing CI evidence, not a new operator execution.
 ### 53. Runtime and Deployment Requirements

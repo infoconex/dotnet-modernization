@@ -34,3 +34,29 @@
 
 - Keep values in the baseline's **Value** column atomic (for example, `Library`, `Public`, `MIT`, `Windows`, a version, SHA, or exact URL). Do not append citation titles, provenance prose, or execution caveats to those values.
 - Source links and qualifications belong in this manifest. Fields **1–7** are supported by EV-003/EV-004; **8–11** by EV-005; **12** by EV-006; **13–14** by EV-007. Local machine fields **18–30** remain unverified until the operator supplies tool output.
+
+## Command review against source and tool documentation
+
+The procedures follow baseline item order. **No local Windows commands were executed by the discovery operator in this evaluation.** The classifications below distinguish a command reviewed for correctness from a command actually observed in existing Windows CI.
+
+| Baseline item | Native command / procedure | Review outcome | Execution evidence |
+|---|---|---|---|
+| 18–21 | `Get-CimInstance Win32_OperatingSystem` | Correct Windows CIM query for host caption, version, build and architecture; map four outputs to separate fields | Operator not executed |
+| 22 | `$PSVersionTable.PSVersion.ToString()` | Standard PowerShell self-report; output not supplied | Operator not executed |
+| 23 | `git --version` | Correct Git version command | Operator not executed |
+| 24–25 | `dotnet --list-sdks` and `dotnet --list-runtimes` | Appropriate SDK and runtime inventories, not a .NET Framework targeting-pack check | Operator not executed |
+| 26–27 | `msbuild -version -nologo` and `Get-Command msbuild` | Appropriate version and PATH-location checks; Developer PowerShell may be needed | Operator not executed; CI records MSBuild 17.14.60.43110 |
+| 28 | `nuget help` | NuGet CLI prints version information | Operator not executed; NuGet CI restore succeeded |
+| 29 | `Test-Path` against v4.8 reference assemblies | Tests one local reference-assembly directory, not build success | Operator not executed |
+| 31–35 | Unique-folder `git clone --no-checkout`, `git switch --detach`, `git rev-parse HEAD`, `git status`, `git branch --show-current` | Non-overwriting path guard, stop-on-error and exact-SHA comparison reviewed; real checkout unverified | Operator not executed |
+| 36–37 | `git ls-files` solution/project patterns and optional `dotnet sln ... list` | Correct source inventory workflow; source project files and solution independently inspected via GitHub at selected SHA | Local commands not executed |
+| 38–40 | Inspect project XML via `Get-Content` | Source declarations verified from ten current project files, but not MSBuild evaluated defaults | Local command not executed |
+| 41 | `msbuild -getProperty:TargetFrameworkVersion,LangVersion` | [Microsoft-documented MSBuild 17.8+](https://learn.microsoft.com/en-us/visualstudio/msbuild/evaluate-items-and-properties) syntax; no targets specified, so evaluation does not request a build | Operator not executed |
+| 42–43 | `git ls-files` tracked directories/configuration | Tracked-tree inspection completed through GitHub; effective machine-level imports remain unknown | Local command not executed |
+| 44 | `dotnet nuget list source --configfile .\NuGet.Config` | [Microsoft-documented .NET 6+](https://learn.microsoft.com/en-us/dotnet/core/tools/dotnet-nuget-list-source) option; reads only the specified config rather than inherited settings | Operator not executed |
+| 47 | `nuget restore` from the repository workflow | Exact-commit Windows CI step succeeded; creates/restores package files | [Windows run 43146607664](https://github.com/infoconex/RecordSift/actions/runs/43146607664); operator not executed |
+| 48 | Release `msbuild ... /t:Rebuild` | Exact-commit Windows CI step succeeded; builds files and may modify output directories | [Windows run 43146607664](https://github.com/infoconex/RecordSift/actions/runs/43146607664); operator not executed |
+| 49 | `.\scripts\run_tests.ps1 -Level All` | Parameter and Release artifact prerequisites verified against existing script; CI executed the same script with its default `All` level | [Windows run 43146607664](https://github.com/infoconex/RecordSift/actions/runs/43146607664); operator not executed |
+| 50–51 | `git ls-files .github/workflows` and GitHub Actions run lookups | Tracked workflow definitions and exact-commit run records inspected; not every defined release workflow has been executed in this discovery | Existing exact-commit runs EV-008–EV-010 |
+
+The review is a **source and documentation validation**, not an assertion that all PowerShell commands have been run successfully on the operator's Windows machine. Commands for restore, Rebuild and tests require an agreed execution environment and side-effect approval.

@@ -156,9 +156,9 @@ These are **source-declared** values. D/R means Debug / Release and uses the sam
 
 ### 40. Project Metadata and Imports
 
-These are project-file metadata and **explicit** imports, not evaluated defaults. `Not declared` means the property was absent from the inspected project XML. The source file for every row is the project path in the last column.
+These are project-file metadata and **explicit** imports, not evaluated MSBuild values. **Configuration Fallback** is the source-declared `Debug` value only when `$(Configuration)` is empty; it does **not** establish the configuration used during an actual build. `Not declared` means the property was absent from the inspected project XML. The source file for every row is the project path in the last column.
 
-| Project | Default Configuration | IsTestProject | FileAlignment | AppDesignerFolder | Imports | Additional Metadata / Conditions | Project Path |
+| Project | Configuration Fallback | IsTestProject | FileAlignment | AppDesignerFolder | Imports | Additional Metadata / Conditions | Project Path |
 |---|---|---|---|---|---|---|---|
 | [RecordSift.Domain](https://github.com/infoconex/RecordSift/blob/1809d06c0fade59e4769d16e0f8eaf10fa426004/src/RecordSift.Domain/RecordSift.Domain.csproj) | Debug | Not declared | 512 | Properties | `$(MSBuildToolsPath)\Microsoft.CSharp.targets` | None | `src/RecordSift.Domain/RecordSift.Domain.csproj` |
 | [RecordSift.Application](https://github.com/infoconex/RecordSift/blob/1809d06c0fade59e4769d16e0f8eaf10fa426004/src/RecordSift.Application/RecordSift.Application.csproj) | Debug | Not declared | 512 | Properties | `$(MSBuildToolsPath)\Microsoft.CSharp.targets` | None | `src/RecordSift.Application/RecordSift.Application.csproj` |

@@ -27,7 +27,7 @@
 | 12. MSBuild Version |  |
 | 13. MSBuild Installation Source |  |
 | 14. NuGet CLI Version |  |
-| 15. Targeting Pack Version |  |
+| 15. Targeting Pack Framework |  |
 | 16. Targeting Pack Installed |  |
 | 17. Test Runner Name |  |
 | 18. Test Runner Version |  |

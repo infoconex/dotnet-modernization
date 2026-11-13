@@ -2,7 +2,7 @@
 
 **Evaluation:** [November 2026 native-first technical baseline](../README.md)  
 **Frozen source commit:** `1809d06c0fade59e4769d16e0f8eaf10fa426004`  
-**Status:** Source-inspected application facts and existing GitHub Actions evidence are available for the selected commit. **Operator-supplied outputs for Windows OS (EV-017), PowerShell (EV-018), Git (EV-019), and .NET SDK inventory (EV-020) are captured; remaining local tool, checkout, build and test evidence is pending.** GitHub CI results and the operator's local machine are different environments.
+**Status:** Source-inspected application facts and existing GitHub Actions evidence are available for the selected commit. **Operator-supplied outputs for Windows OS (EV-017), PowerShell (EV-018), Git (EV-019), .NET SDKs (EV-020), and .NET runtimes (EV-021) are captured; remaining local tool, checkout, build and test evidence is pending.** GitHub CI results and the operator's local machine are different environments.
 
 | Evidence ID | Discovery context | Source / trace | Method and provenance | What it establishes / limitations |
 |---|---|---|---|---|
@@ -26,6 +26,7 @@
 | EV-018 | Baseline item 24 — operator-local PowerShell version | Operator-provided PowerShell output in discovery conversation on 2026-11-13 (no external artifact link) | Operator executed `$PSVersionTable.PSVersion.ToString()` at the visible prompt `PS D:\RecordSift>` and supplied the single output `7.7.0` | Confirms the active local PowerShell session reported version `7.7.0`; working directory was `D:\RecordSift`. Command exit code was not supplied; this does not prove Git, MSBuild, or other prerequisites are available. |
 | EV-019 | Baseline item 25 — operator-local Git version | Operator-provided PowerShell console output in the discovery conversation on 2026-11-13 (no external artifact link) | Operator executed `git --version` at prompt `PS D:\RecordSift>`; output was `git version 2.56.0.windows.4` | Confirms local Git `2.56.0.windows.4` in the active PowerShell session. Working directory shown as `D:\RecordSift`, but no local checkout state, HEAD or tracked files have yet been verified. Command process exit code was not explicitly recorded. Separate 2026-11-13 CI inventory runner reported Git `2.56.1.windows.1`; versions are not assumed identical. |
 | EV-020 | Baseline item 26 — operator-local .NET SDK inventory | Operator-provided PowerShell console output in the discovery conversation on 2026-11-13 (no external artifact link) | Operator executed `dotnet --list-sdks` at prompt `PS D:\RecordSift>` and supplied three version/path pairs | Local SDK versions `8.0.428`, `9.0.321`, `10.0.404`, each reported under `C:\Program Files\dotnet\sdk`. All three also appear among the 12 entries of CI runner EV-016. No local runtime inventory, selected default SDK, or exact process exit code was supplied; differences from the CI inventory are not automatically a defect. |
+| EV-021 | Baseline item 27 — operator-local modern .NET runtime inventory | Operator-provided PowerShell console output in the discovery conversation on 2026-11-13 (no external artifact link) | Operator executed `dotnet --list-runtimes` at prompt `PS D:\RecordSift>` and supplied 13 runtime name/version/path rows | Local runtime inventory: `Microsoft.AspNetCore.App` (8.0.34, 9.0.23, 10.0.15), `Microsoft.NETCore.App` (6.0.36, 7.0.20, 8.0.34, 9.0.23, 10.0.15), and `Microsoft.WindowsDesktop.App` (6.0.36, 7.0.20, 8.0.34, 9.0.23, 10.0.15), all under their `C:\Program Files\dotnet\shared` family directories. Nine exact name/version pairs occur in the independent 29-row CI runner inventory; four older local pairs do not. Command process exit code was not separately supplied. This output does not enumerate .NET Framework 4.8 or prove runtime compatibility. |
 
 ## Rules for new evidence
 
@@ -39,11 +40,11 @@
 ## Baseline value provenance
 
 - Keep values in the baseline's **Value** column atomic (for example, `Library`, `Public`, `MIT`, `Windows`, a version, SHA, or exact URL). Do not append citation titles, provenance prose, or execution caveats to those values.
-- Source links and qualifications belong in this manifest. Fields **5–11** are supported by EV-003/EV-004; **12–15** by EV-005; **16** by EV-006; **17–18** by EV-007. Operator-local OS fields **20–23** are populated from EV-017, local PowerShell version (item **24**) from EV-018, and Git version (item **25**) from EV-019; local SDK inventory (item **26**) is from EV-020; local tool fields **27–32** remain unverified until operator output is supplied.
+- Source links and qualifications belong in this manifest. Fields **5–11** are supported by EV-003/EV-004; **12–15** by EV-005; **16** by EV-006; **17–18** by EV-007. Operator-local OS fields **20–23** are populated from EV-017, local PowerShell version (item **24**) from EV-018, and Git version (item **25**) from EV-019; local SDK inventory (item **26**) is from EV-020 and modern .NET runtime inventory (item **27**) from EV-021; local tool fields **28–32** remain unverified until operator output is supplied.
 
 ## Command review against source and tool documentation
 
-The procedures follow baseline item order. **The operator supplied output for the local Windows OS query (EV-017), PowerShell version query (EV-018), Git version query (EV-019), and .NET SDK inventory query (EV-020); other local commands remain unverified.** The classifications below distinguish a command reviewed for correctness from a command actually observed in existing Windows CI.
+The procedures follow baseline item order. **The operator supplied output for the local Windows OS query (EV-017), PowerShell version query (EV-018), Git version query (EV-019), and .NET SDK inventory query (EV-020), and .NET runtime inventory query (EV-021); other local commands remain unverified.** The classifications below distinguish a command reviewed for correctness from a command actually observed in existing Windows CI.
 
 | Baseline item | Native command / procedure | Review outcome | Execution evidence |
 |---|---|---|---|
@@ -51,7 +52,7 @@ The procedures follow baseline item order. **The operator supplied output for th
 | 24 | `$PSVersionTable.PSVersion.ToString()` | Standard PowerShell self-report; `7.7.0` provided from `D:\RecordSift` | Operator-provided output captured (EV-018); exit code not recorded |
 | 25 | `git --version` | Correct Git version command; operator observed `2.56.0.windows.4` in `D:\RecordSift` | Operator-provided output captured (EV-019); exit code not recorded |
 | 26 | `dotnet --list-sdks` | Appropriate SDK inventory, not a .NET runtime or Framework targeting-pack check; operator observed 3 installed SDKs | Operator-provided output captured (EV-020); exit code not recorded |
-| 27 | `dotnet --list-runtimes` | Appropriate modern .NET runtime inventory, not a .NET Framework targeting-pack check | Operator not executed |
+| 27 | `dotnet --list-runtimes` | Appropriate modern .NET runtime inventory, not a .NET Framework targeting-pack check; operator reported 13 entries | Operator-provided output captured (EV-021); exit code not recorded |
 | 28–29 | `msbuild -version -nologo` and `Get-Command msbuild` | Appropriate version and PATH-location checks; Developer PowerShell may be needed | Operator not executed; CI records MSBuild 17.14.60.43110 |
 | 30 | `nuget help` | NuGet CLI prints version information | Operator not executed; NuGet CI restore succeeded |
 | 31 | `Test-Path` for `v4.8\mscorlib.dll` under .NET Framework reference assemblies | Tests a specific local reference-assembly file, not just the existence of an empty directory or build success | Operator not executed |

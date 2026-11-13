@@ -101,7 +101,7 @@ A numbered **field** records one value. A numbered **table** records one kind of
 
 ### 41. Projects
 
-| Project Path | Role | Project Format | Target Framework | Language Version | Output Type | MSBuild Platform | SDK or ToolsVersion | Project References |
+| Project Path | Role | Project Format | Target Framework | Language Version | Output Type | MSBuild Platform | SDK or ToolsVersion | Direct Project Reference |
 |---|---|---|---|---|---|---|---|---|
 |   |   |   |   |   |   |   |   |   |
 
@@ -185,7 +185,7 @@ A numbered **field** records one value. A numbered **table** records one kind of
 
 ### 54. CI Workflows
 
-| Workflow Path | Trigger | Runner OS | Build or Test Commands | Artifact or Deployment |
+| Workflow Path | Trigger | Runner OS | Configured Command | Artifact or Deployment |
 |---|---|---|---|---|
 |   |   |   |   |   |
 
@@ -197,9 +197,9 @@ A numbered **field** records one value. A numbered **table** records one kind of
 
 ### 56. Package and Release Artifacts
 
-| Artifact | Version | Contents or Metadata | Release URL | Evidence |
-|---|---|---|---|---|
-|   |   |   |   |   |
+| Artifact | Version | Attribute | Attribute Value | Release URL | Evidence |
+|---|---|---|---|---|---|
+|   |   |   |   |   |   |
 
 ### 57. Runtime and Deployment Requirements
 

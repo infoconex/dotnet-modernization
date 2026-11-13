@@ -335,6 +335,22 @@ One row per project for these **source-declared non-NuGet framework assembly ref
 | RecordSift | 0.1.0-rc.1 | CI package build | Passed | Not published | https://github.com/infoconex/RecordSift/actions/runs/43146607706 |
 | RecordSift | 0.1.0 | CI local stable-package test | Passed | Not published | https://github.com/infoconex/RecordSift/actions/runs/43146607706 |
 
+**Source revision provenance** — the UTC timestamps below are Git *committer dates*, not guaranteed SHA creation or GitHub push times. The discovery checkout revision is different from the published release/package source.
+
+| Source Context | Source Commit SHA | Committer Date (UTC) | Verification |
+|---|---|---|---|
+| Frozen discovery source (`main`) | [`1809d06c0fade59e4769d16e0f8eaf10fa426004`](https://github.com/infoconex/RecordSift/commit/1809d06c0fade59e4769d16e0f8eaf10fa426004) | `2026-11-12T03:12:18Z` | Commit metadata inspected; local checkout not verified |
+| Published GitHub release tag (`v0.1.0`) | [`2db5c86bc26010afcb83c2e455d2471d8c9340d6`](https://github.com/infoconex/RecordSift/commit/2db5c86bc26010afcb83c2e455d2471d8c9340d6) | `2026-11-01T21:13:46Z` | Git tag and release metadata verified |
+| Published NuGet package (`RecordSift 0.1.0`) | [`2db5c86bc26010afcb83c2e455d2471d8c9340d6`](https://github.com/infoconex/RecordSift/commit/2db5c86bc26010afcb83c2e455d2471d8c9340d6) | `2026-11-01T21:13:46Z` | Existing [public-feed verification CI](https://github.com/infoconex/RecordSift/actions/runs/41355904536/job/124995742204) confirmed package source; this is not an independently repeated download in this discovery |
+
+**Publication timestamps** — separate publication events from Git commit dates.
+
+| Published Artifact | Published At (UTC) | Evidence |
+|---|---|---|
+| GitHub release `v0.1.0` | `2026-11-01T22:12:43Z` | [GitHub release](https://github.com/infoconex/RecordSift/releases/tag/v0.1.0) |
+| NuGet package `RecordSift 0.1.0` | Not checked | [NuGet listing](https://www.nuget.org/packages/RecordSift/0.1.0); precise registry publication timestamp not independently checked |
+
+**Package provenance boundary:** Existing [recovery CI](https://github.com/infoconex/RecordSift/actions/runs/41355904536/job/124995909555) verified the original package SHA-256 `c6e96f76693358125346d31829bc8a016c75af13aab3261566a6e6033f7c052a` and `SOURCE_COMMIT.txt` against `2db5c86bc26010afcb83c2e455d2471d8c9340d6` before creating the release. The actual public-feed consumer verification reported that same source SHA. The discovery has **not** independently downloaded the NuGet package or its GitHub release assets; this is existing CI evidence, not a new operator execution.
 ### 53. Runtime and Deployment Requirements
 
 | Requirement | Type | Target Environment | Source or Evidence |

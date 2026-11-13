@@ -344,16 +344,19 @@
 
 | File or Mechanism | Present | Scope | Setting Name | Setting Value | Import or Precedence |
 |---|---|---|---|---|---|
-| NuGet.Config | True | Repository | packageSources.nuget.org | https://api.nuget.org/v3/index.json | Repository override |
-| NuGet.Config | True | Repository | auditSources.nuget.org-audit | https://api.nuget.org/v3/index.json | Repository override |
-| .editorconfig | True | Repository | EditorConfig rules | See source file | Root |
-| .gitignore | True | Repository | Ignore rules | See source file | Root |
-| AGENTS.md | True | Repository | Agent instructions | See source file | Root |
-| .github/copilot-instructions.md | True | Repository | AI instructions | See source file | .github/ |
-| Directory.Build.props | False | Tracked source | Not applicable | Not applicable | Not evaluated |
-| Directory.Build.targets | False | Tracked source | Not applicable | Not applicable | Not evaluated |
-| Directory.Packages.props | False | Tracked source | Not applicable | Not applicable | Not evaluated |
-| global.json | False | Tracked source | Not applicable | Not applicable | Not evaluated |
+| NuGet.Config | True | Repository | packageSources.nuget.org | https://api.nuget.org/v3/index.json | NuGet.Config |
+| NuGet.Config | True | Repository | auditSources.nuget.org-audit | https://api.nuget.org/v3/index.json | NuGet.Config |
+| .editorconfig | True | Repository | root | true | Root-level EditorConfig |
+| .editorconfig | True | Repository | charset | utf-8 | [*] |
+| .editorconfig | True | Repository | indent_style | space | [*] |
+| .editorconfig | True | Repository | dotnet_diagnostic.IDE1006.severity | error | C# analyzer |
+| .gitignore | True | Repository | File present | True | Git ignore rules |
+| AGENTS.md | True | Repository | File present | True | Repository instructions |
+| .github/copilot-instructions.md | True | Repository | File present | True | GitHub AI instructions |
+| Directory.Build.props | False | Tracked repository | Not applicable | Not applicable | Not evaluated |
+| Directory.Build.targets | False | Tracked repository | Not applicable | Not applicable | Not evaluated |
+| Directory.Packages.props | False | Tracked repository | Not applicable | Not applicable | Not evaluated |
+| global.json | False | Tracked repository | Not applicable | Not applicable | Not evaluated |
 
 ### 44. NuGet Package Declarations
 
@@ -381,9 +384,21 @@
 
 | Consumer | Dependency | Type or Mechanism | Declaration Source | Version or Identity | Resolution or Location |
 |---|---|---|---|---|---|
-| RecordSift production projects | .NET Framework assemblies | Framework Reference | 10 project files | net48 | Framework resolved by MSBuild (CI) |
-| RecordSift.Infrastructure.Xlsx | System.IO.Compression | Framework Reference | src/RecordSift.Infrastructure.Xlsx/RecordSift.Infrastructure.Xlsx.csproj | net48 | Framework resolved by MSBuild (CI) |
-| RecordSift.Infrastructure.Xlsx | System.Data | Framework Reference | src/RecordSift.Infrastructure.Xlsx/RecordSift.Infrastructure.Xlsx.csproj | net48 | Framework resolved by MSBuild (CI) |
+| src/RecordSift.Domain/RecordSift.Domain.csproj | System | Framework assembly reference | src/RecordSift.Domain/RecordSift.Domain.csproj | Not declared | Not checked locally |
+| src/RecordSift.Domain/RecordSift.Domain.csproj | System.Core | Framework assembly reference | src/RecordSift.Domain/RecordSift.Domain.csproj | Not declared | Not checked locally |
+| src/RecordSift.Application/RecordSift.Application.csproj | System | Framework assembly reference | src/RecordSift.Application/RecordSift.Application.csproj | Not declared | Not checked locally |
+| src/RecordSift.Application/RecordSift.Application.csproj | System.Core | Framework assembly reference | src/RecordSift.Application/RecordSift.Application.csproj | Not declared | Not checked locally |
+| src/RecordSift.Infrastructure.Csv/RecordSift.Infrastructure.Csv.csproj | System | Framework assembly reference | src/RecordSift.Infrastructure.Csv/RecordSift.Infrastructure.Csv.csproj | Not declared | Not checked locally |
+| src/RecordSift.Infrastructure.Csv/RecordSift.Infrastructure.Csv.csproj | System.Core | Framework assembly reference | src/RecordSift.Infrastructure.Csv/RecordSift.Infrastructure.Csv.csproj | Not declared | Not checked locally |
+| src/RecordSift.Infrastructure.Xlsx/RecordSift.Infrastructure.Xlsx.csproj | System | Framework assembly reference | src/RecordSift.Infrastructure.Xlsx/RecordSift.Infrastructure.Xlsx.csproj | Not declared | Not checked locally |
+| src/RecordSift.Infrastructure.Xlsx/RecordSift.Infrastructure.Xlsx.csproj | System.Core | Framework assembly reference | src/RecordSift.Infrastructure.Xlsx/RecordSift.Infrastructure.Xlsx.csproj | Not declared | Not checked locally |
+| src/RecordSift.Infrastructure.Xlsx/RecordSift.Infrastructure.Xlsx.csproj | System.IO.Compression | Framework assembly reference | src/RecordSift.Infrastructure.Xlsx/RecordSift.Infrastructure.Xlsx.csproj | Not declared | Not checked locally |
+| src/RecordSift.Infrastructure.Xlsx/RecordSift.Infrastructure.Xlsx.csproj | System.Data | Framework assembly reference | src/RecordSift.Infrastructure.Xlsx/RecordSift.Infrastructure.Xlsx.csproj | Not declared | Not checked locally |
+| src/RecordSift.Infrastructure.Xlsx/RecordSift.Infrastructure.Xlsx.csproj | System.Xml | Framework assembly reference | src/RecordSift.Infrastructure.Xlsx/RecordSift.Infrastructure.Xlsx.csproj | Not declared | Not checked locally |
+| src/RecordSift.Infrastructure.Reporting/RecordSift.Infrastructure.Reporting.csproj | System | Framework assembly reference | src/RecordSift.Infrastructure.Reporting/RecordSift.Infrastructure.Reporting.csproj | Not declared | Not checked locally |
+| src/RecordSift.Infrastructure.Reporting/RecordSift.Infrastructure.Reporting.csproj | System.Core | Framework assembly reference | src/RecordSift.Infrastructure.Reporting/RecordSift.Infrastructure.Reporting.csproj | Not declared | Not checked locally |
+| src/RecordSift.Infrastructure.Reporting/RecordSift.Infrastructure.Reporting.csproj | System.Runtime.Serialization | Framework assembly reference | src/RecordSift.Infrastructure.Reporting/RecordSift.Infrastructure.Reporting.csproj | Not declared | Not checked locally |
+| src/RecordSift.Infrastructure.Reporting/RecordSift.Infrastructure.Reporting.csproj | System.Xml | Framework assembly reference | src/RecordSift.Infrastructure.Reporting/RecordSift.Infrastructure.Reporting.csproj | Not declared | Not checked locally |
 
 ## Restore, build, tests and delivery
 

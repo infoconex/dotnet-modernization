@@ -63,7 +63,7 @@ nuget help
 **.NET Framework 4.8 targeting pack** (when needed on Windows):
 
 ```powershell
-Test-Path "\${env:ProgramFiles(x86)}\Reference Assemblies\Microsoft\Framework\.NETFramework\v4.8"
+Test-Path "${env:ProgramFiles(x86)}\Reference Assemblies\Microsoft\Framework\.NETFramework\v4.8"
 ```
 
 - **Record:** `True` or `False`. `True` confirms only that the standard directory exists; later build checks establish whether targeting actually works.

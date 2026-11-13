@@ -180,7 +180,7 @@ The [getting-started guide](https://github.com/infoconex/RecordSift/blob/1809d06
 
 | Field | Value |
 |---|---|
-| 33. Discovery Folder | Not recorded |
+| 33. Discovery Folder | `$HOME\source\discoveries\RecordSift-discovery-2026-11-13-145400` |
 | 34. Selected Source Branch or Tag | `main` |
 | 35. Source Commit SHA | `1809d06c0fade59e4769d16e0f8eaf10fa426004` |
 | 36. Source Committer Date (UTC) | `2026-11-12T03:12:18Z` |
@@ -188,6 +188,8 @@ The [getting-started guide](https://github.com/infoconex/RecordSift/blob/1809d06
 | 38. Detached HEAD | Not checked |
 
 **36. Source Committer Date (UTC)** records the timestamp of the exact commit being evaluated. It comes from the pinned [Git commit metadata](https://github.com/infoconex/RecordSift/commit/1809d06c0fade59e4769d16e0f8eaf10fa426004); it is **not** the discovery date, checkout time, first push, or release publication time. No local checkout has been performed for this evaluation.
+
+**Operator-local discovery destination (EV-032, 2026-11-13):** The operator ran the item 33 PowerShell block, creating the parent discovery directory and printing an unused timestamped destination under their Windows home folder. The recorded path uses `$HOME` for the personal account-directory prefix in this public baseline, preserving the exact relative folder name and timestamp. **Only the parent directory has been prepared; the selected discovery destination was not cloned or populated.** Source branch `main` (item 34), pinned source SHA (item 35), and source committer date (item 36) were already independently established from GitHub. Local clean-tree and detached-HEAD outcomes (items 37–38) remain `Not checked`.
 
 ## Solution and project inventory
 
@@ -580,6 +582,8 @@ Each distribution has its own record. NuGet package upload acceptance was previo
 
 | 32 | & ".\packages\NUnit.ConsoleRunner.3.17.0\tools\nunit3-console.exe" --version | Operator PowerShell session (`D:\RecordSift`) | NUnit ConsoleRunner 3.17.0 (Release) | Installed NUnit executable version | Not recorded | Version `3.17.0+685c5b542b5e9ba632c905f0bd514a773d9758af` reported | EV-031; operator-provided output in discovery conversation, 2026-11-13 |
 
+| 33 | New-Item -ItemType Directory; Join-Path; Test-Path -LiteralPath $destination; $destination | Operator PowerShell session (`D:\RecordSift`) | PowerShell 7.7.0 | Unique timestamped discovery destination under operator home directory | Not recorded | Destination `$HOME\source\discoveries\RecordSift-discovery-2026-11-13-145400` printed; no clone performed | EV-032; operator-provided console output in discovery conversation, 2026-11-13; home-directory account name generalized in public evidence |
+
 ### 59. Findings and Gaps
 
 | Finding | Impact | Evidence | Next Check |
@@ -587,7 +591,7 @@ Each distribution has its own record. NuGet package upload acceptance was previo
 | Operator Windows development-tool readiness incomplete | Local OS, PowerShell, Git, SDK/runtime inventories verified (EV-017–021); legacy .NET Framework MSBuild `4.8.10001.0` verified (EV-027), NuGet CLI `7.9.0.83` verified (EV-028), and NUnit ConsoleRunner `3.17.0` executable version verified (EV-030–031). Modern Visual Studio MSBuild is not verified after the Professional uninstall (EV-022–026); the v4.8 reference-assembly check returned `False` (EV-029). This prevents treating local .NET Framework 4.8 build prerequisites as satisfied | Items 20–32; EV-016–031 | Proceed to isolated checkout preparation (item 33) for source inspection; after Community/developer-pack installation verify modern MSBuild and repeat v4.8 reference-assembly check before local build |
 | Required .NET Framework 4.8 reference assembly missing at local checked path | Operator's direct `Test-Path` for `v4.8\mscorlib.dll` returned `False` versus `True` in CI; this is a confirmed local build-prerequisite gap at that path, not a RecordSift source-code failure or proof the runtime is missing | Item 31; EV-016, EV-029 | Install or restore the .NET Framework 4.8 developer/targeting pack as appropriate, then repeat the direct file check before attempting a local build |
 | NUnit executable verified; local tests not yet executed | Local `nunit3-console.exe --version` reported `3.17.0`, consistent with the declared package (EV-030–031); no operator-local tests or checkout SHA verification have occurred | Item 32; EV-030–031 | Record test execution only after isolated source checkout, build prerequisites and approved build/test execution |
-| Clean local checkout not verified | Local filesystem and Git state remain unknown | Items 33–38 | Clone selected SHA into unique discovery folder |
+| Clean local checkout not verified | The unique timestamped isolated discovery folder has been selected under the operator's home directory (item 33, EV-032), but the source has not yet been cloned or checked out locally; Git revision, working-tree cleanliness and detached HEAD still lack operator-local verification | Items 33–38; EV-032 | Clone into the selected unused destination and check out pinned SHA; then confirm clean tree and detached HEAD |
 | Operator-local MSBuild evaluation outstanding | CI evaluated 20 project/configuration scopes; local tool/import differences remain unverified | Item 44; EV-015 | Evaluate the same properties on an approved operator Windows checkout if local parity is required |
 | Build-policy properties not explicitly set in evaluated results | `Deterministic`, `TreatWarningsAsErrors` and `PlatformTarget` returned empty strings; the output alone does not establish compiler-switch behavior | Item 44; [CI evidence](https://github.com/infoconex/RecordSift/actions/runs/43501555831/job/132148357265) | Inspect actual compiler invocations and existing build gates before proposing policy changes |
 | CI outcomes are not local execution evidence | CI success cannot verify operator environment | Items 50–52 | Restore, build and run tests in the approved Windows checkout |
@@ -598,7 +602,7 @@ Each distribution has its own record. NuGet package upload acceptance was previo
 |---|---|---|
 | Modern Visual Studio MSBuild verification | Local legacy .NET Framework MSBuild `4.8.10001.0` (items 28–29, EV-027), NuGet CLI `7.9.0.83` (item 30, EV-028), and NUnit ConsoleRunner `3.17.0` (item 32, EV-031) verified; modern Visual Studio MSBuild corresponding to CI has not been observed since Professional was uninstalled | After Visual Studio Community installation, verify modern MSBuild executable version and path; proceed with isolated checkout/source inspection without claiming local build readiness |
 | .NET Framework 4.8 targeting-pack remediation | The required v4.8 reference assembly `mscorlib.dll` is absent at the checked desktop location (EV-029), unlike the CI runner (EV-016) | After developer/targeting pack installation, rerun item 31 direct file check before local build |
-| Local checkout verification | No isolated Windows discovery folder created | After host prerequisite checks |
+| Local checkout verification | Operator selected an isolated timestamped discovery destination (EV-032), but no clone or checkout has been observed | After checkout of the approved immutable source SHA, verify Git revision, clean tree and detached HEAD |
 | Operator-local MSBuild property parity | Existing CI evaluated the frozen source (EV-015); local tool/import parity remains unverified | If local parity is required, after host preflight and checkout |
 | Local restore/build/test | Operator approval and environment verification required | After source checkout and side-effect review |
 

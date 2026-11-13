@@ -4,6 +4,17 @@
 
 [Step-by-Step Instructions](../methodology/technical-discovery-runbook.md)
 
+## Discovery information
+
+| Field | Value |
+|---|---|
+| 16. Discovery By |  |
+| 17. Discovery Date |  |
+| Discovery Status |  |
+| Discovery Completed Date |  |
+
+**Status guidance:** Use `Not started`, `In progress`, `Blocked`, `Completed` or `Completed with gaps`. Enter `Discovery Completed Date` in `YYYY-MM-DD` only after completion and review; otherwise use `Not completed`. Keep the overall disposition (item 58), reviewer (item 59), review date (item 60) and outstanding checks consistent with this summary. Discovery dates are distinct from source commit, CI and publication dates.
+
 ## Application information
 
 | Field | Value |
@@ -29,12 +40,6 @@
 |---|---|---|
 |   |   |   |
 
-## Discovery information
-
-| Field | Value |
-|---|---|
-| 16. Discovery By |  |
-| 17. Discovery Date |  |
 
 ## Discovery host and prerequisite tools
 

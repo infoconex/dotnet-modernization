@@ -27,8 +27,8 @@
 
 | Consumer or Entry Point | Type | Source or Evidence |
 |---|---|---|
-| RecordSift.Application.Importing.Csv.CsvImporter<T> | Library API | https://github.com/infoconex/RecordSift/blob/1809d06c0fade59e4769d16e0f8eaf10fa426004/src/RecordSift.Application/Importing/Csv/CsvImporter.cs |
-| RecordSift.Application.Importing.Xlsx.XlsxImporter<T> | Library API | https://github.com/infoconex/RecordSift/blob/1809d06c0fade59e4769d16e0f8eaf10fa426004/src/RecordSift.Application/Importing/Xlsx/XlsxImporter.cs |
+| `RecordSift.Application.Importing.Csv.CsvImporter<T>` | Library API | https://github.com/infoconex/RecordSift/blob/1809d06c0fade59e4769d16e0f8eaf10fa426004/src/RecordSift.Application/Importing/Csv/CsvImporter.cs |
+| `RecordSift.Application.Importing.Xlsx.XlsxImporter<T>` | Library API | https://github.com/infoconex/RecordSift/blob/1809d06c0fade59e4769d16e0f8eaf10fa426004/src/RecordSift.Application/Importing/Xlsx/XlsxImporter.cs |
 | tests/ReleaseConsumer | Test consumer | https://github.com/infoconex/RecordSift/blob/1809d06c0fade59e4769d16e0f8eaf10fa426004/tests/ReleaseConsumer/Program.cs |
 
 ## Discovery information
@@ -407,9 +407,8 @@
 | Operation | Project or Solution | Configuration | Platform | Command or Workflow | Source |
 |---|---|---|---|---|---|
 | Restore | RecordSift.sln | Not applicable | Not applicable | nuget restore RecordSift.sln -NonInteractive -PackagesDirectory packages -ConfigFile NuGet.Config | .github/workflows/windows-net48.yml |
-| Build | RecordSift.sln | Release | Any CPU | msbuild RecordSift.sln /m /t:Rebuild /p:Configuration=Release '/p:Platform=Any CPU' /verbosity:minimal | .github/workflows/windows-net48.yml |
-| Test | Five NUnit assemblies | Release | Any CPU | nunit3-console.exe <assembly> --result=<path>;format=nunit3 --noheader | .github/workflows/windows-net48.yml |
-| Test | Five NUnit assemblies | Release | Any CPU | .\scripts\run_tests.ps1 -Level All | .github/workflows/windows-net48.yml |
+| Build | RecordSift.sln | Release | Any CPU | msbuild .\RecordSift.sln /m /t:Rebuild /p:Configuration=Release '/p:Platform=Any CPU' /verbosity:minimal | docs/engineering/baseline.md |
+| Test | Five NUnit assemblies | Release | Any CPU | .\scripts\run_tests.ps1 -Level All | scripts/run_tests.ps1 |
 | API verification | Production assemblies | Release | Any CPU | .\scripts\verify_public_api.ps1 | .github/workflows/windows-net48.yml |
 | XML documentation | Production assemblies | Release | Any CPU | .\scripts\verify_xml_documentation.ps1 | .github/workflows/windows-net48.yml |
 | IDE1006 style | RecordSift.sln | Not applicable | Not applicable | dotnet format style RecordSift.sln --no-restore --verify-no-changes --diagnostics IDE1006 --severity error --verbosity normal | .github/workflows/windows-net48.yml |
@@ -444,16 +443,31 @@
 
 | Workflow Path | Trigger | Runner OS | Configured Command | Artifact or Deployment |
 |---|---|---|---|---|
-| .github/workflows/windows-net48.yml | push | windows-2022 | nuget restore RecordSift.sln -NonInteractive -PackagesDirectory packages -ConfigFile NuGet.Config | Windows build and test |
-| .github/workflows/verify-rc-consumer.yml | push | windows-2022 | .\scripts\verify_clean_consumer.ps1 -CandidateDirectory $feed | Installed consumer verification |
-| .github/workflows/validate-docs.yml | push | ubuntu-latest | python3 scripts/validate_docs.py | Documentation checks |
-| .github/workflows/adversarial-extended.yml | workflow_dispatch | windows-2022 | nuget restore RecordSift.sln -NonInteractive -PackagesDirectory packages -ConfigFile NuGet.Config | Extended security validation |
-| .github/workflows/extended-adversarial.yml | workflow_dispatch | windows-2022 | .\scripts\run_adversarial_stress.ps1 | Resource validation |
-| .github/workflows/prepare-0.1-release.yml | workflow_dispatch | windows-2022 | .\scripts\build_release_candidate.ps1 | Prepare 0.1.0 artifact |
-| .github/workflows/publish-release.yml | workflow_dispatch | windows-2022 | Not reviewed at individual job level | Release preparation |
-| .github/workflows/publish-release.yml | workflow_dispatch | ubuntu-24.04 | Not reviewed at individual job level | Release publishing |
-| .github/workflows/recover-recordsift-0.1-release.yml | workflow_dispatch | windows-2022 | .\scripts\verify_clean_consumer.ps1 -FromNuGetOrg | Verify published package |
-| .github/workflows/recover-recordsift-0.1-release.yml | workflow_dispatch | ubuntu-24.04 | .\scripts\verify_clean_consumer.ps1 -FromNuGetOrg | Reconcile GitHub release |
+| .github/workflows/windows-net48.yml | push | windows-2022 | nuget restore RecordSift.sln -NonInteractive -PackagesDirectory packages -ConfigFile NuGet.Config | NUnit XML |
+| .github/workflows/windows-net48.yml | pull_request | windows-2022 | nuget restore RecordSift.sln -NonInteractive -PackagesDirectory packages -ConfigFile NuGet.Config | NUnit XML |
+| .github/workflows/windows-net48.yml | workflow_dispatch | windows-2022 | nuget restore RecordSift.sln -NonInteractive -PackagesDirectory packages -ConfigFile NuGet.Config | NUnit XML |
+| .github/workflows/windows-net48.yml | push | windows-2022 | & $msbuild RecordSift.sln /m /t:Rebuild /p:Configuration=Release '/p:Platform=Any CPU' /verbosity:minimal | Build outputs |
+| .github/workflows/windows-net48.yml | pull_request | windows-2022 | & $msbuild RecordSift.sln /m /t:Rebuild /p:Configuration=Release '/p:Platform=Any CPU' /verbosity:minimal | Build outputs |
+| .github/workflows/windows-net48.yml | workflow_dispatch | windows-2022 | & $msbuild RecordSift.sln /m /t:Rebuild /p:Configuration=Release '/p:Platform=Any CPU' /verbosity:minimal | Build outputs |
+| .github/workflows/verify-rc-consumer.yml | push | windows-2022 | & .\scripts\verify_clean_consumer.ps1 -CandidateDirectory $feed | Installed consumer verification |
+| .github/workflows/verify-rc-consumer.yml | pull_request | windows-2022 | & .\scripts\verify_clean_consumer.ps1 -CandidateDirectory $feed | Installed consumer verification |
+| .github/workflows/verify-rc-consumer.yml | workflow_dispatch | windows-2022 | & .\scripts\verify_clean_consumer.ps1 -CandidateDirectory $feed | Installed consumer verification |
+| .github/workflows/validate-docs.yml | push | ubuntu-latest | python3 scripts/validate_docs.py | Documentation validation |
+| .github/workflows/validate-docs.yml | pull_request | ubuntu-latest | python3 scripts/validate_docs.py | Documentation validation |
+| .github/workflows/validate-docs.yml | workflow_dispatch | ubuntu-latest | python3 scripts/validate_docs.py | Documentation validation |
+| .github/workflows/adversarial-extended.yml | push | windows-2022 | nuget restore RecordSift.sln -NonInteractive -PackagesDirectory packages -ConfigFile NuGet.Config | Adversarial test evidence |
+| .github/workflows/adversarial-extended.yml | pull_request | windows-2022 | nuget restore RecordSift.sln -NonInteractive -PackagesDirectory packages -ConfigFile NuGet.Config | Adversarial test evidence |
+| .github/workflows/adversarial-extended.yml | workflow_dispatch | windows-2022 | nuget restore RecordSift.sln -NonInteractive -PackagesDirectory packages -ConfigFile NuGet.Config | Adversarial test evidence |
+| .github/workflows/extended-adversarial.yml | push | windows-2022 | & .\scripts\run_adversarial_stress.ps1 -Iterations $iterations -MaximumPrivateMegabytes $maximumMiB -PerProcessTimeoutSeconds 90 | Bounded stress evidence |
+| .github/workflows/extended-adversarial.yml | pull_request | windows-2022 | & .\scripts\run_adversarial_stress.ps1 -Iterations $iterations -MaximumPrivateMegabytes $maximumMiB -PerProcessTimeoutSeconds 90 | Bounded stress evidence |
+| .github/workflows/extended-adversarial.yml | workflow_dispatch | windows-2022 | & .\scripts\run_adversarial_stress.ps1 -Iterations $iterations -MaximumPrivateMegabytes $maximumMiB -PerProcessTimeoutSeconds 90 | Bounded stress evidence |
+| .github/workflows/prepare-0.1-release.yml | workflow_dispatch | windows-2022 | & .\scripts\build_release_candidate.ps1 -OutputDirectory $output -PackageVersion '0.1.0' | Prepared package artifact |
+| .github/workflows/publish-release.yml | workflow_dispatch | windows-2022 | nuget restore RecordSift.sln -NonInteractive -PackagesDirectory packages -ConfigFile NuGet.Config | Validated package |
+| .github/workflows/publish-release.yml | workflow_dispatch | ubuntu-24.04 | dotnet nuget push "dist/RecordSift.$RELEASE_VERSION.nupkg" --api-key "$NUGET_API_KEY" --source https://api.nuget.org/v3/index.json | NuGet publish |
+| .github/workflows/publish-release.yml | workflow_dispatch | windows-2022 | & .\scripts\verify_clean_consumer.ps1 -FromNuGetOrg -PackageVersion $env:RELEASE_VERSION -ExpectedSourceCommit $env:GITHUB_SHA | Public-feed consumer |
+| .github/workflows/publish-release.yml | workflow_dispatch | ubuntu-24.04 | gh release view "$tag" --repo "$GITHUB_REPOSITORY" --json url,tagName | GitHub release |
+| .github/workflows/recover-recordsift-0.1-release.yml | workflow_dispatch | windows-2022 | & .\scripts\verify_clean_consumer.ps1 -FromNuGetOrg -PackageVersion '0.1.0' -ExpectedSourceCommit $env:PUBLISHED_SOURCE_SHA | Published package verification |
+| .github/workflows/recover-recordsift-0.1-release.yml | workflow_dispatch | ubuntu-24.04 | gh release view v0.1.0 --repo "$GITHUB_REPOSITORY" --json url,tagName,targetCommitish | Release reconciliation |
 
 ### 51. CI Runs
 

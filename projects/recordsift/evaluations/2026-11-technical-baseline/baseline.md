@@ -329,33 +329,29 @@ Use this table for separately declared third-party or locally distributed assemb
 
 ### 50. CI Workflows
 
-| Workflow Path | Trigger | Runner OS | Configured Command | Artifact or Deployment |
-|---|---|---|---|---|
-| .github/workflows/windows-net48.yml | push | windows-2022 | nuget restore RecordSift.sln -NonInteractive -PackagesDirectory packages -ConfigFile NuGet.Config | NUnit XML |
-| .github/workflows/windows-net48.yml | pull_request | windows-2022 | nuget restore RecordSift.sln -NonInteractive -PackagesDirectory packages -ConfigFile NuGet.Config | NUnit XML |
-| .github/workflows/windows-net48.yml | workflow_dispatch | windows-2022 | nuget restore RecordSift.sln -NonInteractive -PackagesDirectory packages -ConfigFile NuGet.Config | NUnit XML |
-| .github/workflows/windows-net48.yml | push | windows-2022 | & $msbuild RecordSift.sln /m /t:Rebuild /p:Configuration=Release '/p:Platform=Any CPU' /verbosity:minimal | Build outputs |
-| .github/workflows/windows-net48.yml | pull_request | windows-2022 | & $msbuild RecordSift.sln /m /t:Rebuild /p:Configuration=Release '/p:Platform=Any CPU' /verbosity:minimal | Build outputs |
-| .github/workflows/windows-net48.yml | workflow_dispatch | windows-2022 | & $msbuild RecordSift.sln /m /t:Rebuild /p:Configuration=Release '/p:Platform=Any CPU' /verbosity:minimal | Build outputs |
-| .github/workflows/verify-rc-consumer.yml | push | windows-2022 | & .\scripts\verify_clean_consumer.ps1 -CandidateDirectory $feed | Installed consumer verification |
-| .github/workflows/verify-rc-consumer.yml | pull_request | windows-2022 | & .\scripts\verify_clean_consumer.ps1 -CandidateDirectory $feed | Installed consumer verification |
-| .github/workflows/verify-rc-consumer.yml | workflow_dispatch | windows-2022 | & .\scripts\verify_clean_consumer.ps1 -CandidateDirectory $feed | Installed consumer verification |
-| .github/workflows/validate-docs.yml | push | ubuntu-latest | python3 scripts/validate_docs.py | Documentation validation |
-| .github/workflows/validate-docs.yml | pull_request | ubuntu-latest | python3 scripts/validate_docs.py | Documentation validation |
-| .github/workflows/validate-docs.yml | workflow_dispatch | ubuntu-latest | python3 scripts/validate_docs.py | Documentation validation |
-| .github/workflows/adversarial-extended.yml | push | windows-2022 | nuget restore RecordSift.sln -NonInteractive -PackagesDirectory packages -ConfigFile NuGet.Config | Adversarial test evidence |
-| .github/workflows/adversarial-extended.yml | pull_request | windows-2022 | nuget restore RecordSift.sln -NonInteractive -PackagesDirectory packages -ConfigFile NuGet.Config | Adversarial test evidence |
-| .github/workflows/adversarial-extended.yml | workflow_dispatch | windows-2022 | nuget restore RecordSift.sln -NonInteractive -PackagesDirectory packages -ConfigFile NuGet.Config | Adversarial test evidence |
-| .github/workflows/extended-adversarial.yml | push | windows-2022 | & .\scripts\run_adversarial_stress.ps1 -Iterations $iterations -MaximumPrivateMegabytes $maximumMiB -PerProcessTimeoutSeconds 90 | Bounded stress evidence |
-| .github/workflows/extended-adversarial.yml | pull_request | windows-2022 | & .\scripts\run_adversarial_stress.ps1 -Iterations $iterations -MaximumPrivateMegabytes $maximumMiB -PerProcessTimeoutSeconds 90 | Bounded stress evidence |
-| .github/workflows/extended-adversarial.yml | workflow_dispatch | windows-2022 | & .\scripts\run_adversarial_stress.ps1 -Iterations $iterations -MaximumPrivateMegabytes $maximumMiB -PerProcessTimeoutSeconds 90 | Bounded stress evidence |
-| .github/workflows/prepare-0.1-release.yml | workflow_dispatch | windows-2022 | & .\scripts\build_release_candidate.ps1 -OutputDirectory $output -PackageVersion '0.1.0' | Prepared package artifact |
-| .github/workflows/publish-release.yml | workflow_dispatch | windows-2022 | nuget restore RecordSift.sln -NonInteractive -PackagesDirectory packages -ConfigFile NuGet.Config | Validated package |
-| .github/workflows/publish-release.yml | workflow_dispatch | ubuntu-24.04 | dotnet nuget push "dist/RecordSift.$RELEASE_VERSION.nupkg" --api-key "$NUGET_API_KEY" --source https://api.nuget.org/v3/index.json | NuGet publish |
-| .github/workflows/publish-release.yml | workflow_dispatch | windows-2022 | & .\scripts\verify_clean_consumer.ps1 -FromNuGetOrg -PackageVersion $env:RELEASE_VERSION -ExpectedSourceCommit $env:GITHUB_SHA | Public-feed consumer |
-| .github/workflows/publish-release.yml | workflow_dispatch | ubuntu-24.04 | gh release view "$tag" --repo "$GITHUB_REPOSITORY" --json url,tagName | GitHub release |
-| .github/workflows/recover-recordsift-0.1-release.yml | workflow_dispatch | windows-2022 | & .\scripts\verify_clean_consumer.ps1 -FromNuGetOrg -PackageVersion '0.1.0' -ExpectedSourceCommit $env:PUBLISHED_SOURCE_SHA | Published package verification |
-| .github/workflows/recover-recordsift-0.1-release.yml | workflow_dispatch | ubuntu-24.04 | gh release view v0.1.0 --repo "$GITHUB_REPOSITORY" --json url,tagName,targetCommitish | Release reconciliation |
+These are **configured source definitions**, not proof that every job ran. Group identical commands by workflow, job/stage, runner, configured output and applicable triggers. The recorded commands are representative **exact command excerpts** from the pinned workflow definitions, not an exhaustive list of every step. Keep job-specific prerequisites and publication/deployment gates distinct.
+
+| Workflow Path | Trigger(s) | Job / Stage | Runner OS | Configured Command | Artifact or Deployment |
+|---|---|---|---|---|---|
+| .github/workflows/windows-net48.yml | push, pull_request, workflow_dispatch | `build-test` / Restore packages.config dependencies | windows-2022 | nuget restore RecordSift.sln -NonInteractive -PackagesDirectory packages -ConfigFile NuGet.Config | NUnit XML |
+| .github/workflows/windows-net48.yml | push, pull_request, workflow_dispatch | `build-test` / Build separate Domain, Application and Infrastructure projects with MSBuild | windows-2022 | & $msbuild RecordSift.sln /m /t:Rebuild /p:Configuration=Release '/p:Platform=Any CPU' /verbosity:minimal | Build outputs |
+| .github/workflows/verify-rc-consumer.yml | push, pull_request, workflow_dispatch | `verify-consumer` / Build unpublished package and run installed consumer | windows-2022 | & .\scripts\verify_clean_consumer.ps1 -CandidateDirectory $feed | Installed consumer verification |
+| .github/workflows/validate-docs.yml | push, pull_request, workflow_dispatch | `docs` / Validate versioned requirements and Markdown links | ubuntu-latest | python3 scripts/validate_docs.py | Documentation validation |
+| .github/workflows/adversarial-extended.yml | push, pull_request, workflow_dispatch | `extended-adversarial` / Restore pinned dependencies | windows-2022 | nuget restore RecordSift.sln -NonInteractive -PackagesDirectory packages -ConfigFile NuGet.Config | Adversarial test evidence |
+| .github/workflows/extended-adversarial.yml | push, pull_request, workflow_dispatch | `bounded-adversarial-stress` / Repeat bounded adversarial tests with sampled memory and process timeouts | windows-2022 | & .\scripts\run_adversarial_stress.ps1 -Iterations $iterations -MaximumPrivateMegabytes $maximumMiB -PerProcessTimeoutSeconds 90 | Bounded stress evidence |
+| .github/workflows/prepare-0.1-release.yml | workflow_dispatch | `prepare` / Build stable package, independently install and execute net48 consumer, record SHA256 | windows-2022 | & .\scripts\build_release_candidate.ps1 -OutputDirectory $output -PackageVersion '0.1.0' | Prepared package artifact |
+| .github/workflows/publish-release.yml | workflow_dispatch | `prepare` / Restore exact pinned packages | windows-2022 | nuget restore RecordSift.sln -NonInteractive -PackagesDirectory packages -ConfigFile NuGet.Config | Validated package |
+| .github/workflows/publish-release.yml | workflow_dispatch | `publish` / Publish exact package to nuget.org | ubuntu-24.04 | dotnet nuget push "dist/RecordSift.$RELEASE_VERSION.nupkg" --api-key "$NUGET_API_KEY" --source https://api.nuget.org/v3/index.json | NuGet publish |
+| .github/workflows/publish-release.yml | workflow_dispatch | `verify_public` / Independently install and run actual published package | windows-2022 | & .\scripts\verify_clean_consumer.ps1 -FromNuGetOrg -PackageVersion $env:RELEASE_VERSION -ExpectedSourceCommit $env:GITHUB_SHA | Public-feed consumer |
+| .github/workflows/publish-release.yml | workflow_dispatch | `github_release` / Publish release with verified package and checksum | ubuntu-24.04 | gh release view "$tag" --repo "$GITHUB_REPOSITORY" --json url,tagName | GitHub release |
+| .github/workflows/recover-recordsift-0.1-release.yml | workflow_dispatch | `verify_public` / Validate installed package and run isolated net48 consumer | windows-2022 | & .\scripts\verify_clean_consumer.ps1 -FromNuGetOrg -PackageVersion '0.1.0' -ExpectedSourceCommit $env:PUBLISHED_SOURCE_SHA | Published package verification |
+| .github/workflows/recover-recordsift-0.1-release.yml | workflow_dispatch | `github_release` / Reconcile exact original artifact and create GitHub release | ubuntu-24.04 | gh release view v0.1.0 --repo "$GITHUB_REPOSITORY" --json url,tagName,targetCommitish | Release reconciliation |
+
+**Trigger and job conditions:** For the push and pull-request workflows, event branch filters are defined in their pinned YAML; listing an event alone does not imply every branch matches. `workflow_dispatch` is manual. `prepare-0.1-release.yml` job `prepare`, `publish-release.yml` job `prepare` and recovery job `verify_public` each require `github.ref == 'refs/heads/main'`. Other job/step conditions, inputs and dependencies remain authoritative in the linked source workflow files; commands can be conditional even when a workflow trigger is permitted.
+
+**Release and deployment sequence:** `publish-release.yml` runs `prepare` (Windows package build and provenance), then `publish` (Ubuntu, protected `nuget-release` environment requiring owner approval, OIDC authentication and NuGet push), then `verify_public` (Windows independent public-feed consumer), then `github_release` (Ubuntu tag/release creation following successful verification). The table retains the original `gh release view` verification command; its containing step also invokes `gh release create`. The separate `recover-recordsift-0.1-release.yml` does **not** republish the package: `verify_public` checks the original public package and `github_release` reconciles the original artifact/tag/release.
+
+**Execution evidence boundary:** Source-defined triggers and commands do not establish observed execution, successful publication or deployment. Separately recorded CI runs and release evidence in the evidence manifest establish only their specific verified runs.
 
 ### 51. CI Runs
 

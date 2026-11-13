@@ -9,15 +9,15 @@
 
 This is the authoritative operator progress record, separate from the final technical facts in `baseline.md`. **Nothing has been run in a local checkout as part of this new walkthrough.** Initial GitHub source inspection is recorded separately below.
 
-## DISC-001 — Check each prerequisite and record its result
+## DISC-001 — Check prerequisites
 
 **Executed by:** Not yet recorded.  
-**Execution date/time:** Not yet recorded.  
+**Date/time:** Not yet recorded.  
 **Discovery folder:** Not yet created.
 
-Run each snippet **separately in Windows PowerShell**. Replace the pending result immediately below each command with the **actual version, output or error**. Do not fill in expected results.
+Execute each snippet separately in **Windows PowerShell**. Replace **Not yet executed** with the actual result, including the version or any error.
 
-### Windows
+### Windows — required; Windows host for all RecordSift steps
 
 ```powershell
 Get-CimInstance Win32_OperatingSystem | Select-Object Caption, Version, BuildNumber, OSArchitecture
@@ -25,9 +25,10 @@ Get-CimInstance Win32_OperatingSystem | Select-Object Caption, Version, BuildNum
 
 **Result:** Not yet executed.
 
-- Record the Windows edition, version, build, and architecture. This walkthrough requires Windows, not WSL.
+- If you're not using Windows, switch to a Windows computer before beginning.
+- Record Windows version, build, and architecture.
 
-### PowerShell
+### PowerShell — required; Windows PowerShell 5.1 or PowerShell 7
 
 ```powershell
 $PSVersionTable.PSVersion
@@ -35,7 +36,9 @@ $PSVersionTable.PSVersion
 
 **Result:** Not yet executed.
 
-### Git
+- If unavailable, use Windows PowerShell or [install PowerShell for Windows](https://learn.microsoft.com/en-us/powershell/scripting/install/installing-powershell-on-windows).
+
+### Git — required; minimum version 2.23
 
 ```powershell
 git --version
@@ -43,9 +46,10 @@ git --version
 
 **Result:** Not yet executed.
 
-- Git 2.23+ is needed for the planned `git switch --detach` command. Stop before cloning if unavailable.
+- If missing or older than 2.23, [install Git for Windows](https://git-scm.com/install/win), reopen PowerShell, and try again.
+- Record the reported version. Stop before cloning if this check fails.
 
-### .NET SDK
+### .NET SDK — optional for checkout; no universal minimum
 
 ```powershell
 dotnet --info
@@ -53,9 +57,10 @@ dotnet --info
 
 **Result:** Not yet executed.
 
-- Record the SDK/runtime details shown, or the error if the command is unavailable. We will use DISC-004 for further SDK details.
+- If missing and required for a later step, [install a compatible .NET SDK](https://dotnet.microsoft.com/en-us/download).
+- Record installed SDKs and runtimes or the command error.
 
-### MSBuild
+### MSBuild — required for RecordSift build; version to confirm
 
 ```powershell
 msbuild -version -nologo
@@ -63,9 +68,10 @@ msbuild -version -nologo
 
 **Result:** Not yet executed.
 
-- If unavailable, record **not found on PATH**; we'll check Visual Studio Developer PowerShell before deciding whether anything is missing.
+- If missing, try Visual Studio Developer PowerShell first. If not installed, [install Visual Studio Build Tools](https://visualstudio.microsoft.com/downloads/) with the .NET Framework build components.
+- Record the version. The optional `-getProperty` query later requires **MSBuild 17.8+**.
 
-### NuGet CLI
+### NuGet CLI — required for RecordSift restore; minimum not yet established
 
 ```powershell
 nuget help
@@ -73,9 +79,10 @@ nuget help
 
 **Result:** Not yet executed.
 
-- Record the version shown, or **not found on PATH**. RecordSift's documented `packages.config` restore uses the standalone NuGet CLI.
+- If missing, [install the standalone NuGet CLI](https://learn.microsoft.com/en-us/nuget/consume-packages/install-use-packages-nuget-cli).
+- Record the version shown. Use the application's documented `nuget restore` command at DISC-008, not during this check.
 
-### .NET Framework 4.8 targeting pack
+### .NET Framework 4.8 targeting pack — required for RecordSift build
 
 ```powershell
 Test-Path "${env:ProgramFiles(x86)}\Reference Assemblies\Microsoft\Framework\.NETFramework\v4.8"
@@ -83,13 +90,14 @@ Test-Path "${env:ProgramFiles(x86)}\Reference Assemblies\Microsoft\Framework\.NE
 
 **Result:** Not yet executed.
 
-- `True` indicates the standard directory exists; it doesn't prove that an application builds successfully.
+- If `False`, check Visual Studio components or [install the .NET Framework 4.8 Developer Pack](https://dotnet.microsoft.com/en-us/download/dotnet-framework/net48).
+- Record `True` or `False`. This checks the directory, not build success.
 
-**Test runner:** Check and record its command/version later, once the actual runner has been identified in DISC-010.
+**Test runner:** Check its command and version at DISC-010 after identifying the actual runner.
 
-- **Needed for cloning now:** Windows, PowerShell, Git, network access, and a writable folder.
-- **Needed for later steps:** an appropriate Windows MSBuild, targeting assemblies, NuGet, and test runner. Record gaps rather than installing or changing anything automatically.
-- Keep large outputs in evidence files or provide a faithful excerpt with a link; don't commit personal paths, credentials, or tokens.
+- **To clone:** Windows, PowerShell, Git, internet access, and a writable folder must be available.
+- **Before restore/build/tests:** confirm the remaining prerequisites and record any missing versions. Do not install anything automatically.
+- Don't include secrets or personal paths in shared results.
 
 ## Step progress
 

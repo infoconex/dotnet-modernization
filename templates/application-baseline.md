@@ -97,35 +97,45 @@
 
 ### 37. Projects
 
-| Project Path | Role | Project Format | Target Framework | Language Version | Output Type | MSBuild Platform | SDK or ToolsVersion | Direct Project Reference |
-|---|---|---|---|---|---|---|---|---|
-|   |   |   |   |   |   |   |   |   |
+One row per project wherever possible. Use project name first (link to the project file when available), group direct references by name, and put the repository-relative project file path last. Preserve all frameworks/platforms and split only when differences cannot be represented unambiguously.
+
+| Project | Role | Format | Target Framework(s) | Language Version | Output Type | MSBuild Platform(s) | SDK or ToolsVersion | Direct Project References | Project Path |
+|---|---|---|---|---|---|---|---|---|---|
+|   |   |   |   |   |   |   |   |   |   |
 
 ## Project settings and evaluated values
 
 ### 38. Compiler Settings
 
-| Project Path | Configuration | Framework | Property | Declared Value | Condition |
-|---|---|---|---|---|---|
-|   |   |   |   |   |   |
+One row per project whenever possible. D/R means Debug/Release in that order; show one value when both have identical declarations. `Not declared` is not an evaluated default. Document shared exact conditions once; label exceptions or additional configurations and properties explicitly.
+
+| Project | Framework(s) | LangVersion | DebugSymbols (D/R) | DebugType (D/R) | Optimize (D/R) | DefineConstants (D/R) | Conditions / Exceptions | Project Path |
+|---|---|---|---|---|---|---|---|---|
+|   |   |   |   |   |   |   |   |   |
 
 ### 39. Output and Validation Settings
 
-| Project Path | Configuration | Property | Declared Value | Condition |
-|---|---|---|---|---|
-|   |   |   |   |   |
+One row per project when practical. Use Debug/Release values where declarations differ, one value where identical, and `Not declared` where absent; do not infer evaluated defaults. Preserve other properties and exceptional conditions.
+
+| Project | OutputPath (D/R) | WarningLevel (D/R) | WarningsAsErrors (D/R) | DocumentationFile (D/R) | Conditions / Exceptions | Project Path |
+|---|---|---|---|---|---|---|
+|   |   |   |   |   |   |   |
 
 ### 40. Project Metadata and Imports
 
-| Project Path | Metadata or Import Name | Declared Value | Source File |
-|---|---|---|---|
-|   |   |   |   |
+One row per project. Give each named metadata property a column and list distinct imports together. `Not declared` means absent from project source, not evaluated false. Preserve exceptional conditional/import scope.
+
+| Project | Default Configuration | IsTestProject | FileAlignment | AppDesignerFolder | Imports | Additional Metadata / Conditions | Project Path |
+|---|---|---|---|---|---|---|---|
+|   |   |   |   |   |   |   |   |
 
 ### 41. Evaluated MSBuild Properties
 
-| Project Path | Configuration | Framework | Property | Evaluated Value | Declared Value | Evidence |
-|---|---|---|---|---|---|---|
-|   |   |   |   |   |   |   |
+One row per project when possible. Enter only observed evaluated values, labeled by configuration/platform/framework, and distinguish source declarations from evaluated outputs. Link exact command/output; do not populate from XML or successful build alone.
+
+| Project | Configuration / Framework / Platform | Evaluated Properties (name=value) | Declared Properties for Comparison | Evidence | Project Path |
+|---|---|---|---|---|---|
+|   |   |   |   |   |   |
 
 ## Repository structure and dependencies
 
@@ -143,15 +153,19 @@
 
 ### 44. NuGet Package Declarations
 
-| Project Path | Package ID | Declared Version | Declaration File | Configured Feed | Purpose |
-|---|---|---|---|---|---|
-|   |   |   |   |   |   |
+One row per consuming project where unambiguous. List **each package ID, declared version and purpose** together, one per line, alongside version source and configured feed(s). Qualify any differing per-package conditions or feeds rather than merging incompatible details. Configured feed is not proven acquisition origin.
+
+| Project | Packages (ID — Version — Purpose) | Declaration / Version Source | Configured Feed(s) | Project Path |
+|---|---|---|---|---|
+|   |   |   |   |   |
 
 ### 45. Other External Dependencies
 
-| Consumer | Dependency | Type or Mechanism | Declaration Source | Version or Identity | Resolution or Location |
-|---|---|---|---|---|---|
-|   |   |   |   |   |   |
+One row per project when possible. Group non-NuGet dependencies, preserving each type, version/identity and resolution. If different dependencies have different attributes, label them within the cell or split into scoped rows. Do not repeat project references or NuGet packages.
+
+| Project | Dependencies | Type / Mechanism | Version / Identity | Resolution / Location | Declaration Source | Project Path |
+|---|---|---|---|---|---|---|
+|   |   |   |   |   |   |   |
 
 ## Restore, build, tests and delivery
 

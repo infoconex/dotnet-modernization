@@ -6,9 +6,14 @@ Don't change the application or publish anything as part of discovery.
 
 ## DISC-001 — Check tools and get a clean copy of the source
 
-### 1. Check required tools
+### Record discovery details
 
-- Run each check separately. The **field number** on its Result line is the matching field in the [discovery form](../templates/application-baseline.md). Write the result here and share it so I can update the report.
+1. **Recorder:** Enter the person performing the discovery. This is report field **1**.
+2. **Recorded Date:** Enter the date discovery is being performed, in `YYYY-MM-DD` format. This is report field **2**.
+
+### Check prerequisites
+
+- Run each check separately. Its number tells you which field to complete in the application discovery report. Share the actual output so the report can be updated.
 - Use a computer supported by the application. **RecordSift requires Windows.**
 
 **Windows — required for RecordSift; use a supported Windows version**
@@ -92,9 +97,9 @@ Test-Path "${env:ProgramFiles(x86)}\Reference Assemblies\Microsoft\Framework\.NE
 - **Before restore, build, or tests:** resolve any other tools the application needs. Don't install optional tools just to complete this checklist.
 - **11** (test runner) is completed later in DISC-010 if it isn't known now.
 
-### 2. Create a dated discovery folder
+### Create a dated discovery folder
 
-**Fields to fill:** **1** (operator), **2** (date/time), **3** (dated folder), **12** (selected branch/tag), **20** (HTTPS clone URL).
+**Report fields:** **3** (dated folder), **12** (source branch/tag), **20** (HTTPS clone URL). Fields **1** and **2** were collected above.
 
 - Use a **new folder** for each discovery run. The name includes the repository, `discovery`, and a local date/time stamp.
 - Replace `REPOSITORY` and the example URL with the real application details.
@@ -123,7 +128,7 @@ git switch --detach FULL_COMMIT_SHA
 - The download creates a new local repository and the checkout creates its source files. Neither changes the remote repository.
 - If you're using an existing checkout instead, inspect it before changing branches. Don't reset or clean it.
 
-### 3. Confirm the checkout
+### Confirm the checkout
 
 **Fields to fill:** **13** (actual full source SHA), **14** (checkout status), **22** (default branch when known), **112–115** (actual command results when captured).
 
@@ -140,7 +145,7 @@ git remote get-url origin
 - Check that `HEAD` matches the intended full commit SHA.
 - A blank branch name is normal for a detached checkout.
 - A blank status means no tracked changes or untracked files were reported. It doesn't check ignored build outputs.
-- Record the actual output for **1–14** as applicable. Do not share passwords, tokens or private paths.
+- Record actual values in the report using their field numbers. Do not share passwords, tokens or private paths.
 - If the commit differs or files are unexpectedly changed, stop and investigate.
 - A clean checkout doesn't mean the computer's SDKs, NuGet cache, or build tools are clean; we'll check those later.
 
@@ -163,7 +168,7 @@ dotnet sln .\path\to\solution.sln list
 - A solution filter may list only part of the solution; don't treat it as a complete inventory.
 - Fill **17–26** (application and repository details), **31–37** (one row per solution), and **38–39** (project paths and roles).
 
-**Fields 17–26, 31–37, 38–39 — Result:** ____________________
+**Report fields:** 17–26, 31–37, 38–39. Record the collected values, or note what is missing.
 
 ## DISC-003 — Check project types and target frameworks
 
@@ -175,7 +180,7 @@ dotnet sln .\path\to\solution.sln list
 - An SDK-style project can still target .NET Framework. Don't guess settings that aren't declared.
 - Fill **27–30** (versions and consumers), **40–46** (project details), and **47–51, 52–56, 57–62** (source-declared settings, only where applicable).
 
-**Fields 27–30, 40–46, 47–51, 52–56, 57–62 — Result:** ____________________
+**Report fields:** 27–30, 40–46, 47–51, 52–56, 57–62. Record the collected values, or note what is missing.
 
 ## DISC-004 — Record installed build tools
 
@@ -219,7 +224,7 @@ nuget help
 - The .NET SDK does **not** guarantee a .NET Framework targeting pack is installed.
 - Update **7–11** with detailed versions, and **88** for any second host such as CI. Don't record a tool as installed unless verified.
 
-**Fields 7–11, 88 — Result:** ____________________
+**Report fields:** 7–11, 88. Record the collected values, or note what is missing.
 
 ## DISC-005 — Check MSBuild settings
 
@@ -236,7 +241,7 @@ msbuild .\path\to\project.csproj -getProperty:TargetFramework -getProperty:Targe
 - This command checks property values; it **doesn't build the project**. If your MSBuild version doesn't support it, record that and continue with file inspection.
 - Fill **63** with evaluated property values and relevant differences from declared values. Update **47–51, 52–56, 57–62** only when additional evidence changes them.
 
-**Fields 63; 47–51, 52–56, 57–62 if needed — Result:** ____________________
+**Report fields:** 63; 47–51, 52–56, 57–62 if needed. Record the collected values, or note what is missing.
 
 ## DISC-006 — Find shared configuration files
 
@@ -246,7 +251,7 @@ msbuild .\path\to\project.csproj -getProperty:TargetFramework -getProperty:Targe
 - A missing file isn't automatically a problem or a reason to create one.
 - Fill **64–65** (folders) and **66–69** (configuration paths, existence, settings, scope). Use one row per folder or file.
 
-**Fields 64–65, 66–69 — Result:** ____________________
+**Report fields:** 64–65, 66–69. Record the collected values, or note what is missing.
 
 ## DISC-007 — List dependencies
 
@@ -262,7 +267,7 @@ dotnet nuget list source
 - **Don't restore packages yet.** A listed source or package declaration doesn't prove a package was downloaded.
 - Fill **70–75** for each NuGet package and **76–81** for other dependencies. Note packages and feeds not checked.
 
-**Fields 70–75, 76–81 — Result:** ____________________
+**Report fields:** 70–75, 76–81. Record the collected values, or note what is missing.
 
 ## DISC-008 — Restore dependencies
 
@@ -273,7 +278,7 @@ dotnet nuget list source
 - **Save:** exact command, tool version, result, errors, and any generated files. Don't change package versions or bypass missing feeds to make the restore pass.
 - Fill **82** (restore command), **99** (outcome) and **112–115** (actual command, exit code, evidence).
 
-**Fields 82, 99, 112–115 — Result:** ____________________
+**Report fields:** 82, 99, 112–115. Record the collected values, or note what is missing.
 
 ## DISC-009 — Build the application
 
@@ -285,7 +290,7 @@ dotnet nuget list source
 - One successful project build doesn't prove every project or configuration builds.
 - Fill **83** (build command), **94** (outputs/warnings), **100** (outcome) and **112–115** (actual execution).
 
-**Fields 83, 94, 100, 112–115 — Result:** ____________________
+**Report fields:** 83, 94, 100, 112–115. Record the collected values, or note what is missing.
 
 ## DISC-010 — Run the tests
 
@@ -297,7 +302,7 @@ dotnet nuget list source
 - Don't report "all tests passed" if an expected test project wasn't executed.
 - Fill **11** (runner), **84** (command), **89–93** (test counts and included assemblies), **101** (outcome), and **112–115** (execution).
 
-**Fields 11, 84, 89–93, 101, 112–115 — Result:** ____________________
+**Report fields:** 11, 84, 89–93, 101, 112–115. Record the collected values, or note what is missing.
 
 ## DISC-011 — Review CI, packaging, and deployment
 
@@ -308,7 +313,7 @@ dotnet nuget list source
 - A workflow file alone doesn't prove that it ran successfully.
 - Fill **85–88** (existing check/packaging/deployment commands and alternate hosts) and **95–98** (CI, runs, packaging, runtime requirements).
 
-**Fields 85–88, 95–98 — Result:** ____________________
+**Report fields:** 85–88, 95–98. Record the collected values, or note what is missing.
 
 ## DISC-012 — Find existing compatibility checks
 
@@ -318,7 +323,7 @@ dotnet nuget list source
 - Don't create extra checks just to fill out the list.
 - Fill applicable **102–111** check outcomes. Each must say passed, failed, not executed, not checked or not applicable; link existing results.
 
-**Fields 102–111 — Result:** ____________________
+**Report fields:** 102–111. Record the collected values, or note what is missing.
 
 ## DISC-013 — Review results and missing information
 
@@ -329,18 +334,18 @@ dotnet nuget list source
 - Keep old test results labeled as historical; don't present them as new runs.
 - Fill **116–118** for each gap or problem and **119–121** for per-step status and evidence.
 
-**Fields 116–118, 119–121 — Result:** ____________________
+**Report fields:** 116–118, 119–121. Record the collected values, or note what is missing.
 
 ## DISC-014 — Finish the technical baseline
 
-- Fill in the [application baseline template](../templates/application-baseline.md) using what you actually found.
-- Add the actual commands, results and evidence links to the [discovery report](../templates/application-baseline.md).
+- Update the application's **discovery report** with the facts that have actually been collected.
+- Record actual commands, results and evidence links with their field numbers. Do not copy unanswered questions into the report.
 - Check that another engineer can find the same source, understand the setup, and repeat the steps.
 - List any missing results instead of guessing.
 - Save the final baseline with its source commit and discovery date. Modernization recommendations come afterward.
 - Fill **15–16** (verification date/status) and **122–124** (disposition, reviewer, next action). Finish **119–121** for all 14 steps.
 
-**Fields 15–16, 119–121, 122–124 — Result:** ____________________
+**Report fields:** 15–16, 119–121, 122–124. Record the collected values, or note what is missing.
 
 ## Optional — Create scripts later
 
@@ -355,7 +360,7 @@ dotnet nuget list source
 ## Where to keep the results
 
 - **Instructions:** `methodology/technical-discovery-runbook.md`.
-- **Full report template:** `templates/application-baseline.md`.
-- **Completed application report and supporting evidence:** `projects/<app>/evaluations/<dated-discovery>/` in this repository.
+- **Application discovery report:** a numbered list of collected answers, created and updated for each application; for example, [RecordSift's report](../projects/recordsift/evaluations/2026-11-technical-baseline/baseline.md).
+- **Completed report and supporting evidence:** `projects/<app>/evaluations/<dated-discovery>/` in this repository.
 - **Application source and build workflows:** the application's own repository.
 - **Blog article:** `infoconex/coding-blog`; use selected results and link back to the complete discovery records.

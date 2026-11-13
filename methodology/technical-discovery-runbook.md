@@ -8,12 +8,12 @@ Don't change the application or publish anything as part of discovery.
 
 ### Record discovery details
 
-1. **Recorder:** Enter the person performing the discovery. This is report field **1**.
-2. **Recorded Date:** Enter the date discovery is being performed, in `YYYY-MM-DD` format. This is report field **2**.
+1. **Recorder:** Enter the person performing the discovery.
+2. **Recorded Date:** Enter the date discovery is being performed (`YYYY-MM-DD`).
 
 ### Check prerequisites
 
-- Run each check separately. Its number tells you which field to complete in the application discovery report. Share the actual output so the report can be updated.
+- Run each check separately. Enter its result **only in the numbered field of your copied [baseline](../templates/application-baseline.md)**. Do not write results in this guide.
 - Use a computer supported by the application. **RecordSift requires Windows.**
 
 **4. Windows — required for RecordSift; use a supported Windows version**
@@ -21,8 +21,6 @@ Don't change the application or publish anything as part of discovery.
 ```powershell
 Get-CimInstance Win32_OperatingSystem | Select-Object Caption, Version, BuildNumber, OSArchitecture
 ```
-
-**Result:** ____________________
 
 - If not running Windows, use a Windows computer before continuing.
 - Record the Windows version, build, and architecture.
@@ -33,8 +31,6 @@ Get-CimInstance Win32_OperatingSystem | Select-Object Caption, Version, BuildNum
 $PSVersionTable.PSVersion
 ```
 
-**Result:** ____________________
-
 - If unavailable, use Windows PowerShell or [install PowerShell for Windows](https://learn.microsoft.com/en-us/powershell/scripting/install/installing-powershell-on-windows).
 - Record the version shown.
 
@@ -43,8 +39,6 @@ $PSVersionTable.PSVersion
 ```powershell
 git --version
 ```
-
-**Result:** ____________________
 
 - If missing or older than 2.23, [install Git for Windows](https://git-scm.com/install/win), reopen PowerShell, and run the command again.
 - Record the installed version. Git 2.23+ supports `git switch`, which we'll use below.
@@ -55,8 +49,6 @@ git --version
 dotnet --info
 ```
 
-**Result:** ____________________
-
 - If missing and needed for a later step, [install the appropriate .NET SDK](https://dotnet.microsoft.com/en-us/download).
 - Record installed SDK and runtime versions. An SDK alone doesn't provide .NET Framework targeting packs.
 
@@ -65,8 +57,6 @@ dotnet --info
 ```powershell
 msbuild -version -nologo
 ```
-
-**Result:** ____________________
 
 - If not found, first try **Visual Studio Developer PowerShell**. If still unavailable and needed, [install Visual Studio Build Tools](https://visualstudio.microsoft.com/downloads/) with the required .NET components.
 - Record the installed version. The optional `-getProperty` command in DISC-005 requires MSBuild 17.8+.
@@ -77,8 +67,6 @@ msbuild -version -nologo
 nuget help
 ```
 
-**Result:** ____________________
-
 - If unavailable and needed for restore, [install the NuGet CLI](https://learn.microsoft.com/en-us/nuget/consume-packages/install-use-packages-nuget-cli).
 - Record the version shown. No universal minimum version is assumed here.
 
@@ -87,8 +75,6 @@ nuget help
 ```powershell
 Test-Path "${env:ProgramFiles(x86)}\Reference Assemblies\Microsoft\Framework\.NETFramework\v4.8"
 ```
-
-**Result:** ____________________
 
 - If `False`, check the installed Visual Studio components or [install the .NET Framework 4.8 Developer Pack](https://dotnet.microsoft.com/en-us/download/dotnet-framework/net48).
 - Record `True` or `False`. A directory check doesn't prove that a build will succeed.
@@ -168,7 +154,7 @@ dotnet sln .\path\to\solution.sln list
 - A solution filter may list only part of the solution; don't treat it as a complete inventory.
 - Fill **17–26** (application and repository details), **31–37** (one row per solution), and **38–39** (project paths and roles).
 
-**Report fields:** 17–26, 31–37, 38–39. Record the collected values, or note what is missing.
+- **Report fields:** 17–26, 31–37, 38–39. Add the findings directly to the copied baseline.
 
 ## DISC-003 — Check project types and target frameworks
 
@@ -180,12 +166,12 @@ dotnet sln .\path\to\solution.sln list
 - An SDK-style project can still target .NET Framework. Don't guess settings that aren't declared.
 - Fill **27–30** (versions and consumers), **40–46** (project details), and **47–51, 52–56, 57–62** (source-declared settings, only where applicable).
 
-**Report fields:** 27–30, 40–46, 47–51, 52–56, 57–62. Record the collected values, or note what is missing.
+- **Report fields:** 27–30, 40–46, 47–51, 52–56, 57–62. Add the findings directly to the copied baseline.
 
 ## DISC-004 — Record installed build tools
 
 - Use the results from DISC-001. Check any tool that wasn't fully identified.
-- Run each command separately and write its result directly below it.
+- Run each command separately and enter the output in the indicated baseline field.
 
 **.NET SDKs:**
 
@@ -193,7 +179,7 @@ dotnet sln .\path\to\solution.sln list
 dotnet --list-sdks
 ```
 
-- **Record:** SDK versions and locations, or the error.
+- Enter installed SDK versions and locations (or the error) in field **7**.
 
 **.NET runtimes:**
 
@@ -201,7 +187,7 @@ dotnet --list-sdks
 dotnet --list-runtimes
 ```
 
-- **Record:** runtime versions and locations, or the error.
+- Enter runtime versions and locations (or the error) in field **7**.
 
 **MSBuild:**
 
@@ -209,7 +195,7 @@ dotnet --list-runtimes
 msbuild -version -nologo
 ```
 
-- **Record:** version and which installation supplied it. If unavailable in normal PowerShell, try a Visual Studio Developer PowerShell and note the difference.
+- Enter the version and installation source in field **8**. If unavailable in normal PowerShell, try Visual Studio Developer PowerShell.
 
 **NuGet CLI:**
 
@@ -217,14 +203,14 @@ msbuild -version -nologo
 nuget help
 ```
 
-- **Record:** version and path, or the error.
+- Enter the version/path (or error) in field **9**.
 
 - Check any remaining framework targeting packs and test runners required by the project. Give each its own command and recorded result when identified.
 - **Save:** tool versions, paths, missing prerequisites, and any differences between PowerShell environments.
 - The .NET SDK does **not** guarantee a .NET Framework targeting pack is installed.
 - Update **7–11** with detailed versions, and **88** for any second host such as CI. Don't record a tool as installed unless verified.
 
-**Report fields:** 7–11, 88. Record the collected values, or note what is missing.
+- **Report fields:** 7–11, 88. Add the findings directly to the copied baseline.
 
 ## DISC-005 — Check MSBuild settings
 
@@ -241,7 +227,7 @@ msbuild .\path\to\project.csproj -getProperty:TargetFramework -getProperty:Targe
 - This command checks property values; it **doesn't build the project**. If your MSBuild version doesn't support it, record that and continue with file inspection.
 - Fill **63** with evaluated property values and relevant differences from declared values. Update **47–51, 52–56, 57–62** only when additional evidence changes them.
 
-**Report fields:** 63; 47–51, 52–56, 57–62 if needed. Record the collected values, or note what is missing.
+- **Report fields:** 63; 47–51, 52–56, 57–62 if needed. Add the findings directly to the copied baseline.
 
 ## DISC-006 — Find shared configuration files
 
@@ -251,7 +237,7 @@ msbuild .\path\to\project.csproj -getProperty:TargetFramework -getProperty:Targe
 - A missing file isn't automatically a problem or a reason to create one.
 - Fill **64–65** (folders) and **66–69** (configuration paths, existence, settings, scope). Use one row per folder or file.
 
-**Report fields:** 64–65, 66–69. Record the collected values, or note what is missing.
+- **Report fields:** 64–65, 66–69. Add the findings directly to the copied baseline.
 
 ## DISC-007 — List dependencies
 
@@ -267,7 +253,7 @@ dotnet nuget list source
 - **Don't restore packages yet.** A listed source or package declaration doesn't prove a package was downloaded.
 - Fill **70–75** for each NuGet package and **76–81** for other dependencies. Note packages and feeds not checked.
 
-**Report fields:** 70–75, 76–81. Record the collected values, or note what is missing.
+- **Report fields:** 70–75, 76–81. Add the findings directly to the copied baseline.
 
 ## DISC-008 — Restore dependencies
 
@@ -278,7 +264,7 @@ dotnet nuget list source
 - **Save:** exact command, tool version, result, errors, and any generated files. Don't change package versions or bypass missing feeds to make the restore pass.
 - Fill **82** (restore command), **99** (outcome) and **112–115** (actual command, exit code, evidence).
 
-**Report fields:** 82, 99, 112–115. Record the collected values, or note what is missing.
+- **Report fields:** 82, 99, 112–115. Add the findings directly to the copied baseline.
 
 ## DISC-009 — Build the application
 
@@ -290,7 +276,7 @@ dotnet nuget list source
 - One successful project build doesn't prove every project or configuration builds.
 - Fill **83** (build command), **94** (outputs/warnings), **100** (outcome) and **112–115** (actual execution).
 
-**Report fields:** 83, 94, 100, 112–115. Record the collected values, or note what is missing.
+- **Report fields:** 83, 94, 100, 112–115. Add the findings directly to the copied baseline.
 
 ## DISC-010 — Run the tests
 
@@ -302,7 +288,7 @@ dotnet nuget list source
 - Don't report "all tests passed" if an expected test project wasn't executed.
 - Fill **11** (runner), **84** (command), **89–93** (test counts and included assemblies), **101** (outcome), and **112–115** (execution).
 
-**Report fields:** 11, 84, 89–93, 101, 112–115. Record the collected values, or note what is missing.
+- **Report fields:** 11, 84, 89–93, 101, 112–115. Add the findings directly to the copied baseline.
 
 ## DISC-011 — Review CI, packaging, and deployment
 
@@ -313,7 +299,7 @@ dotnet nuget list source
 - A workflow file alone doesn't prove that it ran successfully.
 - Fill **85–88** (existing check/packaging/deployment commands and alternate hosts) and **95–98** (CI, runs, packaging, runtime requirements).
 
-**Report fields:** 85–88, 95–98. Record the collected values, or note what is missing.
+- **Report fields:** 85–88, 95–98. Add the findings directly to the copied baseline.
 
 ## DISC-012 — Find existing compatibility checks
 
@@ -323,7 +309,7 @@ dotnet nuget list source
 - Don't create extra checks just to fill out the list.
 - Fill applicable **102–111** check outcomes. Each must say passed, failed, not executed, not checked or not applicable; link existing results.
 
-**Report fields:** 102–111. Record the collected values, or note what is missing.
+- **Report fields:** 102–111. Add the findings directly to the copied baseline.
 
 ## DISC-013 — Review results and missing information
 
@@ -334,7 +320,7 @@ dotnet nuget list source
 - Keep old test results labeled as historical; don't present them as new runs.
 - Fill **116–118** for each gap or problem and **119–121** for per-step status and evidence.
 
-**Report fields:** 116–118, 119–121. Record the collected values, or note what is missing.
+- **Report fields:** 116–118, 119–121. Add the findings directly to the copied baseline.
 
 ## DISC-014 — Finish the technical baseline
 
@@ -345,7 +331,7 @@ dotnet nuget list source
 - Save the final baseline with its source commit and discovery date. Modernization recommendations come afterward.
 - Fill **15–16** (verification date/status) and **122–124** (disposition, reviewer, next action). Finish **119–121** for all 14 steps.
 
-**Report fields:** 15–16, 119–121, 122–124. Record the collected values, or note what is missing.
+- **Report fields:** 15–16, 119–121, 122–124. Add the findings directly to the copied baseline.
 
 ## Optional — Create scripts later
 
@@ -360,7 +346,7 @@ dotnet nuget list source
 ## Where to keep the results
 
 - **Instructions:** `methodology/technical-discovery-runbook.md`.
-- **Application discovery report:** a numbered list of collected answers, created and updated for each application; for example, [RecordSift's report](../projects/recordsift/evaluations/2026-11-technical-baseline/baseline.md).
-- **Completed report and supporting evidence:** `projects/<app>/evaluations/<dated-discovery>/` in this repository.
+- **Blank baseline template:** [templates/application-baseline.md](../templates/application-baseline.md). Copy this for each discovery and fill the copy, not the template.
+- **Completed baseline and supporting evidence:** `projects/<app>/evaluations/<dated-discovery>/` in this repository.
 - **Application source and build workflows:** the application's own repository.
 - **Blog article:** `infoconex/coding-blog`; use selected results and link back to the complete discovery records.

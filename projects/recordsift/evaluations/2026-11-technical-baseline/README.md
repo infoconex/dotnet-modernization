@@ -7,7 +7,6 @@
 **Discovery opened:** 2026-11-12  
 **Required evaluation host:** **Windows** (RecordSift is Windows-only; host version/build and architecture not yet verified)  
 **Runbook:** [Technical discovery](../../../../methodology/technical-discovery-runbook.md)  
-**Reusable template:** [Full discovery report](../../../../templates/application-baseline.md)  
 **Verification approach:** User executes supported native commands one at a time; assistant records facts, limitations, results and article-relevant findings.
 
 ## Purpose and boundaries
@@ -24,7 +23,7 @@
 
 ## Working documents
 
-- [Discovery report](baseline.md) — the single record of actual tool versions, commands, collected findings, and results; currently limited to source-inspected preflight.
+- [Discovery report](baseline.md) — numbered answers and observed findings, added only when collected; not a duplicate blank template.
 - [Evidence manifest](evidence/manifest.md) — immutable GitHub source links now; local/CI outputs to be added **only when collected**.
 - [Reusable runbook](../../../../methodology/technical-discovery-runbook.md) — exact portable procedures and their applicability/side-effect conditions.
 - [Article evidence map](../../../../articles/recordsift-technical-discovery-outline.md) — candidate narrative, not proof or publication-ready copy.
@@ -41,4 +40,4 @@ This is not a claim that missing repository-wide files have no equivalents in pa
 
 **Research/implementation separation:** no change to RecordSift source, project files or its application main branch. This documentation remains on its own review PR until approved.
 
-**Next action:** operator follows **DISC-001** in the [step-by-step guide](../../../../methodology/technical-discovery-runbook.md): verify Windows/tool versions, then create a dated, clean RecordSift checkout at commit `1809d06c0fade59e4769d16e0f8eaf10fa426004`. **No local commands have been executed or verified.** The assistant fills in the [discovery report](baseline.md) from the actual output before moving to DISC-002.
+**Next action:** operator follows **DISC-001** in the [step-by-step guide](../../../../methodology/technical-discovery-runbook.md): verify Windows/tool versions, then create a dated, clean RecordSift checkout at commit `1809d06c0fade59e4769d16e0f8eaf10fa426004`. **No local commands have been executed or verified.** The assistant adds the actual answers to the numbered [discovery report](baseline.md) before moving to DISC-002.

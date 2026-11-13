@@ -227,7 +227,7 @@ $repository = 'RecordSift'
 $remoteUrl = 'https://github.com/infoconex/RecordSift.git'
 $discoveryRoot = Join-Path (Join-Path $HOME 'source') 'discoveries'
 New-Item -ItemType Directory -Path $discoveryRoot -Force | Out-Null
-$discoveryFolder = "$repository-discovery-$(Get-Date -Format 'yyyy-MM-dd-HHmmss')"
+$discoveryFolder = "${repository}-discovery-$(Get-Date -Format 'yyyy-MM-dd-HHmmss')"
 $destination = Join-Path $discoveryRoot $discoveryFolder
 $alreadyExists = Test-Path -LiteralPath $destination
 $alreadyExists
@@ -251,11 +251,13 @@ Choose and record a **full immutable commit SHA** before checking out source. Fo
 $selectedCommit = '1809d06c0fade59e4769d16e0f8eaf10fa426004'
 git switch --detach $selectedCommit
 if ($LASTEXITCODE -ne 0) { throw 'Commit checkout failed. Stop before proceeding.' }
-git rev-parse HEAD
+$actualCommit = (git rev-parse HEAD).Trim()
+if ($LASTEXITCODE -ne 0 -or $actualCommit -ne $selectedCommit) { throw 'Checked-out SHA does not match the selected commit.' }
+$actualCommit
 git remote get-url origin
 ```
 
-The commit must be present in the new clone. If this command fails, do not continue pretending checkout was successful. A detached checkout intentionally leaves item 35 = `True`.
+The commit must be present in the new clone. The explicit SHA comparison above must succeed before continuing. If this command fails, do not continue pretending checkout was successful. A detached checkout intentionally leaves item 35 = `True`.
 
 ### 34. Working Tree Clean
 
@@ -409,7 +411,7 @@ git ls-files
 Inspect `NuGet.Config`, `.editorconfig`, `global.json`, `Directory.Build.props/targets`, `Directory.Packages.props`, `.gitignore` and nested equivalents. Use one row **per setting** with source/scope and precedence. Absence from the tracked tree does not prove a machine-level setting or inherited MSBuild import is absent.
 
 ```powershell
-git ls-files "NuGet.Config" ".editorconfig" "global.json" "Directory.*.props" "Directory.*.targets" "Directory.Packages.props"
+git ls-files "NuGet.Config" "*NuGet.Config" ".editorconfig" "*.editorconfig" ".gitignore" "AGENTS.md" ".github/copilot-instructions.md" "global.json" "*global.json" "*Directory.Build.props" "*Directory.Build.targets" "*Directory.Packages.props"
 ```
 
 **How to populate each column (left to right):**
@@ -426,7 +428,7 @@ git ls-files "NuGet.Config" ".editorconfig" "global.json" "Directory.*.props" "D
 Read `packages.config`, `PackageReference` and central versions as appropriate. Add one row per **package declaration per consuming project**. The feed column is configured source information and must **not** be described as proven download origin. Inspect sources via `dotnet nuget list source` if the SDK is present or the corresponding NuGet CLI command.
 
 ```powershell
-dotnet nuget list source
+dotnet nuget list source --configfile .\NuGet.Config
 ```
 
 This command requires the .NET CLI. If only NuGet CLI is available, use an equivalent `nuget sources List -ConfigFile NuGet.Config` command, without asserting the configured feed is the actual download origin.
@@ -521,7 +523,7 @@ Identify the test runner and **all intended test assemblies**. On RecordSift, a 
 .\scripts\run_tests.ps1 -Level All
 ```
 
-**Test execution.** Requires restored packages and built Release test assemblies. Execute only with operator approval and the correct Windows environment.
+**Test execution.** Requires restored packages and built Release test assemblies. Execute only with operator approval and the correct Windows environment. The existing `scripts/run_tests.ps1` is the project's runner wrapper; first inspect its behavior and its dependency on `NUnit.ConsoleRunner.3.17.0`. No new wrapper is required.
 
 **How to populate each column (left to right):**
 

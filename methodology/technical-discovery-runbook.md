@@ -191,7 +191,7 @@ nuget help
 
 ### 29. .NET Framework Targeting Pack Inventory
 
-For traditional .NET Framework projects, check the applicable **reference assemblies / targeting pack**, not merely the presence of a runtime. For RecordSift inspect the .NET Framework 4.8 reference assemblies directory with the command below. Add one row for each framework checked, with exact bool and checked path. If missing, see the [.NET Framework Developer Pack](https://dotnet.microsoft.com/en-us/download/dotnet-framework/net48).
+For traditional .NET Framework projects, check the applicable **reference assemblies / targeting pack**, not merely the presence of a runtime. For RecordSift inspect the .NET Framework 4.8 reference assemblies directory with the command below. Use the output path shown by the command as the `Location` in the table. Add one row for each framework checked, with exact bool and checked path. If missing, see the [.NET Framework Developer Pack](https://dotnet.microsoft.com/en-us/download/dotnet-framework/net48).
 
 ```powershell
 $pack = Join-Path $env:ProgramFiles 'Reference Assemblies\Microsoft\Framework\.NETFramework\v4.8'
@@ -232,6 +232,8 @@ $destination = Join-Path $discoveryRoot $discoveryFolder
 Test-Path -LiteralPath $destination
 # Continue only if False. Do not overwrite an existing destination.
 git clone --no-checkout $remoteUrl $destination
+if ($LASTEXITCODE -ne 0) { throw 'Git clone failed. Stop before proceeding.' }
+Set-Location -LiteralPath $destination
 ```
 
 **Safety gate:** If `Test-Path` returns `True`, stop and generate a different timestamp; never clean/delete an existing folder. This clone creates files and requires network access. On failure, stop before items 33–35.
@@ -246,9 +248,10 @@ Choose and record a **full immutable commit SHA** before checking out source. Fo
 
 ```powershell
 $selectedCommit = '1809d06c0fade59e4769d16e0f8eaf10fa426004'
-git -C $destination switch --detach $selectedCommit
-git -C $destination rev-parse HEAD
-git -C $destination remote get-url origin
+git switch --detach $selectedCommit
+if ($LASTEXITCODE -ne 0) { throw 'Commit checkout failed. Stop before proceeding.' }
+git rev-parse HEAD
+git remote get-url origin
 ```
 
 The commit must be present in the new clone. If this command fails, do not continue pretending checkout was successful. A detached checkout intentionally leaves item 35 = `True`.
@@ -258,7 +261,7 @@ The commit must be present in the new clone. If this command fails, do not conti
 Run `git status --porcelain=v1 --untracked-files=all` **inside the cloned repository**. An empty result supports `True` for a clean working tree (tracked and untracked, excluding ignored files); any lines require review. Record only `True` or `False`. Do not run `git clean` or `git reset --hard`.
 
 ```powershell
-git -C $destination status --porcelain=v1 --untracked-files=all
+git status --porcelain=v1 --untracked-files=all
 ```
 
 ### 35. Detached HEAD
@@ -266,7 +269,7 @@ git -C $destination status --porcelain=v1 --untracked-files=all
 Run `git branch --show-current` in the selected checkout. A blank branch name after `git switch --detach` indicates a detached HEAD; record `True`. An attached branch name indicates `False`. The actual SHA from item 33 is still authoritative.
 
 ```powershell
-git -C $destination branch --show-current
+git branch --show-current
 ```
 
 ## Solution and project inventory

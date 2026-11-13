@@ -1,175 +1,195 @@
-# `<Application>` — Application baseline
+# `<Application>` — Discovery baseline
 
-**Repository:** `<owner/repository browser link>`  
-**Baseline source ref:** `<branch, tag, or detached commit>`  
-**Baseline commit:** `<full immutable SHA>`  
-**Source inventory date:** `<YYYY-MM-DD>` · **Verification date:** `<YYYY-MM-DD or not executed>`  
-**Evidence status:** `<verified / partial / blocked; identify gaps>`
+Copy this **blank baseline** into a dated application discovery folder. Fill in the answers as you follow the [step-by-step instructions](../methodology/technical-discovery-runbook.md). This template contains no actual findings.
 
-Record **observed facts once**, at their correct scope. Consult the [variation guide](../methodology/baseline-variation-guide.md) for alternatives before completing each section; do not copy unobserved possibilities into the application baseline. Distinguish declared, evaluated and executed values. The [evaluation process](../methodology/evaluation-process.md#2-establish-the-baseline) defines verification; modernization recommendations belong outside this document.
+- Each number identifies one report field. Keep the same numbers in every copy.
+- For solutions, projects, settings, dependencies and commands, add a row for each item; column numbers stay the same.
+- Leave fields blank until checked. Use **Not applicable**, **Not checked**, or **Not executed** where appropriate when completing a copy.
+- Link actual outputs when available. Don't include passwords or other secrets.
 
-## 1. Application overview
+## A. Discovery setup — DISC-001 and DISC-004
 
-`<One short paragraph: what the application does, its intended consumers and application type.>`
+**1. Recorder:** `<person performing discovery>`
 
-| Attribute | Value |
-|---|---|
-| Application name | `<name>` |
-| Application type | `<library, API, service, desktop, etc.>` |
-| Visibility | `<public/private>` |
-| HTTPS clone URL | `<URL>` |
-| SSH clone URL | `<URL>` |
-| Default branch | `<branch>` |
-| License | `<license>` |
-| Supported OS | `<OS/platform>` |
-| Published application/package version | `<value and source>` |
-| Published package or release URL | `<exact public/package/release URL, if applicable>` |
-| Source manifest version | `<value and source>` |
-| Assembly version | `<value and source, if applicable>` |
-| File version | `<value and source, if applicable>` |
+**2. Recorded Date:** `<YYYY-MM-DD>`
 
-Only include applicable fields. Multiple applications, runtime environments or separately versioned artifacts may require scoped rows. Keep distinct version concepts separate.
+| Field | What to record | Answer |
+|---|---|---|
+| 3 | Dated discovery folder | `<folder or not yet created>` |
+| 4 | Operating system, version/build, architecture | `<actual result>` |
+| 5 | PowerShell version (if used) | `<actual result>` |
+| 6 | Git version | `<actual result>` |
+| 7 | Installed .NET SDKs and runtimes | `<versions or not installed>` |
+| 8 | MSBuild / Visual Studio Build Tools version and source | `<actual result>` |
+| 9 | Standalone NuGet CLI version | `<actual result>` |
+| 10 | Framework targeting packs needed and found | `<versions or check result>` |
+| 11 | Test runner and version | `<runner/version or not checked>` |
+| 12 | Selected source branch or tag | `<ref>` |
+| 13 | Exact source commit SHA | `<full SHA>` |
+| 14 | Local checkout status (clean/changes/detached) | `<actual status or not checked>` |
+| 15 | Verification date (if distinct from inspection date) | `<date or not executed>` |
+| 16 | Overall evidence status | `<verified/partial/blocked/not executed>` |
 
-## 2. Solution and projects
+Link supporting command output from field **115** when a copy is completed.
 
-### Solutions
+## B. Application — DISC-002 and DISC-003
 
-One row per solution (`.sln`, `.slnx`, and relevant filters). Support **none, one or several** solutions, overlapping project memberships and standalone projects. Where mapping varies, add per-configuration/project build-inclusion detail.
+| Field | What to fill in | Result |
+|---|---|---|
+| 17 | Application name | `<name>` |
+| 18 | What the application does / application type | `<purpose and type>` |
+| 19 | Public or private repository | `<visibility>` |
+| 20 | HTTPS clone URL | `<URL>` |
+| 21 | SSH clone URL, if used | `<URL or not applicable>` |
+| 22 | Repository default branch | `<branch>` |
+| 23 | License | `<license or unknown>` |
+| 24 | Supported operating systems | `<OS/platform>` |
+| 25 | Published application or package version | `<version and source>` |
+| 26 | Published release/package URL | `<URL or not applicable>` |
+| 27 | Source manifest version | `<value and source>` |
+| 28 | Assembly version | `<value and source>` |
+| 29 | File version | `<value and source>` |
+| 30 | Consumers or entry points | `<library/API/desktop/service, consumers>` |
 
-| Solution path | Format | Format version | Declared IDE version | Configurations | Platforms |
-|---|---|---|---|---|---|
-| `<.sln/.slnx path>` | `<format>` | `<actual declaration or —>` | `<actual declaration or —>` | `<configurations>` | `<platforms>` |
+### Solutions (repeat one row per solution)
 
-Document relevant solution-level build inclusion/exclusions, nested solution folders and project mappings **only where present or important**. Solution versions are not evidence of an installed toolchain.
-
-### Project inventory
-
-**One row per project**, including projects outside solutions. Record conditional, inherited, multi-targeted or configuration-specific values at their actual scope. **MSBuild Platform** refers to the project's `Platform` property; `PlatformTarget`, `Prefer32Bit`, RIDs and effective architecture are distinct settings (see the variation guide).
-
-| Project path/name | Role | Format | Target framework(s) | Language version | Output type | MSBuild Platform | ToolsVersion / SDK | Direct project references |
-|---|---|---|---|---|---|---|---|---|
-| `<project file>` | `<production/test/tool>` | `<traditional/SDK-style>` | `<TFM(s)>` | `<language/version>` | `<Library/Exe/etc.>` | `<AnyCPU/x64/etc.>` | `<value>` | `<declared direct refs or —>` |
-
-### Project-specific configuration
-
-**Use one row per project in each relevant table.** Separate Debug/Release columns only where values differ; combine identical values and verified path patterns. Support additional named configurations, platforms, target frameworks and conditional/inherited properties using additional columns or focused tables. `Debug` and `Release` are examples, not guaranteed configurations.
-
-**Compiler settings**
-
-| Project | DebugType (Debug) | DebugType (Release) | Optimize (Debug) | Optimize (Release) | DefineConstants (Debug) | DefineConstants (Release) |
+| 31 Solution path | 32 Format | 33 Format version | 34 Declared IDE version | 35 Configurations | 36 Platforms | 37 Solution membership/build exclusions |
 |---|---|---|---|---|---|---|
-| `<project>` | `<value>` | `<value>` | `<value>` | `<value>` | `<value>` | `<value>` |
+| `<.sln/.slnx>` | `<format>` | `<value/—>` | `<value/—>` | `<configurations>` | `<platforms>` | `<projects/notes>` |
+
+### Projects (repeat one row per project, including standalone projects)
+
+| 38 Project path | 39 Role | 40 Project format | 41 Target framework(s) | 42 Language version | 43 Output type | 44 MSBuild Platform | 45 SDK / ToolsVersion | 46 Direct project references |
+|---|---|---|---|---|---|---|---|---|
+| `<project file>` | `<production/test/tool>` | `<SDK-style/traditional>` | `<framework(s)>` | `<version>` | `<output type>` | `<platform>` | `<SDK/version>` | `<paths>` |
+
+## C. Project settings — DISC-003 and DISC-005
+
+Record values declared in source separately from MSBuild-evaluated results. For conditional or multi-targeted properties, add rows showing the project, configuration, platform and framework. Debug and Release are examples, not mandatory configurations.
+
+**Compiler settings (repeat per project and configuration as needed)**
+
+| 47 Project/configuration | 48 DebugType | 49 Optimize | 50 DefineConstants | 51 Other compiler settings / conditions |
+|---|---|---|---|---|
+| `<project/configuration>` | `<value>` | `<value>` | `<value>` | `<details>` |
 
 **Output and validation settings**
 
-Show identical or verified patterned values once; split configuration columns when they differ.
-
-| Project | OutputPath | WarningLevel | WarningsAsErrors | DocumentationFile |
+| 52 Project/configuration | 53 OutputPath | 54 WarningLevel | 55 WarningsAsErrors | 56 DocumentationFile |
 |---|---|---|---|---|
-| `<project>` | `<shared value or configuration path pattern>` | `<shared value or named configuration values>` | `<shared value or not declared>` | `<shared value, path pattern, or not declared>` |
+| `<project/configuration>` | `<path>` | `<value>` | `<value>` | `<path or not declared>` |
 
-`<Configuration>` in a path is a **display placeholder** for verified Debug/Release paths, not an MSBuild expression. For any project whose two configurations differ beyond the placeholder, show the actual Debug and Release values explicitly rather than implying they match.
+**Project metadata and imports**
 
-**Project-wide metadata**
-
-| Project | Default Configuration | IsTestProject | FileAlignment | AppDesignerFolder | Custom imports |
+| 57 Project | 58 Default configuration | 59 IsTestProject | 60 FileAlignment | 61 AppDesignerFolder | 62 Imports / shared properties |
 |---|---|---|---|---|---|
-| `<project>` | `<value>` | `<value or —>` | `<value or —>` | `<value or —>` | `<import(s)>` |
+| `<project>` | `<value>` | `<value or —>` | `<value or —>` | `<value or —>` | `<imports or —>` |
 
-Record additional settings (e.g., DebugSymbols, signing, resources, platform targets, generated code) in the relevant focused table when applicable. `—` means **not declared**, not an evaluated default. The baseline captures **source declarations** separately from values evaluated by MSBuild; don't present source-only inspection as an executed property comparison.
+**63 — Evaluated MSBuild properties and differences:** `<project/configuration/property/result/evidence, or not evaluated>`
 
-## 3. Repository structure and configuration
+## D. Repository folders and configuration — DISC-006
 
-| Directory | Purpose |
+**Directories (repeat as needed)**
+
+| 64 Directory | 65 Purpose |
 |---|---|
-| `<directory>` | `<one-line purpose, not a count of files>` |
+| `<path>` | `<what belongs here>` |
 
-Record meaningful existing and absent configuration files. Check root, nested, imported, machine/user, and CI scopes when they may affect evaluation; do not list unrelated files just to fill the table.
+**Configuration files (including files that are absent)**
 
-| File or mechanism | Present? | Existing purpose |
+| 66 File / mechanism | 67 Present? | 68 Current purpose / value | 69 Scope, imports or precedence |
+|---|---|---|---|
+| `<path or mechanism>` | `<yes/no/not checked>` | `<settings>` | `<projects/configuration>` |
+
+Check relevant `global.json`, `Directory.Build.props`, `Directory.Build.targets`, `Directory.Packages.props`, NuGet configuration, `.editorconfig` and nested imports. A missing file does not imply a change is necessary.
+
+## E. Dependencies — DISC-007 and DISC-008
+
+**NuGet declarations (repeat per project/package)**
+
+| 70 Project | 71 Package ID | 72 Version | 73 Declared in | 74 Configured feed(s) | 75 Purpose |
+|---|---|---|---|---|---|
+| `<project>` | `<package>` | `<declared version>` | `<packages.config/PackageReference/etc.>` | `<sources or not checked>` | `<production/test/tool>` |
+
+**Other dependencies (repeat only when present)**
+
+| 76 Project/consumer | 77 Dependency | 78 Mechanism/type | 79 Source file | 80 Version/identity | 81 Resolution/location |
+|---|---|---|---|---|---|
+| `<project>` | `<DLL/COM/native/service>` | `<how used>` | `<location declared>` | `<version/identity>` | `<verified or unknown>` |
+
+A configured feed is not proof that a package was restored from it. Keep secrets out of the report.
+
+## F. Build, tests, CI and release — DISC-008 through DISC-012
+
+**Existing commands (record the exact command or entry point found in application documentation/CI)**
+
+| Field | Operation | Command or existing entry point |
 |---|---|---|
-| `<file/path>` | `<yes/no/unknown>` | `<current use or —>` |
+| 82 | Restore | `<actual command>` |
+| 83 | Build (configuration/platform) | `<actual command>` |
+| 84 | Full tests | `<actual command>` |
+| 85 | Compatibility checks | `<commands/scripts>` |
+| 86 | Packaging | `<command/workflow or N/A>` |
+| 87 | Consumer/deployment | `<command/workflow or N/A>` |
+| 88 | Alternate host/CI toolchain details | `<host and versions if different>` |
 
-Tracked-source presence does not establish whether the toolchain imports other or generated configuration files. **Absence is not an implementation recommendation.**
+**Test counts and executed artifacts**
 
-## 4. Dependencies and build
-
-### External dependencies
-
-Include **non-NuGet** dependencies only when evidenced, and do not repeat project references from Section 2. Distinguish source declarations from verified runtime dependencies; state unassessed categories briefly.
-
-**NuGet package declarations**
-
-Record one row per project/package declaration. Identify its source file (`packages.config`, project `PackageReference`, central version source where applicable) and its usage. See the variation guide for conditional versions, feeds and target frameworks.
-
-| Project | Package | Declared version | Declared in | Eligible feed(s) | Usage |
-|---|---|---|---|---|---|
-| `<project>` | `<package ID>` | `<version or range>` | `<declaration file and central version file if applicable>` | `<configured feed(s) or not established>` | `<production, test, tool, or other evidenced purpose>` |
-
-The **Usage** column identifies the consuming project's purpose; it does **not** establish whether a package was historically direct or transitive. Capture configured feeds separately from **verified acquisition origin**. If the latter is unverified, note that once. Relate package-owned assemblies to their package instead of duplicating them. Published `.nuspec` dependencies are a separate consumer contract.
-
-**Other external dependencies (when present)**
-
-| Project / consumer | Dependency | Type / reference mechanism | Declared at | Version / identity | Location / resolution |
-|---|---|---|---|---|---|
-| `<project>` | `<Vendor.Library.dll>` | `<managed Reference with HintPath>` | `<linked project file>` | `<assembly identity/version if declared>` | `<relative/absolute path, verified or unresolved>` |
-| `<project>` | `<COM component>` | `<COMReference, COMFileReference or runtime activation>` | `<project file or code link>` | `<type-library GUID/version, ProgID if known>` | `<registration, interop binary, or unknown>` |
-| `<project>` | `<native library>` | `<P/Invoke or dynamic native load>` | `<code or build manifest>` | `<DLL name/version/architecture>` | `<deployment path or runtime search behavior>` |
-| `<application>` | `<database/service>` | `<runtime service/API dependency>` | `<documented configuration or code>` | `<endpoint type/protocol/version if applicable>` | `<host/environment; omit secrets>` |
-
-Use the [variation guide](../methodology/baseline-variation-guide.md#4-external-dependency-fields) for framework, GAC, COM, native and runtime cases. Record **not assessed** rather than claiming runtime mechanisms absent based only on project XML.
-
-### Build environment
-
-For materially different host/toolchains (local, CI, VM, SDK-only, Windows/Linux, architectures), record each separately; do not infer a single toolchain across every execution.
-
-| Attribute | Observed value |
-|---|---|
-| OS / runner | `<OS and version>` |
-| MSBuild version | `<observed version and tool provenance>` |
-| .NET SDK version | `<observed version or not applicable>` |
-| NuGet version | `<observed version or not applicable>` |
-| Test runner version | `<observed version>` |
-
-### Entry points
-
-Distinguish entry points by solution, configuration, platform, target framework, CI matrix or deployment environment where their commands differ.
-
-| Operation | Command, script or workflow |
-|---|---|
-| Restore | `<exact command>` |
-| Build | `<exact command / configuration>` |
-| Full tests | `<runner/workflow>` |
-| Compatibility checks | `<links to scripts/commands>` |
-| Packaging | `<entry point, when applicable>` |
-| Consumer/deployment verification | `<entry point, when applicable>` |
-
-## 5. Verification results
-
-| Compatibility gate | Result | Evidence |
+| Field | What to fill in | Actual result |
 |---|---|---|
-| Dependency restore | `<passed / failed / not executed>` | `<run, immutable SHA>` |
-| Solution/project build | `<passed / failed / not executed; configuration>` | `<run>` |
-| Automated tests | `<discovered / passed / failed / skipped; detail in test table if useful>` | `<run/artifact>` |
-| Public API compatibility | `<result or not applicable>` | `<contract snapshot/run>` |
-| Assembly identity | `<result or not applicable>` | `<snapshot/run>` |
-| Embedded resource identity | `<result, not executed or not applicable>` | `<snapshot/run>` |
-| XML documentation | `<result or not applicable>` | `<run/artifact>` |
-| Package contents | `<result or not applicable>` | `<artifact/run>` |
-| Package metadata | `<result or not applicable>` | `<manifest/run>` |
-| Dependency validation | `<result or not applicable>` | `<restore/validator run>` |
-| Vulnerability audit | `<result or not executed>` | `<audit run>` |
-| Installed-package consumer | `<result or not applicable>` | `<consumer run>` |
-| Application-specific integration checks | `<result or not applicable>` | `<run/artifact>` |
+| 89 | Tests discovered | `<number or not executed>` |
+| 90 | Tests passed | `<number or not executed>` |
+| 91 | Tests failed | `<number or not executed>` |
+| 92 | Tests skipped | `<number or not executed>` |
+| 93 | Test projects/assemblies actually executed | `<list or not executed>` |
+| 94 | Build warnings/errors and important outputs | `<summary, links or not executed>` |
+| 95 | CI workflow names, triggers and commands | `<paths and details>` |
+| 96 | CI runs checked and their exact source SHA | `<run IDs / status or not checked>` |
+| 97 | Package contents/metadata and release evidence | `<location and outcome or not checked>` |
+| 98 | Runtime / deployment requirements | `<requirements or not applicable>` |
 
-Use one row per independently checked fact **and execution combination where outcomes differ** (configuration, OS, TFM, platform, consumer). Distinguish passed, failed, partial, blocked, not executed and not applicable; preserve deliberate negative controls and harness failures separately. Remove unrelated gates or mark them not applicable. Reuse suitable existing evidence from the same baseline SHA; do not rerun sufficient checks just to fill a template.
+**Checks and outcomes (include the supporting evidence with each result)**
 
-## 6. Known issues and verification gaps
+| Field | Check | Outcome and evidence |
+|---|---|---|
+| 99 | Dependency restore | `<pass/fail/blocked/not executed; link>` |
+| 100 | Build | `<result/configuration; link>` |
+| 101 | Automated tests | `<result/test scope; link>` |
+| 102 | Public API | `<result or not applicable; link>` |
+| 103 | Assembly identity | `<result or not applicable; link>` |
+| 104 | Resources | `<result or not applicable; link>` |
+| 105 | XML documentation | `<result or not applicable; link>` |
+| 106 | Package contents | `<result or not applicable; link>` |
+| 107 | Package metadata | `<result or not applicable; link>` |
+| 108 | Dependency validation | `<result or not applicable; link>` |
+| 109 | Vulnerability audit | `<result or not executed; link>` |
+| 110 | Installed-package consumer | `<result or not applicable; link>` |
+| 111 | Application integration checks | `<result or not applicable; link>` |
 
-| Existing observation or unverified check | Impact on the baseline |
-|---|---|
-| `<source-backed discrepancy or named gap>` | `<brief factual significance>` |
+**Executed commands (repeat one row per actual execution, including failures)**
 
-**Baseline disposition:** `<accepted / accepted with gaps / further evidence needed>`
+| 112 Step | 113 Exact command, scope and tool | 114 Result and exit code | 115 Output / evidence link |
+|---|---|---|---|
+| `<DISC-###>` | `<command and project/config/host>` | `<result/exit code>` | `<location or not captured>` |
 
-This record is **source and verification evidence only**. Modernization hypotheses, decisions and remediation plans belong in the evaluation's experiment, findings and roadmap documents.
+## G. Review and completion — DISC-013 and DISC-014
+
+**Open issues and missing checks (repeat as needed)**
+
+| 116 Gap or finding | 117 Impact | 118 Evidence / next check |
+|---|---|---|
+| `<missing tool, error, or source-backed fact>` | `<why it matters>` | `<link or next action>` |
+
+**Step completion (one row per DISC step)**
+
+| 119 Step | 120 Result/status | 121 Evidence or missing information |
+|---|---|---|
+| `<DISC-001…DISC-014>` | `<done/partial/blocked/not executed>` | `<link/notes>` |
+
+| Field | Final review | Result |
+|---|---|---|
+| 122 | Overall baseline disposition | `<complete/complete with gaps/further checks needed>` |
+| 123 | Report reviewed by/date | `<reviewer/date or pending>` |
+| 124 | Next action or deferred checks | `<short summary>` |
+
+Complete a copied baseline using observed facts only. Modernization proposals belong in separate documents.

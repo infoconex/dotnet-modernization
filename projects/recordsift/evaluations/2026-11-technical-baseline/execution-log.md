@@ -9,6 +9,28 @@
 
 This is the authoritative operator progress record, separate from the final technical facts in `baseline.md`. **Nothing has been run in a local checkout as part of this new walkthrough.** Initial GitHub source inspection is recorded separately below.
 
+## Local execution and prerequisite versions
+
+**Executed by:** Not yet recorded — awaiting your Windows PowerShell results.  
+**Execution date/time:** Not yet recorded.  
+**Discovery folder:** Not yet created or verified.
+
+| Prerequisite | When needed | Version / details recorded from your computer | Status |
+|---|---|---|---|
+| Windows OS and architecture | All RecordSift steps | Not yet recorded | Not checked |
+| PowerShell | Discovery commands | Not yet recorded | Not checked |
+| Git | Clone and source checks | Not yet recorded | Not checked |
+| .NET SDK / `dotnet` | Applicable later commands | Not yet recorded | Not checked |
+| MSBuild / Visual Studio Build Tools | Build evaluation and compilation | Not yet recorded | Not checked |
+| .NET Framework 4.8 targeting pack | Traditional net48 build | Not yet recorded | Not checked |
+| Standalone NuGet CLI | Existing `packages.config` restore | Not yet recorded | Not checked |
+| Test runner | Test execution | Not yet recorded | Not checked |
+
+- Fill this table from your **actual command results**. Record unavailable tools as *not found on PATH* or *not installed*, as supported by the check; don't guess versions.
+- DISC-001 captures Windows, PowerShell, Git, and command availability. DISC-004 records the complete SDK, MSBuild, NuGet, targeting-pack, and test-runner versions before those tools are used.
+- For each completed discovery step, record **who ran it, when, the commands/results, and where the output is saved**. Use the detailed fields in the [execution-log template](../../../../templates/discovery-execution-log.md).
+- Keep expected outputs separate from observed results. No local execution has been verified yet.
+
 ## Step progress
 
 | Step | Work state | Evidence outcome | Current note |

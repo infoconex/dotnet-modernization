@@ -13,7 +13,7 @@
 | 3. Discovery Status |  |
 | 4. Discovery Completed Date |  |
 
-**Status guidance:** Use `Not started`, `In progress`, `Blocked`, `Completed` or `Completed with gaps`. Enter `Discovery Completed Date` in `YYYY-MM-DD` only after completion and review; otherwise use `Not completed`. Keep the overall disposition (item 60), reviewer (item 61), review date (item 62) and outstanding checks consistent with this summary. Discovery dates are distinct from source commit, CI and publication dates.
+**Status guidance:** Use `Not started`, `In progress`, `Blocked`, `Completed` or `Completed with gaps`. Enter `Discovery Completed Date` in `YYYY-MM-DD` only when the discovery is genuinely complete, with remaining gaps explicitly documented and accepted where applicable; otherwise use `Not completed`. Assess completion using the evidence recorded in the numbered items, item 59 (Findings and Gaps), and item 60 (Deferred Checks); no separate disposition or reviewer/date fields are needed. Discovery dates are distinct from source commit, CI and publication dates.
 
 ## Application information
 
@@ -339,16 +339,7 @@ Git committer dates are not guaranteed source creation or push times, and neithe
 |---|---|---|---|
 |   |   |   |   |
 
-**Overall disposition and review:**
-
-| Field | Value |
-|---|---|
-| 60. Overall Baseline Disposition |  |
-| 61. Reviewed By |  |
-| 62. Review Date |  |
-| 63. Next Action |  |
-
-### 64. Deferred Checks
+### 60. Deferred Checks
 
 | Check | Reason Deferred | Revisit When |
 |---|---|---|

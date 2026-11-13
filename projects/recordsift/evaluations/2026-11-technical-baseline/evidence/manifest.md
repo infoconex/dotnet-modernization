@@ -2,7 +2,7 @@
 
 **Evaluation:** [November 2026 native-first technical baseline](../README.md)  
 **Frozen source commit:** `1809d06c0fade59e4769d16e0f8eaf10fa426004`  
-**Status:** Source-inspected application facts and existing GitHub Actions evidence are available for the selected commit. **Operator-supplied outputs for the Windows OS command (EV-017) and PowerShell version command (EV-018) are captured; remaining local tool, checkout, build and test evidence is pending.** GitHub CI results and the operator's local machine are different environments.
+**Status:** Source-inspected application facts and existing GitHub Actions evidence are available for the selected commit. **Operator-supplied outputs for Windows OS (EV-017), PowerShell (EV-018), and Git (EV-019) are captured; remaining local tool, checkout, build and test evidence is pending.** GitHub CI results and the operator's local machine are different environments.
 
 | Evidence ID | Discovery context | Source / trace | Method and provenance | What it establishes / limitations |
 |---|---|---|---|---|
@@ -24,6 +24,7 @@
 | EV-016 | Baseline items 20–31 — independently inspected CI host, toolchain and reference assemblies | [Read-only Windows host inventory job](https://github.com/infoconex/RecordSift/actions/runs/43514868868/job/132194144480) · [Run and artifact](https://github.com/infoconex/RecordSift/actions/runs/43514868868) · [Artifact 14079917356](https://github.com/infoconex/RecordSift/actions/runs/43514868868/artifacts/14079917356) · [Research workflow source](https://github.com/infoconex/RecordSift/blob/597a457b613a38ed964e0f452a62e13a54dc1a7d/.github/workflows/validate-discovery-host.yml) | Research-only PR run `43514868868` on `windows-2022` image `20261112.366.7` verified frozen application checkout `1809d06c0fade59e4769d16e0f8eaf10fa426004`. Read-only CIM, PowerShell, Git, `dotnet --list-sdks`, `dotnet --list-runtimes`, VS/MSBuild, NuGet help, registry and `Test-Path` checks; retained JSON artifact ID `14079917356` (GitHub-controlled retention). Research PR/workflow revision is distinct from the checked-out application SHA. | CI independently verified OS architecture, PowerShell/Git/MSBuild/NuGet versions, **12 SDK** and **29 modern .NET runtime** entries (with reported paths), and direct presence of .NET Framework v4.8 `mscorlib.dll` plus `RedistList/FrameworkList.xml` at the runner's reference-assembly path. Verified only on this 2026-11-13 ephemeral CI runner; operator-local fields remain unverified. The older 2026-11-12 CI image/tool observation is separate. Research workflow is not merged. |
 | EV-017 | Baseline items 20–23 — operator-local Windows OS inventory | Operator-provided PowerShell console output in the discovery conversation on 2026-11-13 (no external artifact link) | The operator supplied `Caption`, `Version`, `BuildNumber`, and `OSArchitecture` output after the read-only `Get-CimInstance Win32_OperatingSystem | Select-Object Caption, Version, BuildNumber, OSArchitecture` instruction | Reports Microsoft Windows 11 Pro, version `10.0.26300`, build `26300`, 64-bit architecture. Command exit code, local working directory and PowerShell version were not supplied; this does not verify development tool readiness. |
 | EV-018 | Baseline item 24 — operator-local PowerShell version | Operator-provided PowerShell output in discovery conversation on 2026-11-13 (no external artifact link) | Operator executed `$PSVersionTable.PSVersion.ToString()` at the visible prompt `PS D:\RecordSift>` and supplied the single output `7.7.0` | Confirms the active local PowerShell session reported version `7.7.0`; working directory was `D:\RecordSift`. Command exit code was not supplied; this does not prove Git, MSBuild, or other prerequisites are available. |
+| EV-019 | Baseline item 25 — operator-local Git version | Operator-provided PowerShell console output in the discovery conversation on 2026-11-13 (no external artifact link) | Operator executed `git --version` at prompt `PS D:\RecordSift>`; output was `git version 2.56.0.windows.4` | Confirms local Git `2.56.0.windows.4` in the active PowerShell session. Working directory shown as `D:\RecordSift`, but no local checkout state, HEAD or tracked files have yet been verified. Command process exit code was not explicitly recorded. Separate 2026-11-13 CI inventory runner reported Git `2.56.1.windows.1`; versions are not assumed identical. |
 
 ## Rules for new evidence
 
@@ -37,17 +38,17 @@
 ## Baseline value provenance
 
 - Keep values in the baseline's **Value** column atomic (for example, `Library`, `Public`, `MIT`, `Windows`, a version, SHA, or exact URL). Do not append citation titles, provenance prose, or execution caveats to those values.
-- Source links and qualifications belong in this manifest. Fields **5–11** are supported by EV-003/EV-004; **12–15** by EV-005; **16** by EV-006; **17–18** by EV-007. Operator-local OS fields **20–23** are populated from EV-017, and local PowerShell version (item **24**) from EV-018; local tool fields **25–32** remain unverified until operator output is supplied.
+- Source links and qualifications belong in this manifest. Fields **5–11** are supported by EV-003/EV-004; **12–15** by EV-005; **16** by EV-006; **17–18** by EV-007. Operator-local OS fields **20–23** are populated from EV-017, local PowerShell version (item **24**) from EV-018, and Git version (item **25**) from EV-019; local tool fields **26–32** remain unverified until operator output is supplied.
 
 ## Command review against source and tool documentation
 
-The procedures follow baseline item order. **The operator supplied output for the local Windows OS query (EV-017) and PowerShell version query (EV-018); other local commands remain unverified.** The classifications below distinguish a command reviewed for correctness from a command actually observed in existing Windows CI.
+The procedures follow baseline item order. **The operator supplied output for the local Windows OS query (EV-017), PowerShell version query (EV-018), and Git version query (EV-019); other local commands remain unverified.** The classifications below distinguish a command reviewed for correctness from a command actually observed in existing Windows CI.
 
 | Baseline item | Native command / procedure | Review outcome | Execution evidence |
 |---|---|---|---|
 | 20–23 | `Get-CimInstance Win32_OperatingSystem` | Correct Windows CIM query for host caption, version, build and architecture; map four outputs to separate fields | Operator-provided output captured (EV-017); exit code not recorded |
 | 24 | `$PSVersionTable.PSVersion.ToString()` | Standard PowerShell self-report; `7.7.0` provided from `D:\RecordSift` | Operator-provided output captured (EV-018); exit code not recorded |
-| 25 | `git --version` | Correct Git version command | Operator not executed |
+| 25 | `git --version` | Correct Git version command; operator observed `2.56.0.windows.4` in `D:\RecordSift` | Operator-provided output captured (EV-019); exit code not recorded |
 | 26–27 | `dotnet --list-sdks` and `dotnet --list-runtimes` | Appropriate SDK and runtime inventories, not a .NET Framework targeting-pack check | Operator not executed |
 | 28–29 | `msbuild -version -nologo` and `Get-Command msbuild` | Appropriate version and PATH-location checks; Developer PowerShell may be needed | Operator not executed; CI records MSBuild 17.14.60.43110 |
 | 30 | `nuget help` | NuGet CLI prints version information | Operator not executed; NuGet CI restore succeeded |

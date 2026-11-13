@@ -17,18 +17,18 @@ Show a real .NET application's technical discovery **as it happened**: the nativ
 
 | Article section | Discovery steps | Required actual evidence before writing conclusions |
 |---|---|---|
-| Why start with source identity? | Baseline items 1–17 and 31–35 | Exact user-run Git commands/outputs, revision and dirty-state disposition |
-| What projects and solution exist? | Baseline items 36–40 | Actual paths, solution listing and declared format/frameworks; distinguish source from CLI inspection |
-| What configuration is really in effect? | Baseline items 18–30 and 38–43 | Tool/host version inventory, applicable MSBuild evaluated properties (if supported), imported/config files and gaps |
-| What are the dependency and restore requirements? | Baseline items 44–47 | Real dependency declarations, native NuGet/SDK output and documented side effects; no fabricated success |
-| Can we build and test the current code? | Baseline items 46–49 | Real command scope, results, exit codes, test assembly inclusion, pass/fail/skip counts |
-| How does the application ship and prove compatibility? | Baseline items 50–54 | CI definitions vs exact executed runs, packaging and compatibility evidence |
-| What did the baseline establish? | Baseline items 55–62 | Links to completed baseline, manifest, gaps and reproducibility instructions |
+| Why start with source identity? | Baseline items 1–19 and 33–38 | Exact user-run Git commands/outputs, revision and dirty-state disposition |
+| What projects and solution exist? | Baseline items 39–43 | Actual paths, solution listing and declared format/frameworks; distinguish source from CLI inspection |
+| What configuration is really in effect? | Baseline items 20–32 and 41–46 | Tool/host version inventory, applicable MSBuild evaluated properties (if supported), imported/config files and gaps |
+| What are the dependency and restore requirements? | Baseline items 47–50 | Real dependency declarations, native NuGet/SDK output and documented side effects; no fabricated success |
+| Can we build and test the current code? | Baseline items 49–52 | Real command scope, results, exit codes, test assembly inclusion, pass/fail/skip counts |
+| How does the application ship and prove compatibility? | Baseline items 53–57 | CI definitions vs exact executed runs, packaging and compatibility evidence |
+| What did the baseline establish? | Baseline items 58–65 | Links to completed baseline, manifest, gaps and reproducibility instructions |
 
 ## Editorial rules
 
 1. **Start writing progressively, but do not publish an outcome before it is observed.** An article may describe the intended command as a planned next step; observed outputs, counts and findings require execution evidence.
-2. Use **selected** native command/output excerpts; link long logs and multi-project tables to the canonical evaluation documents. Do not duplicate the entire 62-item guide.
+2. Use **selected** native command/output excerpts; link long logs and multi-project tables to the canonical evaluation documents. Do not duplicate the entire 65-item guide.
 3. State toolchain and project-format limitations alongside a command; do not imply that a Windows/traditional-net48 result applies to all .NET projects.
 4. Explain failed or blocked commands and why they matter. Do not silently replace a failed invocation or infer modernized compatibility from a passing build.
 5. Link the frozen RecordSift SHA and individual `EV-NNN` items. Distinguish historical research from the current walkthrough.
@@ -37,6 +37,6 @@ Show a real .NET application's technical discovery **as it happened**: the nativ
 
 ## Writing progress
 
-- **Current:** source preflight and 62-item guide authored. No new manual command transcripts yet. The draft methodology article already explains why a baseline matters; the companion should focus on what was actually done.
-- **Next:** capture owner-run Baseline items 1–17 and 31–35, cite verified output, then draft the first real walkthrough section.
+- **Current:** source preflight and 65-item guide authored. No new manual command transcripts yet. The draft methodology article already explains why a baseline matters; the companion should focus on what was actually done.
+- **Next:** capture owner-run Baseline items 1–2, 5–19 and 33–38, cite verified output, then draft the first real walkthrough section.
 - **Publication status:** not authorized; do not create or merge a production article based on a planned result.

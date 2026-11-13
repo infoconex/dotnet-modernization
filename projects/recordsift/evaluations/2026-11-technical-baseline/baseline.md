@@ -485,31 +485,102 @@
 
 | Baseline Item | Command | Working Directory | Tool Version | Target or Configuration | Exit Code | Outcome | Output or Evidence |
 |---|---|---|---|---|---|---|---|
-|   |   |   |   |   |   |   |   |
+| 47 | nuget restore RecordSift.sln -NonInteractive -PackagesDirectory packages -ConfigFile NuGet.Config | GitHub Actions Windows checkout | NuGet CLI (version not logged) | RecordSift.sln | Not recorded | Passed | https://github.com/infoconex/RecordSift/actions/runs/43146607664 |
+| 48 | & $msbuild RecordSift.sln /m /t:Rebuild /p:Configuration=Release '/p:Platform=Any CPU' /verbosity:minimal | GitHub Actions Windows checkout | MSBuild 17.14.60.43110 | Release; Any CPU | Not recorded | Passed | https://github.com/infoconex/RecordSift/actions/runs/43146607664 |
+| 49 | & .\scripts\run_tests.ps1 | GitHub Actions Windows checkout | NUnit ConsoleRunner 3.17.0 | Five Release test assemblies | Not recorded | Passed | https://github.com/infoconex/RecordSift/actions/runs/43146607664 |
+| 54 | & .\scripts\verify_public_api.ps1 | GitHub Actions Windows checkout | PowerShell (version not logged) | net48 Release | Not recorded | Passed | https://github.com/infoconex/RecordSift/actions/runs/43146607664 |
+| 52 | & .\scripts\verify_clean_consumer.ps1 -CandidateDirectory $feed | GitHub Actions Windows checkout | PowerShell (version not logged) | Local candidate package | Not recorded | Passed | https://github.com/infoconex/RecordSift/actions/runs/43146607706 |
 
 ### 56. Findings and Gaps
 
 | Finding | Impact | Evidence | Next Check |
 |---|---|---|---|
-|   |   |   |   |
+| Windows discovery machine not inventoried | Cannot assert local tool/readiness baseline | Items 18–29 | Perform Windows host and tool version commands |
+| Clean local checkout not verified | Local filesystem and Git state remain unknown | Items 31–35 | Clone selected SHA into unique discovery folder |
+| Evaluated MSBuild values not independently queried | Declared project properties may differ from evaluated settings | Item 41 | Run MSBuild property queries from Windows Developer PowerShell |
+| CI outcomes are not local execution evidence | CI success cannot verify operator environment | Items 47–49 | Restore, build and run tests in the approved Windows checkout |
 
 ### 57. Discovery Item Status
 
 | Baseline Item | Status | Evidence or Missing Information |
 |---|---|---|
-|   |   |   |
+| 1 | Complete | EV-003–EV-007 |
+| 2 | Complete | EV-003–EV-007 |
+| 3 | Complete | EV-003–EV-007 |
+| 4 | Complete | EV-003–EV-007 |
+| 5 | Complete | EV-003–EV-007 |
+| 6 | Complete | EV-003–EV-007 |
+| 7 | Complete | EV-003–EV-007 |
+| 8 | Complete | EV-003–EV-007 |
+| 9 | Complete | EV-003–EV-007 |
+| 10 | Complete | EV-003–EV-007 |
+| 11 | Complete | EV-003–EV-007 |
+| 12 | Complete | EV-003–EV-007 |
+| 13 | Complete | EV-003–EV-007 |
+| 14 | Complete | EV-003–EV-007 |
+| 15 | Complete | EV-003–EV-007 |
+| 16 | Not checked | Operator identity not supplied |
+| 17 | Complete | Evaluation README |
+| 18 | Not checked | Operator Windows host output missing |
+| 19 | Not checked | Operator Windows host output missing |
+| 20 | Not checked | Operator Windows host output missing |
+| 21 | Not checked | Operator Windows host output missing |
+| 22 | Not checked | Operator Windows host output missing |
+| 23 | Not checked | Operator Windows host output missing |
+| 24 | Not checked | Operator Windows host output missing |
+| 25 | Not checked | Operator Windows host output missing |
+| 26 | Not checked | Operator Windows host output missing |
+| 27 | Not checked | Operator Windows host output missing |
+| 28 | Not checked | Operator Windows host output missing |
+| 29 | Not checked | Operator Windows host output missing |
+| 30 | Partial | Declared runner; local installation not checked |
+| 31 | Not checked | No local discovery folder recorded |
+| 32 | Complete | EV-004 |
+| 33 | Partial | Selected SHA; no local checkout verified |
+| 34 | Not checked | Local Git verification pending |
+| 35 | Not checked | Local Git verification pending |
+| 36 | Complete | EV-011 |
+| 37 | Complete | EV-011 |
+| 38 | Complete | EV-011 |
+| 39 | Complete | EV-011 |
+| 40 | Complete | EV-011 |
+| 41 | Not checked | MSBuild evaluated-property query not executed |
+| 42 | Complete | EV-002 |
+| 43 | Partial | Tracked settings checked; effective precedence not evaluated |
+| 44 | Complete | EV-012 |
+| 45 | Partial | Static dependency inspection only |
+| 46 | Complete | EV-013 |
+| 47 | Partial | CI restore passed; local restore not executed |
+| 48 | Partial | CI build passed; local build not executed |
+| 49 | Partial | CI NUnit passed; local suite not executed |
+| 50 | Complete | EV-013 |
+| 51 | Complete | EV-008–EV-010 |
+| 52 | Complete | EV-006, EV-009 |
+| 53 | Complete | EV-003 |
+| 54 | Complete | EV-008–EV-010 |
+| 55 | Partial | CI command evidence; no operator execution |
+| 56 | Partial | Known gaps documented |
+| 57 | Partial | Status table populated; operator checks outstanding |
+| 58 | Partial | Assessment remains incomplete |
+| 59 | Not checked | Review not performed |
+| 60 | Not checked | Review not performed |
+| 61 | Partial | Operator action pending |
+| 62 | Partial | Pending checks documented |
 
 | Field | Value |
 |---|---|
-| 58. Overall Baseline Disposition |  |
-| 59. Reviewed By |  |
-| 60. Review Date |  |
-| 61. Next Action |  |
+| 58. Overall Baseline Disposition | More verification needed |
+| 59. Reviewed By | Not reviewed |
+| 60. Review Date | Not reviewed |
+| 61. Next Action | Verify Windows prerequisites and clean checkout (items 18–35) |
 
 ### 62. Deferred Checks
 
 | Check | Reason Deferred | Revisit When |
 |---|---|---|
-|   |   |   |
+| Windows toolchain preflight | No operator Windows command outputs | When Windows host is available |
+| Local checkout verification | No isolated Windows discovery folder created | After host prerequisite checks |
+| Evaluated MSBuild properties | Requires compatible Windows MSBuild and project checkout | After checkout and tool check |
+| Local restore/build/test | Operator approval and environment verification required | After source checkout and side-effect review |
 
 This baseline records observed application facts and verification outcomes, not proposed modernization work.

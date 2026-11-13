@@ -27,7 +27,9 @@
 
 | Consumer or Entry Point | Type | Source or Evidence |
 |---|---|---|
-|   |   |   |
+| RecordSift.Application.Importing.Csv.CsvImporter<T> | Library API | https://github.com/infoconex/RecordSift/blob/1809d06c0fade59e4769d16e0f8eaf10fa426004/src/RecordSift.Application/Importing/Csv/CsvImporter.cs |
+| RecordSift.Application.Importing.Xlsx.XlsxImporter<T> | Library API | https://github.com/infoconex/RecordSift/blob/1809d06c0fade59e4769d16e0f8eaf10fa426004/src/RecordSift.Application/Importing/Xlsx/XlsxImporter.cs |
+| tests/ReleaseConsumer | Test consumer | https://github.com/infoconex/RecordSift/blob/1809d06c0fade59e4769d16e0f8eaf10fa426004/tests/ReleaseConsumer/Program.cs |
 
 ## Discovery information
 
@@ -75,7 +77,7 @@
 
 | Runner Name | Runner Version | Source or Location |
 |---|---|---|
-|   |   |   |
+| NUnit ConsoleRunner | 3.17.0 | tests/RecordSift.Domain.Tests/packages.config |
 
 ## Source revision and checkout
 
@@ -93,7 +95,8 @@
 
 | Solution Path | Format | Format Version | Declared IDE Version | Configuration | Platform | Membership / Build Exclusions |
 |---|---|---|---|---|---|---|
-|   |   |   |   |   |   |   |
+| RecordSift.sln | .sln | 12.00 | 16.0.28701.123 | Debug | Any CPU | All 10 projects mapped to build |
+| RecordSift.sln | .sln | 12.00 | 16.0.28701.123 | Release | Any CPU | All 10 projects mapped to build |
 
 ### 37. Projects
 

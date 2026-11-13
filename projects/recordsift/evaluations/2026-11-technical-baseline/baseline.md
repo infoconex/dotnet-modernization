@@ -15,7 +15,7 @@
 | 5. HTTPS Clone URL | `https://github.com/infoconex/RecordSift.git` |
 | 6. SSH Clone URL | `git@github.com:infoconex/RecordSift.git` |
 | 7. Repository Default Branch | `main` |
-| 8. Published Application Version | `0.1.0` |
+| 8. Published Application Version | Not applicable |
 | 9. Published Package Version | `0.1.0` |
 | 10. Published Release URL | `https://github.com/infoconex/RecordSift/releases/tag/v0.1.0` |
 | 11. Published Package URL | `https://www.nuget.org/packages/RecordSift/0.1.0` |

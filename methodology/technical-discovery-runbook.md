@@ -11,7 +11,7 @@ These commands are Windows PowerShell examples. Use the host appropriate to the 
 ### Identify the discovery
 
 - **18. Discovery By:** Enter the name of the person doing the discovery.
-- **19. Discovery Date:** Enter the local date discovery started, in `YYYY-MM-DD` format. It is not the date of every evidence item.
+- **19. Discovery Date:** Enter the date the discovery began, in `YYYY-MM-DD` format. Use this date for the overall assessment; do not capture a separate collection date for every piece of evidence.
 - **20. Discovery Folder:** Record the actual timestamped checkout folder created below, not a planned path.
 
 ### Check the Windows host
@@ -352,13 +352,13 @@ Do not invent new checks just to fill the table, and do not apply results from a
 
 ## DISC-013 — Reconcile results and gaps
 
-**57. Executed Command Evidence** — one row for every actual command that matters to reproducing a finding. `Discovery Step` identifies the `DISC-###` section; `Evidence Date (UTC)` is when this output was actually collected (ISO 8601 date/time); `Command` is the exact invocation; `Working Directory` is where it ran; `Tool Version` records its environment; `Target or Configuration` clarifies scope; `Exit Code` is observed when available; `Outcome` says passed/failed/blocked; `Output or Evidence` points to the captured output.
+**57. Executed Command Evidence** — one row for every actual command that matters to reproducing a finding. `Discovery Step` identifies the `DISC-###` section; `Command` is the exact invocation; `Working Directory` is where it ran; `Tool Version` records its environment; `Target or Configuration` clarifies scope; `Exit Code` is observed when available; `Outcome` says passed/failed/blocked; `Output or Evidence` points to the captured output.
 
 *Illustrative evidence row only—not an actual result:*
 
-| Discovery Step | Evidence Date (UTC) | Command | Working Directory | Tool Version | Target or Configuration | Exit Code | Outcome | Output or Evidence |
-|---|---|---|---|---|---|---|---|---|
-| `DISC-002` | `2026-11-12T21:00:00Z` | `git ls-files "*.csproj"` | `<checkout root>` | Git 2.45.0 | Repository | 0 | Passed | `<saved output path>` |
+| Discovery Step | Command | Working Directory | Tool Version | Target or Configuration | Exit Code | Outcome | Output or Evidence |
+|---|---|---|---|---|---|---|---|
+| `DISC-002` | `git ls-files "*.csproj"` | `<checkout root>` | Git 2.45.0 | Repository | 0 | Passed | `<saved output path>` |
 
 **58. Findings and Gaps** — one row per gap. `Finding` describes the verified issue or missing information; `Impact` explains why it matters; `Evidence` points to a source; `Next Check` names the next concrete verification step.
 
@@ -375,7 +375,7 @@ Check that results refer to the correct commit, host, project, framework and con
 
 **64. Deferred Checks** — one row per intentional deferral. `Check` identifies it; `Reason Deferred` explains why it could not or should not run; `Revisit When` specifies the trigger for revisiting it.
 
-Keep each evidence record's collection date distinct from the initial discovery date and any original event date (for example, a CI run date). Make sure the copied baseline contains observed answers, relevant repeated rows, evidence links and clearly identified gaps. Keep modernization proposals separate.
+The discovery uses one Discovery Date. Keep a CI run's actual date when it is part of the CI run record. Make sure the copied baseline contains observed answers, relevant repeated rows, evidence links and clearly identified gaps. Keep modernization proposals separate.
 
 ## Optional — Create scripts only after manual discovery
 

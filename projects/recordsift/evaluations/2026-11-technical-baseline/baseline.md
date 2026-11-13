@@ -476,153 +476,19 @@ Each distribution has its own record. NuGet package upload acceptance was previo
 | Clean local checkout not verified | Local filesystem and Git state remain unknown | Items 33–38 | Clone selected SHA into unique discovery folder |
 | Evaluated MSBuild values not independently queried | Declared project properties may differ from evaluated settings | Item 44 | Run MSBuild property queries from Windows Developer PowerShell |
 | CI outcomes are not local execution evidence | CI success cannot verify operator environment | Items 50–52 | Restore, build and run tests in the approved Windows checkout |
+| CI host version and architecture evidence incomplete | Exact OS architecture, PowerShell version, NuGet CLI version and complete SDK/runtime inventories are unavailable | Items 23–30; [Windows CI job](https://github.com/infoconex/RecordSift/actions/runs/43146607664/job/130945777245) | Capture explicit version and inventory outputs in a future CI run |
+| .NET Framework targeting-pack installation not inspected | Successful net48 compilation does not identify the exact installed reference assemblies or their path | Item 31; [Windows CI job](https://github.com/infoconex/RecordSift/actions/runs/43146607664/job/130945777245) | Record the targeting-pack file and path in a future CI run |
 
-### 60. Discovery Item Status
-
-Track three independent evidence dimensions for all 65 baseline items. **Source Inspection** means pinned source files, repository metadata, external public artifact metadata or discovery documentation were inspected; it does **not** mean a command ran. **Existing CI** refers only to reviewed GitHub-hosted runs or their logs. **Operator Local** refers only to actual work on the operator's machine, not CI runner execution. A populated item is not automatically locally verified.
-
-**Status definitions:** Source Inspection uses `Verified` (source/metadata documented), `Partial` (source-only view leaves relevant verification gaps), `Not checked`, or `Not applicable`. Existing CI uses `Passed` (relevant completed CI checks succeeded), `Verified` (run/log/evidence inspected, with incomplete inventories explicitly qualified rather than claiming full coverage or local execution), `Not checked`, or `Not applicable`. Operator Local uses `Passed`/`Failed` only for observed operator-executed checks, `Not executed` for required operations not performed, `Not recorded` for missing operator-supplied information, and `Not applicable` when that item does not require an operator-local check. These status dimensions are **not** substitutes for the final disposition or review approval.
-
-| Baseline Item | Source Inspection | Existing CI | Operator Local | Evidence or Missing Information |
-|---|---|---|---|---|
-| 1 | Not applicable | Not applicable | Not recorded | Operator identity not supplied |
-| 2 | Verified | Not applicable | Not applicable | Evaluation README |
-| 3 | Verified | Not applicable | Not applicable | In progress; Windows verification and review outstanding |
-| 4 | Verified | Not applicable | Not applicable | Not completed; discovery and final review outstanding |
-| 5 | Verified | Not applicable | Not applicable | EV-003–EV-007 |
-| 6 | Verified | Not applicable | Not applicable | EV-003–EV-007 |
-| 7 | Verified | Not applicable | Not applicable | EV-003–EV-007 |
-| 8 | Verified | Not applicable | Not applicable | EV-003–EV-007 |
-| 9 | Verified | Not applicable | Not applicable | EV-003–EV-007 |
-| 10 | Verified | Not applicable | Not applicable | EV-003–EV-007 |
-| 11 | Verified | Not applicable | Not applicable | EV-003–EV-007 |
-| 12 | Verified | Not applicable | Not applicable | EV-003–EV-007 |
-| 13 | Verified | Not applicable | Not applicable | EV-003–EV-007 |
-| 14 | Verified | Not applicable | Not applicable | EV-003–EV-007 |
-| 15 | Verified | Not applicable | Not applicable | EV-003–EV-007 |
-| 16 | Verified | Not applicable | Not applicable | EV-003–EV-007 |
-| 17 | Verified | Not applicable | Not applicable | EV-003–EV-007 |
-| 18 | Verified | Not applicable | Not applicable | EV-003–EV-007 |
-| 19 | Verified | Not applicable | Not applicable | EV-003–EV-007 |
-| 20 | Not applicable | Verified | Not executed | EV-008; CI Windows Server 2022; operator OS not checked |
-| 21 | Not applicable | Verified | Not executed | EV-008; CI OS version 10.0.20348; operator not checked |
-| 22 | Not applicable | Verified | Not executed | EV-008; CI OS build 20348; operator not checked |
-| 23 | Not applicable | Not checked | Not executed | CI and operator architecture not captured |
-| 24 | Not applicable | Verified | Not executed | EV-008; CI PowerShell 7 executable observed, exact version not checked; operator not checked |
-| 25 | Not applicable | Verified | Not executed | EV-008; CI Git 2.56.0.windows.4; operator not checked |
-| 26 | Not applicable | Verified | Not executed | EV-008; CI SDK 10.0.403 observed; full inventory and paths not checked; operator not checked |
-| 27 | Not applicable | Verified | Not executed | EV-008; CI .NET Framework CLR v4.0.30319.42000 observed; full runtime inventory and operator not checked |
-| 28 | Not applicable | Verified | Not executed | EV-008; CI MSBuild 17.14.60.43110; operator not checked |
-| 29 | Not applicable | Verified | Not executed | EV-008; CI MSBuild from Visual Studio 2022 Enterprise; operator not checked |
-| 30 | Not applicable | Not checked | Not executed | CI NuGet restore passed but CLI version not logged; operator not checked |
-| 31 | Not applicable | Verified | Not executed | EV-008; CI net48 build passed, exact targeting-pack inventory and operator not checked |
-| 32 | Verified | Passed | Not executed | Declared runner; local installation not checked |
-| 33 | Not applicable | Not applicable | Not executed | No local discovery folder recorded |
-| 34 | Verified | Not applicable | Not applicable | EV-004 |
-| 35 | Verified | Verified | Not executed | Selected SHA; no local checkout verified |
-| 36 | Verified | Not applicable | Not applicable | EV-001; frozen source Git committer timestamp, not local checkout time |
-| 37 | Not applicable | Not applicable | Not executed | Local Git verification pending |
-| 38 | Not applicable | Not applicable | Not executed | Local Git verification pending |
-| 39 | Verified | Not applicable | Not applicable | EV-011 |
-| 40 | Verified | Not applicable | Not applicable | EV-011 |
-| 41 | Verified | Not applicable | Not applicable | EV-011 |
-| 42 | Verified | Not applicable | Not applicable | EV-011 |
-| 43 | Verified | Not applicable | Not applicable | EV-011 |
-| 44 | Not applicable | Not checked | Not executed | MSBuild evaluated-property query not executed |
-| 45 | Verified | Not applicable | Not applicable | EV-002 |
-| 46 | Partial | Not checked | Not executed | Tracked settings checked; effective precedence not evaluated |
-| 47 | Verified | Not applicable | Not applicable | EV-012 |
-| 48 | Partial | Not checked | Not executed | Static dependency inspection only |
-| 49 | Verified | Not applicable | Not applicable | EV-013 |
-| 50 | Verified | Passed | Not executed | CI restore passed; local restore not executed |
-| 51 | Verified | Passed | Not executed | CI build passed; local build not executed |
-| 52 | Verified | Passed | Not executed | CI NUnit passed; local suite not executed |
-| 53 | Verified | Not applicable | Not applicable | EV-013 |
-| 54 | Not applicable | Verified | Not applicable | EV-008–EV-010 |
-| 55 | Verified | Passed | Not executed | EV-006, EV-009; EV-005 (published artifacts); exact NuGet registry publication time not checked |
-| 56 | Verified | Not applicable | Not applicable | EV-003 |
-| 57 | Verified | Passed | Not executed | EV-008–EV-010 |
-| 58 | Not applicable | Verified | Not executed | CI command evidence; no operator execution |
-| 59 | Verified | Not applicable | Not applicable | Known gaps documented |
-| 60 | Verified | Not applicable | Not applicable | Status table populated; operator checks outstanding |
-| 61 | Verified | Not applicable | Not applicable | Assessment remains incomplete |
-| 62 | Not applicable | Not applicable | Not applicable | Review not performed |
-| 63 | Not applicable | Not applicable | Not applicable | Review not performed |
-| 64 | Verified | Not applicable | Not applicable | Operator action pending |
-| 65 | Verified | Not applicable | Not executed | Pending checks documented |
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-**Unresolved verification and review:** No operator-run Windows preflight, clean checkout, MSBuild property evaluation, restore, build or test has been captured in this evaluation. Existing CI at the frozen source SHA does not verify local tooling or deployment/runtime conditions. Items 62–63 are **Not reviewed**; the overall item 61 disposition remains **More verification needed**. A `Not applicable` cell means that particular evidence channel is not required for that item, **not** that the full discovery is approved.
+**Unresolved verification and review:** No operator-run Windows preflight, clean checkout, MSBuild property evaluation, restore, build or test has been captured in this evaluation. Existing CI at the frozen source SHA does not verify local tooling or deployment/runtime conditions. Items 61–62 are **Not reviewed**; the overall item 60 disposition remains **More verification needed**.
 
 | Field | Value |
 |---|---|
-| 61. Overall Baseline Disposition | More verification needed |
-| 62. Reviewed By | Not reviewed |
-| 63. Review Date | Not reviewed |
-| 64. Next Action | Verify Windows prerequisites and clean checkout (items 20–38) |
+| 60. Overall Baseline Disposition | More verification needed |
+| 61. Reviewed By | Not reviewed |
+| 62. Review Date | Not reviewed |
+| 63. Next Action | Verify Windows prerequisites and clean checkout (items 20–38) |
 
-### 65. Deferred Checks
+### 64. Deferred Checks
 
 | Check | Reason Deferred | Revisit When |
 |---|---|---|

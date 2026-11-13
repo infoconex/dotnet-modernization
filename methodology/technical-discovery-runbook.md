@@ -635,19 +635,36 @@ Identify the test runner and **all intended test assemblies**. On RecordSift, a 
 
 ### 50. CI Workflows
 
-Inspect the tracked `.github/workflows/*.yml` definitions. One row per workflow/trigger/runner/job command as needed. Distinguish **configured CI** from actual execution, and never infer that release workflows ran merely because definitions exist.
+Inspect all tracked `.github/workflows/*.yml` and `.yaml` files, including jobs, stages/steps, event triggers, branch/path filters, job `if` conditions, runner labels, matrix choices, `needs` dependencies, environment approvals and artifact/deployment actions. **Prefer one row per unique workflow + job/stage + command + runner + output/gate**, grouping event triggers only when the remaining attributes (including applicable conditions) are genuinely identical. Do **not** fold different jobs, runner operating systems, deployment steps, outputs or conditional execution into one row. In particular, `workflow_dispatch` is manual, and permission to trigger a workflow does not mean all jobs execute for every event.
 
 ```powershell
 git ls-files ".github/workflows/*.yml" ".github/workflows/*.yaml"
 ```
 
+Inspect the YAML source to establish the exact events and job/stage placement. The `on` event list may be constrained by `branches`, `paths`, etc.; job `if`, step-level `if`, strategy matrices and upstream `needs` can further narrow execution. When grouping a trigger list would hide distinct conditions, **use separate scoped rows or explicit trigger-specific conditions**, not an unqualified shared trigger list. Preserve exact configured commands (or clearly state that the selected command is one excerpt from a longer step), and include a source link to the workflow file.
+
 **How to populate each column (left to right):**
 
-- **Workflow Path:** Workflow file path.
-- **Trigger:** Events that trigger it.
-- **Runner OS:** Runner OS declared by a job.
-- **Configured Command:** One command configured in that workflow; repeat rows.
-- **Artifact or Deployment:** Produced artifact or deployment action, if any.
+- **Workflow Path:** Repository-relative workflow YAML path, preferably linked to frozen source.
+- **Trigger(s):** Applicable event names (for example `push, pull_request, workflow_dispatch`), grouped only for identical command/stage records. Record branch/path/event restrictions alongside the table when relevant, and never imply all repository branches trigger it.
+- **Job / Stage:** Exact job ID and step/stage name for the recorded command. Distinguish different stages in the same job, and distinct jobs sharing the same command.
+- **Runner OS:** Declared `runs-on` value(s) for the specific job; expand or qualify any matrix/conditional runner choice.
+- **Configured Command:** The actual source-declared command, retained in full for the selected record; use separate rows for materially different commands or relevant condition scopes. A command excerpt does not establish every step in the job.
+- **Artifact or Deployment:** Actual configured output, artifact, publication or deployment intent. Distinguish a file produced locally from an uploaded artifact and from a published package/release. Identify protected environments and required approval gates in an adjacent note.
+
+**Additional notes below the table:** List significant job `needs` dependencies, branch restrictions, conditional job/step execution, environment reviewer/approval requirements, provenance checks and publication stages. Do not infer a deployment from a `gh release view` command alone; verify if the same step includes `gh release create` and whether it is guarded by upstream successful jobs. Treat a one-time release-recovery workflow separately from the ordinary publication workflow; recovery may validate an already-published package without pushing another package.
+
+**Source versus observed execution:** A configured command, trigger, artifact upload or deployment step is **source-inspected configuration**, not proof of a successful run. Record actual workflow runs in item 51 and the evidence manifest with exact run ID, commit SHA, status and relevant logs; only those observations establish what ran.
+
+**Illustrative RecordSift examples from pinned source:**
+
+| Workflow Path | Trigger(s) | Job / Stage | Runner OS | Configured Command | Artifact or Deployment |
+|---|---|---|---|---|---|
+| .github/workflows/windows-net48.yml | push, pull_request, workflow_dispatch | `build-test` / Restore packages.config dependencies | windows-2022 | nuget restore RecordSift.sln -NonInteractive -PackagesDirectory packages -ConfigFile NuGet.Config | NUnit XML |
+| .github/workflows/publish-release.yml | workflow_dispatch | `publish` / Publish exact package to nuget.org | ubuntu-24.04 | dotnet nuget push "dist/RecordSift.$RELEASE_VERSION.nupkg" --api-key "$NUGET_API_KEY" --source https://api.nuget.org/v3/index.json | NuGet publish (protected `nuget-release` environment) |
+
+For the first example, the trigger list has branch filters in the workflow source. For the second, the `prepare` job requires `main`; the `publish` job needs `prepare`, and the protected environment requires owner approval before NuGet publication. Neither example, by itself, establishes that the workflow actually ran.
+
 
 ### 51. CI Runs
 

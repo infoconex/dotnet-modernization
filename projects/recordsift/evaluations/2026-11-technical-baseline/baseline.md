@@ -63,12 +63,14 @@ The [getting-started guide](https://github.com/infoconex/RecordSift/blob/1809d06
 
 | Field | Existing CI Runner | Operator Local |
 |---|---|---|
-| 20. Operating System Name | Microsoft Windows Server 2022 Datacenter | Not checked |
-| 21. Operating System Version | `10.0.20348` | Not checked |
-| 22. Operating System Build | `20348` | Not checked |
-| 23. Operating System Architecture | 64-bit | Not checked |
+| 20. Operating System Name | Microsoft Windows Server 2022 Datacenter | Microsoft Windows 11 Pro |
+| 21. Operating System Version | `10.0.20348` | `10.0.26300` |
+| 22. Operating System Build | `20348` | `26300` |
+| 23. Operating System Architecture | 64-bit | 64-bit |
 | 24. PowerShell Version | `7.6.10` | Not checked |
 | 25. Git Version | `2.56.1.windows.1` | Not checked |
+
+**Operator-provided local Windows OS output (EV-017, 2026-11-13):** The operator supplied four columns from the read-only `Get-CimInstance Win32_OperatingSystem | Select-Object Caption, Version, BuildNumber, OSArchitecture` command (items 20–23). These values are operator-reported, not a CI measurement. PowerShell version, working directory and exit code were not recorded; remaining local tool items 24–31 are still unverified.
 
 ### 26. .NET SDK Inventory
 
@@ -527,11 +529,13 @@ Each distribution has its own record. NuGet package upload acceptance was previo
 | 30 | & $nugetCommand.Source help | GitHub Actions research runner | NuGet 8.0.0.137 | NuGet CLI version | Not recorded | Passed | https://github.com/infoconex/RecordSift/actions/runs/43514868868/job/132194144480 |
 | 31 | Test-Path -LiteralPath $referenceAssembly -PathType Leaf; Test-Path -LiteralPath $frameworkList -PathType Leaf | GitHub Actions research runner | PowerShell Core 7.6.10 | Targeting reference files | Not applicable | Passed | https://github.com/infoconex/RecordSift/actions/runs/43514868868/job/132194144480 |
 
+| 20–23 | Get-CimInstance Win32_OperatingSystem \| Select-Object Caption, Version, BuildNumber, OSArchitecture | Operator PowerShell session (directory not recorded) | PowerShell version not yet checked | Windows OS identity, version, build, architecture | Not recorded | Output supplied | EV-017; operator-provided result in discovery conversation, 2026-11-13 |
+
 ### 59. Findings and Gaps
 
 | Finding | Impact | Evidence | Next Check |
 |---|---|---|---|
-| Operator Windows discovery machine not inventoried | CI tool inventory verified for the hosted Windows research runner (EV-016), but operator-local versions and paths remain unknown | Items 20–31; EV-016 | Perform operator Windows host and tool version commands |
+| Operator Windows toolchain inventory incomplete | Operator supplied Windows 11 Pro/version/build/architecture (items 20–23, EV-017); local PowerShell, Git, SDK/runtime, MSBuild, NuGet and targeting-pack inventories remain unchecked | Items 20–31; EV-016–017 | Continue read-only local prerequisite inventory at item 24 |
 | Clean local checkout not verified | Local filesystem and Git state remain unknown | Items 33–38 | Clone selected SHA into unique discovery folder |
 | Operator-local MSBuild evaluation outstanding | CI evaluated 20 project/configuration scopes; local tool/import differences remain unverified | Item 44; EV-015 | Evaluate the same properties on an approved operator Windows checkout if local parity is required |
 | Build-policy properties not explicitly set in evaluated results | `Deterministic`, `TreatWarningsAsErrors` and `PlatformTarget` returned empty strings; the output alone does not establish compiler-switch behavior | Item 44; [CI evidence](https://github.com/infoconex/RecordSift/actions/runs/43501555831/job/132148357265) | Inspect actual compiler invocations and existing build gates before proposing policy changes |
@@ -541,7 +545,7 @@ Each distribution has its own record. NuGet package upload acceptance was previo
 
 | Check | Reason Deferred | Revisit When |
 |---|---|---|
-| Windows toolchain preflight | No operator Windows command outputs | When Windows host is available |
+| Windows toolchain preflight (remaining items 24–31) | Operator provided OS items 20–23; local tools and targeting packs still need checking | Continue read-only local prerequisite inventory |
 | Local checkout verification | No isolated Windows discovery folder created | After host prerequisite checks |
 | Operator-local MSBuild property parity | Existing CI evaluated the frozen source (EV-015); local tool/import parity remains unverified | If local parity is required, after host preflight and checkout |
 | Local restore/build/test | Operator approval and environment verification required | After source checkout and side-effect review |

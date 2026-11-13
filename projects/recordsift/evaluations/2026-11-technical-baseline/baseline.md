@@ -59,41 +59,53 @@ The [getting-started guide](https://github.com/infoconex/RecordSift/blob/1809d06
 
 ## Discovery host and prerequisite tools
 
-| Field | Value |
-|---|---|
-| 20. Operating System Name | Not checked |
-| 21. Operating System Version | Not checked |
-| 22. Operating System Build | Not checked |
-| 23. Operating System Architecture | Not checked |
-| 24. PowerShell Version | Not checked |
-| 25. Git Version | Not checked |
+**Existing CI evidence:** [Windows restore, MSBuild and NUnit job](https://github.com/infoconex/RecordSift/actions/runs/43146607664/job/130945777245), pinned to RecordSift commit `1809d06c0fade59e4769d16e0f8eaf10fa426004` and executed November 12, 2026 (UTC), on `windows-2022` runner image `20261101.353.1`. The CI runner and operator's machine are **independent environments**. No operator-local host inventory has been executed.
+
+| Field | Existing CI Runner | Operator Local |
+|---|---|---|
+| 20. Operating System Name | Microsoft Windows Server 2022 | Not checked |
+| 21. Operating System Version | `10.0.20348` | Not checked |
+| 22. Operating System Build | `20348` | Not checked |
+| 23. Operating System Architecture | Not checked | Not checked |
+| 24. PowerShell Version | Not checked | Not checked |
+| 25. Git Version | `2.56.0.windows.4` | Not checked |
+
+**Partial CI observation:** The job ran `C:\Program Files\PowerShell\7\pwsh.exe`, but its exact version was not logged. No OS/processor architecture measurement was captured.
 
 ### 26. .NET SDK Inventory
 
-| SDK Version | Installation Path |
-|---|---|
+| Environment | SDK Version | Installation Path |
+|---|---|---|
+| Existing CI runner | `10.0.403` | Not checked |
+| Operator local | Not checked | Not checked |
 
-*Not checked — no operator-run Windows SDK inventory has been supplied.*
+**Partial CI observation:** `dotnet --version` reported the selected SDK. Neither a full `dotnet --list-sdks` inventory nor installation paths were logged.
 
 ### 27. .NET Runtime Inventory
 
-| Runtime Name | Runtime Version | Installation Path |
+| Environment | Runtime Name | Runtime Version | Installation Path |
+|---|---|---|---|
+| Existing CI runner | .NET Framework CLR | `v4.0.30319.42000` | Not checked |
+| Operator local | Not checked | Not checked | Not checked |
+
+**Partial CI observation:** NUnit reported a .NET Framework CLR runtime, not a full `dotnet --list-runtimes` inventory or the .NET Framework product version.
+
+| Field | Existing CI Runner | Operator Local |
 |---|---|---|
+| 28. MSBuild Version | `17.14.60.43110` | Not checked |
+| 29. MSBuild Installation Source | Visual Studio 2022 Enterprise | Not checked |
+| 30. NuGet CLI Version | Not checked | Not checked |
 
-*Not checked — no operator-run Windows runtime inventory has been supplied.*
-
-| Field | Value |
-|---|---|
-| 28. MSBuild Version | Not checked |
-| 29. MSBuild Installation Source | Not checked |
-| 30. NuGet CLI Version | Not checked |
+**Partial CI observation:** NuGet restore succeeded but did not log the CLI version. MSBuild was auto-detected under `C:\Program Files\Microsoft Visual Studio\2022\Enterprise\MSBuild\Current\bin`.
 
 ### 31. .NET Framework Targeting Pack Inventory
 
-| Framework Version | Installed | Location |
-|---|---|---|
+| Environment | Framework Version | Installed | Location |
+|---|---|---|---|
+| Existing CI runner | `v4.8` | Not checked | Not checked |
+| Operator local | `v4.8` | Not checked | Not checked |
 
-*Not checked — the local .NET Framework 4.8 reference-assembly file has not been inspected.*
+**Partial CI observation:** The successful `net48` build verifies CI build capability, not the exact reference-assembly installation or targeting-pack path.
 
 ### 32. Test Runner Inventory
 
@@ -469,7 +481,7 @@ Each distribution has its own record. NuGet package upload acceptance was previo
 
 Track three independent evidence dimensions for all 65 baseline items. **Source Inspection** means pinned source files, repository metadata, external public artifact metadata or discovery documentation were inspected; it does **not** mean a command ran. **Existing CI** refers only to reviewed GitHub-hosted runs or their logs. **Operator Local** refers only to actual work on the operator's machine, not CI runner execution. A populated item is not automatically locally verified.
 
-**Status definitions:** Source Inspection uses `Verified` (source/metadata documented), `Partial` (source-only view leaves relevant verification gaps), `Not checked`, or `Not applicable`. Existing CI uses `Passed` (relevant completed CI checks succeeded), `Verified` (run/log/evidence inspected without claiming a new local execution), `Not checked`, or `Not applicable`. Operator Local uses `Passed`/`Failed` only for observed operator-executed checks, `Not executed` for required operations not performed, `Not recorded` for missing operator-supplied information, and `Not applicable` when that item does not require an operator-local check. These status dimensions are **not** substitutes for the final disposition or review approval.
+**Status definitions:** Source Inspection uses `Verified` (source/metadata documented), `Partial` (source-only view leaves relevant verification gaps), `Not checked`, or `Not applicable`. Existing CI uses `Passed` (relevant completed CI checks succeeded), `Verified` (run/log/evidence inspected, with incomplete inventories explicitly qualified rather than claiming full coverage or local execution), `Not checked`, or `Not applicable`. Operator Local uses `Passed`/`Failed` only for observed operator-executed checks, `Not executed` for required operations not performed, `Not recorded` for missing operator-supplied information, and `Not applicable` when that item does not require an operator-local check. These status dimensions are **not** substitutes for the final disposition or review approval.
 
 | Baseline Item | Source Inspection | Existing CI | Operator Local | Evidence or Missing Information |
 |---|---|---|---|---|
@@ -492,18 +504,18 @@ Track three independent evidence dimensions for all 65 baseline items. **Source 
 | 17 | Verified | Not applicable | Not applicable | EV-003–EV-007 |
 | 18 | Verified | Not applicable | Not applicable | EV-003–EV-007 |
 | 19 | Verified | Not applicable | Not applicable | EV-003–EV-007 |
-| 20 | Not applicable | Not applicable | Not executed | Operator Windows host output missing |
-| 21 | Not applicable | Not applicable | Not executed | Operator Windows host output missing |
-| 22 | Not applicable | Not applicable | Not executed | Operator Windows host output missing |
-| 23 | Not applicable | Not applicable | Not executed | Operator Windows host output missing |
-| 24 | Not applicable | Not applicable | Not executed | Operator Windows host output missing |
-| 25 | Not applicable | Not applicable | Not executed | Operator Windows host output missing |
-| 26 | Not applicable | Not applicable | Not executed | Operator Windows host output missing |
-| 27 | Not applicable | Not applicable | Not executed | Operator Windows host output missing |
-| 28 | Not applicable | Not applicable | Not executed | Operator Windows host output missing |
-| 29 | Not applicable | Not applicable | Not executed | Operator Windows host output missing |
-| 30 | Not applicable | Not applicable | Not executed | Operator Windows host output missing |
-| 31 | Not applicable | Not applicable | Not executed | Operator Windows host output missing |
+| 20 | Not applicable | Verified | Not executed | EV-008; CI Windows Server 2022; operator OS not checked |
+| 21 | Not applicable | Verified | Not executed | EV-008; CI OS version 10.0.20348; operator not checked |
+| 22 | Not applicable | Verified | Not executed | EV-008; CI OS build 20348; operator not checked |
+| 23 | Not applicable | Not checked | Not executed | CI and operator architecture not captured |
+| 24 | Not applicable | Verified | Not executed | EV-008; CI PowerShell 7 executable observed, exact version not checked; operator not checked |
+| 25 | Not applicable | Verified | Not executed | EV-008; CI Git 2.56.0.windows.4; operator not checked |
+| 26 | Not applicable | Verified | Not executed | EV-008; CI SDK 10.0.403 observed; full inventory and paths not checked; operator not checked |
+| 27 | Not applicable | Verified | Not executed | EV-008; CI .NET Framework CLR v4.0.30319.42000 observed; full runtime inventory and operator not checked |
+| 28 | Not applicable | Verified | Not executed | EV-008; CI MSBuild 17.14.60.43110; operator not checked |
+| 29 | Not applicable | Verified | Not executed | EV-008; CI MSBuild from Visual Studio 2022 Enterprise; operator not checked |
+| 30 | Not applicable | Not checked | Not executed | CI NuGet restore passed but CLI version not logged; operator not checked |
+| 31 | Not applicable | Verified | Not executed | EV-008; CI net48 build passed, exact targeting-pack inventory and operator not checked |
 | 32 | Verified | Passed | Not executed | Declared runner; local installation not checked |
 | 33 | Not applicable | Not applicable | Not executed | No local discovery folder recorded |
 | 34 | Verified | Not applicable | Not applicable | EV-004 |

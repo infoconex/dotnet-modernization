@@ -245,11 +245,27 @@ Record one row per distinct **workflow + job/stage + configured command + runner
 
 ### 52. Package and Release Artifacts
 
-Record separately the source used for **discovery**, the source targeted by the **published Git tag**, and the source actually verified for the **published package**. Git committer timestamps are not source creation/push dates; publication timestamps are separate. Use full SHAs and UTC `YYYY-MM-DDTHH:MM:SSZ`; never infer package source from a release tag without package-specific evidence.
+Keep source declarations, CI-produced artifacts and **independent published distributions** in separate tables. Use **one meaningful UTC date/time per row**, labeling the event; do not turn an upload attempt, upload acceptance or source commit timestamp into a confirmed publication timestamp. Use `YYYY-MM-DDTHH:MM:SSZ` for verified exact UTC timestamps and `YYYY-MM-DD` only when a day is verified but the exact time is not. Include direct evidence links, and do not claim CI evidence is a new operator execution.
 
-| Artifact | Version | Attribute | Attribute Value | Release URL | Evidence |
-|---|---|---|---|---|---|
-|   |   |   |   |   |   |
+**A. Source package declarations**
+
+| Declaration | Declared Version | Source Committer Date (UTC) | Evidence |
+|---|---|---|---|
+|   |   |   |   |
+
+**B. CI package artifacts and verification**
+
+| Artifact | Version | Verification Result | Verification Completed (UTC) | Evidence |
+|---|---|---|---|---|
+|   |   |   |   |   |
+
+**C. Published artifacts**
+
+| Artifact | Version | Status | Publication Date (UTC) | Evidence |
+|---|---|---|---|---|
+|   |   |   |   |   |
+
+Keep **NuGet package** and **GitHub release** as distinct rows even when they share version numbers. If only the publication day can be established, label the precision. If the date itself is unavailable, record `Not checked` rather than substituting another distribution's timestamp or an upload-acceptance date.
 
 **Source revision provenance**
 
@@ -257,11 +273,9 @@ Record separately the source used for **discovery**, the source targeted by the 
 |---|---|---|---|
 |   |   |   |   |
 
-**Publication timestamps**
+Git committer dates are not guaranteed source creation or push times, and neither commit timestamps nor CI verification timestamps are publication dates. Preserve exact source-commit provenance and evidence separately from the artifact dates.
 
-| Published Artifact | Published At (UTC) | Evidence |
-|---|---|---|
-|   |   |   |
+**Package provenance and verification limits:**
 ### 53. Runtime and Deployment Requirements
 
 | Requirement | Type | Target Environment | Source or Evidence |

@@ -6,71 +6,90 @@ Don't change the application or publish anything as part of discovery.
 
 ## DISC-001 — Check tools and get a clean copy of the source
 
-### 1. Check your computer and tools
+### 1. Check required tools
 
-- Use a computer that supports the application. **RecordSift requires Windows.**
-- Run **one command at a time**. Keep each tool in its own command snippet, with its actual result directly underneath. If a command cannot run, record the error instead of inventing a version.
-- These examples use PowerShell on Windows. For another OS, use its native system-information command.
+- Check each tool **one at a time**. Record the version shown or the error.
+- Use a computer supported by the application. **RecordSift requires Windows.**
 
-**Windows version** (for Windows applications):
+**Windows — required for RecordSift; use a supported Windows version**
 
 ```powershell
 Get-CimInstance Win32_OperatingSystem | Select-Object Caption, Version, BuildNumber, OSArchitecture
 ```
 
-- **Record:** Windows edition, version, build, and architecture.
+**Result:** Not yet executed.
 
-**PowerShell:**
+- If not running Windows, use a Windows computer before continuing.
+- Record the Windows version, build, and architecture.
+
+**PowerShell — required; Windows PowerShell 5.1 or PowerShell 7**
 
 ```powershell
 $PSVersionTable.PSVersion
 ```
 
-- **Record:** PowerShell version.
+**Result:** Not yet executed.
 
-**Git:**
+- If unavailable, use Windows PowerShell or [install PowerShell for Windows](https://learn.microsoft.com/en-us/powershell/scripting/install/installing-powershell-on-windows).
+- Record the version shown.
+
+**Git — required; minimum version 2.23**
 
 ```powershell
 git --version
 ```
 
-- **Record:** Git version. Git 2.23+ is needed for the `git switch` command used below. If Git is unavailable, stop before cloning.
+**Result:** Not yet executed.
 
-**.NET SDK:**
+- If missing or older than 2.23, [install Git for Windows](https://git-scm.com/install/win), reopen PowerShell, and run the command again.
+- Record the installed version. Git 2.23+ supports `git switch`, which we'll use below.
+
+**.NET SDK — optional for checkout; version depends on later commands**
 
 ```powershell
 dotnet --info
 ```
 
-- **Record:** installed SDK/runtime information, or a command-not-found error.
+**Result:** Not yet executed.
 
-**MSBuild:**
+- If missing and needed for a later step, [install the appropriate .NET SDK](https://dotnet.microsoft.com/en-us/download).
+- Record installed SDK and runtime versions. An SDK alone doesn't provide .NET Framework targeting packs.
+
+**MSBuild — needed for applicable builds; compatible version depends on the project**
 
 ```powershell
 msbuild -version -nologo
 ```
 
-- **Record:** MSBuild version or **not found on PATH**. On Windows it may be available only in a Visual Studio Developer PowerShell.
+**Result:** Not yet executed.
 
-**Standalone NuGet CLI:**
+- If not found, first try **Visual Studio Developer PowerShell**. If still unavailable and needed, [install Visual Studio Build Tools](https://visualstudio.microsoft.com/downloads/) with the required .NET components.
+- Record the installed version. The optional `-getProperty` command in DISC-005 requires MSBuild 17.8+.
+
+**Standalone NuGet CLI — needed for some restores, including RecordSift**
 
 ```powershell
 nuget help
 ```
 
-- **Record:** NuGet CLI version shown in the output, or **not found on PATH**.
+**Result:** Not yet executed.
 
-**.NET Framework 4.8 targeting pack** (when needed on Windows):
+- If unavailable and needed for restore, [install the NuGet CLI](https://learn.microsoft.com/en-us/nuget/consume-packages/install-use-packages-nuget-cli).
+- Record the version shown. No universal minimum version is assumed here.
+
+**.NET Framework 4.8 targeting pack — needed to build RecordSift**
 
 ```powershell
 Test-Path "${env:ProgramFiles(x86)}\Reference Assemblies\Microsoft\Framework\.NETFramework\v4.8"
 ```
 
-- **Record:** `True` or `False`. `True` confirms only that the standard directory exists; later build checks establish whether targeting actually works.
+**Result:** Not yet executed.
 
-- **Needed now:** supported OS, PowerShell, Git, network access, and a writable folder.
-- **Needed later:** the build tools, targeting packs, and test runners required by the actual projects. A missing command on PATH does not always mean the tool is uninstalled.
-- **Do not install or change tools automatically.** Record what is available first.
+- If `False`, check the installed Visual Studio components or [install the .NET Framework 4.8 Developer Pack](https://dotnet.microsoft.com/en-us/download/dotnet-framework/net48).
+- Record `True` or `False`. A directory check doesn't prove that a build will succeed.
+
+- **To start cloning:** Windows (for RecordSift), PowerShell, Git, internet access, and a writable folder are required.
+- **Before restore, build, or tests:** resolve any other tools the application needs. Don't install optional tools just to complete this checklist.
 
 ### 2. Create a dated discovery folder
 

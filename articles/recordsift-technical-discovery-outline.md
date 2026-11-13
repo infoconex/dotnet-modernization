@@ -38,5 +38,5 @@ Show a real .NET application's technical discovery **as it happened**: the nativ
 ## Writing progress
 
 - **Current:** source preflight and 65-item guide authored. No new manual command transcripts yet. The draft methodology article already explains why a baseline matters; the companion should focus on what was actually done.
-- **Next:** capture owner-run Baseline items 1–2, 5–19 and 33–38, cite verified output, then draft the first real walkthrough section.
+- **Next:** capture owner-run Baseline items 1–19 and 33–38, cite verified output, then draft the first real walkthrough section.
 - **Publication status:** not authorized; do not create or merge a production article based on a planned result.

@@ -304,9 +304,15 @@ Git committer dates are not guaranteed source creation or push times, and neithe
 
 ### 57. Discovery Item Status
 
-| Baseline Item | Status | Evidence or Missing Information |
-|---|---|---|
-|   |   |   |
+Create **one row for every numbered baseline item (1–62)** and track evidence channels independently. The dimensions below refer to what was actually inspected or executed; they do **not** imply that all required discovery work has been completed. Preserve the original evidence IDs, links, missing information, and unresolved checks in the last column.
+
+**Status meanings:** **Source Inspection:** `Verified` (exact source, external public metadata, repository metadata or documented discovery facts checked), `Partial` (source evidence available but material checks still open), `Not checked`, `Not applicable`. **Existing CI:** `Passed` (relevant checks completed successfully on a documented SHA), `Verified` (CI log/run evidence inspected), `Not checked`, `Not applicable`. **Operator Local:** `Passed` / `Failed` (actually executed by operator, with evidence), `Not executed` (check required but not run), `Not recorded` (operator-supplied information missing), `Not applicable` (no operator-local check is required for this particular item). For any relevant failure, record details in evidence; never relabel CI success as local success.
+
+| Baseline Item | Source Inspection | Existing CI | Operator Local | Evidence or Missing Information |
+|---|---|---|---|---|
+|   |   |   |   |   |
+
+**Unresolved operator checks and review status:**
 
 | Field | Value |
 |---|---|

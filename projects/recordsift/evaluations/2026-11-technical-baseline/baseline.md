@@ -35,35 +35,25 @@
 |---|---|
 | 16. Discovery By | Not confirmed; earlier name was a formatting example, not proof of execution |
 | 17. Discovery Date | `2026-11-12` — discovery opened; no local Windows execution yet |
-| 18. Discovery Folder | Not recorded — operator Windows checkout pending |
-
-## Source revision and checkout
-
-| Field | Value |
-|---|---|
-| 19. Selected Source Branch or Tag | `main` — selected upstream revision |
-| 20. Source Commit SHA | [`1809d06c0fade59e4769d16e0f8eaf10fa426004`](https://github.com/infoconex/RecordSift/commit/1809d06c0fade59e4769d16e0f8eaf10fa426004) — immutable selected source revision |
-| 21. Working Tree Clean | Not checked on operator's machine |
-| 22. Detached HEAD | Not checked on operator's machine |
 
 ## Discovery host and prerequisite tools
 
 | Field | Value |
 |---|---|
-| 23. Operating System Name | Not checked on operator's machine; current GitHub CI used Windows Server 2022 |
-| 24. Operating System Version | Not checked on operator's machine |
-| 25. Operating System Build | Not checked on operator's machine |
-| 26. Operating System Architecture | Not checked on operator's machine |
-| 27. PowerShell Version | Not checked on operator's machine |
-| 28. Git Version | Not checked on operator's machine |
+| 18. Operating System Name | Not checked on operator's machine; current GitHub CI used Windows Server 2022 |
+| 19. Operating System Version | Not checked on operator's machine |
+| 20. Operating System Build | Not checked on operator's machine |
+| 21. Operating System Architecture | Not checked on operator's machine |
+| 22. PowerShell Version | Not checked on operator's machine |
+| 23. Git Version | Not checked on operator's machine |
 
-### 29. .NET SDK Inventory
+### 24. .NET SDK Inventory
 
 | SDK Version | Installation Path |
 |---|---|
 |   |   |
 
-### 30. .NET Runtime Inventory
+### 25. .NET Runtime Inventory
 
 | Runtime Name | Runtime Version | Installation Path |
 |---|---|---|
@@ -71,21 +61,31 @@
 
 | Field | Value |
 |---|---|
-| 31. MSBuild Version | Not checked locally; current CI used MSBuild 17.14.60.43110 |
-| 32. MSBuild Installation Source | Not checked locally; current CI used Visual Studio 2022 Enterprise MSBuild |
-| 33. NuGet CLI Version | Not checked locally; current CI restore succeeded |
+| 26. MSBuild Version | Not checked locally; current CI used MSBuild 17.14.60.43110 |
+| 27. MSBuild Installation Source | Not checked locally; current CI used Visual Studio 2022 Enterprise MSBuild |
+| 28. NuGet CLI Version | Not checked locally; current CI restore succeeded |
 
-### 34. .NET Framework Targeting Pack Inventory
+### 29. .NET Framework Targeting Pack Inventory
 
 | Framework Version | Installed | Location |
 |---|---|---|
 |   |   |   |
 
-### 35. Test Runner Inventory
+### 30. Test Runner Inventory
 
 | Runner Name | Runner Version | Source or Location |
 |---|---|---|
 |   |   |   |
+
+## Source revision and checkout
+
+| Field | Value |
+|---|---|
+| 31. Discovery Folder | Not recorded — operator Windows checkout pending |
+| 32. Selected Source Branch or Tag | `main` — selected upstream revision |
+| 33. Source Commit SHA | [`1809d06c0fade59e4769d16e0f8eaf10fa426004`](https://github.com/infoconex/RecordSift/commit/1809d06c0fade59e4769d16e0f8eaf10fa426004) — immutable selected source revision |
+| 34. Working Tree Clean | Not checked on operator's machine |
+| 35. Detached HEAD | Not checked on operator's machine |
 
 ## Solution and project inventory
 
@@ -213,7 +213,7 @@
 
 ### 55. Executed Command Evidence
 
-| Discovery Step | Command | Working Directory | Tool Version | Target or Configuration | Exit Code | Outcome | Output or Evidence |
+| Baseline Item | Command | Working Directory | Tool Version | Target or Configuration | Exit Code | Outcome | Output or Evidence |
 |---|---|---|---|---|---|---|---|
 |   |   |   |   |   |   |   |   |
 
@@ -223,9 +223,9 @@
 |---|---|---|---|
 |   |   |   |   |
 
-### 57. Discovery Step Status
+### 57. Discovery Item Status
 
-| Step ID | Status | Evidence or Missing Information |
+| Baseline Item | Status | Evidence or Missing Information |
 |---|---|---|
 |   |   |   |
 

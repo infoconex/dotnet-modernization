@@ -819,7 +819,7 @@ Do not claim the discovery operator executed CI commands when only GitHub workfl
 
 | Baseline Item | Command | Working Directory | Tool Version | Target or Configuration | Exit Code | Outcome | Output or Evidence |
 |---|---|---|---|---|---|---|---|
-| 34 | git status --porcelain=v1 --untracked-files=all | <checkout> | Git 2.47.0 | Repository | 0 | Passed | <saved console output> |
+| 37 | git status --porcelain=v1 --untracked-files=all | <checkout> | Git 2.47.0 | Repository | 0 | Passed | <saved console output> |
 
 ### 59. Findings and Gaps
 
@@ -837,7 +837,7 @@ Record each unresolved issue, source limitation, missing verification or cross-e
 
 ### 60. Deferred Checks
 
-Document intentionally omitted checks with reason and trigger for revisit, one row per check. For example: `Local Release build | Windows host not inventoried | After DISC host/checkout checks`; use baseline item numbers instead of outdated DISC phase identifiers.
+Document intentionally omitted checks with reason and trigger for revisit, one row per check. For example: `Local Release build | Windows host not inventoried | After host inventory (items 20–31) and checkout verification (items 33–38)`; use baseline item numbers instead of outdated DISC phase identifiers.
 
 **How to populate each column (left to right):**
 

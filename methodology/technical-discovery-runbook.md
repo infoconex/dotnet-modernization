@@ -476,7 +476,7 @@ The first command uses **only** the specified file; the second uses the applicab
 **RecordSift-specific scope:** The pinned repository `NuGet.Config` declares `packageSources` and `auditSources`, each with `<clear />` followed by a nuget.org URL. It does **not** declare `disabledPackageSources` or other optional NuGet configuration sections. This is source inspection, **not** proof of enabled feeds, tool defaults, authentication, local effective settings or feeds used during CI or a future local restore.
 ### 44. NuGet Package Declarations
 
-Inspect every tracked `packages.config`, project-level `PackageReference`, and applicable `Directory.Packages.props` or other central version declarations. Record **direct, source-declared** dependencies by consuming project and exact declared version; do not invent usage labels such as `Production`, `Testing` or generic `Purpose`. Do not combine versions, direct and transitive dependencies, or distinct conditional declarations as though they were equivalent. NuGet package restore or feed acquisition has **not** been established simply by finding a source declaration.
+Inspect every tracked `packages.config`, project-level `PackageReference`, and applicable `Directory.Packages.props` or other central version declarations. Record **direct, source-declared** dependencies by consuming project and exact declared version; do not invent package classifications. Do not combine versions, direct and transitive dependencies, or distinct conditional declarations as though they were equivalent. NuGet package restore or feed acquisition has **not** been established simply by finding a source declaration.
 
 **A. Packages by project — one row per consuming project.**
 
@@ -493,7 +493,7 @@ Inspect every tracked `packages.config`, project-level `PackageReference`, and a
 - **Declaration Source(s):** Direct source evidence for each consumer's declaration and version (including centrally managed versions). When many consumers share a version, maintain an unambiguous consumer-to-source mapping.
 - **Configured Feed(s):** Source-declared eligible feeds, or `Not checked`; preserve differences by consumer or scope rather than implying a single effective source.
 
-Preserve additional package declaration metadata such as `targetFramework`, `developmentDependency`, conditions, version overrides and applicable package-source mapping in an explicit metadata note or column if needed for fidelity. Do not infer package purpose solely from which project references it. A package already listed in item 44 should not also appear in item 45 as a separate non-NuGet dependency.
+Preserve additional package declaration metadata such as `targetFramework`, `developmentDependency`, conditions, version overrides and applicable package-source mapping in an explicit metadata note or column if needed for fidelity. Do not infer package classifications solely from the consuming project. A package already listed in item 44 should not also appear in item 45 as a separate non-NuGet dependency.
 
 To inspect repository-configured sources with a compatible .NET SDK:
 

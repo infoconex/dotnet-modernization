@@ -4,8 +4,8 @@ This is the working RecordSift discovery report for **source commit `1809d06c0fa
 
 **Current status:** GitHub source-only inspection (November 12, 2026); **no user-run local commands, tool-version checks, restore, build or tests have been received**. Historical evaluations use different source revisions.
 
-- **Every field has a permanent ID**, such as `F-006` for Git version. The guide uses these same IDs.
-- **One answer per field.** For project, solution, package and execution tables, use a new row for each item; each column keeps the same field ID. Identify the item by its project/path/name.
+- **Every field has a permanent number**, such as `6` for Git version. The guide uses these same IDs.
+- **One answer per field.** For project, solution, package and execution tables, use a new row for each item; each column keeps the same field number. Identify the item by its project/path/name.
 - Leave unanswered fields as **Not checked**, **Not executed** or **Not applicable**. Do not copy results from an older source revision as new results.
 - Link to actual output or relevant excerpts, and avoid secrets/personal paths. See the [variation guide](../../../../methodology/baseline-variation-guide.md) when builds have conditional settings or multiple frameworks.
 - This records facts, not modernization recommendations.
@@ -14,22 +14,22 @@ This is the working RecordSift discovery report for **source commit `1809d06c0fa
 
 | Field | What to fill in | Result |
 |---|---|---|
-| F-001 | Person or system performing discovery | Not checked |
-| F-002 | Discovery date, time and time zone | Not checked |
-| F-003 | Dated discovery folder | Not checked |
-| F-004 | Operating system, version/build, architecture | Not checked |
-| F-005 | PowerShell version (if used) | Not checked |
-| F-006 | Git version | Not checked |
-| F-007 | Installed .NET SDKs and runtimes | Not checked |
-| F-008 | MSBuild / Visual Studio Build Tools version and source | Not checked |
-| F-009 | Standalone NuGet CLI version | Not checked |
-| F-010 | Framework targeting packs needed and found | Not checked |
-| F-011 | Test runner and version | Not checked |
-| F-012 | Selected source branch or tag | `main` — GitHub observed, local checkout pending |
-| F-013 | Exact source commit SHA | [`1809d06c0fade59e4769d16e0f8eaf10fa426004`](https://github.com/infoconex/RecordSift/commit/1809d06c0fade59e4769d16e0f8eaf10fa426004) — selected source SHA, **local checkout not verified** |
-| F-014 | Local checkout status (clean/changes/detached) | Not checked |
-| F-015 | Verification date (if distinct from inspection date) | Not checked |
-| F-016 | Overall evidence status | Partial — source-only GitHub inspection; local execution pending |
+| 1 | Person or system performing discovery | Not checked |
+| 2 | Discovery date, time and time zone | Not checked |
+| 3 | Dated discovery folder | Not checked |
+| 4 | Operating system, version/build, architecture | Not checked |
+| 5 | PowerShell version (if used) | Not checked |
+| 6 | Git version | Not checked |
+| 7 | Installed .NET SDKs and runtimes | Not checked |
+| 8 | MSBuild / Visual Studio Build Tools version and source | Not checked |
+| 9 | Standalone NuGet CLI version | Not checked |
+| 10 | Framework targeting packs needed and found | Not checked |
+| 11 | Test runner and version | Not checked |
+| 12 | Selected source branch or tag | `main` — GitHub observed, local checkout pending |
+| 13 | Exact source commit SHA | [`1809d06c0fade59e4769d16e0f8eaf10fa426004`](https://github.com/infoconex/RecordSift/commit/1809d06c0fade59e4769d16e0f8eaf10fa426004) — selected source SHA, **local checkout not verified** |
+| 14 | Local checkout status (clean/changes/detached) | Not checked |
+| 15 | Verification date (if distinct from inspection date) | Not checked |
+| 16 | Overall evidence status | Partial — source-only GitHub inspection; local execution pending |
 
 **Evidence for prerequisites and checkout:** [EV-001–003](evidence/manifest.md) for GitHub source preflight only; local command output not available.
 
@@ -37,30 +37,30 @@ This is the working RecordSift discovery report for **source commit `1809d06c0fa
 
 | Field | What to fill in | Result |
 |---|---|---|
-| F-101 | Application name | RecordSift |
-| F-102 | What the application does / application type | Windows/.NET Framework 4.8 CSV/XLSX import, validation and reporting library — source README |
-| F-103 | Public or private repository | Public GitHub repository (source inspected) |
-| F-104 | HTTPS clone URL | `https://github.com/infoconex/RecordSift.git` |
-| F-105 | SSH clone URL, if used | Not checked |
-| F-106 | Repository default branch | `main` (observed November 12, 2026) |
-| F-107 | License | MIT — source README |
-| F-108 | Supported operating systems | Windows — source README; operator Windows version not checked |
-| F-109 | Published application or package version | 0.1.0 — described as published in source README; not independently verified |
-| F-110 | Published release/package URL | Not checked |
-| F-111 | Source manifest version | Not checked |
-| F-112 | Assembly version | Not checked |
-| F-113 | File version | Not checked |
-| F-114 | Consumers or entry points | Not checked |
+| 17 | Application name | RecordSift |
+| 18 | What the application does / application type | Windows/.NET Framework 4.8 CSV/XLSX import, validation and reporting library — source README |
+| 19 | Public or private repository | Public GitHub repository (source inspected) |
+| 20 | HTTPS clone URL | `https://github.com/infoconex/RecordSift.git` |
+| 21 | SSH clone URL, if used | Not checked |
+| 22 | Repository default branch | `main` (observed November 12, 2026) |
+| 23 | License | MIT — source README |
+| 24 | Supported operating systems | Windows — source README; operator Windows version not checked |
+| 25 | Published application or package version | 0.1.0 — described as published in source README; not independently verified |
+| 26 | Published release/package URL | Not checked |
+| 27 | Source manifest version | Not checked |
+| 28 | Assembly version | Not checked |
+| 29 | File version | Not checked |
+| 30 | Consumers or entry points | Not checked |
 
 ### Solutions (repeat one row per solution)
 
-| F-201 Solution path | F-202 Format | F-203 Format version | F-204 Declared IDE version | F-205 Configurations | F-206 Platforms | F-207 Solution membership/build exclusions |
+| 31 Solution path | 32 Format | 33 Format version | 34 Declared IDE version | 35 Configurations | 36 Platforms | 37 Solution membership/build exclusions |
 |---|---|---|---|---|---|---|
 | `RecordSift.sln` — [EV-002](evidence/manifest.md) | Not checked | Not checked | Not checked | Not checked | Not checked | Membership not checked |
 
 ### Projects (repeat one row per project, including standalone projects)
 
-| F-211 Project path | F-212 Role | F-213 Project format | F-214 Target framework(s) | F-215 Language version | F-216 Output type | F-217 MSBuild Platform | F-218 SDK / ToolsVersion | F-219 Direct project references |
+| 38 Project path | 39 Role | 40 Project format | 41 Target framework(s) | 42 Language version | 43 Output type | 44 MSBuild Platform | 45 SDK / ToolsVersion | 46 Direct project references |
 |---|---|---|---|---|---|---|---|---|
 | `src/RecordSift.Domain/RecordSift.Domain.csproj` — [EV-002](evidence/manifest.md) | production path (inferred) | Not checked | Not checked | Not checked | Not checked | Not checked | Not checked | Not checked |
 | `src/RecordSift.Application/RecordSift.Application.csproj` — [EV-002](evidence/manifest.md) | production path (inferred) | Not checked | Not checked | Not checked | Not checked | Not checked | Not checked | Not checked |
@@ -79,36 +79,36 @@ Record values declared in source separately from MSBuild-evaluated results. For 
 
 **Compiler settings (repeat per project and configuration as needed)**
 
-| F-301 Project/configuration | F-302 DebugType | F-303 Optimize | F-304 DefineConstants | F-305 Other compiler settings / conditions |
+| 47 Project/configuration | 48 DebugType | 49 Optimize | 50 DefineConstants | 51 Other compiler settings / conditions |
 |---|---|---|---|---|
 | Not checked | Not checked | Not checked | Not checked | Not checked |
 
 **Output and validation settings**
 
-| F-311 Project/configuration | F-312 OutputPath | F-313 WarningLevel | F-314 WarningsAsErrors | F-315 DocumentationFile |
+| 52 Project/configuration | 53 OutputPath | 54 WarningLevel | 55 WarningsAsErrors | 56 DocumentationFile |
 |---|---|---|---|---|
 | Not checked | Not checked | Not checked | Not checked | Not checked |
 
 **Project metadata and imports**
 
-| F-321 Project | F-322 Default configuration | F-323 IsTestProject | F-324 FileAlignment | F-325 AppDesignerFolder | F-326 Imports / shared properties |
+| 57 Project | 58 Default configuration | 59 IsTestProject | 60 FileAlignment | 61 AppDesignerFolder | 62 Imports / shared properties |
 |---|---|---|---|---|---|
 | Not checked | Not checked | Not checked | Not checked | Not checked | Not checked |
 
-**F-327 — Evaluated MSBuild properties and differences:** Not checked
+**63 — Evaluated MSBuild properties and differences:** Not checked
 
 ## D. Repository folders and configuration — DISC-006
 
 **Directories (repeat as needed)**
 
-| F-401 Directory | F-402 Purpose |
+| 64 Directory | 65 Purpose |
 |---|---|
 | `src` | production project files found — [EV-002](evidence/manifest.md) |
 | `tests` | test project files found — [EV-002](evidence/manifest.md) |
 
 **Configuration files (including files that are absent)**
 
-| F-411 File / mechanism | F-412 Present? | F-413 Current purpose / value | F-414 Scope, imports or precedence |
+| 66 File / mechanism | 67 Present? | 68 Current purpose / value | 69 Scope, imports or precedence |
 |---|---|---|---|
 | `.editorconfig` | Yes, tracked at frozen SHA | Contents not checked | Scope/imports not checked — [EV-002](evidence/manifest.md) |
 | `NuGet.Config` | Yes, tracked at frozen SHA | Contents not checked | Scope/imports not checked — [EV-002](evidence/manifest.md) |
@@ -130,13 +130,13 @@ Check relevant `global.json`, `Directory.Build.props`, `Directory.Build.targets`
 
 **NuGet declarations (repeat per project/package)**
 
-| F-501 Project | F-502 Package ID | F-503 Version | F-504 Declared in | F-505 Configured feed(s) | F-506 Purpose |
+| 70 Project | 71 Package ID | 72 Version | 73 Declared in | 74 Configured feed(s) | 75 Purpose |
 |---|---|---|---|---|---|
 | Not checked | Not checked | Not checked | Not checked | Not checked | Not checked |
 
 **Other dependencies (repeat only when present)**
 
-| F-511 Project/consumer | F-512 Dependency | F-513 Mechanism/type | F-514 Source file | F-515 Version/identity | F-516 Resolution/location |
+| 76 Project/consumer | 77 Dependency | 78 Mechanism/type | 79 Source file | 80 Version/identity | 81 Resolution/location |
 |---|---|---|---|---|---|
 | Not checked | Not checked | Not checked | Not checked | Not checked | Not checked |
 
@@ -148,50 +148,50 @@ A configured feed is not proof that a package was restored from it. Keep secrets
 
 | Field | Operation | Command or existing entry point |
 |---|---|---|
-| F-611 | Restore | Not checked |
-| F-612 | Build (configuration/platform) | Not checked |
-| F-613 | Full tests | Not checked |
-| F-614 | Compatibility checks | Not checked |
-| F-615 | Packaging | Not checked |
-| F-616 | Consumer/deployment | Not checked |
-| F-617 | Alternate host/CI toolchain details | Not checked |
+| 82 | Restore | Not checked |
+| 83 | Build (configuration/platform) | Not checked |
+| 84 | Full tests | Not checked |
+| 85 | Compatibility checks | Not checked |
+| 86 | Packaging | Not checked |
+| 87 | Consumer/deployment | Not checked |
+| 88 | Alternate host/CI toolchain details | Not checked |
 
 **Test counts and executed artifacts**
 
 | Field | What to fill in | Actual result |
 |---|---|---|
-| F-621 | Tests discovered | Not checked |
-| F-622 | Tests passed | Not checked |
-| F-623 | Tests failed | Not checked |
-| F-624 | Tests skipped | Not checked |
-| F-625 | Test projects/assemblies actually executed | Not checked |
-| F-626 | Build warnings/errors and important outputs | Not checked |
-| F-627 | CI workflow names, triggers and commands | Not checked |
-| F-628 | CI runs checked and their exact source SHA | Not checked |
-| F-629 | Package contents/metadata and release evidence | Not checked |
-| F-630 | Runtime / deployment requirements | Not checked |
+| 89 | Tests discovered | Not checked |
+| 90 | Tests passed | Not checked |
+| 91 | Tests failed | Not checked |
+| 92 | Tests skipped | Not checked |
+| 93 | Test projects/assemblies actually executed | Not checked |
+| 94 | Build warnings/errors and important outputs | Not checked |
+| 95 | CI workflow names, triggers and commands | Not checked |
+| 96 | CI runs checked and their exact source SHA | Not checked |
+| 97 | Package contents/metadata and release evidence | Not checked |
+| 98 | Runtime / deployment requirements | Not checked |
 
 **Checks and outcomes (include the supporting evidence with each result)**
 
 | Field | Check | Outcome and evidence |
 |---|---|---|
-| F-701 | Dependency restore | Not checked |
-| F-702 | Build | Not checked |
-| F-703 | Automated tests | Not checked |
-| F-704 | Public API | Not checked |
-| F-705 | Assembly identity | Not checked |
-| F-706 | Resources | Not checked |
-| F-707 | XML documentation | Not checked |
-| F-708 | Package contents | Not checked |
-| F-709 | Package metadata | Not checked |
-| F-710 | Dependency validation | Not checked |
-| F-711 | Vulnerability audit | Not checked |
-| F-712 | Installed-package consumer | Not checked |
-| F-713 | Application integration checks | Not checked |
+| 99 | Dependency restore | Not checked |
+| 100 | Build | Not checked |
+| 101 | Automated tests | Not checked |
+| 102 | Public API | Not checked |
+| 103 | Assembly identity | Not checked |
+| 104 | Resources | Not checked |
+| 105 | XML documentation | Not checked |
+| 106 | Package contents | Not checked |
+| 107 | Package metadata | Not checked |
+| 108 | Dependency validation | Not checked |
+| 109 | Vulnerability audit | Not checked |
+| 110 | Installed-package consumer | Not checked |
+| 111 | Application integration checks | Not checked |
 
 **Executed commands (repeat one row per actual execution, including failures)**
 
-| F-731 Step | F-732 Exact command, scope and tool | F-733 Result and exit code | F-734 Output / evidence link |
+| 112 Step | 113 Exact command, scope and tool | 114 Result and exit code | 115 Output / evidence link |
 |---|---|---|---|
 | Not executed | Not executed | Not executed | No local output available |
 
@@ -199,13 +199,13 @@ A configured feed is not proof that a package was restored from it. Keep secrets
 
 **Open issues and missing checks (repeat as needed)**
 
-| F-801 Gap or finding | F-802 Impact | F-803 Evidence / next check |
+| 116 Gap or finding | 117 Impact | 118 Evidence / next check |
 |---|---|---|
 | Operator tools and local checkout not checked | Restore, build and tests remain unexecuted | Complete DISC-001 first; GitHub source preflight [EV-001–003](evidence/manifest.md) |
 
 **Step completion (one row per DISC step)**
 
-| F-901 Step | F-902 Result/status | F-903 Evidence or missing information |
+| 119 Step | 120 Result/status | 121 Evidence or missing information |
 |---|---|---|
 | `DISC-001` | Not executed in this evaluation | Pending user-run results |
 | `DISC-002` | Partial — GitHub tracked-path preflight only | [EV-002](evidence/manifest.md), no local verification |
@@ -224,9 +224,9 @@ A configured feed is not proof that a package was restored from it. Keep secrets
 
 | Field | Final review | Result |
 |---|---|---|
-| F-911 | Overall baseline disposition | Further checks needed — user-run discovery not started |
-| F-912 | Report reviewed by/date | Not checked |
-| F-913 | Next action or deferred checks | DISC-001: Windows prerequisites, dated fresh clone and exact SHA verification |
+| 122 | Overall baseline disposition | Further checks needed — user-run discovery not started |
+| 123 | Report reviewed by/date | Not checked |
+| 124 | Next action or deferred checks | DISC-001: Windows prerequisites, dated fresh clone and exact SHA verification |
 
 This form records **what exists and what was observed**. Proposals to modernize the application are separate.
 

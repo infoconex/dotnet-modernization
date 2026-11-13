@@ -13,7 +13,7 @@
 | 3. Discovery Status |  |
 | 4. Discovery Completed Date |  |
 
-**Status guidance:** Use `Not started`, `In progress`, `Blocked`, `Completed` or `Completed with gaps`. Enter `Discovery Completed Date` in `YYYY-MM-DD` only after completion and review; otherwise use `Not completed`. Keep the overall disposition (item 61), reviewer (item 62), review date (item 63) and outstanding checks consistent with this summary. Discovery dates are distinct from source commit, CI and publication dates.
+**Status guidance:** Use `Not started`, `In progress`, `Blocked`, `Completed` or `Completed with gaps`. Enter `Discovery Completed Date` in `YYYY-MM-DD` only after completion and review; otherwise use `Not completed`. Keep the overall disposition (item 60), reviewer (item 61), review date (item 62) and outstanding checks consistent with this summary. Discovery dates are distinct from source commit, CI and publication dates.
 
 ## Application information
 
@@ -339,26 +339,16 @@ Git committer dates are not guaranteed source creation or push times, and neithe
 |---|---|---|---|
 |   |   |   |   |
 
-### 60. Discovery Item Status
-
-Create **one row for every numbered baseline item (1–65)** and track evidence channels independently. The dimensions below refer to what was actually inspected or executed; they do **not** imply that all required discovery work has been completed. Preserve the original evidence IDs, links, missing information, and unresolved checks in the last column.
-
-**Status meanings:** **Source Inspection:** `Verified` (exact source, external public metadata, repository metadata or documented discovery facts checked), `Partial` (source evidence available but material checks still open), `Not checked`, `Not applicable`. **Existing CI:** `Passed` (relevant checks completed successfully on a documented SHA), `Verified` (CI log/run evidence inspected, including partial inventory evidence with unobserved fields explicitly recorded), `Not checked`, `Not applicable`. **Operator Local:** `Passed` / `Failed` (actually executed by operator, with evidence), `Not executed` (check required but not run), `Not recorded` (operator-supplied information missing), `Not applicable` (no operator-local check is required for this particular item). For any relevant failure, record details in evidence; never relabel CI success as local success.
-
-| Baseline Item | Source Inspection | Existing CI | Operator Local | Evidence or Missing Information |
-|---|---|---|---|---|
-|   |   |   |   |   |
-
-**Unresolved operator checks and review status:**
+**Overall disposition and review:**
 
 | Field | Value |
 |---|---|
-| 61. Overall Baseline Disposition |  |
-| 62. Reviewed By |  |
-| 63. Review Date |  |
-| 64. Next Action |  |
+| 60. Overall Baseline Disposition |  |
+| 61. Reviewed By |  |
+| 62. Review Date |  |
+| 63. Next Action |  |
 
-### 65. Deferred Checks
+### 64. Deferred Checks
 
 | Check | Reason Deferred | Revisit When |
 |---|---|---|

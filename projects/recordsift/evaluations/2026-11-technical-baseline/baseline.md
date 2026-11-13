@@ -518,14 +518,14 @@ Each distribution has its own record. NuGet package upload acceptance was previo
 | 57 | & .\scripts\verify_public_api.ps1 | GitHub Actions Windows checkout | PowerShell (version not logged) | net48 Release | Not recorded | Passed | https://github.com/infoconex/RecordSift/actions/runs/43146607664 |
 | 57 | & .\scripts\verify_clean_consumer.ps1 -CandidateDirectory $feed | GitHub Actions Windows checkout | PowerShell (version not logged) | Local candidate package | Not recorded | Passed | https://github.com/infoconex/RecordSift/actions/runs/43146607706 |
 
-| 20 | Get-CimInstance Win32_OperatingSystem | GitHub Actions research runner | PowerShell Core 7.6.10 | OS name/version/build/architecture | Not applicable | Passed | https://github.com/infoconex/RecordSift/actions/runs/43514868868/job/132194144480 |
+| 20 | Get-CimInstance Win32_OperatingSystem -ErrorAction Stop | GitHub Actions research runner | PowerShell Core 7.6.10 | OS name/version/build/architecture | Not applicable | Passed | https://github.com/infoconex/RecordSift/actions/runs/43514868868/job/132194144480 |
 | 24 | $PSVersionTable.PSVersion.ToString() | GitHub Actions research runner | PowerShell Core 7.6.10 | PowerShell version | Not applicable | Passed | https://github.com/infoconex/RecordSift/actions/runs/43514868868/job/132194144480 |
 | 25 | git --version | GitHub Actions research runner | Git 2.56.1.windows.1 | Git version | Not recorded | Passed | https://github.com/infoconex/RecordSift/actions/runs/43514868868/job/132194144480 |
 | 26 | & $dotnet.Source --list-sdks | GitHub Actions research runner | dotnet CLI | 12 SDK entries | Not recorded | Passed | https://github.com/infoconex/RecordSift/actions/runs/43514868868/job/132194144480 |
 | 27 | & $dotnet.Source --list-runtimes | GitHub Actions research runner | dotnet CLI | 29 .NET runtime entries | Not recorded | Passed | https://github.com/infoconex/RecordSift/actions/runs/43514868868/job/132194144480 |
 | 28 | & $msbuildPath -version -nologo | GitHub Actions research runner | MSBuild 17.14.60.43110 | MSBuild version | Not recorded | Passed | https://github.com/infoconex/RecordSift/actions/runs/43514868868/job/132194144480 |
 | 30 | & $nugetCommand.Source help | GitHub Actions research runner | NuGet 8.0.0.137 | NuGet CLI version | Not recorded | Passed | https://github.com/infoconex/RecordSift/actions/runs/43514868868/job/132194144480 |
-| 31 | Test-Path for v4.8 mscorlib.dll and RedistList/FrameworkList.xml | GitHub Actions research runner | PowerShell Core 7.6.10 | Targeting reference files | Not applicable | Passed | https://github.com/infoconex/RecordSift/actions/runs/43514868868/job/132194144480 |
+| 31 | Test-Path -LiteralPath $referenceAssembly -PathType Leaf; Test-Path -LiteralPath $frameworkList -PathType Leaf | GitHub Actions research runner | PowerShell Core 7.6.10 | Targeting reference files | Not applicable | Passed | https://github.com/infoconex/RecordSift/actions/runs/43514868868/job/132194144480 |
 
 ### 59. Findings and Gaps
 

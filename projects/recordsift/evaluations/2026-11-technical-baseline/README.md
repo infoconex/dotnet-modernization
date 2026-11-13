@@ -25,7 +25,7 @@
 
 - [RecordSift baseline](baseline.md) — a copy of the numbered [template](../../../../templates/application-baseline.md), partially populated from previously verified source information. Item 40 maps short, linked project names to authoritative repository-relative paths. Project-scoped inventories (items 41–44, 47–48) reuse these linked names without repeating project paths, with one row per project where unambiguous. Debug/Release and per-package values retain their individual scope. Enter new Windows results **only after** collecting them with the guide.
 - [Evidence manifest](evidence/manifest.md) — source links, exact-commit existing CI execution evidence, and command-review boundaries; future operator-run evidence is added only when collected.
-- [Step-by-step guide](../../../../methodology/technical-discovery-runbook.md) — all 65 numbered items in baseline order, with Windows command examples, table-column definitions and applicability/side-effect conditions.
+- [Step-by-step guide](../../../../methodology/technical-discovery-runbook.md) — all 64 numbered items in baseline order, with Windows command examples, table-column definitions and applicability/side-effect conditions.
 - [Article evidence map](../../../../articles/recordsift-technical-discovery-outline.md) — candidate narrative, not proof or publication-ready copy.
 
 ## Source inventory and existing exact-commit CI — 2026-11-12

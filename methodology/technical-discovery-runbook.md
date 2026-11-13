@@ -1,6 +1,6 @@
 # .NET Technical Discovery — Step-by-Step Guide
 
-Follow this guide alongside the [blank baseline template](../templates/application-baseline.md). All **62 existing numbered item identifiers are preserved** and the collection instructions remain in numeric order (1–65); no separate DISC phase numbering is required. The copied baseline **displays Discovery information first** as a document-level summary, followed by application information, even though discovery operator/start-date instructions retain their established item identifiers **16 and 17**. Record results in the application's copied baseline, not here.
+Follow this guide alongside the [blank baseline template](../templates/application-baseline.md). All **65 discovery items** are numbered in ascending order (1–65) throughout the baseline, template and runbook. Discovery information comes first, then application information and the remaining verification steps; no separate phase numbering is required. Record results in the application's copied baseline, not here.
 
 **Before recording item 1:** Replace `<Application Name>` in the copied baseline title with the actual application name. Immediately below it, replace `<Application description>` with a factual description of what the application does, its users/consumers, and core responsibilities; verify against the README, documentation and source. For RecordSift, the copy already has its name and description.
 
@@ -255,7 +255,7 @@ Record the exact branch or tag **chosen as the source**, for example `main`. Thi
 
 ### 35. Source Commit SHA
 
-Choose and record a **full immutable commit SHA** for the selected source ref (item 34) before cloning. Obtain it from the repository host or a read-only remote-ref query; confirm that the SHA belongs to the intended repository/ref. For RecordSift, the previously selected source SHA is `1809d06c0fade59e4769d16e0f8eaf10fa426004`. Keep item 35 **SHA only**. In the adjacent, unnumbered **Source Committer Date (UTC)** field, record the pinned commit's Git *committer date* in UTC ISO 8601 (`YYYY-MM-DDTHH:MM:SSZ`). Read it from the **same exact SHA** through GitHub's commit metadata (before cloning) or the read-only Git command below (after checkout); retain the same evidence in item 55's separate source-provenance table. This timestamp is **not** the discovery date (item 2), author date, clone/checkout time, GitHub push time or release publication time. A Git committer date does not reliably establish when the revision was first created or pushed.
+Choose and record a **full immutable commit SHA** for the selected source ref (item 34) before cloning. Obtain it from the repository host or a read-only remote-ref query; confirm that the SHA belongs to the intended repository/ref. For RecordSift, the previously selected source SHA is `1809d06c0fade59e4769d16e0f8eaf10fa426004`. Keep item 35 **SHA only**. In item 36, **Source Committer Date (UTC)**, record the pinned commit's Git *committer date* in UTC ISO 8601 (`YYYY-MM-DDTHH:MM:SSZ`). Read it from the **same exact SHA** through GitHub's commit metadata (before cloning) or the read-only Git command below (after checkout); retain the same evidence in item 55's separate source-provenance table. This timestamp is **not** the discovery date (item 2), author date, clone/checkout time, GitHub push time or release publication time. A Git committer date does not reliably establish when the revision was first created or pushed.
 
 With the unique destination prepared in item 33, use `git clone --no-checkout` and detach at that exact SHA. The selected SHA must be available in the new clone. Execute these commands **in the same PowerShell session** as item 33:
 
@@ -522,7 +522,7 @@ To inspect repository-configured sources with a compatible .NET SDK:
 dotnet nuget list source --configfile .\NuGet.Config
 ```
 
-The `--configfile` option requires .NET 6 SDK or later. When only NuGet CLI is present, `nuget sources List -ConfigFile NuGet.Config` is a comparable file-scoped check. These commands identify **configured sources**, not the actual source of an acquired package. Step 43 separately inventories the configuration hierarchy and potential inherited/disabled settings; do not call effective source selection verified without runtime evidence.
+The `--configfile` option requires .NET 6 SDK or later. When only NuGet CLI is present, `nuget sources List -ConfigFile NuGet.Config` is a comparable file-scoped check. These commands identify **configured sources**, not the actual source of an acquired package. Step 46 separately inventories the configuration hierarchy and potential inherited/disabled settings; do not call effective source selection verified without runtime evidence.
 
 **Illustrative RecordSift project summary (from pinned source, not a new restore):**
 
@@ -732,7 +732,7 @@ Use **one row per independently published distribution** (for example one NuGet.
 
 **Source revision provenance (one row per distinct source context)**
 
-1. **Frozen discovery source:** Item 33's full selected SHA and Git **committer timestamp** in UTC. Do not imply the operator performed a local checkout if only the remote source was inspected.
+1. **Frozen discovery source:** Item 35's full selected SHA and Git **committer timestamp** (item 36) in UTC. Do not imply the operator performed a local checkout if only the remote source was inspected.
 2. **Published release tag:** Resolve the tag's target **commit** (dereference annotated tags when needed); capture the full Git SHA and the target commit's UTC committer timestamp. Do not assume the release source matches frozen discovery source or current default branch.
 3. **Published package source:** Verify its source SHA from package-specific provenance, such as embedded metadata, an exact `SOURCE_COMMIT.txt` manifest/checksum or a public-feed consumer verification. If unsupported, record `Not verified` — never assume it equals the tag. Link the precise evidence, distinguishing an existing CI result from a new package download.
 

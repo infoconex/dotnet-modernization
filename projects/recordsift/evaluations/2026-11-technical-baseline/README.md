@@ -7,7 +7,7 @@
 **Discovery opened:** 2026-11-12  
 **Required evaluation host:** **Windows** (RecordSift is Windows-only; host version/build and architecture not yet verified)  
 **Runbook:** [Technical discovery](../../../../methodology/technical-discovery-runbook.md)  
-**Reusable template:** [Application baseline](../../../../templates/application-baseline.md)  
+**Reusable template:** [Full discovery report](../../../../templates/application-baseline.md)  
 **Verification approach:** User executes supported native commands one at a time; assistant records facts, limitations, results and article-relevant findings.
 
 ## Purpose and boundaries
@@ -24,8 +24,7 @@
 
 ## Working documents
 
-- [Execution log](execution-log.md) — authoritative **per-step** progress, operator commands and evidence status.
-- [Technical baseline](baseline.md) — observed repository facts and ultimately verified technical inventory; currently limited to source-inspected preflight.
+- [Discovery report](baseline.md) — the single record of actual tool versions, commands, collected findings, and results; currently limited to source-inspected preflight.
 - [Evidence manifest](evidence/manifest.md) — immutable GitHub source links now; local/CI outputs to be added **only when collected**.
 - [Reusable runbook](../../../../methodology/technical-discovery-runbook.md) — exact portable procedures and their applicability/side-effect conditions.
 - [Article evidence map](../../../../articles/recordsift-technical-discovery-outline.md) — candidate narrative, not proof or publication-ready copy.
@@ -42,4 +41,4 @@ This is not a claim that missing repository-wide files have no equivalents in pa
 
 **Research/implementation separation:** no change to RecordSift source, project files or its application main branch. This documentation remains on its own review PR until approved.
 
-**Next action:** operator first verifies a Windows host and required tools in **DISC-001**, then creates a dated, isolated `RecordSift-discovery` clone (recommended), checks out immutable commit `1809d06c0fade59e4769d16e0f8eaf10fa426004` in detached HEAD state, and captures native Git identity/status outputs. **No clone has yet been executed or verified.** The assistant then records the actual output and prepares **DISC-002**. The clean source checkout must not be confused with a clean host/toolchain or package-cache environment.
+**Next action:** operator follows **DISC-001** in the [step-by-step guide](../../../../methodology/technical-discovery-runbook.md): verify Windows/tool versions, then create a dated, clean RecordSift checkout at commit `1809d06c0fade59e4769d16e0f8eaf10fa426004`. **No local commands have been executed or verified.** The assistant fills in the [discovery report](baseline.md) from the actual output before moving to DISC-002.

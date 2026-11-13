@@ -244,7 +244,7 @@ Record the exact branch or tag **chosen as the source**, for example `main`. Thi
 
 ### 33. Source Commit SHA
 
-Choose and record a **full immutable commit SHA** for the selected source ref (item 32) before cloning. Obtain it from the repository host or a read-only remote-ref query; confirm that the SHA belongs to the intended repository/ref. For RecordSift, the previously selected source SHA is `1809d06c0fade59e4769d16e0f8eaf10fa426004`. Keep this field **SHA only**; capture the commit's UTC committer timestamp in item 52's separate source-provenance table (not appended to the SHA).
+Choose and record a **full immutable commit SHA** for the selected source ref (item 32) before cloning. Obtain it from the repository host or a read-only remote-ref query; confirm that the SHA belongs to the intended repository/ref. For RecordSift, the previously selected source SHA is `1809d06c0fade59e4769d16e0f8eaf10fa426004`. Keep item 33 **SHA only**. In the adjacent, unnumbered **Source Committer Date (UTC)** field, record the pinned commit's Git *committer date* in UTC ISO 8601 (`YYYY-MM-DDTHH:MM:SSZ`). Read it from the **same exact SHA** through GitHub's commit metadata (before cloning) or the read-only Git command below (after checkout); retain the same evidence in item 52's separate source-provenance table. This timestamp is **not** the discovery date (item 17), author date, clone/checkout time, GitHub push time or release publication time. A Git committer date does not reliably establish when the revision was first created or pushed.
 
 With the unique destination prepared in item 31, use `git clone --no-checkout` and detach at that exact SHA. The selected SHA must be available in the new clone. Execute these commands **in the same PowerShell session** as item 31:
 
@@ -260,9 +260,15 @@ $actualCommit = (git rev-parse HEAD).Trim()
 if ($LASTEXITCODE -ne 0 -or $actualCommit -ne $selectedCommit) { throw 'Checked-out SHA does not match the selected commit.' }
 $actualCommit
 git remote get-url origin
+
+# Read the Git committer timestamp for the exact checked-out SHA.
+$rawCommitterDate = (git show -s --format='%cI' HEAD).Trim()
+if ($LASTEXITCODE -ne 0 -or [string]::IsNullOrWhiteSpace($rawCommitterDate)) { throw 'Failed to read selected commit date.' }
+$sourceCommitterDateUtc = [DateTimeOffset]::Parse($rawCommitterDate).ToUniversalTime().ToString("yyyy-MM-ddTHH:mm:ss'Z'")
+$sourceCommitterDateUtc
 ```
 
-**Safety gate:** Cloning creates a new folder and uses network access, but never modifies an existing checkout. On any failure, stop and inspect the partial destination without deleting or resetting it automatically. A successful detached checkout intentionally leaves item 35 = `True`.
+**Safety gate:** Cloning creates a new folder and uses network access, but never modifies an existing checkout. On any failure, stop and inspect the partial destination without deleting or resetting it automatically. A successful detached checkout intentionally leaves item 35 = `True`. The read-only `git show` reports **commit metadata**, not the time the checkout happened; compare its SHA to the pinned source. If item 33 was populated from remote Git metadata before checkout, the UTC committer date may be recorded even while items 34–35 remain `Not checked`.
 
 ### 34. Working Tree Clean
 

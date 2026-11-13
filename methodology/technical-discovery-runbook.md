@@ -191,19 +191,20 @@ nuget help
 
 ### 29. .NET Framework Targeting Pack Inventory
 
-For traditional .NET Framework projects, check the applicable **reference assemblies / targeting pack**, not merely the presence of a runtime. For RecordSift inspect the .NET Framework 4.8 reference assemblies directory with the command below. Use the output path shown by the command as the `Location` in the table. Add one row for each framework checked, with exact bool and checked path. If missing, see the [.NET Framework Developer Pack](https://dotnet.microsoft.com/en-us/download/dotnet-framework/net48).
+For traditional .NET Framework projects, check the applicable **reference assemblies / targeting pack**, not merely the presence of a runtime. For RecordSift check that the .NET Framework 4.8 reference assembly `mscorlib.dll` is present, rather than checking for an empty directory. Use the printed pack path as the table `Location` and the file-check result as `Installed`. Add one row per framework actually checked. If missing, see the [.NET Framework Developer Pack](https://dotnet.microsoft.com/en-us/download/dotnet-framework/net48).
 
 ```powershell
 $pack = Join-Path $env:ProgramFiles 'Reference Assemblies\Microsoft\Framework\.NETFramework\v4.8'
 if (${env:ProgramFiles(x86)}) { $pack = Join-Path ${env:ProgramFiles(x86)} 'Reference Assemblies\Microsoft\Framework\.NETFramework\v4.8' }
 $pack
-Test-Path -LiteralPath $pack
+$referenceAssembly = Join-Path $pack 'mscorlib.dll'
+Test-Path -LiteralPath $referenceAssembly
 ```
 
 **How to populate each column (left to right):**
 
 - **Framework Version:** The framework and version being checked.
-- **Installed:** True or False based on an actual installation check.
+- **Installed:** True or False based on the reference-assembly file check; this does not verify a working compiler or build.
 - **Location:** The exact path checked.
 
 ### 30. Test Runner Inventory
@@ -220,7 +221,9 @@ Identify the actual test runner from test project manifests or CI definitions, t
 
 ### 31. Discovery Folder
 
-Choose an existing **parent directory** under which discovery checkouts can be created. Form a timestamped destination with `discovery` in its name, confirm it does not exist, then perform a clean `git clone --no-checkout`. Use the commands below as individual PowerShell invocations. This must not clean or delete an existing repository.
+Choose an existing **parent directory** for the isolated discovery checkout and prepare a unique timestamped destination. Do **not** clone yet: select the source branch/tag (item 32) and pin its immutable commit SHA (item 33) **before** downloading or checking out source.
+
+Run the following in a Windows PowerShell session that you will continue using for item 33:
 
 ```powershell
 $repository = 'RecordSift'
@@ -229,15 +232,11 @@ $discoveryRoot = Join-Path (Join-Path $HOME 'source') 'discoveries'
 New-Item -ItemType Directory -Path $discoveryRoot -Force | Out-Null
 $discoveryFolder = "${repository}-discovery-$(Get-Date -Format 'yyyy-MM-dd-HHmmss')"
 $destination = Join-Path $discoveryRoot $discoveryFolder
-$alreadyExists = Test-Path -LiteralPath $destination
-$alreadyExists
-if ($alreadyExists) { throw 'Discovery destination already exists; generate a new timestamp and stop.' }
-git clone --no-checkout $remoteUrl $destination
-if ($LASTEXITCODE -ne 0) { throw 'Git clone failed. Stop before proceeding.' }
-Set-Location -LiteralPath $destination
+if (Test-Path -LiteralPath $destination) { throw 'Discovery destination already exists; generate a new timestamp and stop.' }
+$destination
 ```
 
-**Safety gate:** The command now **throws before cloning** if the destination exists. Generate a different timestamp rather than cleaning/deleting an existing folder. This clone creates files and requires network access. On failure, stop before items 33–35.
+**Safety gate:** This creates only the parent folder. It does not overwrite, delete, reset or clone an existing repository. Record the destination in item 31; if it exists, choose a new unused name. Keep `$remoteUrl` and `$destination` in the same PowerShell session for item 33.
 
 ### 32. Selected Source Branch or Tag
 
@@ -245,10 +244,16 @@ Record the exact branch or tag **chosen as the source**, for example `main`. Thi
 
 ### 33. Source Commit SHA
 
-Choose and record a **full immutable commit SHA** before checking out source. For RecordSift, the previously selected source SHA is `1809d06c0fade59e4769d16e0f8eaf10fa426004`. After the clean clone from item 31, use the commands below to detach at and verify that SHA. Never substitute a moving branch tip silently.
+Choose and record a **full immutable commit SHA** for the selected source ref (item 32) before cloning. Obtain it from the repository host or a read-only remote-ref query; confirm that the SHA belongs to the intended repository/ref. For RecordSift, the previously selected source SHA is `1809d06c0fade59e4769d16e0f8eaf10fa426004`.
+
+With the unique destination prepared in item 31, use `git clone --no-checkout` and detach at that exact SHA. The selected SHA must be available in the new clone. Execute these commands **in the same PowerShell session** as item 31:
 
 ```powershell
 $selectedCommit = '1809d06c0fade59e4769d16e0f8eaf10fa426004'
+if (Test-Path -LiteralPath $destination) { throw 'Discovery destination already exists; refuse to clone over it.' }
+git clone --no-checkout $remoteUrl $destination
+if ($LASTEXITCODE -ne 0) { throw 'Git clone failed. Stop before proceeding.' }
+Set-Location -LiteralPath $destination
 git switch --detach $selectedCommit
 if ($LASTEXITCODE -ne 0) { throw 'Commit checkout failed. Stop before proceeding.' }
 $actualCommit = (git rev-parse HEAD).Trim()
@@ -257,7 +262,7 @@ $actualCommit
 git remote get-url origin
 ```
 
-The commit must be present in the new clone. The explicit SHA comparison above must succeed before continuing. If this command fails, do not continue pretending checkout was successful. A detached checkout intentionally leaves item 35 = `True`.
+**Safety gate:** Cloning creates a new folder and uses network access, but never modifies an existing checkout. On any failure, stop and inspect the partial destination without deleting or resetting it automatically. A successful detached checkout intentionally leaves item 35 = `True`.
 
 ### 34. Working Tree Clean
 
@@ -373,10 +378,10 @@ Inspect project-wide properties (`IsTestProject`, `FileAlignment`, `AppDesignerF
 
 ### 41. Evaluated MSBuild Properties
 
-Read declared properties first. When compatible **MSBuild 17.8 or later** is available, query evaluated properties with `-getProperty` using explicit configuration and framework. Multiple property names may be comma-separated in a single switch ([Microsoft documentation](https://learn.microsoft.com/en-us/visualstudio/msbuild/evaluate-items-and-properties)). Record only actual MSBuild output under `Evaluated Value`; leave as Not checked if the operator hasn't executed it. A successful CI build alone doesn't establish this inventory.
+Read declared properties first. When compatible **MSBuild 17.8 or later** is available, query evaluated properties with `-getProperty` using explicit configuration and platform (plus target framework where multi-targeting applies). Multiple property names may be comma-separated in a single switch ([Microsoft documentation](https://learn.microsoft.com/en-us/visualstudio/msbuild/evaluate-items-and-properties)). Record only actual MSBuild output under `Evaluated Value`; leave as Not checked if the operator hasn't executed it. A successful CI build alone doesn't establish this inventory.
 
 ```powershell
-msbuild .\src\RecordSift.Domain\RecordSift.Domain.csproj -getProperty:TargetFrameworkVersion,LangVersion -p:Configuration=Release
+msbuild .\src\RecordSift.Domain\RecordSift.Domain.csproj -getProperty:TargetFrameworkVersion,LangVersion -p:Configuration=Release -p:Platform=AnyCPU
 ```
 
 The property-query option depends on MSBuild version. On older installations, record `Not checked` and note the incompatibility, rather than calling source XML an evaluated property. Do not build just to satisfy this query.

@@ -36,10 +36,25 @@
 
 ### 19. Consumers and Entry Points
 
-| Consumer or Entry Point | Type | Source or Evidence |
+Separate **known consuming applications or systems** from the **public operations intended to be invoked directly by a consumer**. Use one row per verified consumer or distinct direct-call operation; cite source or usage evidence rather than inferring behavior from visibility or naming.
+
+**A. Known Consumers**
+
+| Consumer | Type | Evidence |
 |---|---|---|
 |   |   |   |
 
+**External production consumers:** 
+
+Use `Not identified` if none can be established from the inspected evidence; do not invent integrations or treat tests, samples and CI tools as deployed production applications.
+
+**B. Public Entry Points**
+
+| Entry Point | Purpose | Evidence |
+|---|---|---|
+|   |   |   |
+
+Only include entry points that are **documented or demonstrated as direct consumer operations** (for example, a caller-invoked API method, executable command, HTTP endpoint or message handler). Do not include every public class or method, internal implementation detail, or callbacks merely passed to another API. An empty catalog is preferable to a speculative one.
 
 ## Discovery host and prerequisite tools
 

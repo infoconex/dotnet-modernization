@@ -20,7 +20,7 @@ Record the discovery start date (`YYYY-MM-DD`). Do not confuse it with a commit 
 
 ### 3. Discovery Status
 
-Use `Not started`, `In progress`, `Blocked`, `Completed`, or `Completed with gaps`, based on actual work. For RecordSift, the operator has now verified a ten-project Release build and five NUnit standard suites with SDK-provided MSBuild (EV-081); discovery completion still depends on the agreed scope and acceptance of remaining gaps. A completed CI run is not an operator-local check.
+Use `Not started`, `In progress`, `Blocked`, `Completed`, or `Completed with gaps`, based on actual work. For RecordSift, the operator verified a ten-project Release build and five NUnit standard suites with SDK-provided MSBuild (EV-081), independently confirmed the frozen checkout remained clean and detached (EV-082), and explicitly accepted the remaining three deferrals (EV-083). The baseline is therefore `Completed with gaps` as of 2026-11-13 (operator-local date). A completed CI run is not an operator-local check.
 
 ### 4. Discovery Completed Date
 

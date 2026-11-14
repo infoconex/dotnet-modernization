@@ -273,3 +273,93 @@ The following original item-58 table and local execution note were moved here fo
 
 | 49 | Get-Content -LiteralPath .\.github\workflows\windows-net48.yml &#124; Select-Object -Skip 79 -First 74 | Operator PowerShell session (`$HOME\source\discoveries\RecordSift-discovery-2026-11-13-145400`); independently compared with frozen GitHub workflow | PowerShell 7.7.0 (EV-018) | Direct NUnit ConsoleRunner, assembly isolation, unfiltered/targeted branch and acceptance gate declarations in workflow lines 80–153 | Not recorded separately | Five Release NUnit assemblies; standard CI five separate outputs and min 121/62/122/49/33 (aggregate >=387, zero failures); filtered CI one NUnit3 result, >=1 selected and zero failures; no local run | EV-061; operator PowerShell transcript, 2026-11-13; pinned workflow source |
 
+
+## Repository configuration — original item 46 inventory
+
+This is the complete property-level item 46 inventory before the concise, per-file presentation was introduced. It preserves the original setting names, values, scopes, and declared/observed distinctions. The [current baseline](../baseline.md#46-repository-configuration) is the readable summary; the frozen source files remain authoritative.
+
+### Preserved original configuration inventory
+
+Repository-declared configuration; effective user/machine NuGet configuration remains outside the inspected source.
+
+| File or Mechanism | Present | Scope | Setting Name | Setting Value | Import or Precedence |
+|---|---|---|---|---|---|
+| NuGet.Config | True | Repository | packageSources.clear | True | Clears previously inherited package source entries in this collection |
+| NuGet.Config | True | Repository | packageSources.nuget.org | https://api.nuget.org/v3/index.json | Declared package source following clear |
+| `dotnet nuget list source --configfile .\NuGet.Config` | True | Explicit repository-file query | packageSources.nuget.org.enabled | True | One enabled package source returned; not a restore or effective inherited-config query |
+| NuGet.Config | True | Repository | auditSources.clear | True | Clears previously inherited audit source entries in this collection |
+| NuGet.Config | True | Repository | auditSources.nuget.org-audit | https://api.nuget.org/v3/index.json | Declared audit source following clear |
+| .editorconfig | True | Repository | `root` | `true` | `Root (unscoped)` |
+| .editorconfig | True | Repository | `charset` | `utf-8` | `[*]` |
+| .editorconfig | True | Repository | `end_of_line` | `lf` | `[*]` |
+| .editorconfig | True | Repository | `indent_style` | `space` | `[*]` |
+| .editorconfig | True | Repository | `insert_final_newline` | `true` | `[*]` |
+| .editorconfig | True | Repository | `trim_trailing_whitespace` | `true` | `[*]` |
+| .editorconfig | True | Repository | `indent_size` | `4` | `[*.{cs,csx}]` |
+| .editorconfig | True | Repository | `dotnet_sort_system_directives_first` | `true` | `[*.{cs,csx}]` |
+| .editorconfig | True | Repository | `dotnet_separate_import_directive_groups` | `false` | `[*.{cs,csx}]` |
+| .editorconfig | True | Repository | `dotnet_style_qualification_for_field` | `false:suggestion` | `[*.{cs,csx}]` |
+| .editorconfig | True | Repository | `dotnet_style_qualification_for_property` | `false:suggestion` | `[*.{cs,csx}]` |
+| .editorconfig | True | Repository | `dotnet_style_qualification_for_method` | `false:suggestion` | `[*.{cs,csx}]` |
+| .editorconfig | True | Repository | `dotnet_style_qualification_for_event` | `false:suggestion` | `[*.{cs,csx}]` |
+| .editorconfig | True | Repository | `dotnet_style_predefined_type_for_locals_parameters_members` | `true:suggestion` | `[*.{cs,csx}]` |
+| .editorconfig | True | Repository | `dotnet_style_predefined_type_for_member_access` | `true:suggestion` | `[*.{cs,csx}]` |
+| .editorconfig | True | Repository | `csharp_style_var_for_built_in_types` | `false:suggestion` | `[*.{cs,csx}]` |
+| .editorconfig | True | Repository | `csharp_style_var_when_type_is_apparent` | `true:suggestion` | `[*.{cs,csx}]` |
+| .editorconfig | True | Repository | `csharp_style_var_elsewhere` | `false:suggestion` | `[*.{cs,csx}]` |
+| .editorconfig | True | Repository | `csharp_style_namespace_declarations` | `block_scoped:suggestion` | `[*.{cs,csx}]` |
+| .editorconfig | True | Repository | `csharp_prefer_braces` | `true:suggestion` | `[*.{cs,csx}]` |
+| .editorconfig | True | Repository | `dotnet_diagnostic.IDE1006.severity` | `error` | `[*.{cs,csx}]` |
+| .editorconfig | True | Repository | `dotnet_naming_rule.constants_pascal.severity` | `error` | `[*.{cs,csx}]` |
+| .editorconfig | True | Repository | `dotnet_naming_rule.constants_pascal.symbols` | `constants` | `[*.{cs,csx}]` |
+| .editorconfig | True | Repository | `dotnet_naming_rule.constants_pascal.style` | `pascal_case` | `[*.{cs,csx}]` |
+| .editorconfig | True | Repository | `dotnet_naming_symbols.constants.applicable_kinds` | `field, local` | `[*.{cs,csx}]` |
+| .editorconfig | True | Repository | `dotnet_naming_symbols.constants.required_modifiers` | `const` | `[*.{cs,csx}]` |
+| .editorconfig | True | Repository | `dotnet_naming_style.pascal_case.capitalization` | `pascal_case` | `[*.{cs,csx}]` |
+| .editorconfig | True | Repository | `dotnet_naming_rule.private_constants_pascal.severity` | `error` | `[*.{cs,csx}]` |
+| .editorconfig | True | Repository | `dotnet_naming_rule.private_constants_pascal.symbols` | `private_constants` | `[*.{cs,csx}]` |
+| .editorconfig | True | Repository | `dotnet_naming_rule.private_constants_pascal.style` | `pascal_case` | `[*.{cs,csx}]` |
+| .editorconfig | True | Repository | `dotnet_naming_symbols.private_constants.applicable_kinds` | `field` | `[*.{cs,csx}]` |
+| .editorconfig | True | Repository | `dotnet_naming_symbols.private_constants.applicable_accessibilities` | `private` | `[*.{cs,csx}]` |
+| .editorconfig | True | Repository | `dotnet_naming_symbols.private_constants.required_modifiers` | `const` | `[*.{cs,csx}]` |
+| .editorconfig | True | Repository | `dotnet_naming_rule.interfaces_use_i.severity` | `error` | `[*.{cs,csx}]` |
+| .editorconfig | True | Repository | `dotnet_naming_rule.interfaces_use_i.symbols` | `interfaces` | `[*.{cs,csx}]` |
+| .editorconfig | True | Repository | `dotnet_naming_rule.interfaces_use_i.style` | `prefixed_pascal` | `[*.{cs,csx}]` |
+| .editorconfig | True | Repository | `dotnet_naming_symbols.interfaces.applicable_kinds` | `interface` | `[*.{cs,csx}]` |
+| .editorconfig | True | Repository | `dotnet_naming_style.prefixed_pascal.required_prefix` | `I` | `[*.{cs,csx}]` |
+| .editorconfig | True | Repository | `dotnet_naming_style.prefixed_pascal.capitalization` | `pascal_case` | `[*.{cs,csx}]` |
+| .editorconfig | True | Repository | `dotnet_naming_rule.locals_and_parameters_camel.severity` | `error` | `[*.{cs,csx}]` |
+| .editorconfig | True | Repository | `dotnet_naming_rule.locals_and_parameters_camel.symbols` | `locals_and_parameters` | `[*.{cs,csx}]` |
+| .editorconfig | True | Repository | `dotnet_naming_rule.locals_and_parameters_camel.style` | `camel_case` | `[*.{cs,csx}]` |
+| .editorconfig | True | Repository | `dotnet_naming_symbols.locals_and_parameters.applicable_kinds` | `local, parameter` | `[*.{cs,csx}]` |
+| .editorconfig | True | Repository | `dotnet_naming_style.camel_case.capitalization` | `camel_case` | `[*.{cs,csx}]` |
+| .editorconfig | True | Repository | `dotnet_naming_rule.types_and_members_pascal.severity` | `error` | `[src/**/*.cs]` |
+| .editorconfig | True | Repository | `dotnet_naming_rule.types_and_members_pascal.symbols` | `types_and_members` | `[src/**/*.cs]` |
+| .editorconfig | True | Repository | `dotnet_naming_rule.types_and_members_pascal.style` | `pascal_case` | `[src/**/*.cs]` |
+| .editorconfig | True | Repository | `dotnet_naming_symbols.types_and_members.applicable_kinds` | `class, struct, enum, delegate, method, property, event` | `[src/**/*.cs]` |
+| .editorconfig | True | Repository | `dotnet_naming_style.pascal_case.capitalization` | `pascal_case` | `[src/**/*.cs]` |
+| .editorconfig | True | Repository | `dotnet_naming_rule.instance_fields_underscore.severity` | `error` | `[src/**/*.cs]` |
+| .editorconfig | True | Repository | `dotnet_naming_rule.instance_fields_underscore.symbols` | `private_fields` | `[src/**/*.cs]` |
+| .editorconfig | True | Repository | `dotnet_naming_rule.instance_fields_underscore.style` | `underscore_camel` | `[src/**/*.cs]` |
+| .editorconfig | True | Repository | `dotnet_naming_symbols.private_fields.applicable_kinds` | `field` | `[src/**/*.cs]` |
+| .editorconfig | True | Repository | `dotnet_naming_symbols.private_fields.applicable_accessibilities` | `private` | `[src/**/*.cs]` |
+| .editorconfig | True | Repository | `dotnet_naming_style.underscore_camel.capitalization` | `camel_case` | `[src/**/*.cs]` |
+| .editorconfig | True | Repository | `dotnet_naming_style.underscore_camel.required_prefix` | `_` | `[src/**/*.cs]` |
+| .editorconfig | True | Repository | `dotnet_naming_rule.static_fields_s_prefix.severity` | `error` | `[src/**/*.cs]` |
+| .editorconfig | True | Repository | `dotnet_naming_rule.static_fields_s_prefix.symbols` | `private_static_fields` | `[src/**/*.cs]` |
+| .editorconfig | True | Repository | `dotnet_naming_rule.static_fields_s_prefix.style` | `s_camel` | `[src/**/*.cs]` |
+| .editorconfig | True | Repository | `dotnet_naming_symbols.private_static_fields.applicable_kinds` | `field` | `[src/**/*.cs]` |
+| .editorconfig | True | Repository | `dotnet_naming_symbols.private_static_fields.applicable_accessibilities` | `private` | `[src/**/*.cs]` |
+| .editorconfig | True | Repository | `dotnet_naming_symbols.private_static_fields.required_modifiers` | `static` | `[src/**/*.cs]` |
+| .editorconfig | True | Repository | `dotnet_naming_style.s_camel.capitalization` | `camel_case` | `[src/**/*.cs]` |
+| .editorconfig | True | Repository | `dotnet_naming_style.s_camel.required_prefix` | `s_` | `[src/**/*.cs]` |
+| .editorconfig | True | Repository | `indent_size` | `2` | `[*.{csproj,props,targets,config,xml}]` |
+| .editorconfig | True | Repository | `trim_trailing_whitespace` | `false` | `[*.md]` |
+| .gitignore | True | Repository | File present | True | Git ignore rules |
+| AGENTS.md | True | Repository | File present | True | Repository instructions |
+| .github/copilot-instructions.md | True | Repository | File present | True | GitHub AI instructions |
+| Directory.Build.props | False | Tracked repository | Not applicable | Not applicable | Not evaluated |
+| Directory.Build.targets | False | Tracked repository | Not applicable | Not applicable | Not evaluated |
+| Directory.Packages.props | False | Tracked repository | Not applicable | Not applicable | Not evaluated |
+| global.json | False | Tracked repository | Not applicable | Not applicable | Not evaluated |
+

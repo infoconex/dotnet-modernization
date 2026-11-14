@@ -1,0 +1,38 @@
+# RecordSift — Native-first technical baseline discovery
+
+**Status:** Completed with gaps (2026-11-13, operator-local date; EV-083). The frozen RecordSift source (`1809d06c0fade59e4769d16e0f8eaf10fa426004`) has been inspected and existing exact-commit GitHub Actions evidence reviewed. Operator-local Windows discovery, a clean detached checkout, a complete ten-project SDK-only Release build, and all five standard NUnit suites are verified (EV-017–081): **419 discovered, 418 passed, 0 failed, 1 explicit skip**. This used cached NuGet packages and the net48 reference-assemblies package without Visual Studio or machine-wide Developer Pack installation. The remaining scope decisions are documented in [items 59–60](baseline.md); no operator-local NuGet restore, independent clean-host reproducibility, or exact CI/local MSBuild parity is claimed. The operator explicitly accepted the three remaining deferrals; discovery is complete within the documented scope (EV-083).
+
+## Purpose and boundaries
+
+**Objective:** validate that a portable, documented discovery method can produce a traceable technical baseline using RecordSift as the worked example. This is **not** a new modernization assessment or application implementation.
+
+**Platform boundary:** perform RecordSift operator-run discovery on Windows. Begin with discovery information (items 1–4) and application information (items 5–19), followed by Windows toolchain preflight (items 20–32). Do not substitute Linux, macOS or WSL as equivalent verification. Cross-platform exploration would be a separate explicitly scoped assessment.
+
+**Proposed scope for owner-led manual execution:** source identity; solution/project and MSBuild configuration; central settings; NuGet dependencies; toolchain inventory; existing build/test entry points; approved manual restore/build/test verification; CI, runtime, package, and compatibility evidence; synthesis of a dated baseline.
+
+**Authorized preparation:** documentation drafting and read-only inspection of publicly available repository contents. The user requested a hands-on, native-command-first walkthrough and will operate local commands. **Before state-changing execution** (restore/build/test, CI triggers, package operations), confirm the specific environment, side effects and current step with the operator. No application edit, release, deployment, branch merge or publication is authorized by this document. The separately approved read-only research workflow is limited to CI environment inspection; it does not authorize restore, build or test execution on the operator's machine.
+
+**New CI-only host evidence:** A [2026-11-13 Windows research inventory](https://github.com/infoconex/RecordSift/actions/runs/43514868868) at the selected immutable application SHA inspected the runner's OS, PowerShell, Git, complete .NET SDK/runtime listings, MSBuild, NuGet CLI and .NET Framework 4.8 targeting reference files. Item 20–31 values and EV-016 in the evidence manifest are **CI observations**, not operator-local verification. The isolated research workflow remains in an unmerged draft PR; its results are CI evidence only. The overall discovery was subsequently completed with accepted gaps (EV-083).
+
+**Existing evidence:** The [2026-11 pre-SDK evaluation](../2026-11-pre-sdk/README.md) covers an earlier immutable RecordSift commit and a different modernization question. It may guide discovery, but old test/build outcomes cannot be relabeled as results from this frozen source revision.
+
+## Working documents
+
+- [RecordSift baseline](baseline.md) — a copy of the numbered [template](../../../../templates/application-baseline.md), populated from verified source inspection, historical CI, and separately identified operator-local evidence. Item 40 maps short, linked project names to authoritative repository-relative paths. Project-scoped inventories (items 41–44, 47–48) reuse these linked names without repeating project paths, with one row per project where unambiguous. Debug/Release and per-package values retain their individual scope. Record additional Windows results **only after** collecting them with the guide.
+- [Evidence manifest](evidence/manifest.md) — source links, exact-commit existing CI execution evidence, and command-review boundaries; operator-run evidence recorded only when collected.
+- [Step-by-step guide](../../../../methodology/technical-discovery-runbook.md) — all 60 numbered items in baseline order, with Windows command examples, table-column definitions and applicability/side-effect conditions.
+- [Article evidence map](../../../../articles/recordsift-technical-discovery-outline.md) — candidate narrative, not proof or publication-ready copy.
+
+## Source inventory and existing exact-commit CI — 2026-11-12
+
+The application repository's `main` HEAD was inspected through GitHub at the frozen SHA. The tracked tree contains `RecordSift.sln`, **ten project files** (five under `src/` and five under `tests/`), a root `NuGet.Config`, root `.editorconfig`, seven tracked `packages.config` files, and eight `.github/workflows/` definitions. The inventory is source-inspected, not the result of a local checkout. Separately, three existing GitHub Actions runs succeeded **at the same selected SHA**: [Windows build/test 43146607664](https://github.com/infoconex/RecordSift/actions/runs/43146607664), [Windows package-consumer 43146607706](https://github.com/infoconex/RecordSift/actions/runs/43146607706), and [documentation checks 43146607615](https://github.com/infoconex/RecordSift/actions/runs/43146607615). The build/test run recorded **419 discovered / 418 passed / 0 failed / 1 skipped** across five NUnit assemblies. The three existing checks are recorded as CI evidence; none establishes the operator's local Windows checkout, prerequisites or a new manual execution. A **separate research-only** [MSBuild property-evaluation run](https://github.com/infoconex/RecordSift/actions/runs/43501555831) explicitly checked out the same frozen source SHA, evaluated **18 properties across 10 projects in both Debug and Release (20 successful scopes)**, and retained a JSON evidence artifact. That workflow lives in [draft RecordSift PR #273](https://github.com/infoconex/RecordSift/pull/273) and remains unmerged. It does not establish operator-local tool settings or actual compiler command switches. The populated [baseline](baseline.md) retains these distinctions, and [EV-001–063](evidence/manifest.md) trace the sources.
+
+This is not a claim that missing repository-wide files have no equivalents in parent directories, user-level configuration, installed tools or SDK defaults.
+
+## Approval and progress
+
+**Stakeholder instruction (2026-11-12):** develop detailed reusable discovery documentation; operator manually executes native SDK, NuGet, MSBuild and other commands; capture artifacts and write a worked article as evidence accumulates; consider reporting scripts only after understanding manual outputs.
+
+**Research/implementation separation:** no change to RecordSift source, project files or its application main branch. This documentation remains on its own review PR until approved.
+
+**Current evidence boundary:** The source snapshot, historical CI checks, local SDK-only build and local NUnit execution are independently distinguished in the baseline and EV-001–EV-083 manifest. Do not reclassify cached-package staging as a fresh NuGet restore or infer that local execution covered CI-only quality gates. The frozen checkout's clean/detached state was independently reverified in EV-082; the three remaining deferred checks were explicitly accepted in EV-083. No further local operator commands are required for this discovery.

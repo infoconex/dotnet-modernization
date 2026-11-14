@@ -294,88 +294,52 @@ Tracked repository directory inventory; counts reflect the frozen source.
 
 ### 46. Repository Configuration
 
-Repository-declared configuration; effective user/machine NuGet configuration remains outside the inspected source.
+Repository-scoped configuration at the frozen revision. Each existing file links to its immutable source. Absent files mean **not tracked in the inspected repository**, not necessarily absent from parent directories or build environments.
 
-| File or Mechanism | Present | Scope | Setting Name | Setting Value | Import or Precedence |
-|---|---|---|---|---|---|
-| NuGet.Config | True | Repository | packageSources.clear | True | Clears previously inherited package source entries in this collection |
-| NuGet.Config | True | Repository | packageSources.nuget.org | https://api.nuget.org/v3/index.json | Declared package source following clear |
-| `dotnet nuget list source --configfile .\NuGet.Config` | True | Explicit repository-file query | packageSources.nuget.org.enabled | True | One enabled package source returned; not a restore or effective inherited-config query |
-| NuGet.Config | True | Repository | auditSources.clear | True | Clears previously inherited audit source entries in this collection |
-| NuGet.Config | True | Repository | auditSources.nuget.org-audit | https://api.nuget.org/v3/index.json | Declared audit source following clear |
-| .editorconfig | True | Repository | `root` | `true` | `Root (unscoped)` |
-| .editorconfig | True | Repository | `charset` | `utf-8` | `[*]` |
-| .editorconfig | True | Repository | `end_of_line` | `lf` | `[*]` |
-| .editorconfig | True | Repository | `indent_style` | `space` | `[*]` |
-| .editorconfig | True | Repository | `insert_final_newline` | `true` | `[*]` |
-| .editorconfig | True | Repository | `trim_trailing_whitespace` | `true` | `[*]` |
-| .editorconfig | True | Repository | `indent_size` | `4` | `[*.{cs,csx}]` |
-| .editorconfig | True | Repository | `dotnet_sort_system_directives_first` | `true` | `[*.{cs,csx}]` |
-| .editorconfig | True | Repository | `dotnet_separate_import_directive_groups` | `false` | `[*.{cs,csx}]` |
-| .editorconfig | True | Repository | `dotnet_style_qualification_for_field` | `false:suggestion` | `[*.{cs,csx}]` |
-| .editorconfig | True | Repository | `dotnet_style_qualification_for_property` | `false:suggestion` | `[*.{cs,csx}]` |
-| .editorconfig | True | Repository | `dotnet_style_qualification_for_method` | `false:suggestion` | `[*.{cs,csx}]` |
-| .editorconfig | True | Repository | `dotnet_style_qualification_for_event` | `false:suggestion` | `[*.{cs,csx}]` |
-| .editorconfig | True | Repository | `dotnet_style_predefined_type_for_locals_parameters_members` | `true:suggestion` | `[*.{cs,csx}]` |
-| .editorconfig | True | Repository | `dotnet_style_predefined_type_for_member_access` | `true:suggestion` | `[*.{cs,csx}]` |
-| .editorconfig | True | Repository | `csharp_style_var_for_built_in_types` | `false:suggestion` | `[*.{cs,csx}]` |
-| .editorconfig | True | Repository | `csharp_style_var_when_type_is_apparent` | `true:suggestion` | `[*.{cs,csx}]` |
-| .editorconfig | True | Repository | `csharp_style_var_elsewhere` | `false:suggestion` | `[*.{cs,csx}]` |
-| .editorconfig | True | Repository | `csharp_style_namespace_declarations` | `block_scoped:suggestion` | `[*.{cs,csx}]` |
-| .editorconfig | True | Repository | `csharp_prefer_braces` | `true:suggestion` | `[*.{cs,csx}]` |
-| .editorconfig | True | Repository | `dotnet_diagnostic.IDE1006.severity` | `error` | `[*.{cs,csx}]` |
-| .editorconfig | True | Repository | `dotnet_naming_rule.constants_pascal.severity` | `error` | `[*.{cs,csx}]` |
-| .editorconfig | True | Repository | `dotnet_naming_rule.constants_pascal.symbols` | `constants` | `[*.{cs,csx}]` |
-| .editorconfig | True | Repository | `dotnet_naming_rule.constants_pascal.style` | `pascal_case` | `[*.{cs,csx}]` |
-| .editorconfig | True | Repository | `dotnet_naming_symbols.constants.applicable_kinds` | `field, local` | `[*.{cs,csx}]` |
-| .editorconfig | True | Repository | `dotnet_naming_symbols.constants.required_modifiers` | `const` | `[*.{cs,csx}]` |
-| .editorconfig | True | Repository | `dotnet_naming_style.pascal_case.capitalization` | `pascal_case` | `[*.{cs,csx}]` |
-| .editorconfig | True | Repository | `dotnet_naming_rule.private_constants_pascal.severity` | `error` | `[*.{cs,csx}]` |
-| .editorconfig | True | Repository | `dotnet_naming_rule.private_constants_pascal.symbols` | `private_constants` | `[*.{cs,csx}]` |
-| .editorconfig | True | Repository | `dotnet_naming_rule.private_constants_pascal.style` | `pascal_case` | `[*.{cs,csx}]` |
-| .editorconfig | True | Repository | `dotnet_naming_symbols.private_constants.applicable_kinds` | `field` | `[*.{cs,csx}]` |
-| .editorconfig | True | Repository | `dotnet_naming_symbols.private_constants.applicable_accessibilities` | `private` | `[*.{cs,csx}]` |
-| .editorconfig | True | Repository | `dotnet_naming_symbols.private_constants.required_modifiers` | `const` | `[*.{cs,csx}]` |
-| .editorconfig | True | Repository | `dotnet_naming_rule.interfaces_use_i.severity` | `error` | `[*.{cs,csx}]` |
-| .editorconfig | True | Repository | `dotnet_naming_rule.interfaces_use_i.symbols` | `interfaces` | `[*.{cs,csx}]` |
-| .editorconfig | True | Repository | `dotnet_naming_rule.interfaces_use_i.style` | `prefixed_pascal` | `[*.{cs,csx}]` |
-| .editorconfig | True | Repository | `dotnet_naming_symbols.interfaces.applicable_kinds` | `interface` | `[*.{cs,csx}]` |
-| .editorconfig | True | Repository | `dotnet_naming_style.prefixed_pascal.required_prefix` | `I` | `[*.{cs,csx}]` |
-| .editorconfig | True | Repository | `dotnet_naming_style.prefixed_pascal.capitalization` | `pascal_case` | `[*.{cs,csx}]` |
-| .editorconfig | True | Repository | `dotnet_naming_rule.locals_and_parameters_camel.severity` | `error` | `[*.{cs,csx}]` |
-| .editorconfig | True | Repository | `dotnet_naming_rule.locals_and_parameters_camel.symbols` | `locals_and_parameters` | `[*.{cs,csx}]` |
-| .editorconfig | True | Repository | `dotnet_naming_rule.locals_and_parameters_camel.style` | `camel_case` | `[*.{cs,csx}]` |
-| .editorconfig | True | Repository | `dotnet_naming_symbols.locals_and_parameters.applicable_kinds` | `local, parameter` | `[*.{cs,csx}]` |
-| .editorconfig | True | Repository | `dotnet_naming_style.camel_case.capitalization` | `camel_case` | `[*.{cs,csx}]` |
-| .editorconfig | True | Repository | `dotnet_naming_rule.types_and_members_pascal.severity` | `error` | `[src/**/*.cs]` |
-| .editorconfig | True | Repository | `dotnet_naming_rule.types_and_members_pascal.symbols` | `types_and_members` | `[src/**/*.cs]` |
-| .editorconfig | True | Repository | `dotnet_naming_rule.types_and_members_pascal.style` | `pascal_case` | `[src/**/*.cs]` |
-| .editorconfig | True | Repository | `dotnet_naming_symbols.types_and_members.applicable_kinds` | `class, struct, enum, delegate, method, property, event` | `[src/**/*.cs]` |
-| .editorconfig | True | Repository | `dotnet_naming_style.pascal_case.capitalization` | `pascal_case` | `[src/**/*.cs]` |
-| .editorconfig | True | Repository | `dotnet_naming_rule.instance_fields_underscore.severity` | `error` | `[src/**/*.cs]` |
-| .editorconfig | True | Repository | `dotnet_naming_rule.instance_fields_underscore.symbols` | `private_fields` | `[src/**/*.cs]` |
-| .editorconfig | True | Repository | `dotnet_naming_rule.instance_fields_underscore.style` | `underscore_camel` | `[src/**/*.cs]` |
-| .editorconfig | True | Repository | `dotnet_naming_symbols.private_fields.applicable_kinds` | `field` | `[src/**/*.cs]` |
-| .editorconfig | True | Repository | `dotnet_naming_symbols.private_fields.applicable_accessibilities` | `private` | `[src/**/*.cs]` |
-| .editorconfig | True | Repository | `dotnet_naming_style.underscore_camel.capitalization` | `camel_case` | `[src/**/*.cs]` |
-| .editorconfig | True | Repository | `dotnet_naming_style.underscore_camel.required_prefix` | `_` | `[src/**/*.cs]` |
-| .editorconfig | True | Repository | `dotnet_naming_rule.static_fields_s_prefix.severity` | `error` | `[src/**/*.cs]` |
-| .editorconfig | True | Repository | `dotnet_naming_rule.static_fields_s_prefix.symbols` | `private_static_fields` | `[src/**/*.cs]` |
-| .editorconfig | True | Repository | `dotnet_naming_rule.static_fields_s_prefix.style` | `s_camel` | `[src/**/*.cs]` |
-| .editorconfig | True | Repository | `dotnet_naming_symbols.private_static_fields.applicable_kinds` | `field` | `[src/**/*.cs]` |
-| .editorconfig | True | Repository | `dotnet_naming_symbols.private_static_fields.applicable_accessibilities` | `private` | `[src/**/*.cs]` |
-| .editorconfig | True | Repository | `dotnet_naming_symbols.private_static_fields.required_modifiers` | `static` | `[src/**/*.cs]` |
-| .editorconfig | True | Repository | `dotnet_naming_style.s_camel.capitalization` | `camel_case` | `[src/**/*.cs]` |
-| .editorconfig | True | Repository | `dotnet_naming_style.s_camel.required_prefix` | `s_` | `[src/**/*.cs]` |
-| .editorconfig | True | Repository | `indent_size` | `2` | `[*.{csproj,props,targets,config,xml}]` |
-| .editorconfig | True | Repository | `trim_trailing_whitespace` | `false` | `[*.md]` |
-| .gitignore | True | Repository | File present | True | Git ignore rules |
-| AGENTS.md | True | Repository | File present | True | Repository instructions |
-| .github/copilot-instructions.md | True | Repository | File present | True | GitHub AI instructions |
-| Directory.Build.props | False | Tracked repository | Not applicable | Not applicable | Not evaluated |
-| Directory.Build.targets | False | Tracked repository | Not applicable | Not applicable | Not evaluated |
-| Directory.Packages.props | False | Tracked repository | Not applicable | Not applicable | Not evaluated |
-| global.json | False | Tracked repository | Not applicable | Not applicable | Not evaluated |
+**A. Configuration file inventory**
+
+| File | Present | Purpose |
+|---|---|---|
+| [NuGet.Config](https://github.com/infoconex/RecordSift/blob/1809d06c0fade59e4769d16e0f8eaf10fa426004/NuGet.Config) | Yes | Package and audit sources |
+| [.editorconfig](https://github.com/infoconex/RecordSift/blob/1809d06c0fade59e4769d16e0f8eaf10fa426004/.editorconfig) | Yes | Formatting, C# style, naming and diagnostics |
+| [.gitignore](https://github.com/infoconex/RecordSift/blob/1809d06c0fade59e4769d16e0f8eaf10fa426004/.gitignore) | Yes | Tracked-file exclusion patterns |
+| [AGENTS.md](https://github.com/infoconex/RecordSift/blob/1809d06c0fade59e4769d16e0f8eaf10fa426004/AGENTS.md) | Yes | Repository agent instructions |
+| [.github/copilot-instructions.md](https://github.com/infoconex/RecordSift/blob/1809d06c0fade59e4769d16e0f8eaf10fa426004/.github/copilot-instructions.md) | Yes | Copilot instructions |
+| `Directory.Build.props` | No | Central build properties |
+| `Directory.Build.targets` | No | Central build targets |
+| `Directory.Packages.props` | No | Central package versions |
+| `global.json` | No | SDK selection |
+
+**B. [NuGet.Config](https://github.com/infoconex/RecordSift/blob/1809d06c0fade59e4769d16e0f8eaf10fa426004/NuGet.Config) — package and audit configuration**
+
+| Setting | Declared value / observation | Meaning |
+|---|---|---|
+| `packageSources` | `<clear />` | Clears inherited entries in this collection |
+| `packageSources.nuget.org` | `https://api.nuget.org/v3/index.json` | Declared package feed |
+| `auditSources` | `<clear />` | Clears inherited audit-source entries |
+| `auditSources.nuget.org-audit` | `https://api.nuget.org/v3/index.json` | Declared audit feed |
+| Explicit CLI source query | One enabled `nuget.org` source | `dotnet nuget list source --configfile .\NuGet.Config`; file-only query |
+
+The explicit CLI query verified one enabled source **for the specified repository file only**. It did not establish inherited effective settings, actual download provenance, or a successful restore. Optional NuGet sections were not declared in the inspected file; consult the [complete key inventory](evidence/manifest.md#repository-configuration-original-item-46-inventory).
+
+**C. [.editorconfig](https://github.com/infoconex/RecordSift/blob/1809d06c0fade59e4769d16e0f8eaf10fa426004/.editorconfig) — formatting, style and naming**
+
+| Category | Settings / values | Applies to |
+|---|---|---|
+| General | `root=true`; `charset=utf-8`; `end_of_line=lf`; `indent_style=space`; final newline required; trailing whitespace trimmed | Root and `[*]` |
+| Indentation | `indent_size=4` for C#/CSX; `indent_size=2` for project, props, targets, config and XML | `[*.{cs,csx}]`, `[*.{csproj,props,targets,config,xml}]` |
+| Markdown | `trim_trailing_whitespace=false` | `[*.md]` |
+| Imports | System directives first; import groups not separated | `[*.{cs,csx}]` |
+| C# style | Qualification of field/property/method/event `false:suggestion`; predefined types `true:suggestion`; `var` built-in/elsewhere `false:suggestion`, apparent type `true:suggestion`; block-scoped namespaces; braces preferred | `[*.{cs,csx}]` |
+| Diagnostics | `IDE1006=error` | `[*.{cs,csx}]` |
+| Naming — shared C# | Constants PascalCase (including private constants); interfaces `I` prefix; locals and parameters camelCase; naming rules have `error` severity | `[*.{cs,csx}]` |
+| Naming — production | Types and members PascalCase; private instance fields `_camelCase`; private static fields `s_camelCase`; naming rules have `error` severity | `[src/**/*.cs]` |
+
+The C# style preferences marked `suggestion` are not equivalent to errors. Production-only naming rules use `[src/**/*.cs]` rather than applying to every test file. Exact keys, symbolic names, accessibilities, modifiers and individual scopes are preserved in the [full configuration inventory](evidence/manifest.md#repository-configuration-original-item-46-inventory) and frozen source.
+
+**D. Other configuration files**
+
+[.gitignore](https://github.com/infoconex/RecordSift/blob/1809d06c0fade59e4769d16e0f8eaf10fa426004/.gitignore), [AGENTS.md](https://github.com/infoconex/RecordSift/blob/1809d06c0fade59e4769d16e0f8eaf10fa426004/AGENTS.md) and [.github/copilot-instructions.md](https://github.com/infoconex/RecordSift/blob/1809d06c0fade59e4769d16e0f8eaf10fa426004/.github/copilot-instructions.md) are tracked. Their contents are documented by source links; they are not interchangeable with NuGet, EditorConfig or centralized MSBuild settings.
 
 ### 47. NuGet Package Declarations
 

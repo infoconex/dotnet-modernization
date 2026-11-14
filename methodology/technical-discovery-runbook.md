@@ -20,7 +20,7 @@ Record the discovery start date (`YYYY-MM-DD`). Do not confuse it with a commit 
 
 ### 3. Discovery Status
 
-Use `Not started`, `In progress`, `Blocked`, `Completed`, or `Completed with gaps`, based on actual work. RecordSift remains `In progress` while required operator Windows verification is outstanding. A completed CI run is not an operator-local check.
+Use `Not started`, `In progress`, `Blocked`, `Completed`, or `Completed with gaps`, based on actual work. For RecordSift, the operator has now verified a ten-project Release build and five NUnit standard suites with SDK-provided MSBuild (EV-081); discovery completion still depends on the agreed scope and acceptance of remaining gaps. A completed CI run is not an operator-local check.
 
 ### 4. Discovery Completed Date
 
@@ -865,4 +865,4 @@ An [optional RecordSift-specific PowerShell experiment](examples/recordsift-sdk-
 3. Keep raw tool output and relevant CI links in the evidence manifest without copying secrets; don't add evidence dates to every entry.
 4. Check that items 3–4 reflect the true discovery progress and that outstanding gaps and deferred checks appear in items 59–60. Keep discovery `In progress` or `Blocked` until mandatory checks are completed or remaining exceptions are explicitly accepted. Leave modernization recommendations outside this factual baseline.
 
-The [RecordSift baseline](../projects/recordsift/evaluations/2026-11-technical-baseline/baseline.md) is a worked, partially populated example. Its checked source and existing CI records must be distinguished from operator-run Windows commands still outstanding.
+The [RecordSift baseline](../projects/recordsift/evaluations/2026-11-technical-baseline/baseline.md) is a worked, partially populated example. Its existing CI records must remain distinct from operator-run Windows evidence, including the subsequently successful isolated SDK-only build-and-test procedure (EV-081).

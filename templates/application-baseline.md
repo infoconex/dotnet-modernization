@@ -265,16 +265,15 @@ Examples include native libraries, COM components, non-NuGet third-party assembl
 
 ### 53. CI Workflows
 
-Record one row per distinct **workflow + job/stage + configured command + runner/output** and group only the event triggers under which that same record applies. Distinct jobs, branch or event conditions, runner types, commands, output artifacts, approvals, deployment gates and workflow dependencies must not disappear through grouping. Link workflow paths to pinned source when practical. This table is an inventory of **configured commands**, not execution evidence; its selected command excerpts need not represent every step in the workflow.
+Record **one row per distinct workflow file**. Summarize its declared triggers, all distinct job IDs, runner operating systems, purpose, and artifacts or deployments. Link the workflow source. Record significant branch/path filters, conditional job execution, matrices, dependencies, approvals, protected environments and exceptions below the table without creating repeated workflow rows. Commands and detailed execution history belong in the workflow source and evidence manifest; do not mistake configured behavior for a successful execution.
 
-| Workflow Path | Trigger(s) | Job / Stage | Runner OS | Configured Command | Artifact or Deployment |
+| Workflow Path | Triggers | Jobs | Runner OS | Purpose | Artifact or Deployment |
 |---|---|---|---|---|---|
 |   |   |   |   |   |   |
 
-**Trigger conditions, job dependencies and deployment/approval gates:**
+**Conditions, dependencies and approval gates:**
 
-**Observed CI execution evidence (separate from source declarations):**
-
+**Observed runs:** See item 54 and the evidence manifest.
 
 ### 54. CI Runs
 

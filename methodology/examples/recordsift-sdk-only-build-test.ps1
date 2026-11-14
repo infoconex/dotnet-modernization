@@ -28,9 +28,15 @@ foreach ($name in @('src','tests')) {
 Copy-Item -LiteralPath $solution -Destination $workspace
 $pkgConfigs = @(Get-ChildItem -LiteralPath $workspace -Filter 'packages.config' -Recurse -File)
 $specs = foreach ($cfg in $pkgConfigs) {
-    [xml]$packageManifestXml = Get-Content -LiteralPath $cfg.FullName -Raw
-    foreach ($item in $packageManifestXml.packages.package) {
-        [pscustomobject]@{ Id = [string]$item.id; Version = [string]$item.version }
+    # Avoid XML type-constrained PowerShell variables that can interfere with
+    # assignments elsewhere in the same script scope.
+    $manifestDocument = [System.Xml.Linq.XDocument]::Load($cfg.FullName)
+    foreach ($manifestPackage in $manifestDocument.Root.Elements()) {
+        if ($manifestPackage.Name.LocalName -ne 'package') { continue }
+        [pscustomobject]@{
+            Id = [string]$manifestPackage.Attribute('id').Value
+            Version = [string]$manifestPackage.Attribute('version').Value
+        }
     }
 }
 $specs = @($specs | Sort-Object Id,Version -Unique)

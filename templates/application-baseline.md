@@ -188,15 +188,31 @@ One row per project when possible. Enter only observed evaluated values, labeled
 
 ### 46. Repository Configuration
 
-Record **declared source settings** in the table, including NuGet `clear` directives and explicitly disabled feeds. Summarize absent NuGet configuration sections once rather than adding empty rows. **Effective** user/machine/CLI settings are separate and remain `Not checked` until verified. Never record secrets; follow step 46 in the [runbook](../methodology/technical-discovery-runbook.md).
+Use **one file-inventory table**, with permanent links for existing files and plain text for absent files. Then create **separate settings tables for each configuration file that has meaningful settings**, using columns suited to that file. Group repetitive settings by category when this remains unambiguous; retain exact individual keys, values, conditions and applicability scopes in the evidence manifest. Do not hide important exceptions or collapse declared values into claims about effective behavior. Include nested/overriding files where present. Never record secrets.
 
-| File or Mechanism | Present | Scope | Setting Name | Setting Value | Import or Precedence |
-|---|---|---|---|---|---|
-|   |   |   |   |   |   |
+**A. Configuration file inventory**
 
-**NuGet sections not declared in inspected source:** 
+| File (link to pinned source when present) | Present | Purpose |
+|---|---|---|
+|   |   |   |
 
-**Effective NuGet configuration:** Not checked
+**B. NuGet configuration — [link to configuration file]**
+
+| Setting / Section | Declared value / observation | Meaning / scope |
+|---|---|---|
+|   |   |   |
+
+**C. EditorConfig — [link to configuration file]**
+
+| Category | Settings / values | Applies to |
+|---|---|---|
+|   |   |   |
+
+**D. Other configuration files**
+
+Add a dedicated settings table for `global.json`, `Directory.Build.props`, `Directory.Build.targets`, `Directory.Packages.props` or another file **when present and meaningful**. For descriptive instructions or ignore files, a short purpose and pinned link may be sufficient. Distinguish source inspection, explicit file-only CLI queries, and effective inherited settings; use `Not checked` where needed.
+
+**Evidence:** Link to the full, exact setting inventory and verification records in the evidence manifest.
 
 ### 47. NuGet Package Declarations
 

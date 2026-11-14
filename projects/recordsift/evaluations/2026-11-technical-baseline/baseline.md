@@ -10,8 +10,8 @@
 |---|---|
 | 1. Discovery By | Not recorded |
 | 2. Discovery Date | `2026-11-12` |
-| 3. Discovery Status | In progress |
-| 4. Discovery Completed Date | Not completed |
+| 3. Discovery Status | Completed with gaps |
+| 4. Discovery Completed Date | `2026-11-13` |
 
 ## Application information
 
@@ -859,6 +859,6 @@ The complete ten-project Release build and all five standard NUnit suites **pass
 | Exact operator-to-CI MSBuild evaluation/command parity | Historical CI used Visual Studio MSBuild and evaluated project properties; local SDK compilation/testing verified functionality but not every evaluated property or compiler flag | If an upgrade decision depends on compiler switches or environment-specific MSBuild behavior |
 | Separate machine-wide Developer Pack or Visual Studio installation | Standard-path targeting assembly is absent; validated local build/test works with package-provided references and SDK MSBuild | Only if a newly identified tool requires these installations |
 
-Outstanding checks above are explicitly scoped limitations, not evidence that the already verified builds or NUnit standard suites failed. Independent post-script verification has now confirmed the exact frozen SHA, clean working tree and detached HEAD (EV-082). Discovery remains **In progress** until the operator agrees on acceptable deferrals and completion criteria.
+Outstanding checks above are explicitly scoped limitations, not evidence that the already verified builds or NUnit standard suites failed. Independent post-script verification has now confirmed the exact frozen SHA, clean working tree and detached HEAD (EV-082). The operator explicitly accepted the three remaining deferrals in the discovery conversation on **2026-11-13 (America/Los_Angeles)**; discovery is therefore **Completed with gaps**. The deferred checks are scope limitations, not required prerequisites for the verified baseline (EV-083). Draft PR #99 remains unmerged.
 
 This baseline records observed application facts and verification outcomes, not proposed modernization work.

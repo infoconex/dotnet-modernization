@@ -806,26 +806,15 @@ Identify existing compatibility gates (public API, assembly identity, XML docume
 
 ### 58. Executed Command Evidence
 
-After executing a command, record its exact invocation, working directory, tool version, exit code, outcome and saved output in a row tied to a **baseline item number**. Use actual logs where available, redact secrets and retain failed output too. Do not present a planned command or an inspected CI YAML line as a locally executed command.
+Keep only the **execution category, verified outcome, and evidence reference** in the baseline. Put complete command syntax, working directories, tool versions, target/configuration, observed exit codes (or `Not recorded`), console output and troubleshooting in the evidence manifest. Every detailed execution must be traceable to a baseline item and its actual source environment. Do not label inspected workflow definitions as executed commands.
 
-Do not claim the discovery operator executed CI commands when only GitHub workflow logs were inspected.
+**Illustrative baseline summary (not a new finding):**
 
-**How to populate each column (left to right):**
+| Execution Category | Outcome | Evidence |
+|---|---|---|
+| Operator source checkout verification | Passed | EV-EXAMPLE |
 
-- **Baseline Item:** The baseline item number supported by this execution.
-- **Command:** Exact command executed.
-- **Working Directory:** Directory in which command ran.
-- **Tool Version:** Tool and version actually used.
-- **Target or Configuration:** Project, configuration or applicable scope.
-- **Exit Code:** Observed process exit code or Not recorded.
-- **Outcome:** Passed, Failed or Blocked.
-- **Output or Evidence:** Location of saved output; do not embed secrets.
-
-**Illustrative example only; not a new observed finding:**
-
-| Baseline Item | Command | Working Directory | Tool Version | Target or Configuration | Exit Code | Outcome | Output or Evidence |
-|---|---|---|---|---|---|---|---|
-| 37 | git status --porcelain=v1 --untracked-files=all | <checkout> | Git 2.47.0 | Repository | 0 | Passed | <saved console output> |
+**Illustrative detailed manifest record (not a new finding):** Baseline item 37; command `git status --porcelain=v1 --untracked-files=all`; working directory `<checkout>`; Git version `<observed version>`; exit code `<observed code>`; output `<retained log or transcript>`.
 
 ### 59. Findings and Gaps
 

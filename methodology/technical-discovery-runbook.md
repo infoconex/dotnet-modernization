@@ -849,6 +849,9 @@ Document intentionally omitted checks with reason and trigger for revisit, one r
 - **Reason Deferred:** Why it was not performed.
 - **Revisit When:** When and under what prerequisite to retry it.
 
+
+**Isolate test-runner side effects:** Building assemblies and writing result XML under a temporary workspace is insufficient when the NUnit working directory still points at the original source checkout. In an operator-local RecordSift experiment, five NUnit 3.17 suites passed, but NUnit reported the original checkout as `WorkDirectory` and generated ten untracked `InternalTrace.*.log` / `nunit-agent_*.log` files there; these were later removed by exact filename and the clean Git status reverified. For subsequent runs, invoke NUnit with a deliberate working directory in the isolated experiment workspace (NUnit ConsoleRunner `--work=<temporary-results-or-work-directory>`), and launch it with the PowerShell process location set to that workspace as appropriate. Inspect the runner-reported `WorkDirectory` and `git status --short` afterward; do not assume isolation from paths to test DLLs or result XML alone. Prefer metadata-only inspection to loading output assemblies into long-lived PowerShell processes, since `Assembly.LoadFile` can hold a DLL lock across subsequent builds. Record each side effect and its verified cleanup separately in the evidence manifest.
+
 ## Completion and validation
 
 1. Confirm every baseline number 1–60 has either an observed value, applicable dataset rows, or a documented `Not checked`/`Not executed`/`Not applicable` disposition. Use the field values, environment-specific evidence and item 59 gaps; no duplicate item-by-item status matrix is required.

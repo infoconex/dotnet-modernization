@@ -91,8 +91,13 @@ The [getting-started guide](https://github.com/infoconex/RecordSift/blob/1809d06
 | Operator local | `8.0.428` | `C:\Program Files\dotnet\sdk` |
 | Operator local | `9.0.321` | `C:\Program Files\dotnet\sdk` |
 | Operator local | `10.0.404` | `C:\Program Files\dotnet\sdk` |
+| Operator isolated | `11.0.100` | `$HOME\dotnet-sdks\11.0.100` |
+| Operator isolated | `11.0.100-rc.2.26504.105` | `$HOME\dotnet-sdks\11.0.100-rc.2.26504.105` |
+| Operator isolated | `10.0.404` | `$HOME\dotnet-sdks\10.0.404` |
+| Operator isolated | `10.0.303` | `$HOME\dotnet-sdks\10.0.303` |
+| Operator isolated | `9.0.205` | `$HOME\dotnet-sdks\9.0.205` |
 
-**Scope:** All 12 SDK versions are the observed output of `dotnet --list-sdks` for the research runner. Their reported paths are SDK installation roots, not a claim that each version has a different path. **Operator-local evidence (EV-020, 2026-11-13):** `dotnet --list-sdks` at `D:\RecordSift` reported exactly three installed SDK versions: `8.0.428`, `9.0.321`, and `10.0.404`, all under `C:\Program Files\dotnet\sdk`. All three versions are also listed in the independent CI runner's 12-entry inventory. The different inventory sizes are not evidence of a build failure or a requirement to install the missing CI versions. This command does not enumerate .NET runtimes.
+**Scope:** All 12 SDK versions are the observed output of `dotnet --list-sdks` for the research runner. Their reported paths are SDK installation roots, not a claim that each version has a different path. **Operator-local evidence (EV-020, 2026-11-13):** `dotnet --list-sdks` at `D:\RecordSift` reported exactly three installed SDK versions: `8.0.428`, `9.0.321`, and `10.0.404`, all under `C:\Program Files\dotnet\sdk`. All three versions are also listed in the independent CI runner's 12-entry inventory. The different inventory sizes are not evidence of a build failure or a requirement to install the missing CI versions. This command does not enumerate .NET runtimes. **Additional operator-local isolated SDK inventory (EV-064, 2026-11-13):** At `PS D:\>`, the operator ran `& "$HOME\dotnet-sdks\isolated-dotnet-sdk.ps1" -Action List`. The tool reported five **isolated** SDK installations (`11.0.100`, `11.0.100-rc.2.26504.105`, `10.0.404`, `10.0.303`, `9.0.205`) under `$HOME\dotnet-sdks\<version>` and independently listed the same three system SDK versions from EV-020 (`10.0.404`, `9.0.321`, `8.0.428`). These are eight installations across seven distinct SDK versions; `10.0.404` is present in both locations. Isolated SDKs are not added to normal PATH by the tool and must be explicitly selected. `List` is an inventory, not direct health verification of each isolated SDK, and does not provide .NET Framework targeting assemblies or Visual Studio MSBuild.
 
 ### 27. .NET Runtime Inventory
 

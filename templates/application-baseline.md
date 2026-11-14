@@ -156,7 +156,7 @@ One row per project whenever possible. D/R means Debug/Release in that order; sh
 
 ### 42. Output and Validation Settings
 
-One row per project when practical. Use Debug/Release values where declarations differ, one value where identical, and `Not declared` where absent; do not infer evaluated defaults. Preserve other properties and exceptional conditions.
+One row per project when practical. Use Debug/Release values where declarations differ, one value where identical, and `Not declared` where absent; do not infer evaluated defaults. Preserve other properties and exceptional conditions. `<Configuration>` denotes `Debug` or `Release` in displayed paths; it is documentation shorthand, not a literal declared MSBuild value. The exact per-configuration declarations remain in the source and evidence. For example, `bin\<Configuration>\` represents the two declared paths `bin\Debug\` and `bin\Release\`.
 
 | Project | OutputPath (D/R) | WarningLevel (D/R) | WarningsAsErrors (D/R) | DocumentationFile (D/R) | Conditions / Exceptions |
 |---|---|---|---|---|---|

@@ -216,7 +216,7 @@ Source-declared values; effective compiler switches are not inferred.
 
 ### 42. Output and Validation Settings
 
-Source-declared values. Production-only XML documentation and warning declarations are distinguished from test projects. `<Configuration>` denotes `Debug` or `Release` in displayed paths; it is documentation shorthand, not a literal declared MSBuild value. 
+Source-declared values. Production-only XML documentation and warning declarations are distinguished from test projects. `<Configuration>` denotes `Debug` or `Release` in displayed paths; it is documentation shorthand, not a literal declared MSBuild value.
 
 | Project | OutputPath (D/R) | WarningLevel (D/R) | WarningsAsErrors (D/R) | DocumentationFile (D/R) | Conditions / Exceptions |
 |---|---|---|---|---|---|
@@ -390,8 +390,7 @@ Framework references and other non-NuGet dependencies are separate inventories; 
 
 **B. Other Non-NuGet Dependencies**
 
-| Project | Dependencies | Type / Mechanism | Version / Identity | Resolution / Location | Declaration Source |
-|---|---|---|---|---|---|
+None declared in the inspected project files.
 
 **C. Tracked internal resources and test fixtures — not third-party dependencies**
 
@@ -518,6 +517,8 @@ Source package declarations, unpublished CI package candidates and published art
 | RecordSift NuGet.org package | `0.1.0` | Published | `2026-11-01` (date verified; exact registry publication time not checked) | [NuGet.org package](https://www.nuget.org/packages/RecordSift/0.1.0) · [Public-feed consumer verification](https://github.com/infoconex/RecordSift/actions/runs/41355904536/job/124995742204) |
 | GitHub Release `v0.1.0` | `v0.1.0` | Published | `2026-11-01T22:12:43Z` | [GitHub Release](https://github.com/infoconex/RecordSift/releases/tag/v0.1.0) |
 
+**D. Artifact source revisions**
+
 | Source Context | Source Commit SHA | Committer Date (UTC) | Verification |
 |---|---|---|---|
 | Frozen discovery source (`main`) | [`1809d06c0fade59e4769d16e0f8eaf10fa426004`](https://github.com/infoconex/RecordSift/commit/1809d06c0fade59e4769d16e0f8eaf10fa426004) | `2026-11-12T03:12:18Z` | Commit metadata inspected; isolated local detached checkout verified (EV-033–035) |
@@ -561,7 +562,7 @@ Detailed historical commands, environments, outputs and exit status are preserve
 
 ### 59. Findings and Gaps
 
-All ten projects and five standard NUnit suites passed locally. 
+All ten projects and five standard NUnit suites passed locally.
 
 | Finding | Impact | Evidence | Next Check |
 |---|---|---|---|

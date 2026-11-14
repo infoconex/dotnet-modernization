@@ -71,10 +71,24 @@ try {
         foreach ($name in $names) {
             $dll = Join-Path $workspace ("tests\$name\bin\$Configuration\$name.dll")
             if (-not (Test-Path -LiteralPath $dll -PathType Leaf)) { throw "Missing compiled test assembly $dll" }
-            # Pass native arguments as simple strings; avoid nested expression parsing.
-            $nunitResultArgument = "--result=$results\$name.xml;format=nunit3"
-            & $runner $dll "--work=$results" $nunitResultArgument --noheader
-            if ($LASTEXITCODE -ne 0) { throw "NUnit suite $name failed with exit code $LASTEXITCODE" }
+            # Use ProcessStartInfo.ArgumentList to pass NUnit arguments without
+            # PowerShell's native-command argument binder.
+            $nunitProcessInfo = [System.Diagnostics.ProcessStartInfo]::new($runner)
+            $nunitProcessInfo.UseShellExecute = $false
+            $nunitProcessInfo.WorkingDirectory = $results
+            [void]$nunitProcessInfo.ArgumentList.Add($dll)
+            [void]$nunitProcessInfo.ArgumentList.Add("--work=$results")
+            [void]$nunitProcessInfo.ArgumentList.Add("--result=$results\$name.xml;format=nunit3")
+            [void]$nunitProcessInfo.ArgumentList.Add('--noheader')
+            $nunitProcess = [System.Diagnostics.Process]::Start($nunitProcessInfo)
+            if ($null -eq $nunitProcess) { throw "Could not start NUnit for $name" }
+            try {
+                $nunitProcess.WaitForExit()
+                if ($nunitProcess.ExitCode -ne 0) {
+                    throw "NUnit suite $name failed with exit code $($nunitProcess.ExitCode)"
+                }
+            }
+            finally { $nunitProcess.Dispose() }
         }
     }
     finally { Pop-Location }

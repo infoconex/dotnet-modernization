@@ -28,8 +28,8 @@ foreach ($name in @('src','tests')) {
 Copy-Item -LiteralPath $solution -Destination $workspace
 $pkgConfigs = @(Get-ChildItem -LiteralPath $workspace -Filter 'packages.config' -Recurse -File)
 $specs = foreach ($cfg in $pkgConfigs) {
-    [xml]$xml = Get-Content -LiteralPath $cfg.FullName -Raw
-    foreach ($item in $xml.packages.package) {
+    [xml]$packageManifestXml = Get-Content -LiteralPath $cfg.FullName -Raw
+    foreach ($item in $packageManifestXml.packages.package) {
         [pscustomobject]@{ Id = [string]$item.id; Version = [string]$item.version }
     }
 }
@@ -50,7 +50,6 @@ $results = Join-Path $workspace 'TestResults'
 New-Item -ItemType Directory -Path $results | Out-Null
 $runner = Join-Path $pkgRoot 'NUnit.ConsoleRunner.3.17.0\tools\nunit3-console.exe'
 if (-not (Test-Path -LiteralPath $runner -PathType Leaf)) { throw "Missing NUnit runner: $runner" }
-$exit = 0
 try {
     Push-Location -LiteralPath $workspace
     try {
@@ -66,8 +65,8 @@ try {
         foreach ($name in $names) {
             $dll = Join-Path $workspace ("tests\$name\bin\$Configuration\$name.dll")
             if (-not (Test-Path -LiteralPath $dll -PathType Leaf)) { throw "Missing compiled test assembly $dll" }
-            $xml = Join-Path $results "$name.xml"
-            & $runner $dll "--work=$results" "--result=$xml;format=nunit3" --noheader
+            $resultXmlPath = Join-Path $results "$name.xml"
+            & $runner $dll "--work=$results" "--result=$resultXmlPath;format=nunit3" --noheader
             if ($LASTEXITCODE -ne 0) { throw "NUnit suite $name failed with exit code $LASTEXITCODE" }
         }
     }

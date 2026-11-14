@@ -184,8 +184,6 @@ One solution, with Debug and Release / Any CPU configurations.
 
 ### 40. Projects
 
-Ten legacy projects. Paths here are authoritative for other project-scoped inventories.
-
 | Project | Role | Format | Target Framework(s) | Language Version | Output Type | MSBuild Platform(s) | SDK or ToolsVersion | Direct Project References | Project Path |
 |---|---|---|---|---|---|---|---|---|---|
 | [RecordSift.Domain](https://github.com/infoconex/RecordSift/blob/1809d06c0fade59e4769d16e0f8eaf10fa426004/src/RecordSift.Domain/RecordSift.Domain.csproj) | Production | Traditional | v4.8 | 7.3 | Library | AnyCPU | 15.0 | None | `src/RecordSift.Domain/RecordSift.Domain.csproj` |
@@ -218,7 +216,7 @@ Source-declared values; effective compiler switches are not inferred.
 
 ### 42. Output and Validation Settings
 
-Source-declared values. Production-only XML documentation and warning declarations are distinguished from test projects. `<Configuration>` denotes `Debug` or `Release` in displayed paths; it is documentation shorthand, not a literal declared MSBuild value. The exact per-configuration declarations remain in the source and evidence.
+Source-declared values. Production-only XML documentation and warning declarations are distinguished from test projects. `<Configuration>` denotes `Debug` or `Release` in displayed paths; it is documentation shorthand, not a literal declared MSBuild value. 
 
 | Project | OutputPath (D/R) | WarningLevel (D/R) | WarningsAsErrors (D/R) | DocumentationFile (D/R) | Conditions / Exceptions |
 |---|---|---|---|---|---|
@@ -269,8 +267,6 @@ Observed CI-evaluated MSBuild properties (EV-015). Empty properties do not estab
 
 ### 45. Repository Directories
 
-Tracked repository directory inventory; counts reflect the frozen source.
-
 | Directory | Purpose |
 |---|---|
 | .github/ | Repository-level Copilot instructions and pull request template |
@@ -293,8 +289,6 @@ Tracked repository directory inventory; counts reflect the frozen source.
 | `.github/pull_request_template.md` | Pull request scope, evidence, compatibility, risk, traceability and review checklist |
 
 ### 46. Repository Configuration
-
-Repository-scoped configuration at the frozen revision. Each existing file links to its immutable source. Absent files mean **not tracked in the inspected repository**, not necessarily absent from parent directories or build environments.
 
 **A. Configuration file inventory**
 
@@ -320,7 +314,7 @@ Repository-scoped configuration at the frozen revision. Each existing file links
 | `auditSources.nuget.org-audit` | `https://api.nuget.org/v3/index.json` | Declared audit feed |
 | Explicit CLI source query | One enabled `nuget.org` source | `dotnet nuget list source --configfile .\NuGet.Config`; file-only query |
 
-The explicit CLI query verified one enabled source **for the specified repository file only**. It did not establish inherited effective settings, actual download provenance, or a successful restore. Optional NuGet sections were not declared in the inspected file; consult the [complete key inventory](evidence/manifest.md#repository-configuration-original-item-46-inventory).
+The explicit CLI query verified one enabled source **for the specified repository file only**. It did not establish inherited effective settings, actual download provenance, or a successful restore.
 
 **C. [.editorconfig](https://github.com/infoconex/RecordSift/blob/1809d06c0fade59e4769d16e0f8eaf10fa426004/.editorconfig) — formatting, style and naming**
 
@@ -416,8 +410,6 @@ Framework references and other non-NuGet dependencies are separate inventories; 
 
 ### 49. Operation Commands
 
-Commands and workflow declarations are recorded here. Detailed operator inspection and CI logs are in the evidence manifest.
-
 | Operation | Project or Solution | Configuration | Platform | Command or Workflow | Source |
 |---|---|---|---|---|---|
 | Restore (CI) | RecordSift.sln | Not applicable | Not applicable | nuget restore RecordSift.sln -NonInteractive -PackagesDirectory packages -ConfigFile NuGet.Config | .github/workflows/windows-net48.yml:38; .github/workflows/verify-rc-consumer.yml:29 |
@@ -480,8 +472,6 @@ Five local NUnit suites: **419 discovered, 418 passed, 0 failed, 1 explicit skip
 | 1809d06c0fade59e4769d16e0f8eaf10fa426004 | RecordSift.Infrastructure.Xlsx.Tests | NUnit ConsoleRunner 3.17.0 | 48 | 48 | 0 | 0 | Passed | https://github.com/infoconex/RecordSift/actions/runs/43146607664 |
 
 ### 53. CI Workflows
-
-Eight configured workflow files, one row per file. Jobs and runners are grouped by workflow; detailed steps, conditions and commands remain in the linked source and evidence manifest. These definitions are not execution evidence (see item 54).
 
 | Workflow Path | Triggers | Jobs | Runner OS | Purpose | Artifact or Deployment |
 |---|---|---|---|---|---|
@@ -571,7 +561,7 @@ Detailed historical commands, environments, outputs and exit status are preserve
 
 ### 59. Findings and Gaps
 
-All ten projects and five standard NUnit suites passed locally. The rows below describe remaining limitations and modernization considerations.
+All ten projects and five standard NUnit suites passed locally. 
 
 | Finding | Impact | Evidence | Next Check |
 |---|---|---|---|
@@ -592,6 +582,4 @@ The three deferrals below were explicitly accepted (EV-083). Discovery is **Comp
 | Independent clean-host restore and SDK-only reproducibility | The successful local script used previously cached dependencies; a second clean Windows host and fresh package restoration have not been tested | If verifying setup from an empty cache or distribution of the procedure beyond this host |
 | Exact operator-to-CI MSBuild evaluation/command parity | Historical CI used Visual Studio MSBuild and evaluated project properties; local SDK compilation/testing verified functionality but not every evaluated property or compiler flag | If an upgrade decision depends on compiler switches or environment-specific MSBuild behavior |
 | Separate machine-wide Developer Pack or Visual Studio installation | Standard-path targeting assembly is absent; validated local build/test works with package-provided references and SDK MSBuild | Only if a newly identified tool requires these installations |
-
-This baseline records observed application facts and verification outcomes, not proposed modernization work.
 

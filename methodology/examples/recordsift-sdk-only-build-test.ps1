@@ -65,8 +65,9 @@ try {
         foreach ($name in $names) {
             $dll = Join-Path $workspace ("tests\$name\bin\$Configuration\$name.dll")
             if (-not (Test-Path -LiteralPath $dll -PathType Leaf)) { throw "Missing compiled test assembly $dll" }
-            # Construct the NUnit result argument inline to avoid typed-variable collisions.
-            & $runner $dll "--work=$results" ("--result={0};format=nunit3" -f (Join-Path $results ($name + '.xml'))) --noheader
+            # Pass native arguments as simple strings; avoid nested expression parsing.
+            $nunitResultArgument = "--result=$results\$name.xml;format=nunit3"
+            & $runner $dll "--work=$results" $nunitResultArgument --noheader
             if ($LASTEXITCODE -ne 0) { throw "NUnit suite $name failed with exit code $LASTEXITCODE" }
         }
     }

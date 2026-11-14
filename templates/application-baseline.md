@@ -4,6 +4,8 @@
 
 [Step-by-Step Instructions](../methodology/technical-discovery-runbook.md)
 
+**Reading rule:** Keep this baseline concise: values, inventories, outcomes, actionable findings and short evidence references only. Full command transcripts, environment diagnostics, failed attempts, historical corrections and supporting explanations belong in the separate evidence manifest. Do not remove verified data from inventory tables to reduce length.
+
 ## Discovery information
 
 | Field | Value |
@@ -329,9 +331,9 @@ Git committer dates are not guaranteed source creation or push times, and neithe
 
 ### 58. Executed Command Evidence
 
-| Baseline Item | Command | Working Directory | Tool Version | Target or Configuration | Exit Code | Outcome | Output or Evidence |
-|---|---|---|---|---|---|---|---|
-|   |   |   |   |   |   |   |   |
+| Execution Category | Outcome | Evidence |
+|---|---|---|
+|   |   |   |
 
 ### 59. Findings and Gaps
 

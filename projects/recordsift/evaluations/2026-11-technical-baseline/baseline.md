@@ -320,14 +320,14 @@ The explicit CLI query verified one enabled source **for the specified repositor
 
 | Category | Settings / values | Applies to |
 |---|---|---|
-| General | `root=true`; `charset=utf-8`; `end_of_line=lf`; `indent_style=space`; final newline required; trailing whitespace trimmed | Root and `[*]` |
-| Indentation | `indent_size=4` for C#/CSX; `indent_size=2` for project, props, targets, config and XML | `[*.{cs,csx}]`, `[*.{csproj,props,targets,config,xml}]` |
+| General | `root=true`<br>`charset=utf-8`<br>`end_of_line=lf`<br>`indent_style=space`<br>Final newline required<br>Trailing whitespace trimmed | Root and `[*]` |
+| Indentation | `indent_size=4` for C#/CSX<br>`indent_size=2` for project, props, targets, config and XML | `[*.{cs,csx}]`, `[*.{csproj,props,targets,config,xml}]` |
 | Markdown | `trim_trailing_whitespace=false` | `[*.md]` |
-| Imports | System directives first; import groups not separated | `[*.{cs,csx}]` |
-| C# style | Qualification of field/property/method/event `false:suggestion`; predefined types `true:suggestion`; `var` built-in/elsewhere `false:suggestion`, apparent type `true:suggestion`; block-scoped namespaces; braces preferred | `[*.{cs,csx}]` |
+| Imports | System directives first<br>Import groups not separated | `[*.{cs,csx}]` |
+| C# style | Qualification of field/property/method/event `false:suggestion`<br>Predefined types `true:suggestion`<br>`var` built-in types `false:suggestion`<br>`var` when type apparent `true:suggestion`<br>`var` elsewhere `false:suggestion`<br>Block-scoped namespaces<br>Braces preferred | `[*.{cs,csx}]` |
 | Diagnostics | `IDE1006=error` | `[*.{cs,csx}]` |
-| Naming — shared C# | Constants PascalCase (including private constants); interfaces `I` prefix; locals and parameters camelCase; naming rules have `error` severity | `[*.{cs,csx}]` |
-| Naming — production | Types and members PascalCase; private instance fields `_camelCase`; private static fields `s_camelCase`; naming rules have `error` severity | `[src/**/*.cs]` |
+| Naming — shared C# | Constants PascalCase (including private constants)<br>Interfaces `I` prefix<br>Locals and parameters camelCase<br>Naming rules have `error` severity | `[*.{cs,csx}]` |
+| Naming — production | Types and members PascalCase<br>Private instance fields `_camelCase`<br>Private static fields `s_camelCase`<br>Naming rules have `error` severity | `[src/**/*.cs]` |
 
 The C# style preferences marked `suggestion` are not equivalent to errors. Production-only naming rules use `[src/**/*.cs]` rather than applying to every test file. Exact keys, symbolic names, accessibilities, modifiers and individual scopes are preserved in the [full configuration inventory](evidence/manifest.md#repository-configuration-original-item-46-inventory) and frozen source.
 

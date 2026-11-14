@@ -837,6 +837,9 @@ Each distribution has its own record. NuGet package upload acceptance was previo
 **Updated local-tooling conclusion (EV-065–069):** The full ten-project successful solution build demonstrates a viable SDK-provided MSBuild + NuGet reference assemblies path without VS installation. Previous recommendations to install Visual Studio Community and a machine-wide Developer Pack as prerequisites for *any* local compilation are superseded; remaining validation should focus on XLSX, complete solution, test projects, and reproducibility.\n\n
 **Post-NUnit cleanup verified (EV-074):** The operator removed only the ten filename-specific, previously observed NUnit diagnostic logs from the frozen checkout using `Remove-Item -LiteralPath` with existence checks. A subsequent `git status --short` produced **no output**, establishing a clean tracked/untracked Git working tree at that time. The source SHA and detached state were verified immediately beforehand in EV-073, not rerun in the cleanup transcript. NUnit suite results remain as recorded in EV-072; use an explicitly isolated runner work directory on subsequent executions to avoid a repeat.
 
+
+**Consolidated script validation (EV-075):** The first execution of the optional SDK-only automation succeeded in staging packages and building all ten projects (1.0 seconds), but stopped before starting NUnit because the script reused the XML document variable `$xml` for the first result-file path. The script's checkout-status check showed no warning, and the operator output confirmed the frozen source SHA. The variable collision has been corrected in the draft PR script; **the fixed end-to-end automation has not yet been rerun**, and its NUnit results must not be inferred from the earlier separately successful manual test runs (EV-072).
+
 ### 60. Deferred Checks
 
 | Check | Reason Deferred | Revisit When |
